@@ -1,0 +1,39 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+  }
+  .title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 20pt;
+  }
+  .todo-done {
+    text-decoration: line-through;
+  }
+  .container {
+    padding: 10px 10px 10px 10px;
+  }
+  .panel-borderless {
+    border: 0;
+    box-shadow: none;
+  }
+  .pointer {
+    cursor: pointer;
+  }
+
+  .main-container {
+	min-height: calc(100vh - 80px); /* 로그인/헤더 제외한 높이 */
+}
+
+.main-area {
+	background-color: #fff;
+	padding: 20px;
+	height: 100%;
+}
+
+.nav-area {
+	background-color: #f8f9fa;
+	height: 100%;
+	padding: 20px;
+}
