@@ -22,7 +22,7 @@
 
     <!-- 좋아요 / 수정 / 삭제 -->
     <div class="actions">
-      <button @click="$emit('like', comment.id)">좋아요 👍 {{ comment.likes }}</button>
+      <button @click="$emit('like', comment.id)">👍 {{ comment.likes }}</button>
       <button @click="isEditing = true">수정</button>
       <button @click="$emit('delete', comment.id)">삭제</button>
     </div>

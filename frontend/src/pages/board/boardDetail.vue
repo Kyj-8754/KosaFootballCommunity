@@ -3,21 +3,32 @@
     <PostHeader :post="post" />
     <PostContent :post="post" />
     <PostActionButtons @edit="handleEdit" @delete="handleDelete" />
+    <CommentForm @submit="addComment" />
+    <CommentList :comments="comments" />
   </div>
 </template>
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
+import { ref } from 'vue'
 import PostHeader from '@/components/board/boardHeader.vue'
 import PostContent from '@/components/board/boardContent.vue'
 import PostActionButtons from '@/components/board/boardEmitButton.vue'
 import posts from '@/pages/board/data/board'
+import CommentList from '@/components/reply/replyList.vue'
+import CommentForm from '@/components/reply/replyRegisterForm.vue'
 
 const route = useRoute()
 const router = useRouter()
-const postId = route.params.id
 
+const postId = route.params.id
 const post = posts.find(p => String(p.id) === String(postId))
+
+const comments = ref([])
+
+const addComment = (content) => {
+  alert(`애옹`)
+}
 
 const handleEdit = () => {
   router.push(`/board/boardeditform/${post.id}`)
