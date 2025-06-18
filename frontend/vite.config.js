@@ -17,10 +17,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": {
+      // 게시판 프록시
+      "/api/board": {
         target: "http://localhost:8080",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

@@ -7,59 +7,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+
 import BoardFilter from '@/components/board/boardFilter.vue'
 import BoardTable from '@/components/board/boardTable.vue'
 import Pagination from '@/components/pagination.vue'
-import postsData from '@/pages/board/data/board'
 
 const router = useRouter()
 
-const posts = ref([...postsData])
-
+const posts = ref([])
 const currentPage = ref(1)
 const postsPerPage = 10
-
-const filteredPosts = computed(() => {
-  let filtered = [...posts.value]
-  const { category, criteria, keyword } = searchFilters.value
-
-  if (category) {
-    filtered = filtered.filter(p => p.category === category)
-  }
-
-  if (criteria && keyword) {
-    if (criteria === '제목') {
-      filtered = filtered.filter(p => p.title.includes(keyword))
-    } else if (criteria === '작성자') {
-      filtered = filtered.filter(p => p.author.includes(keyword))
-    }
-  }
-
-  const start = (currentPage.value - 1) * postsPerPage
-  return filtered.slice(start, start + postsPerPage)
-})
-
-const totalPages = computed(() => {
-  let filtered = [...posts.value]
-  const { category, criteria, keyword } = searchFilters.value
-
-  if (category) {
-    filtered = filtered.filter(p => p.category === category)
-  }
-
-  if (criteria && keyword) {
-    if (criteria === '제목') {
-      filtered = filtered.filter(p => p.title.includes(keyword))
-    } else if (criteria === '작성자') {
-      filtered = filtered.filter(p => p.author.includes(keyword))
-    }
-  }
-
-  return Math.ceil(filtered.length / postsPerPage)
-})
-
 
 const searchFilters = ref({
   category: '',
@@ -67,16 +27,45 @@ const searchFilters = ref({
   keyword: ''
 })
 
+// 게시글 목록 조회 (백엔드에서 fetch)
+const fetchPosts = async () => {
+  try {
+    const params = { ...searchFilters.value }
+    const response = await axios.get('/api/board/list', { params })
+    posts.value = response.data
+  } catch (error) {
+    console.error('게시글 목록 불러오기 실패:', error)
+  }
+}
+
+// 검색 조건 변경 시 목록 다시 가져오기
 const handleSearch = (filters) => {
   searchFilters.value = { ...filters }
   currentPage.value = 1
+  fetchPosts()
 }
 
+// 페이지 변경 (프론트에서 slice 처리)
 const handlePageChange = (page) => {
   currentPage.value = page
 }
 
+// 게시글 상세 이동
 const handleViewPost = (postId) => {
   router.push(`/board/boarddetail/${postId}`)
 }
+
+// 실제 보여질 게시글 목록 계산
+const filteredPosts = computed(() => {
+  const start = (currentPage.value - 1) * postsPerPage
+  return posts.value.slice(start, start + postsPerPage)
+})
+
+// 총 페이지 계산
+const totalPages = computed(() => {
+  return Math.ceil(posts.value.length / postsPerPage)
+})
+
+// 초기 로딩 시 게시글 목록 가져오기
+onMounted(fetchPosts)
 </script>

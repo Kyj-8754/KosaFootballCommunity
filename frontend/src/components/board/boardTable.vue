@@ -2,6 +2,7 @@
   <table class="board-table">
     <thead>
       <tr>
+        <th>글 번호</th>
         <th>카테고리</th>
         <th>작성자</th>
         <th>제목</th>
@@ -10,18 +11,19 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="post in posts" :key="post.id">
-        <td>{{ post.category }}</td>
-        <td>{{ post.author }}</td>
-        <td @click="viewPost(post.id)" style="cursor: pointer; color: blue;">
-          {{ post.title }}
+      <tr v-for="post in posts" :key="post.board_id">
+        <td>{{ post.board_id }}</td>
+        <td>{{ post.board_category }}</td>
+        <td>{{ post.user_no }}</td>
+        <td @click="viewPost(post.board_id)" style="cursor: pointer; color: blue;">
+          {{ post.board_title }}
           <span v-if="post.attachment">📎</span>
         </td>
         <td>
-          {{ formatDate(post.created_at) }}<br />
-          {{ formatDate(post.modified_at) }}
+          {{ formatDate(post.board_created_at) }}<br />
+          {{ formatDate(post.board_modified_at) }}
         </td>
-        <td>{{ post.views }}</td>
+        <td>{{ post.board_viewcount }}</td>
       </tr>
     </tbody>
   </table>

@@ -2,7 +2,7 @@
   <div class="comment-item">
     <!-- 작성자 / 날짜 -->
     <div class="meta">
-      <strong>{{ comment.author }}</strong>
+      <strong>{{ comment.author }}|</strong>
       <span>{{ formatDate(comment.createdAt) }}</span>
     </div>
 

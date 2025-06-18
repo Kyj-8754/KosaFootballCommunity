@@ -1,5 +1,5 @@
 <template>
-  <div class="post-content" v-html="post.content"></div>
+  <div class="post-content" v-html="post.board_content"></div>
 </template>
 
 <script setup>

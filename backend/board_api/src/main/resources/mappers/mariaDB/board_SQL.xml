@@ -31,14 +31,17 @@
         WHERE board_id = #{board_id}
     </select>
 
-    <!-- 게시글 작성 -->
-    <insert id="insertBoard" parameterType="com.msa.kyj_prj.board.Board">
-        INSERT INTO board (
-            user_no, board_title, board_content, board_category, board_status
-        ) VALUES (
-            #{user_no}, #{board_title}, #{board_content}, #{board_category}, #{board_status}
-        )
-    </insert>
+	<!-- 게시글 작성 -->
+	<insert id="insertBoard"
+	        parameterType="com.msa.kyj_prj.board.Board"
+	        useGeneratedKeys="true"
+	        keyProperty="board_id">
+	    INSERT INTO board (
+	        user_no, board_title, board_content, board_category, board_status
+	    ) VALUES (
+	        #{user_no}, #{board_title}, #{board_content}, #{board_category}, #{board_status}
+	    )
+	</insert>
 
     <!-- 게시글 수정 -->
     <update id="updateBoard" parameterType="com.msa.kyj_prj.board.Board">
@@ -54,7 +57,7 @@
     <!-- 게시글 삭제 -->
     <update id="deleteBoard" parameterType="long">
     	UPDATE board
-        SET board_status = deleted
+        SET board_status = 'deleted'
         WHERE board_id = #{board_id}
     </update>
 

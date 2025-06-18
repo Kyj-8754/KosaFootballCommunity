@@ -2,20 +2,20 @@
   <div class="post-header">
     <!-- 제목 + 조회수 -->
     <div class="title-row">
-      <h2>{{ post.title }}</h2>
-      <span class="views">조회수: {{ post.views }}</span>
+      <h2>{{ post.board_title }}</h2>
+      <span class="views">조회수: {{ post.board_viewcount }}</span>
     </div>
 
     <!-- 작성자 / 카테고리 -->
     <div class="meta-row">
-      <span>작성자: {{ post.author }}</span>
-      <span>카테고리: {{ post.category }}</span>
+      <span>작성자: {{ post.user_no }}</span>
+      <span>카테고리: {{ post.board_category }}</span>
     </div>
 
     <!-- 작성일 / 수정일 -->
     <div class="date-row">
-      <span>작성일: {{ formatDate(post.created_at) }}</span>
-      <span>수정일: {{ formatDate(post.modified_at) }}</span>
+      <span>작성일: {{ formatDate(post.board_created_at) }}</span>
+      <span>수정일: {{ formatDate(post.board_modified_at) }}</span>
     </div>
 
     <!-- 첨부파일 -->

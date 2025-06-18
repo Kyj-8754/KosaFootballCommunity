@@ -1,8 +1,8 @@
 <template>
   <div class="board-detail">
-    <PostHeader :post="post" />
-    <PostContent :post="post" />
-    <PostActionButtons @edit="handleEdit" @delete="handleDelete" />
+    <PostHeader v-if="post" :post="post" />
+    <PostContent v-if="post" :post="post" />
+    <PostActionButtons v-if="post" @edit="handleEdit" @delete="handleDelete" />
     <CommentForm @submit="addComment" />
     <CommentList :comments="comments" />
   </div>
@@ -10,11 +10,12 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+
 import PostHeader from '@/components/board/boardHeader.vue'
 import PostContent from '@/components/board/boardContent.vue'
 import PostActionButtons from '@/components/board/boardEmitButton.vue'
-import posts from '@/pages/board/data/board'
 import CommentList from '@/components/reply/replyList.vue'
 import CommentForm from '@/components/reply/replyRegisterForm.vue'
 
@@ -22,24 +23,46 @@ const route = useRoute()
 const router = useRouter()
 
 const postId = route.params.id
-const post = posts.find(p => String(p.id) === String(postId))
-
+const post = ref(null)
 const comments = ref([])
+
+const fetchPost = async () => {
+  try {
+    const response = await axios.get(`/api/board/${postId}`)
+    post.value = response.data
+  } catch (error) {
+    console.error('게시글 조회 실패:', error)
+    alert('게시글을 불러오지 못했습니다.')
+  }
+}
 
 const addComment = (content) => {
   alert(`애옹`)
 }
 
 const handleEdit = () => {
-  router.push(`/board/boardeditform/${post.id}`)
-}
-
-const handleDelete = () => {
-  const confirmed = confirm('정말 삭제하시겠습니까?')
-  if (confirmed) {
-    alert(`게시글 삭제: ${post.id}`)
+  if (post.value) {
+    router.push(`/board/boardeditform/${post.value.board_id}`)
   }
 }
+
+const handleDelete = async () => {
+  if (!post.value) return
+
+  const confirmed = confirm('정말 삭제하시겠습니까?')
+  if (!confirmed) return
+
+  try {
+    await axios.delete(`/api/board/${post.value.board_id}`)
+    alert('게시글이 삭제되었습니다.')
+    router.push('/board/list') // 목록 페이지로 이동
+  } catch (error) {
+    console.error('삭제 실패:', error)
+    alert('게시글 삭제에 실패했습니다.')
+  }
+}
+
+onMounted(fetchPost)
 </script>
 
 <style scoped>
