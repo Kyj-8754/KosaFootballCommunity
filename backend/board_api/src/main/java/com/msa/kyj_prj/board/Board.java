@@ -21,4 +21,5 @@ public class Board {
     private LocalDateTime board_modified_at;   // 수정일 (ON UPDATE CURRENT_TIMESTAMP)
     private String board_status;      // 게시글 상태
     private Integer board_viewcount;
+    private Integer board_likecount;
 }

@@ -8,6 +8,7 @@
         <th>제목</th>
         <th>등록일/수정일</th>
         <th>조회수</th>
+        <th>추천수</th>
       </tr>
     </thead>
     <tbody>
@@ -24,6 +25,7 @@
           {{ formatDate(post.board_modified_at) }}
         </td>
         <td>{{ post.board_viewcount }}</td>
+        <td>{{ post.board_likecount }}</td>
       </tr>
     </tbody>
   </table>

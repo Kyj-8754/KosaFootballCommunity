@@ -13,7 +13,8 @@
 	        board_created_at,
 	        board_modified_at,
 	        board_status,
-	        board_viewcount
+	        board_viewcount,
+	        board_likecount
 	    FROM board
 	    <where>
 	        board_status != 'deleted'
@@ -93,12 +94,24 @@
 	    VALUES (#{board_id}, #{user_no})
 	</insert>
 	
+	<!-- 게시글 좋아요 수 증가 -->
+	<update id="increaseLikeCount">
+	  UPDATE board SET board_likecount = board_likecount + 1
+	  WHERE board_id = #{board_id}
+	</update>
+	
 	<!-- 게시글 좋아요 취소 -->
 	<delete id="deleteBoardLike">
 	    DELETE FROM board_like
 	    WHERE board_id = #{board_id}
 	      AND user_no = #{user_no}
 	</delete>
+	
+	<!-- 게시글 좋아요 수 감소 -->
+	<update id="decreaseLikeCount">
+	  UPDATE board SET board_likecount = board_likecount - 1
+	  WHERE board_id = #{board_id} AND board_likecount > 0
+	</update>
 	
 	<!-- 게시글 좋아요 수 조회 -->
 	<select id="countBoardLike" resultType="int">

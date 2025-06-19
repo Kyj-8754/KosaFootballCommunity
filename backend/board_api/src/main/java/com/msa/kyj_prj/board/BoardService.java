@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BoardService {
@@ -35,12 +36,16 @@ public class BoardService {
 		boardDAO.increaseViewCount(board_id);
 	}
 	
+	@Transactional
 	public void insertBoardLike(Long board_id, int user_no) {
 	    boardDAO.insertBoardLike(board_id, user_no);
+	    boardDAO.increaseLikeCount(board_id);
 	}
-
+	
+	@Transactional
 	public void deleteBoardLike(Long board_id, int user_no) {
 	    boardDAO.deleteBoardLike(board_id, user_no);
+	    boardDAO.decreaseLikeCount(board_id);
 	}
 	
 	public int countBoardLike(Long board_id) {
