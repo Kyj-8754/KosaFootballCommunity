@@ -8,6 +8,12 @@
       :likeCount="likeCount"
       @toggle-like="toggleLike"
     />
+   <LikeButton
+      v-if="post"
+      :liked="liked"
+      :likeCount="likeCount"
+      @toggle-like="toggleLike"
+    />
     <PostActionButtons v-if="post" @edit="handleEdit" @delete="handleDelete" />
     <CommentForm
       v-if="post"
@@ -34,6 +40,7 @@ import PostContent from '@/components/board/boardContent.vue'
 import PostActionButtons from '@/components/board/boardEmitButton.vue'
 import CommentList from '@/components/reply/replyList.vue'
 import CommentForm from '@/components/reply/replyRegisterForm.vue'
+import LikeButton from '@/components/board/boardLikeButton.vue'
 
 const route = useRoute()
 const router = useRouter()
