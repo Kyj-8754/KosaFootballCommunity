@@ -6,6 +6,7 @@
 		<div class="row h-100">
 			<main class="main-area">
 				<h1><Strong>환영 합니다.</Strong></h1>
+        <button @click="test">구장 리스트 불러오기</button>
 				<div>
             <p>현재 시간: {{ serverTime }}</p>
         </div>
@@ -38,6 +39,7 @@
 	</div>
 </template>
 <script setup>
+
   import {ref, onMounted} from 'vue'
   import axios from 'axios'
 
@@ -50,4 +52,14 @@
       pageResponse.value = res.data.pageResponse
     })
   })
+
+  function test() {
+  axios.post('/api/stadium/test')
+    .then(res => {
+      console.log('데이터 받음:', res.data)
+    })
+    .catch(err => {
+      console.error('API 호출 실패:', err)
+    })
+}
 </script>
