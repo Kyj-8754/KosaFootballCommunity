@@ -24,8 +24,12 @@ public interface BoardDAO {
 	void increaseViewCount(Long board_id);
 	// 게시글 좋아요
 	void insertBoardLike(@Param("board_id") Long board_id, @Param("user_no") int user_no);
+	// 게시글 좋아요 증가
+	void increaseLikeCount(@Param("board_id") Long board_id);
 	// 게시글 좋아요 취소
 	void deleteBoardLike(@Param("board_id") Long board_id, @Param("user_no") int user_no);
+	// 게시글 좋아요 수 감소
+	void decreaseLikeCount(@Param("board_id") Long board_id);
 	// 게시글 좋아요 개수
 	int countBoardLike(Long board_id);
 	// 게시글 좋아요 여부 확인
