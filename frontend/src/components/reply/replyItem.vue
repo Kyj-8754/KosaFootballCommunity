@@ -3,8 +3,8 @@
     <!-- 작성자 / 날짜 -->
     <div class="meta">
       <strong>{{ comment.user_name }}</strong> |
-      <span>{{ comment.reply_created_at }}</span>
-      <span v-if="comment.reply_modified_at">/{{ comment.reply_modified_at }}</span>
+      <span>{{ formatDate(comment.reply_created_at) }}</span>
+      <span v-if="comment.reply_modified_at">/{{ formatDate(comment.reply_modified_at) }}</span>
     </div>
 
     <!-- 내용 or 수정창 -->
@@ -22,7 +22,7 @@
     </div>
 
     <!-- 수정 / 삭제 -->
-    <div class="actions">
+    <div class="actions" v-if="!isEditing">
       <button @click="isEditing = true">수정</button>
       <button @click="$emit('delete', comment.reply_id)">삭제</button>
     </div>
@@ -54,9 +54,8 @@ const cancelEdit = () => {
   isEditing.value = false
 }
 
-const formatDate = (str) => {
-  if (!str) return ''
-  return str.split('T')[0] // ISO 8601 형식일 경우
+function formatDate(dateStr) {
+  return dateStr ? dateStr.replace('T', ' ') : ''
 }
 </script>
 

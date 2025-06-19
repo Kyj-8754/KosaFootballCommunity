@@ -2,8 +2,8 @@
   <div class="board-header-form">
     <select v-model="form.category">
       <option disabled value="">카테고리</option>
-      <option>게시판 1</option>
-      <option>게시판 2</option>
+      <option>공지사항</option>
+      <option>자유게시판</option>
     </select>
 
     <input type="text" v-model="form.title" placeholder="제목을 입력해주세요" />

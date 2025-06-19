@@ -2,8 +2,8 @@
   <div class="board-filter">
     <select v-model="category">
       <option value="">카테고리</option>
-      <option>게시판 1</option>
-      <option>게시판 2</option>
+      <option>공지사항</option>
+      <option>자유게시판</option>
     </select>
 
     <select v-model="criteria">
