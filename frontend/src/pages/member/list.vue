@@ -86,8 +86,6 @@
 	import { computed, watch, reactive} from 'vue'
 	import axios from 'axios'
 	import { useRouter, useRoute } from 'vue-router'
-	import { useMemberStore } from '@/stores/member'
-	const MemberStore = useMemberStore() // 멤버 정보보
 	const router = useRouter() // 보낼 경로
 	const route = useRoute() // 현재 경로
 	const sizes = [10, 30, 90, 100] // 건수 사이즈 
@@ -157,33 +155,4 @@
 		const base = `list?pageNo=${pageNo}&size=${pageResponse.size}`
 		return pageResponse.searchValue ? `${base}&searchValue=${encodeURIComponent(searchValue)}` : base
 	}
-
-	//밴 시스템 만들기
-	const toggleBan = (item) => {
-		// 원래 값 저장해서 혹여나 실패시 원래값으로 반환하도록
-		const originalFailLogin = item.fail_login;
-		const banned = originalFailLogin === 5 ? 'N' : 'Y';
-
-		axios.post('/api/member/ban', {
-			supervisor: MemberStore.supervisor,
-			userid: item.userid,
-			banned: banned
-		})
-		.then(res => {
-			const result = res.data
-			if (result.success) {
-				alert(result.message)
-				item.fail_login = banned === 'Y' ? 5 : 0
-			} else {
-				alert(result.message)
-				item.fail_login = originalFailLogin;
-			}
-		})
-		.catch(err => {
-			console.error('ban 처리 중 오류:', err)
-			alert('처리 중 오류가 발생했습니다.')
-			item.fail_login = originalFailLogin;
-		})
-	};
-
 </script>

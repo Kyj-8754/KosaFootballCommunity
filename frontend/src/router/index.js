@@ -10,6 +10,7 @@ import Board_DetailView from '@/pages/board/detailView.vue';
 import Board_List from '@/pages/board/list.vue';
 import Board_RegistForm from '@/pages/board/registForm.vue';
 import Board_UpdateForm from '@/pages/board/updateForm.vue';
+import Stadium_DetailView from '@/pages/stadium/detailView.vue';
 
 
 const router = createRouter({
@@ -25,6 +26,7 @@ const router = createRouter({
         { path: '/board/list', name: 'Board_List', component: Board_List },
         { path: '/board/registForm', name: 'Board_RegistForm', component: Board_RegistForm },
         { path: '/board/updateForm', name: 'Board_UpdateForm', component: Board_UpdateForm },
+        { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: Stadium_DetailView },
         { path: '/:paths(.*)*', name: 'NotFound', component: NotFound },
     ]
 })
