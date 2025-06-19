@@ -3,8 +3,18 @@
     <PostHeader v-if="post" :post="post" />
     <PostContent v-if="post" :post="post" />
     <PostActionButtons v-if="post" @edit="handleEdit" @delete="handleDelete" />
-    <CommentForm @submit="addComment" />
-    <CommentList :comments="comments" />
+    <CommentForm
+      v-if="post"
+      :boardId="post.board_id"
+      :userNo="1"
+      :userName="'댓글 테스트 사용자'"
+      @submit="addComment"
+    />
+    <CommentList
+      :comments="comments"
+      @edit="editComment"
+      @delete="deleteComment"
+    />
   </div>
 </template>
 
@@ -36,9 +46,16 @@ const fetchPost = async () => {
   }
 }
 
-const addComment = (content) => {
-  alert(`애옹`)
+const addComment = async (replyData) => {
+  try {
+    await axios.post('/api/reply', replyData)
+    await fetchComments()
+  } catch (error) {
+    console.error('댓글 등록 실패:', error)
+    alert('댓글 등록에 실패했습니다.')
+  }
 }
+
 
 const handleEdit = () => {
   if (post.value) {
@@ -62,6 +79,44 @@ const handleDelete = async () => {
   }
 }
 
+const fetchComments = async () => {
+  try {
+    const response = await axios.get(`/api/reply/list/${postId}`)
+    comments.value = response.data
+  } catch (error) {
+    console.error('댓글 목록 조회 실패:', error)
+    alert('댓글을 불러오지 못했습니다.')
+  }
+}
+
+// 댓글 수정
+const editComment = async (replyId, newContent) => {
+  try {
+    await axios.put(`/api/reply/${replyId}`, {
+      reply_content: newContent
+    })
+    await fetchComments()
+  } catch (error) {
+    console.error('댓글 수정 실패:', error)
+    alert('댓글 수정에 실패했습니다.')
+  }
+}
+
+// 댓글 삭제
+const deleteComment = async (replyId) => {
+  const confirmed = confirm('댓글을 삭제하시겠습니까?')
+  if (!confirmed) return
+
+  try {
+    await axios.delete(`/api/reply/${replyId}`)
+    await fetchComments()
+  } catch (error) {
+    console.error('댓글 삭제 실패:', error)
+    alert('댓글 삭제에 실패했습니다.')
+  }
+}
+
+
 onMounted(async () => {
   try {
     const from = route.query.from
@@ -77,6 +132,7 @@ onMounted(async () => {
     }
 
     await fetchPost()
+    await fetchComments()
   } catch (error) {
     console.error('초기 로딩 실패:', error)
     alert('게시글 정보를 불러오지 못했습니다.')

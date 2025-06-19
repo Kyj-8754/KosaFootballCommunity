@@ -15,6 +15,14 @@
 import { ref } from 'vue'
 
 const emit = defineEmits(['submit'])
+
+const props = defineProps({
+  boardId: { type: Number, required: true },
+  userNo: { type: Number, required: true },
+  userName: { type: String, required: true },
+  parentReplyId: { type: Number, default: null } // 대댓글 지원용 (옵션)
+})
+
 const newComment = ref('')
 
 const submitComment = () => {
@@ -23,7 +31,15 @@ const submitComment = () => {
     return
   }
 
-  emit('submit', newComment.value.trim())
+  const replyData = {
+    board_id: props.boardId,
+    user_no: props.userNo,
+    user_name: props.userName,
+    reply_content: newComment.value.trim(),
+    parent_reply_id: props.parentReplyId
+  }
+
+  emit('submit', replyData)
   newComment.value = ''
 }
 </script>
