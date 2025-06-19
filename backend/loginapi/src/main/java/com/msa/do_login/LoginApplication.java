@@ -1,13 +1,13 @@
-package com.msa.kyj_prj;
+package com.msa.do_login;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class KyjPrjApplication {
+public class LoginApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(KyjPrjApplication.class, args);
+		SpringApplication.run(LoginApplication.class, args);
 	}
 
 }
