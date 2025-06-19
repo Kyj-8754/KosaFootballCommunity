@@ -18,7 +18,6 @@ const router = createRouter({
         { path: '/board/boarddetail/:id', component: boardDetail },
         { path: '/board/boardeditform/:id', component: boardEditForm },
         { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: Stadium_DetailView },
-        { path: '/:paths(.*)*', name: 'NotFound', component: NotFound },
     ]
 })
 
