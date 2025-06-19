@@ -31,7 +31,6 @@
 <script setup>
 	import { reactive, ref } from 'vue'
 	import { useRoute, useRouter } from 'vue-router'
-	import { Login } from '@/util/AuthUtil'
 
 	
 	const router = useRouter();
@@ -51,10 +50,6 @@
 		alert('아이디 또는 비밀번호를 확인 해 주세요');
 		info.passwd = "";
 		document.getElementById("passwd")?.focus();
-	}
-	// 로그인 서비스 시작
-	const login = () => {
-		Login(info.userid, info.passwd, successCallback, faileCallback);
 	}
 
 	// 아이디, 비밀번호 찾는 로직 꺼내오기
