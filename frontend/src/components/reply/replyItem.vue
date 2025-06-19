@@ -2,8 +2,9 @@
   <div class="comment-item">
     <!-- 작성자 / 날짜 -->
     <div class="meta">
-      <strong>{{ comment.author }}|</strong>
-      <span>{{ formatDate(comment.createdAt) }}</span>
+      <strong>{{ comment.user_name }}</strong> |
+      <span>{{ comment.reply_created_at }}</span>
+      <span v-if="comment.reply_modified_at">/{{ comment.reply_modified_at }}</span>
     </div>
 
     <!-- 내용 or 수정창 -->
@@ -16,15 +17,14 @@
         </div>
       </template>
       <template v-else>
-        <p>{{ comment.content }}</p>
+        <p>{{ comment.reply_content }}</p>
       </template>
     </div>
 
-    <!-- 좋아요 / 수정 / 삭제 -->
+    <!-- 수정 / 삭제 -->
     <div class="actions">
-      <button @click="$emit('like', comment.id)">👍 {{ comment.likes }}</button>
       <button @click="isEditing = true">수정</button>
-      <button @click="$emit('delete', comment.id)">삭제</button>
+      <button @click="$emit('delete', comment.reply_id)">삭제</button>
     </div>
   </div>
 </template>
@@ -39,22 +39,25 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['like', 'edit', 'delete'])
+const emit = defineEmits(['edit', 'delete'])
 
 const isEditing = ref(false)
-const editedContent = ref(props.comment.content)
+const editedContent = ref(props.comment.reply_content)
 
 const confirmEdit = () => {
-  emit('edit', props.comment.id, editedContent.value)
+  emit('edit', props.comment.reply_id, editedContent.value)
   isEditing.value = false
 }
 
 const cancelEdit = () => {
-  editedContent.value = props.comment.content
+  editedContent.value = props.comment.reply_content
   isEditing.value = false
 }
 
-const formatDate = (str) => str?.split(' ')[0] || ''
+const formatDate = (str) => {
+  if (!str) return ''
+  return str.split('T')[0] // ISO 8601 형식일 경우
+}
 </script>
 
 <style scoped>

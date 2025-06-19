@@ -22,6 +22,12 @@ export default defineConfig({
         target: "http://localhost:8080",
         changeOrigin: true,
       },
+      // 게시판 프록시
+      "/api/reply": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
     },
+    
   },
 })

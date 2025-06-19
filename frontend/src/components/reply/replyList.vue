@@ -2,7 +2,7 @@
   <div class="comment-list">
     <CommentItem
       v-for="comment in pagedComments"
-      :key="comment.id"
+      :key="comment.reply_id"
       :comment="comment"
       @like="handleLike"
       @edit="handleEdit"
@@ -18,47 +18,43 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import CommentItem from '@/components/reply/replyItem.vue'
 import Pagination from '@/components/pagination.vue'
 
-// 더미 댓글
-const comments = ref([
-  { id: 1, author: '회원 1', content: '댓글 예시 1', createdAt: '2025-06-17 18:00:00', likes: 2 },
-  { id: 2, author: '회원 1', content: '댓글 예시 2', createdAt: '2025-06-17 18:02:00', likes: 0 },
-  { id: 3, author: '회원 1', content: '댓글 예시 3', createdAt: '2025-06-17 18:03:00', likes: 1 },
-  { id: 4, author: '회원 1', content: '댓글 예시 4', createdAt: '2025-06-17 18:05:00', likes: 0 },
-  { id: 5, author: '회원 1', content: '댓글 예시 5', createdAt: '2025-06-17 18:06:00', likes: 3 },
-  { id: 6, author: '회원 1', content: '댓글 예시 6', createdAt: '2025-06-17 18:07:00', likes: 1 }
-])
+const props = defineProps({
+  comments: {
+    type: Array,
+    required: true
+  }
+})
+
+const emit = defineEmits(['like', 'edit', 'delete'])
 
 const currentPage = ref(1)
 const perPage = 5
 
-const totalPages = computed(() => Math.ceil(comments.value.length / perPage))
+const totalPages = computed(() => Math.ceil(props.comments.length / perPage))
 
 const pagedComments = computed(() => {
   const start = (currentPage.value - 1) * perPage
-  return comments.value.slice(start, start + perPage)
+  return props.comments.slice(start, start + perPage)
 })
 
 const handlePageChange = (page) => {
   currentPage.value = page
 }
 
-const handleLike = (id) => {
-  const comment = comments.value.find(c => c.id === id)
-  if (comment) comment.likes += 1
-}
+const handleLike = (id) => emit('like', id)
+const handleEdit = (id, newContent) => emit('edit', id, newContent)
+const handleDelete = (id) => emit('delete', id)
 
-const handleEdit = (id, newContent) => {
-  const comment = comments.value.find(c => c.id === id)
-  if (comment) comment.content = newContent
-}
-
-const handleDelete = (id) => {
-  comments.value = comments.value.filter(c => c.id !== id)
-}
+// 댓글 수가 바뀌면 첫 페이지로
+watch(() => props.comments.length, () => {
+  if (currentPage.value > totalPages.value) {
+    currentPage.value = 1
+  }
+})
 </script>
 
 <style scoped>
