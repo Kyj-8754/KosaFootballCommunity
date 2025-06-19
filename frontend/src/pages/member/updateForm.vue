@@ -58,7 +58,6 @@
 	import {ref, onMounted, computed, reactive} from 'vue'
 	import { useRoute, useRouter } from 'vue-router'
 	import axios from 'axios'
-	import { logoutProcess } from '@/util/AuthUtil'
 
 	const router = useRouter()
 	const route = useRoute()
@@ -97,40 +96,4 @@
 	// 실시간 검사하도록 computed
 	const PasswdValid = computed(() => validatePassword(form.newPasswd))
 	const passwdMatch = computed(() => checkPasswordMatch(form.newPasswd, form.newPasswd2))
-
-
-
-const update = () => {
-  const confirmRegist = confirm("회원 수정 하시겠습니까?")
-  if (!confirmRegist) return
-
-  if (!passwdMatch.value) {
-		document.getElementById("newPasswd")?.focus();
-		alert("새 비밀번호를 다시 확인해주세요.");
-		return;
-	}
-
-	if (!PasswdValid.value) {
-		document.getElementById("newPasswd2")?.focus();
-		alert("새 비밀번호확인을 다시 확인해주세요.");
-		return;
-	}
-
-  axios.post('/api/member/update', form)
-    .then(res => {
-      if (!res.data.error) {
-		  alert(res.data.message)
-		  // 성공하면 로그아웃하고 로그인화면으로 
-		  logoutProcess(() =>{
-			router.push({name: 'Member_LoginForm'})
-		})
-      } else {
-        alert(res.data.message)
-      }
-    })
-    .catch(err => {
-      console.error('수정 실패', err)
-      alert('오류가 발생했습니다.')
-    })
-	}
 </script>
