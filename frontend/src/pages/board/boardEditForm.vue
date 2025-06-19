@@ -51,11 +51,10 @@ const submitEdit = async () => {
       board_category: form.value.category,
       board_title: form.value.title,
       board_content: form.value.content,
-      board_status: 'active',   // 또는 원래 값 유지
     })
 
     alert('게시글이 수정되었습니다.')
-    router.push(`/board/boarddetail/${postId}`)
+    router.push(`/board/boarddetail/${postId}?from=edit`)
   } catch (err) {
     console.error('게시글 수정 실패:', err)
     alert('게시글 수정에 실패했습니다.')

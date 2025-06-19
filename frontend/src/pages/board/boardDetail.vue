@@ -62,7 +62,26 @@ const handleDelete = async () => {
   }
 }
 
-onMounted(fetchPost)
+onMounted(async () => {
+  try {
+    const from = route.query.from
+
+    // from=edit이 아닐 경우에만 조회수 증가
+    if (from !== 'edit') {
+      await axios.post(`/api/board/${postId}/increaseViewcount`)
+    }
+
+    // 쿼리 파라미터 제거 (조회수 증가 이후)
+    if (from) {
+      router.replace({ path: route.path })
+    }
+
+    await fetchPost()
+  } catch (error) {
+    console.error('초기 로딩 실패:', error)
+    alert('게시글 정보를 불러오지 못했습니다.')
+  }
+})
 </script>
 
 <style scoped>
