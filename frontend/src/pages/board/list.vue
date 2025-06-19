@@ -30,10 +30,8 @@
 						<th >작성자</th>
 						<th>등록일</th>
 						<th>조회수</th>
-						<template v-if="memberStore.supervisor === 'Y'">
 						<th>삭제여부</th>
 						<th>삭제일</th>
-						</template>
 					</tr>
 				</thead>
 				<tbody class="text-center">
@@ -45,10 +43,8 @@
 							<td class="cell">{{item.writer}}</td>
 							<td>{{item.reg_date?.substring(0, 10)}}</td>
 							<td>{{item.view_count}}</td>
-							<template v-if="memberStore.supervisor === 'Y'">
-								<td>{{item.is_deleted}}</td>
-								<td>{{item.deleted_at?.substring(0, 10)}}</td>
-							</template>
+							<td>{{item.is_deleted}}</td>
+							<td>{{item.deleted_at?.substring(0, 10)}}</td>
 						</tr>
 				</tbody>
 			</table>
@@ -86,10 +82,7 @@
 	import { computed, watch, reactive} from 'vue'
 	import axios from 'axios'
 	import { useRouter, useRoute } from 'vue-router'
-	import { useMemberStore } from '@/stores/member'
 
-	const memberStore = useMemberStore(); // 로그인한 유저 정보 체크
-	const supervisor = memberStore.supervisor === 'Y' ? 'Y' : 'N'; // 관리자인지 체크
 	const router = useRouter() // 보낼 경로
 	const route = useRoute() // 현재 경로
 	const sizes = [10, 30, 90, 100] // 건수 사이즈 
@@ -151,10 +144,7 @@
 	// 값 변경시 다시 list 가져오도록 요청
 	function fetchData(pageNo, size, searchValue) {
 		axios.get(`/api/board/list`,{
-			params:{pageNo,size,searchValue: searchValue || ''},
-			headers: {
-				'supervisor': supervisor
-			}
+			params:{pageNo,size,searchValue: searchValue || ''}
 			})
 			.then(res => {
 			Object.assign(pageResponse, res.data.pageResponse)
