@@ -1,20 +1,37 @@
 <template>
-  <header class="bg-blue-600 text-black px-6 py-4 shadow-md">
-    <div class="max-w-7xl mx-auto flex justify-between items-center">
-      <h1 class="text-xl font-bold">My Site</h1>
-    </div>
-  </header>
-
-  <section class="bg-blue-100 py-16 text-center">
-    <h2 class="text-3xl font-semibold mb-2">Welcome to My Site</h2>
-    <p class="text-gray-600">이 영역은 배너입니다. 기능 없이 공간만 채워요.</p>
-  </section>
+	<div class="text-end bg-light py-2 px-4">
+        <router-link :to="{ name: 'Member_LoginForm' }">로그인</router-link> /
+        <router-link :to="{ name: 'Member_RegistForm' }"> 회원 가입</router-link> 
+	</div>
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+      <span class="navbar-brand ps-2">TodoList App</span>
+      <button class="navbar-toggler" type="button" @click="isNavShow = !isNavShow">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div :class="isNavShow ? 'collapse navbar-collapse show' : 'collapse navbar-collapse'">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'Home' }">
+                Home
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'Board_List' }">
+                BoardList
+            </router-link>
+          </li>
+        </ul>
+      </div>
+    </nav>
+	<!-- 헤더 -->
+	<header class="header border-bottom"
+		style="height: 250px; overflow: hidden;">
+    <router-link to="/">
+     <img :src="logoImage" alt="사이트 배너" style="width: 100%; height: auto; object-fit: cover;"> 
+    </router-link>
+	</header>
 </template>
 
 <script setup>
-// 기능 없음
+import logoImage from '@/assets/image/bannerlogo.jpg';
 </script>
-
-<style scoped>
-/* Tailwind 없이 CSS로 하려면 여기에 스타일 정의 */
-</style>
