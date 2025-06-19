@@ -40,8 +40,7 @@ const viewPost = (id) => {
   emit('view', id)
 }
 
-const formatDate = (dateStr) => {
-  // yyyy-MM-dd HH:mm:ss → yyyy-MM-dd 로만 보여줌
-  return dateStr?.split(' ')[0] || ''
+function formatDate(dateStr) {
+  return dateStr ? dateStr.replace('T', ' ') : ''
 }
 </script>

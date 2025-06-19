@@ -6,7 +6,7 @@
     <!-- 게시글 목록 조회 -->
 	<select id="findBoards" resultType="com.msa.kyj_prj.board.Board">
 	    SELECT 
-	    	board_id,
+	        board_id,
 	        user_name,
 	        board_title,
 	        board_category,
@@ -14,8 +14,10 @@
 	        board_modified_at,
 	        board_status,
 	        board_viewcount
-		FROM board
+	    FROM board
 	    <where>
+	        board_status != 'deleted'
+	        
 	        <if test="criteria == 'title' and keyword != null and keyword != ''">
 	            AND board_title LIKE CONCAT('%', #{keyword}, '%')
 	        </if>
@@ -80,7 +82,8 @@
     <!-- 게시글 조회수 증가 -->
     <update id="increaseViewCount" parameterType="long">
         UPDATE board
-        SET board_viewcount = board_viewcount + 1
+        SET board_viewcount = board_viewcount + 1,
+        board_modified_at = board_modified_at
         WHERE board_id = #{board_id}
     </update>
 

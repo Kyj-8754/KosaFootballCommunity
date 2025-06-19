@@ -33,8 +33,8 @@ const props = defineProps({
   }
 })
 
-const formatDate = (str) => {
-  return str?.split(' ')[0] || ''
+function formatDate(dateStr) {
+  return dateStr ? dateStr.replace('T', ' ') : ''
 }
 </script>
 
