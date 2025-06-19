@@ -2,26 +2,23 @@
     <div class="container-fluid main-container">
 		<div class="row h-100">
 			 <main class="main-area">
-				<h2>게시물 상세</h2>
+				<h2>구장 상세페이지</h2>
 				<!-- 게시글 내용 테이블 -->
 				<div class="container mt-5">
 					<table class="table" style="width: 100%; max-width: 1000px; margin: 0 auto;">
 						<tbody>
 							<tr class="title-row">
-								<td colspan="4" style="font-size: 26px; font-weight: bold;">{{boardDB.title}}</td>
+								<td colspan="4" style="font-size: 26px; font-weight: bold;">{{stadiumDB.svcnm}}</td>
 							</tr>
 							<tr class="text-muted small">
-								<td style="width: 25%;">작성자: <strong>{{boardDB.writer}}</strong></td>
-								<td style="width: 25%;">작성일: {{ boardDB.modified_date ? boardDB.modified_date.substring(0, 16) + ' (수정됨)' : boardDB.reg_date?.substring(0, 16) }}</td>
-								<td style="width: 25%;">조회수: {{boardDB.view_count}}</td>
+								<td style="width: 25%;">주소: <strong>{{stadiumDB.placenm}}</strong></td>
 								<td style="text-align: right;">
-								<button @click="goToUpdateForm" class="btn btn-outline-primary btn-sm">수정하기</button>
 								</td>
 							</tr>
 							<tr>
-								<td colspan="4">
-									<div class="p-3" style="min-height: 150px;">{{boardDB.content}}</div>
-								</td>
+								
+								<div>이미지:<img :src="stadiumDB.img_PATH" alt="이미지 없어" style="max-width: auto;"/> </div>
+									<div v-html="safeNotice"></div>
 							</tr>
 						</tbody>
 					</table>
@@ -40,8 +37,10 @@
 									</div>
 								</div>
 								<div class="mb-2">{{ comment.content }}</div>
-								<button class="btn btn-sm btn-outline-secondary me-1" @click="editComment(comment)">수정</button>
-								<button class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.comment_no)">삭제</button>
+								<!-- <div class="text-end" v-if="memberStore.userid === comment.userid || memberStore.supervisor === 'Y'">
+									<button class="btn btn-sm btn-outline-secondary me-1" @click="editComment(comment)">수정</button>
+									<button class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.comment_no)">삭제</button>
+								</div> -->
 							</div>
 						</div>
 						<!-- 댓글 수정 창 -->
@@ -65,30 +64,40 @@
 				
 
 				<!-- 댓글 입력 섹션 -->
-				<form id="regist" @submit.prevent="regist">
-					<div class="container mt-4" style="max-width: 1000px;">
-						<div class="border rounded p-3">
-							<div class="d-flex align-items-center">
-								<textarea type="text" ref="textRef" @input="adjustHeight" class="form-control me-2" v-model="form.content" style="resize: none; overflow: hidden; min-height: 80px; max-height: 300px;" required></textarea>
-								<button  type="submit" class="btn btn-secondary flex-shrink-0">등록</button>
+				<!-- <template v-if="memberStore.authenticated">
+					<form id="regist" @submit.prevent="regist">
+						<div class="container mt-4" style="max-width: 1000px;">
+							<div class="border rounded p-3">
+								<strong class="mb-2 d-block">{{memberStore.userid}}</strong>
+								<div class="d-flex align-items-center">
+									<textarea type="text" ref="textRef" @input="adjustHeight" class="form-control me-2" v-model="form.content" style="resize: none; overflow: hidden; min-height: 80px; max-height: 300px;" required></textarea>
+									<button  type="submit" class="btn btn-secondary flex-shrink-0">등록</button>
+								</div>
 							</div>
 						</div>
-					</div>
-				</form>
+					</form>
+				</template> -->
 			</main>
 		</div>
 	</div>
 </template>
 <script setup>
-  import {ref, onMounted, reactive} from 'vue'
+import DOMPurify from 'dompurify'; // notice관련 문제 해결중
+  import {ref, onMounted, reactive, computed} from 'vue'
   import { useRoute, useRouter } from 'vue-router'
+//   import { useMemberStore } from '@/stores/member'
   import axios from 'axios'
 
+  const safeNotice = computed(() => {
+  return DOMPurify.sanitize(stadiumDB.value.dtlcont);
+});
+
+ // const memberStore = useMemberStore(); // 로그인한 유저 정보 체크
   const router = useRouter() // 보낼 경로
   const route = useRoute()	// 현재 경로
-  const bno = route.query.bno // 현재 경로의 bno
-  const boardDB = ref({ list: [] })	// 게시물 
-  const commentDB = ref({ list: [] })	// 댓글 
+  const SVCID = route.query.SVCID // 현재 경로의 SCVID
+  const stadiumDB = ref({ list: [] })	// 게시물 
+ const commentDB = ref({ list: [] })	// 댓글 
 
 	//댓글 입력 폼
 	const form = reactive({
@@ -108,6 +117,7 @@
 			// 수정 시작
 			editForm.comment_no = comment.comment_no;
 			editForm.content = comment.content;
+			editForm.userid = memberStore.userid;
 			editing.value = true;
 		}
 	};
@@ -130,30 +140,30 @@
   
 	// 페이지 로딩 시 
 	onMounted(() => {
-		fetchBoardData();	// 게시판
-		fetchComments();	// 댓글
+		fetchStadiumData();	// 게시판
+		// fetchComments();	// 댓글
 		if (textRef.value) adjustHeight();	// 댓글창 조절
 	});
 
 	// 게시물 불러오기
-	const fetchBoardData = async () => {
-		const res = await axios.get('/api/board/detailView', { params: { bno } });
-		boardDB.value = res.data.boardDB;
+	const fetchStadiumData = async () => {
+		const res = await axios.get('/api/stadium/detailView', { params: { SVCID } });
+		stadiumDB.value = res.data.stadiumDB;
 	};	
 
 	// 게시물의 댓글 불러오기
-	const fetchComments = async () => {
-		const res = await axios.get('/api/comment/list', { params: { bno } });
-		commentDB.value = res.data.commentDB;
-	};
+	// const fetchComments = async () => {
+	// 	const res = await axios.get('/api/comment/list', { params: { bno } });
+	// 	commentDB.value = res.data.commentDB;
+	// };
 
 	// 게시물 수정하기 넘어감
-	function goToUpdateForm() {
-		router.push({
-		name: 'Board_UpdateForm',
-		query: { bno: boardDB.value.bno }
-		})
-	}
+	// function goToUpdateForm() {
+	// 	router.push({
+	// 	name: 'Board_UpdateForm',
+	// 	query: { bno: boardDB.value.bno }
+	// 	})
+	// }
 
 	// 댓글 등록
 	function regist() {
@@ -205,4 +215,12 @@
 				}
 			})
 	}
+
+	// // 페이지 로딩시 로그인 되어있다면 해당 정보를 form에 입력
+	// onMounted(() => {
+	// 	if (memberStore.authenticated) {
+	// 		form.writer = memberStore.userid
+	// 		form.passwd = '';
+	// 	}
+	// })
 </script>
