@@ -8,8 +8,10 @@
 
     <select v-model="criteria">
       <option value="">검색 기준</option>
-      <option>제목</option>
-      <option>작성자</option>
+      <option value="tc">제목+내용</option>
+      <option value="title">제목</option>
+      <option value="content">내용</option>
+      <option value="writer">작성자</option>
     </select>
 
     <input v-model="keyword" placeholder="검색할 내용을 입력해주세요" />

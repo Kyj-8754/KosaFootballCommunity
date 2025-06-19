@@ -8,7 +8,7 @@
 
     <!-- 작성자 / 카테고리 -->
     <div class="meta-row">
-      <span>작성자: {{ post.user_no }}</span>
+      <span>작성자: {{ post.user_name }}</span>
       <span>카테고리: {{ post.board_category }}</span>
     </div>
 

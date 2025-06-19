@@ -52,7 +52,6 @@ const submitEdit = async () => {
       board_title: form.value.title,
       board_content: form.value.content,
       board_status: 'active',   // 또는 원래 값 유지
-      user_no: 1                // 임시. 실제 로그인 사용자로 교체 예정
     })
 
     alert('게시글이 수정되었습니다.')

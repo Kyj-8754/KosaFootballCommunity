@@ -29,7 +29,8 @@ const submitPost = async () => {
       board_category: form.value.category,
       board_title: form.value.title,
       board_content: form.value.content,
-      user_no: 1,               // 🔸 테스트용: 실제 로그인 유저 정보로 대체 예정
+      user_no: 1, // 🔸 테스트용: 실제 로그인 유저 정보로 대체 예정
+      user_name: '테스트용 이름'     ,          // 🔸 테스트용: 실제 로그인 유저 정보로 대체 예정
       board_status: 'active'    // 🔸 기본값 설정
     })
 

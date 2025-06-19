@@ -4,25 +4,34 @@
 <mapper namespace="com.msa.kyj_prj.board.BoardDAO">
 
     <!-- 게시글 목록 조회 -->
-    <select id="findBoards" resultType="com.msa.kyj_prj.board.Board">
-        SELECT *
-        FROM board
-        <where>
-            <if test="title != null and title != ''">
-                AND board_title LIKE CONCAT('%', #{title}, '%')
-            </if>
-            <if test="content != null and content != ''">
-		        AND board_cont LIKE CONCAT('%', #{content}, '%')
-		    </if>
-            <if test="status != null and status != ''">
-                AND board_status = #{status}
-            </if>
-            <if test="category != null and category != ''">
-                AND board_category = #{category}
-            </if>
-        </where>
-        ORDER BY board_id DESC
-    </select>
+	<select id="findBoards" resultType="com.msa.kyj_prj.board.Board">
+	    SELECT *
+	    FROM board
+	    <where>
+	        <if test="criteria == 'title' and keyword != null and keyword != ''">
+	            AND board_title LIKE CONCAT('%', #{keyword}, '%')
+	        </if>
+	        <if test="criteria == 'content' and keyword != null and keyword != ''">
+	            AND board_content LIKE CONCAT('%', #{keyword}, '%')
+	        </if>
+	        <if test="criteria == 'writer' and keyword != null and keyword != ''">
+	            AND user_name LIKE CONCAT('%', #{keyword}, '%')
+	        </if>
+	        <if test="criteria == 'tc' and keyword != null and keyword != ''">
+	            AND (
+	                board_title LIKE CONCAT('%', #{keyword}, '%')
+	                OR board_content LIKE CONCAT('%', #{keyword}, '%')
+	            )
+	        </if>
+	        <if test="category != null and category != ''">
+	            AND board_category = #{category}
+	        </if>
+	        <if test="status != null and status != ''">
+	            AND board_status = #{status}
+	        </if>
+	    </where>
+	    ORDER BY board_id DESC
+	</select>
 
     <!-- 게시글 상세 조회 -->
     <select id="findBoardByBno" parameterType="long" resultType="com.msa.kyj_prj.board.Board">
@@ -37,9 +46,9 @@
 	        useGeneratedKeys="true"
 	        keyProperty="board_id">
 	    INSERT INTO board (
-	        user_no, board_title, board_content, board_category, board_status
+	        user_no, user_name, board_title, board_content, board_category, board_status
 	    ) VALUES (
-	        #{user_no}, #{board_title}, #{board_content}, #{board_category}, #{board_status}
+	        #{user_no}, #{user_name}, #{board_title}, #{board_content}, #{board_category}, #{board_status}
 	    )
 	</insert>
 

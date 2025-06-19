@@ -14,7 +14,7 @@
       <tr v-for="post in posts" :key="post.board_id">
         <td>{{ post.board_id }}</td>
         <td>{{ post.board_category }}</td>
-        <td>{{ post.user_no }}</td>
+        <td>{{ post.user_name }}</td>
         <td @click="viewPost(post.board_id)" style="cursor: pointer; color: blue;">
           {{ post.board_title }}
           <span v-if="post.attachment">📎</span>

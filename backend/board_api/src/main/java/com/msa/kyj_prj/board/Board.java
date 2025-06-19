@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class Board {
     private Long board_id;          // 게시글 ID (PK, auto_increment)
     private Integer user_no;        // 작성자 회원번호 (FK)
+    private String user_name;
     private String board_title;     // 제목
     private String board_content;      // 내용 (MEDIUMTEXT)
     private String board_category;      // 카테고리 코드
