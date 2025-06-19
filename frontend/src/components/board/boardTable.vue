@@ -1,6 +1,6 @@
 <template>
   <table class="board-table">
-    <thead>
+    <thead v-if="showHeader">
       <tr>
         <th>글 번호</th>
         <th>카테고리</th>
@@ -34,6 +34,10 @@
 <script setup>
 defineProps({
   posts: Array,
+  showHeader: {
+    type: Boolean,
+    default: true
+  }
 })
 
 const emit = defineEmits(['view'])

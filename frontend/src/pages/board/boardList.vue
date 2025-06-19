@@ -1,7 +1,8 @@
 <template>
   <div class="board-list-container">
     <BoardFilter @search="handleSearch" />
-    <BoardTable :posts="filteredPosts" @view="handleViewPost" />
+    <BoardNoticeList @view="handleViewPost" />
+    <BoardTable :posts="filteredPosts" :showHeader="false" @view="handleViewPost" />
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="handlePageChange" />
   </div>
 </template>
@@ -12,6 +13,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 import BoardFilter from '@/components/board/boardFilter.vue'
+import BoardNoticeList from '@/components/board/boardNoticeList.vue'
 import BoardTable from '@/components/board/boardTable.vue'
 import Pagination from '@/components/pagination.vue'
 
