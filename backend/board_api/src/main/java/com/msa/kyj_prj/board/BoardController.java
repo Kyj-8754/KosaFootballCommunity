@@ -63,4 +63,37 @@ public class BoardController {
         boardService.increaseViewCount(board_id);
         return Map.of("result", "increased");
     }
+    
+    // 게시글 좋아요
+    @PostMapping("/like")
+    public Map<String, Object> likeBoard(@RequestParam("board_id") Long board_id,
+                                         @RequestParam("user_no") int user_no) {
+        boardService.insertBoardLike(board_id, user_no);
+        return Map.of("result", "liked");
+    }
+
+    // 게시글 좋아요 취소
+    @DeleteMapping("/like")
+    public Map<String, Object> unlikeBoard(@RequestParam("board_id") Long board_id,
+                                           @RequestParam("user_no") int user_no) {
+        boardService.deleteBoardLike(board_id, user_no);
+        return Map.of("result", "unliked");
+    }
+
+    // 게시글 좋아요 개수
+    @GetMapping("/like/count")
+    public Map<String, Object> countBoardLike(@RequestParam("board_id") Long board_id) {
+        int count = boardService.countBoardLike(board_id);
+        return Map.of("result", "success", "likeCount", count);
+    }
+    
+    // 게시글 좋아요 여부 체크
+    @PostMapping("/like/check")
+    public Map<String, Object> checkUserLiked(@RequestBody Map<String, Object> data) {
+        Long board_id = Long.valueOf(data.get("board_id").toString());
+        int user_no = Integer.parseInt(data.get("user_no").toString());
+        boolean liked = boardService.hasUserLikedBoard(board_id, user_no);
+        return Map.of("result", "success", "liked", liked);
+    }
+
 }

@@ -86,5 +86,34 @@
         board_modified_at = board_modified_at
         WHERE board_id = #{board_id}
     </update>
+    
+    <!-- 게시글 좋아요 -->
+    <insert id="insertBoardLike">
+	    INSERT INTO board_like (board_id, user_no)
+	    VALUES (#{board_id}, #{user_no})
+	</insert>
+	
+	<!-- 게시글 좋아요 취소 -->
+	<delete id="deleteBoardLike">
+	    DELETE FROM board_like
+	    WHERE board_id = #{board_id}
+	      AND user_no = #{user_no}
+	</delete>
+	
+	<!-- 게시글 좋아요 수 조회 -->
+	<select id="countBoardLike" resultType="int">
+	    SELECT COUNT(*) 
+	    FROM board_like
+	    WHERE board_id = #{board_id}
+	</select>
+	
+	<!-- 게시글 좋아요 여부 확인 -->
+	<select id="hasUserLikedBoard" resultType="int">
+	    SELECT EXISTS (
+	        SELECT 1 FROM board_like
+	        WHERE board_id = #{board_id}
+	        AND user_no = #{user_no}
+	    )
+	</select>
 
 </mapper>
