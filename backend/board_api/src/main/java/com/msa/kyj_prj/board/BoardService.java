@@ -34,4 +34,20 @@ public class BoardService {
 	public void increaseViewCount(Long board_id) {
 		boardDAO.increaseViewCount(board_id);
 	}
+	
+	public void insertBoardLike(Long board_id, int user_no) {
+	    boardDAO.insertBoardLike(board_id, user_no);
+	}
+
+	public void deleteBoardLike(Long board_id, int user_no) {
+	    boardDAO.deleteBoardLike(board_id, user_no);
+	}
+	
+	public int countBoardLike(Long board_id) {
+		return boardDAO.countBoardLike(board_id);
+	}
+
+	public boolean hasUserLikedBoard(Long board_id, int user_no) {
+	    return boardDAO.hasUserLikedBoard(board_id, user_no) == 1;
+	}
 }

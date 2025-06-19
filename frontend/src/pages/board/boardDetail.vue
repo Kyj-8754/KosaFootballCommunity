@@ -1,7 +1,13 @@
 <template>
   <div class="board-detail">
     <PostHeader v-if="post" :post="post" />
-    <PostContent v-if="post" :post="post" />
+    <PostContent
+      v-if="post"
+      :post="post"
+      :liked="liked"
+      :likeCount="likeCount"
+      @toggle-like="toggleLike"
+    />
     <PostActionButtons v-if="post" @edit="handleEdit" @delete="handleDelete" />
     <CommentForm
       v-if="post"
@@ -35,6 +41,9 @@ const router = useRouter()
 const postId = route.params.id
 const post = ref(null)
 const comments = ref([])
+const liked = ref(false)
+const likeCount = ref(0)
+const userNo = 1 // 테스트용 유저 번호
 
 const fetchPost = async () => {
   try {
@@ -46,16 +55,71 @@ const fetchPost = async () => {
   }
 }
 
-const addComment = async (replyData) => {
+const fetchComments = async () => {
   try {
-    await axios.post('/api/reply', replyData)
-    await fetchComments()
+    const response = await axios.get(`/api/reply/list/${postId}`)
+    comments.value = response.data
   } catch (error) {
-    console.error('댓글 등록 실패:', error)
-    alert('댓글 등록에 실패했습니다.')
+    console.error('댓글 목록 조회 실패:', error)
+    alert('댓글을 불러오지 못했습니다.')
   }
 }
 
+const fetchLikeCount = async () => {
+  if (!post.value) return
+  try {
+    const response = await axios.get('/api/board/like/count', {
+      params: { board_id: post.value.board_id }
+    })
+    likeCount.value = response.data.likeCount
+  } catch (error) {
+    console.error('좋아요 수 조회 실패:', error)
+  }
+}
+
+const fetchLiked = async () => {
+  if (!post.value) return
+  try {
+    const response = await axios.post('/api/board/like/check', {
+      board_id: post.value.board_id,
+      user_no: userNo
+    })
+
+    liked.value = response.data.liked
+  } catch (error) {
+    console.error('좋아요 여부 조회 실패:', error)
+  }
+}
+
+
+const toggleLike = async () => {
+  if (!post.value) return
+
+  try {
+    if (!liked.value) {
+      await axios.post('/api/board/like', null, {
+        params: {
+          board_id: post.value.board_id,
+          user_no: userNo
+        }
+      })
+    } else {
+      await axios.delete('/api/board/like', {
+        params: {
+          board_id: post.value.board_id,
+          user_no: userNo
+        }
+      })
+    }
+
+    // 상태 새로고침
+    await fetchLikeCount()
+    await fetchLiked()
+  } catch (err) {
+    console.error('좋아요 처리 실패:', err)
+    alert('좋아요 처리 중 오류가 발생했습니다.')
+  }
+}
 
 const handleEdit = () => {
   if (post.value) {
@@ -72,24 +136,23 @@ const handleDelete = async () => {
   try {
     await axios.delete(`/api/board/${post.value.board_id}`)
     alert('게시글이 삭제되었습니다.')
-    router.push('/board/list') // 목록 페이지로 이동
+    router.push('/board/list')
   } catch (error) {
     console.error('삭제 실패:', error)
     alert('게시글 삭제에 실패했습니다.')
   }
 }
 
-const fetchComments = async () => {
+const addComment = async (replyData) => {
   try {
-    const response = await axios.get(`/api/reply/list/${postId}`)
-    comments.value = response.data
+    await axios.post('/api/reply', replyData)
+    await fetchComments()
   } catch (error) {
-    console.error('댓글 목록 조회 실패:', error)
-    alert('댓글을 불러오지 못했습니다.')
+    console.error('댓글 등록 실패:', error)
+    alert('댓글 등록에 실패했습니다.')
   }
 }
 
-// 댓글 수정
 const editComment = async (replyId, newContent) => {
   try {
     await axios.put(`/api/reply/${replyId}`, {
@@ -102,7 +165,6 @@ const editComment = async (replyId, newContent) => {
   }
 }
 
-// 댓글 삭제
 const deleteComment = async (replyId) => {
   const confirmed = confirm('댓글을 삭제하시겠습니까?')
   if (!confirmed) return
@@ -116,23 +178,23 @@ const deleteComment = async (replyId) => {
   }
 }
 
-
 onMounted(async () => {
   try {
     const from = route.query.from
 
-    // from=edit이 아닐 경우에만 조회수 증가
     if (from !== 'edit') {
       await axios.post(`/api/board/${postId}/increaseViewcount`)
     }
 
-    // 쿼리 파라미터 제거 (조회수 증가 이후)
     if (from) {
       router.replace({ path: route.path })
     }
 
     await fetchPost()
     await fetchComments()
+    await fetchLikeCount()
+    await fetchLiked()  // 좋아요 상태도 함께 초기화
+
   } catch (error) {
     console.error('초기 로딩 실패:', error)
     alert('게시글 정보를 불러오지 못했습니다.')

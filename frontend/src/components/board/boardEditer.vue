@@ -52,3 +52,16 @@ onMounted(() => {
   })
 })
 </script>
+
+<style scoped>
+.quill-editor {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.quill-editor :deep(.ql-editor) {
+  min-height: 400px;
+  padding: 12px;
+  font-size: 1rem;
+}
+</style>

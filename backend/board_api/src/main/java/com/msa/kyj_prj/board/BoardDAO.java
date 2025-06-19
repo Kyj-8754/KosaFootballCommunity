@@ -22,4 +22,12 @@ public interface BoardDAO {
     // void updateBoardStatus(@Param("bno") int bno, @Param("status") String status);
 	// 게시글 조회수 증가
 	void increaseViewCount(Long board_id);
+	// 게시글 좋아요
+	void insertBoardLike(@Param("board_id") Long board_id, @Param("user_no") int user_no);
+	// 게시글 좋아요 취소
+	void deleteBoardLike(@Param("board_id") Long board_id, @Param("user_no") int user_no);
+	// 게시글 좋아요 개수
+	int countBoardLike(Long board_id);
+	// 게시글 좋아요 여부 확인
+	int hasUserLikedBoard(@Param("board_id") Long board_id, @Param("user_no") int user_no);
 }
