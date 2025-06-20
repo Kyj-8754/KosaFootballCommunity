@@ -14,6 +14,7 @@
       :likeCount="likeCount"
       @toggle-like="toggleLike"
     />
+    <FileDownload v-if="post" :board-id="post.board_id" />
     <PostActionButtons v-if="post" @edit="handleEdit" @delete="handleDelete" />
     <CommentForm
       v-if="post"
@@ -41,6 +42,7 @@ import PostActionButtons from '@/components/board/boardEmitButton.vue'
 import CommentList from '@/components/reply/replyList.vue'
 import CommentForm from '@/components/reply/replyRegisterForm.vue'
 import LikeButton from '@/components/board/boardLikeButton.vue'
+import FileDownload from '@/components/file/FileDownload.vue'
 
 const route = useRoute()
 const router = useRouter()
