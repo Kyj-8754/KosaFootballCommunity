@@ -28,7 +28,7 @@
     <update id="deleteFilesByBoardId" parameterType="long">
         UPDATE board_file
         SET file_status = 'deleted'
-        WHERE board_id = #{board_id}
+        WHERE file_id = #{file_id}
     </update>
     
     <!-- 파일의 상세정보를 호출 -->
