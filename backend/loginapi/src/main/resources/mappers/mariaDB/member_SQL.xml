@@ -3,6 +3,31 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.msa.do_login.user.UserDAO">
-	<!-- 쿼리 작성 구문 -->
+<mapper namespace="com.msa.do_login.user.dao.UserDAO">
+	
+	<!-- 회원 코드 존재 여부 확인 구문 -->
+	<select id="existsByUserCode" parameterType="String" resultType="boolean">
+		SELECT COUNT(*) > 0 FROM user WHERE user_code = #{userCode}
+	</select>
+	
+	<!-- 아이디 존재 여부 확인 구문 -->
+	<select id="getLocalAccount" parameterType="String" resultType="com.msa.do_login.user.vo.LocalAccount">
+		SELECT * FROM local_account WHERE user_id = #{userId}
+	</select>
+	
+	<!-- 회원 가입 구문 -->
+	<insert id="insertUser" useGeneratedKeys="true" keyProperty="userNo">
+		INSERT INTO user (
+		  user_name, user_birth, user_phone, user_post_code, user_addr, 
+		  user_detail_addr, auth_code, user_code, user_gender
+		) 
+		VALUES (
+		  #{userName}, #{userBirth}, #{userPhone}, #{userPostCode}, #{userAddr},
+		  #{userDetailAddr}, #{authCode}, #{userCode}, #{userGender}
+		)
+	</insert>
+	<insert id="insertLocalAccount">
+		INSERT INTO local_account (user_no, user_id, user_pwd) 
+		VALUES (#{userNo}, #{userId}, #{userPwd})
+	</insert>
 </mapper>

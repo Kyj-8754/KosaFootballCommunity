@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserAuthority {
-	private int authCode;
+	private String authCode;
 	private String authName;
 }
