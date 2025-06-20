@@ -51,51 +51,62 @@ public class StadiumController {
 	// 공공 데이터 api 호출
 	@PostMapping("test")
 	public void stadiumapi() throws Exception {
+		// 데이터 담아줄 List
 		List<Map<String, Object>> result = new ArrayList<>();
-//		// 공공 데이터 총 갯수
-//		String totalCount = "2312";
-//		// 500개씩 호출하도록 하기위해 설정
-//		String step = "500";
-//		// 1분 딜레이
-//		int delayMs = 60000; 
+		// 데이터를 n개 나누어서 반복
 		int totalSteps = (int) Math.ceil((double) TOTAL_COUNT / STEP);
 		
 		
+		// api 1차 요청, 1분 간격, 500개씩 호출시키려고함
 		for(int i = 0; i < totalSteps; i++) {
 			
 			int start = i * STEP + 1;
-            int end = Math.min(start + STEP - 1, TOTAL_COUNT);
-            
-            
-            System.out.printf("[%d/%d] 요청: %d ~ %d\n", i + 1, totalSteps, start, end);
-            List<Map<String, Object>> futsalList = fetchData(start, end);
-            result.addAll(futsalList);
-            
-            if (i + 1 < totalSteps) {
-                Thread.sleep(DELAY_MS); // 다음 요청까지 1분 대기
-            }
+	        int end = Math.min(start + STEP - 1, TOTAL_COUNT);
+	        
+	        // 현재 어디부분 하는지 체크
+	        System.out.printf("[%d/%d] 요청: %d ~ %d\n", i + 1, totalSteps, start, end);
+	        
+	        // 패치 시작
+	        List<Map<String, Object>> futsalList = fetchData(start, end);
+	        
+	        // 결과값 담아줌
+	        result.addAll(futsalList);
+	        
+	        // 다음 요청까지 1분 대기
+	        if (i + 1 < totalSteps) {
+	            Thread.sleep(DELAY_MS); 
+	        }
 		}
 		
+		// 몇개 가져왔는지 확인용
+		System.out.println("모든 요청 완료. 풋살장 데이터 총 갯수: " + result.size());
 		
-		  System.out.println("모든 요청 완료. 풋살장 데이터 총 갯수: " + result.size());
+		// 구장 상세 찾아오기
+		for(int i = 0;  i < result.size(); i ++) {
+			
+			String svcId = (String) result.get(i).get("SVCID");
+		    System.out.printf("[%d]번째 요청: \n", i);
+		    try {
+		    List<Map<String, Object>> details = fetchDetailData(svcId);
+		    // 
+		    if (!details.isEmpty()) {
+			    Map<String, Object> detail = details.get(0);
 		  
-		  for(int i = 0;  i < result.size(); i ++) {
-			  String svcId = (String) result.get(i).get("SVCID");
-			  System.out.printf("[%d]번째 요청: \n", i);
-			  List<Map<String, Object>> details = fetchDetailData(svcId);
-			  if (!details.isEmpty()) {
-				  Map<String, Object> detail = details.get(0);
-				  
-				  int result1 = stadiumDAO.regist(detail);
-				  System.out.println("등록 결과: " + result1);
-				  
-			  }
-			  if (i + 1 < result.size()) {
-	              Thread.sleep(DELAY_MS); // 다음 요청까지 1분 대기
-	          }
-		  }
+			    int result1 = stadiumDAO.regist(detail);
+			    System.out.println("등록 결과: " + result1);
+			    if (i + 1 < result.size()) {
+			    	Thread.sleep(DELAY_MS); 
+			    }
+		  
+		    }
+		    // 다음 요청까지 1분 대기
+		    }catch (Exception e) {
+		    	System.out.println("❌ 에러 발생: " + e.getMessage());
+			}
+		}
 	}
 	
+	// 구장 500개 데이터 가져오는 api
 	private List<Map<String, Object>> fetchData(int start, int end) throws IOException {
         String apiKey = "6d657a6f546b796a36384d5665716e"; // 실제 인증키로 교체
         String urlStr = String.format(
@@ -144,7 +155,7 @@ public class StadiumController {
     }
 	
 	
-	
+	// 상세 정보 
 	private List<Map<String, Object>> fetchDetailData(String svcid) throws IOException {
         String apiKey = "6d657a6f546b796a36384d5665716e"; // 실제 인증키로 교체
         String urlStr = String.format(
@@ -224,31 +235,19 @@ public class StadiumController {
 //		return result;
 //	}
 //
-//	// 게시판 목록 진입
-//	@GetMapping("list")
-//	public Map<String, Object> list(String pageNo, String size, String searchValue,  @RequestHeader(value = "supervisor", defaultValue = "N") String supervisor) {
-//		
-//		Map<String, Object> result = new HashMap<>();
-//		//로그인 되어있고, 관리자 일 경우
-//		if(supervisor.equals("Y")) {
-//			result.put("pageResponse",boardService.list_admin(supervisor,
-//					searchValue,
-//					Util.parseInt(pageNo, 1),
-//					Util.parseInt(size, 10)
-//					));
-//			return result;
-//		}
-//		
-//	
-//	result.put("pageResponse",boardService.list(supervisor,
-//			searchValue,
-//			Util.parseInt(pageNo, 1),
-//			Util.parseInt(size, 10)
-//			));
-//		
-//		return result;
-//	}
-//
+	// 게시판 목록 진입
+	@GetMapping("list")
+	public Map<String, Object> list(String pageNo, String searchType, String searchValue) {
+		Map<String, Object> result = new HashMap<>();
+		
+			result.put("pageResponse",stadiumService.list(
+					searchType,
+					searchValue,
+					Util.parseInt(pageNo, 1)
+					));
+			return result;
+	}
+
 	// 구장 상세 디테일
 	@GetMapping("detailView")
 	public Map<String, Object> detailView(@RequestParam String SVCID) {
