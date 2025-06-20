@@ -107,4 +107,11 @@
 		)
 	</insert>
 	
+	
+	
+	<insert id="insertApiDetailLog" parameterType="map">
+	  INSERT INTO stadium_api_detail (svcid, code, message)
+	  VALUES (#{svcid}, #{code}, #{message})
+	</insert>
+	
 </mapper>
