@@ -7,7 +7,7 @@
             <th>카테고리</th>
             <th>작성자</th>
             <th>제목</th>
-            <th>등록일/수정일</th>
+            <th>등록일</th>
             <th>조회수</th>
             <th>추천수</th>
             </tr>
@@ -19,11 +19,9 @@
                 <td>{{ notice.user_name }}</td>
                 <td @click="$emit('view', notice.board_id)" style="cursor: pointer; color: blue;">
                 {{ notice.board_title }}
-                <span v-if="notice.attachment">📎</span>
                 </td>
                 <td>
-                {{ formatDate(notice.board_created_at) }}<br />
-                {{ formatDate(notice.board_modified_at) }}
+                  <span>{{ notice.board_modified_at ? formatDate(notice.board_modified_at) : formatDate(notice.board_created_at) }}</span>
                 </td>
                 <td>{{ notice.board_viewcount }}</td>
                 <td>{{ notice.board_likecount }}</td>
