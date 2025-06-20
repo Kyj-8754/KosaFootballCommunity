@@ -27,6 +27,11 @@ export default defineConfig({
         target: "http://localhost:8080",
         changeOrigin: true,
       },
+      // 첨부파일 프록시
+      "/api/file": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+      },
     },
     
   },
