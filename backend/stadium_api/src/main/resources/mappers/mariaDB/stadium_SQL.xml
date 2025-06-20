@@ -46,14 +46,24 @@
 		select * from stadium where SVCID = #{SVCID}
 	</select>
 	
-	<!-- <update id="update">
-		update t_board set 
-			title=#{title},
-			content=#{content},
-		where bno= #{bno}	
+	<update id="update">
+		update stadium set 
+			  SVCNM = #{SVCNM},
+    PLACENM = #{PLACENM},
+    TELNO = #{TELNO},
+    V_MIN = #{V_MIN},
+    V_MAX = #{V_MAX},
+    NOTICE = #{NOTICE},
+    ADRES = #{ADRES}
+		where SVCID = #{SVCID}
 	</update>
+	
+	
+	<select id="findAllSvcIds" resultType="string">
+	  SELECT SVCID FROM stadium
+	</select>
 		
-	<update id="invViewCount">
+	<!-- <update id="invViewCount">
 		update t_board set 
 		    view_count = view_count + 1  
 		where bno= #{bno}	

@@ -9,7 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface StadiumDAO {
 	public Stadium getStadium(String svcid);
-//	public int update(Board board);
+	public List<String> findAllSvcIds();
+	public int update(Map<String, Object> stadium);
 	public int regist(Map<String, Object> stadium);
 	public List<Stadium> list(Map<String, Object> map);
 	public int getTotalCount(Map<String, Object> map);
