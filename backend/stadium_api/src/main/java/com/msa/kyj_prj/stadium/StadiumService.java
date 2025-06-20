@@ -1,14 +1,16 @@
 package com.msa.kyj_prj.stadium;
 
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
+import java.util.HashMap;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import com.msa.kyj_prj.page.PageResponseVO_board;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.msa.kyj_prj.page.PageResponseVO_board;
 
 @Service
 public class StadiumService{
@@ -48,34 +50,20 @@ public class StadiumService{
 //	}
 
 		
-//	public PageResponseVO_board list(String supervisor, String searchValue, int pageNumber, int size) {
-//		
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		map.put("start", (pageNumber-1)*size+1);
-//		map.put("end", pageNumber * size);
-//		map.put("searchValue", searchValue);
-//		return new PageResponseVO_board(
-//				boardDAO.list(map),
-//				boardDAO.getTotalCount(map),
-//				pageNumber,
-//				size,
-//				searchValue);
-//	}
-//
-//	public PageResponseVO_board list_admin(String supervisor, String searchValue, int pageNumber, int size) {
-//		
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		map.put("supervisor", supervisor);
-//		map.put("start", (pageNumber-1)*size+1);
-//		map.put("end", pageNumber * size);
-//		map.put("searchValue", searchValue);
-//		return new PageResponseVO_board(
-//				boardDAO.list_admin(map),
-//				boardDAO.getTotalCount_admin(map),
-//				pageNumber,
-//				size,
-//				searchValue);
-//	}
+	public PageResponseVO_board list(String searchType, String searchValue, int pageNumber) {
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("start", (pageNumber-1)*9);
+		map.put("end", 9);
+		map.put("searchValue", searchValue);
+		map.put("searchType", searchType);
+		return new PageResponseVO_board(
+				stadiumDAO.list(map),
+				stadiumDAO.getTotalCount(map),
+				pageNumber,
+				searchType,
+				searchValue);
+	}
 	
 }
 
