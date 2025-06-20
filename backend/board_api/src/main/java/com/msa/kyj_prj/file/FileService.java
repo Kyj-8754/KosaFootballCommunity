@@ -19,8 +19,8 @@ public class FileService {
         return fileDAO.findFilesByBoardId(boardId);
     }
 
-    public void deleteFilesByBoardId(Long boardId) {
-    	fileDAO.deleteFilesByBoardId(boardId);
+    public void deleteFilesByBoardId(Long file_id) {
+    	fileDAO.deleteFilesByBoardId(file_id);
     }
     
     public FileEntity findFileById(Long fileId) {

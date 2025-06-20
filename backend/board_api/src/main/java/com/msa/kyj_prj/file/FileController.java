@@ -80,4 +80,23 @@ public class FileController {
                 .body(resource);
     }
  
+    @DeleteMapping("/delete/{file_id}")
+    public Map<String, Object> deleteFile(@PathVariable Long file_id) {
+        FileEntity file = fileService.findFileById(file_id);
+        if (file == null) {
+            return Map.of("error", "파일이 존재하지 않습니다.");
+        }
+
+        // 실제 파일 시스템에서 삭제
+        File target = new File(file.getFile_path() + file.getFile_saved_name());
+        if (target.exists()) {
+            target.delete();
+        }
+
+        // DB에서 삭제
+        fileService.deleteFilesByBoardId(file_id);
+
+        return Map.of("result", "deleted", "file_id", file_id);
+    }
+
 }
