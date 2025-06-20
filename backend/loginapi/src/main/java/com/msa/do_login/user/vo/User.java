@@ -30,7 +30,7 @@ public class User {
 	private Date userExitDate;
 	private String userFailStatus;
 	private int userFailCnt;
-	private int authCode;
+	private String authCode;
 	private String userCode;
 	private String userGender;
 	private String userComment;
