@@ -30,4 +30,10 @@
 		INSERT INTO local_account (user_no, user_id, user_pwd) 
 		VALUES (#{userNo}, #{userId}, #{userPwd})
 	</insert>
+	
+	<!-- 권한 명 조회 구문 -->
+	<select id="getLocalAccount" parameterType="String" resultType="String">
+		SELECT auth_name FROM user_authority WHERE auth_code = #{authCode}
+	</select>
+	
 </mapper>
