@@ -62,13 +62,15 @@ public class StadiumService{
 	// 비교하는 함수
 	public void compareAndUpdateIfChanged(String svcId) throws IOException, InterruptedException {
 	    // 1. API에서 최신 데이터 가져오기
-		Map<String, Object> newData = fetchDetailData(svcId);
-
+		Map<String, Object> newDatas = fetchDetailData(svcId);
+		
+		
 	    // 2. DB에서 기존 데이터 가져오기
 		Stadium oldData = getStadium(svcId);
 
-	    if (oldData == null || newData == null || newData.isEmpty()) return;
+	    if (oldData == null || newDatas == null || newDatas.isEmpty()) return;
 	    
+	    Map<String, Object> newData = ((List<Map<String, Object>>) newDatas.get("data")).get(0);
 	    
 	    boolean changed = false;
 
@@ -216,42 +218,44 @@ public class StadiumService{
 			        
 			        // 결과 반환
 			        Map<String, Object> response = new HashMap<>();
+			        response.put("svcid",svcid);
 			        response.put("code", code);
 			        response.put("message", message);
 			        response.put("data", detailList);
 			        
+			        stadiumDAO.insertApiDetailLog(response);
 			        return response;
 			    }
 	
 		
 				// 초기에 DB를 담기위한 API
-		public void stadiumapi() throws Exception {
-			// 데이터 담아줄 List
-			List<String> result = new ArrayList<>();
-			
-			// 데이터를 n개 나누어서 반복
-			int totalCount = fetchTotalCount();
-			int totalSteps = (int) Math.ceil((double) totalCount / STEP);
-			
-			for(int i = 0; i < totalSteps; i++) {
+			public void stadiumapi() throws Exception {
+				// 데이터 담아줄 List
+				List<String> result = new ArrayList<>();
 				
-				int start = i * STEP + 1;
-		        int end = Math.min(start + STEP - 1, totalCount);
-		        
-		        // 현재 어디부분 하는지 체크
-		        System.out.printf("[%d/%d] 요청: %d ~ %d\n", i + 1, totalSteps, start, end);
-		        
-		        // 1차 API 실행
-		        List<String> futsalList = fetchData(start, end);
-		        
-		        // 결과값 담아줌
-		        result.addAll(futsalList);
-		        
-		        // 다음 요청까지 1분 대기
-		        if (i + 1 < totalSteps) {
-		            Thread.sleep(DELAY_MS); 
-		        }
-			}
+				// 데이터를 n개 나누어서 반복
+				int totalCount = fetchTotalCount();
+				int totalSteps = (int) Math.ceil((double) totalCount / STEP);
+				
+				for(int i = 0; i < totalSteps; i++) {
+					
+					int start = i * STEP + 1;
+			        int end = Math.min(start + STEP - 1, totalCount);
+			        
+			        // 현재 어디부분 하는지 체크
+			        System.out.printf("[%d/%d] 요청: %d ~ %d\n", i + 1, totalSteps, start, end);
+			        
+			        // 1차 API 실행
+			        List<String> futsalList = fetchData(start, end);
+			        
+			        // 결과값 담아줌
+			        result.addAll(futsalList);
+			        
+			        // 다음 요청까지 1분 대기
+			        if (i + 1 < totalSteps) {
+			            Thread.sleep(DELAY_MS); 
+			        }
+				}
 			
 			// 몇개 가져왔는지 확인용
 			System.out.println("모든 요청 완료. 풋살장 데이터 총 갯수: " + result.size());
@@ -271,18 +275,11 @@ public class StadiumService{
 					    
 				    	 if (!details.isEmpty()) {
 					    	Map<String, Object> detail = details.get(0);
-				            String code = (String) results.get("CODE");
-				            String message = (String) results.get("MESSAGE");
 					  
 						    int result1 = stadiumDAO.regist(detail);
 						    System.out.println("등록 결과: " + result1);
 						    
-						    // 로그 DB에 기록
-				            Map<String, Object> log = new HashMap<>();
-				            log.put("svcid", svcId);
-				            log.put("code", code);
-				            log.put("message", message);
-				            stadiumDAO.insertApiDetailLog(log); // MyBatis 또는 JPA DAO
+						
 						    
 						    
 						    if (i + 1 < result.size()) {
@@ -350,9 +347,10 @@ public class StadiumService{
 		public void syncAll() throws IOException, InterruptedException {
 		    List<String> svcIds = stadiumDAO.findAllSvcIds(); // SVCID 목록 조회
 		    System.out.println("데이터 업데이트 시작");
-		    for (String svcId : svcIds) {
-		    		System.out.println(svcId +  "업데이트 시작" );
-			        compareAndUpdateIfChanged(svcId);
+		    for (int i = 0; i <svcIds.size(); i++) {
+		    	String svcId = svcIds.get(i);
+	    		System.out.println(svcId + i + ", 번째 업데이트 시작" );
+		        compareAndUpdateIfChanged(svcId);
 		    }
 		}
 }
