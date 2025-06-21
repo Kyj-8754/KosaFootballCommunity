@@ -1,0 +1,58 @@
+package com.msa.kyj_prj.recruit;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class RecruitService {
+
+	private final RecruitDAO recruit_dao;
+
+	// 전체 모집글 목록 조회 (최신순)
+	public List<RecruitBoard> get_all_recruits() {
+		return recruit_dao.find_all();
+	}
+
+	// 조회수 기준 인기순 정렬
+	public List<RecruitBoard> get_recruits_order_by_view_count() {
+		return recruit_dao.find_all_order_by_view_count();
+	}
+
+	// 클럽별 모집글 목록 조회
+	public List<RecruitBoard> get_recruits_by_club(int club_id) {
+		return recruit_dao.find_by_club_id(club_id);
+	}
+
+	// 모집글 단건 조회
+	public RecruitBoard get_recruit(int bno) {
+		return recruit_dao.find_by_id(bno);
+	}
+
+	// 모집글 등록
+	public void create_recruit(RecruitBoard board) {
+		recruit_dao.insert(board);
+	}
+
+	// 모집글 수정
+	public void update_recruit(RecruitBoard board) {
+		recruit_dao.update(board);
+	}
+
+	// 모집글 삭제
+	public void delete_recruit(int bno) {
+		recruit_dao.delete(bno);
+	}
+
+	// 팀장 여부 확인
+	public boolean is_club_leader(String user_id, int club_id) {
+		return recruit_dao.is_club_leader(user_id, club_id) > 0;
+	}
+
+	// 조회수 증가
+	public void increase_view_count(int bno) {
+		recruit_dao.increase_view_count(bno);
+	}
+}

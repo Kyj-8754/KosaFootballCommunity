@@ -12,14 +12,27 @@ public class ClubService {
 	@Autowired
 	private ClubDAO clubDAO;
 
-	// 클럽 단건 조회
+	// 클럽 단건 조회 (by clubId)
 	public Club getClub(Integer clubId) {
-	    return clubDAO.getClub(clubId);
+		return clubDAO.getClub(clubId);
+	}
+
+	// ✅ 클럽 단건 조회 (by teamCode)
+	public Club getClubByTeamCode(String teamCode) {
+		return clubDAO.getClubByTeamCode(teamCode);
+	}
+
+	public Club findByTeamCode(String teamCode) {
+		return getClubByTeamCode(teamCode);
 	}
 
 	// 클럽 등록
 	public int insert(Club club) {
 		return clubDAO.insert(club);
+	}
+
+	public Club findByName(String name) {
+		return clubDAO.getClubByName(name);
 	}
 
 	// 클럽 수정

@@ -17,11 +17,21 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": {
-        target: "http://localhost:8080",
+      // club_api (포트 8081)
+      '/api/clubs': {
+        target: 'http://localhost:8080',
         changeOrigin: true,
-       // rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      // '/api/apply': {
+      //   target: 'http://localhost:8082',
+      //   changeOrigin: true,
+      // },
+
+      // recruit_api (포트 8082)
+      '/api/recruits': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+      }
     },
   },
 })
