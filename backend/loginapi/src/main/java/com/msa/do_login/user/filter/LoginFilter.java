@@ -72,7 +72,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 		log.info("jsonData = {}", jsonData);
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-				jsonData.get("uid"), jsonData.get("pwd"));
+				jsonData.get("userId"), jsonData.get("userPwd"));
 		return getAuthenticationManager().authenticate(authenticationToken);
 	}
 }

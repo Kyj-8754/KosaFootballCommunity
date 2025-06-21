@@ -3,6 +3,7 @@ package com.msa.do_login.user.service;
 import java.security.SecureRandom;
 import java.util.Date;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 	private final UserDAO userDAO;
+	private final PasswordEncoder passwordEncoder;
 	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	private static final SecureRandom RANDOM = new SecureRandom();
 	
@@ -49,10 +51,10 @@ public class UserService {
 				.userDetailAddr(dto.getUserDetailAddr()).userGender(dto.getUserGender()).authCode("A3")
 				.userCode(userCode).userRegDate(new Date()).build();
 		userDAO.insertUser(user);
-
+		String encodedPwd = passwordEncoder.encode(dto.getUserPwd());
 		// 2. LocalAccount 생성 및 저장
 		LocalAccount account = LocalAccount.builder().userNo(user.getUserNo()).userId(dto.getUserId())
-				.userPwd(dto.getUserPwd()).build();
+				.userPwd(encodedPwd).build();
 		userDAO.insertLocalAccount(account);
 	}
 
