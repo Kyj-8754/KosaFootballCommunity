@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.msa.do_login.user.dao.UserDAO;
 import com.msa.do_login.user.dto.UserRegisterDTO;
 import com.msa.do_login.user.vo.LocalAccount;
-import com.msa.do_login.user.vo.User;
+import com.msa.do_login.user.vo.UserVO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +44,7 @@ public class UserService {
 	public void register(UserRegisterDTO dto) {
 		String userCode = generateUniqueUserCode(5);
 		// 1. User 생성 및 저장
-		User user = User.builder().userName(dto.getUserName()).userBirth(dto.getUserBirth())
+		UserVO user = UserVO.builder().userName(dto.getUserName()).userBirth(dto.getUserBirth())
 				.userPhone(dto.getUserPhone()).userPostCode(dto.getUserPostcode()).userAddr(dto.getUserAddr())
 				.userDetailAddr(dto.getUserDetailAddr()).userGender(dto.getUserGender()).authCode("A3")
 				.userCode(userCode).userRegDate(new Date()).build();
