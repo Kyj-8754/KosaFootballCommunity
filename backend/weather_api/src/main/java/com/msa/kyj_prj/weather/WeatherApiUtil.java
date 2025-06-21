@@ -66,6 +66,9 @@ public class WeatherApiUtil {
         List<Weather> weatherList = new ArrayList<>();
         if (json == null || json.isEmpty()) return weatherList;
 
+        // ✅ 저장할 코드 목록 정의
+        Set<String> allowedCategories = Set.of("POP", "PTY", "PCP", "REH", "SNO", "SKY", "TMP", "WSD");
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode items = mapper.readTree(json)
@@ -75,15 +78,20 @@ public class WeatherApiUtil {
                     .path("item");
 
             for (JsonNode item : items) {
-            	Weather w = new Weather();
-            	w.setWeather_base_date(item.path("baseDate").asText());
-            	w.setWeather_base_time(item.path("baseTime").asText());
-            	w.setWeather_fcst_date(item.path("fcstDate").asText());
-            	w.setWeather_fcst_time(item.path("fcstTime").asText());
-            	w.setWeather_code(item.path("category").asText());
-            	w.setWeather_value(item.path("fcstValue").asText());
-            	w.setWeather_region(regionName);
-            	weatherList.add(w);
+                String category = item.path("category").asText();
+                
+                // ✅ 필터링
+                if (!allowedCategories.contains(category)) continue;
+
+                Weather w = new Weather();
+                w.setWeather_base_date(item.path("baseDate").asText());
+                w.setWeather_base_time(item.path("baseTime").asText());
+                w.setWeather_fcst_date(item.path("fcstDate").asText());
+                w.setWeather_fcst_time(item.path("fcstTime").asText());
+                w.setWeather_code(category);
+                w.setWeather_value(item.path("fcstValue").asText());
+                w.setWeather_region(regionName);
+                weatherList.add(w);
             }
 
         } catch (Exception e) {
@@ -92,6 +100,7 @@ public class WeatherApiUtil {
 
         return weatherList;
     }
+
 
     private static String getBaseTime(int hour) {
         // 기준 발표 시각 (단기예보 8회 발표 기준)
