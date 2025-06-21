@@ -31,11 +31,6 @@
 		VALUES (#{userNo}, #{userId}, #{userPwd})
 	</insert>
 	
-	<!-- 권한 명 조회 구문 -->
-	<select id="getLocalAccount" parameterType="String" resultType="String">
-		SELECT auth_name FROM user_authority WHERE auth_code = #{authCode}
-	</select>
-	
 	<!-- 아이디로 회원(UserVO) 조회 -->
 	<select id="findByUserId" parameterType="String" resultType="com.msa.do_login.user.vo.UserVO">
 		SELECT u.* 
@@ -43,6 +38,7 @@
 		JOIN local_account l ON u.user_no = l.user_no
 		WHERE l.user_id = #{username}
 	</select>
+	
 	<!-- user_no로 LocalAccount 조회 -->
 	<select id="findAccountByUserNo" parameterType="int" resultType="com.msa.do_login.user.vo.LocalAccount">
 		SELECT * 
