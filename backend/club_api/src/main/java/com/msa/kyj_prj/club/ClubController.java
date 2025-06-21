@@ -4,77 +4,94 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/clubs") // 클럽 관련 REST API의 기본 URL
+@RequestMapping("/api/clubs")
 public class ClubController {
 
-	@Autowired
-	private ClubService clubService;
+    @Autowired
+    private ClubService clubService;
 
-	// 클럽 단건 조회
-	@GetMapping("/{clubId}")
-	public Club getClub(@PathVariable Integer clubId) {
-		return clubService.getClub(clubId);
-	}
+    // ✅ [단건 조회] 팀 코드로 클럽 조회
+    @GetMapping("/code/{teamCode}")
+    public Club getClubByTeamCode(@PathVariable String teamCode) {
+        return clubService.findByTeamCode(teamCode);
+    }
+// 포스트맨 테스트를 하기위해 임시로 주석처리
+//    // ✅ [클럽 등록] 로그인된 유저의 세션에서 leader_user_id 주입
+//    @PostMapping
+//    public int insertClub(@RequestBody Club club, HttpSession session) {
+//        String loginUserId = (String) session.getAttribute("loginUserid");
+//        if (loginUserId == null) {
+//            throw new RuntimeException("로그인이 필요합니다.");
+//        }
+//        club.setLeaderUserId(loginUserId); // 🔥 자동으로 팀장 설정
+//        return clubService.insert(club);
+//    }
+    
+    @PostMapping // 포스트맨 테스트용 코드 입니다
+    public int insertClub(@RequestBody Club club) {
+        // ⚠️ 임시 하드코딩 (Postman 테스트용)
+        club.setLeaderUserId("testuser001"); // DB에 존재하는 아이디를 직접 지정
+        return clubService.insert(club);
+    }
 
-	// 클럽 등록
-	@PostMapping
-	public int insertClub(@RequestBody Club club) {
-		return clubService.insert(club);
-	}
 
-	// 클럽 수정
-	@PutMapping("/{clubId}")
-	public int updateClub(@PathVariable int clubId, @RequestBody Club club) {
-		club.setClubId(clubId); // 경로 파라미터로 받은 ID를 객체에 세팅
-		return clubService.update(club);
-	}
+    // ✅ [중복 체크] 클럽 이름 중복 여부 확인
+    @GetMapping("/check-name")
+    public boolean isClubNameAvailable(@RequestParam String name) {
+        return clubService.findByName(name) == null;
+    }
 
-	// 클럽 삭제
-	@DeleteMapping("/{clubId}")
-	public int deleteClub(@PathVariable int clubId) {
-		return clubService.delete(clubId);
-	}
+    // ✅ [중복 체크] 팀 코드 중복 여부 확인
+    @GetMapping("/check-teamcode")
+    public boolean isTeamCodeAvailable(@RequestParam String teamCode) {
+        return clubService.findByTeamCode(teamCode) == null;
+    }
 
-	// 클럽 리스트 조회 (검색 + 페이징 + 정렬)
-	@GetMapping
-	public Map<String, Object> listClubs(@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String searchKeyword,
-			@RequestParam(defaultValue = "ranking") String sortColumn,
-			@RequestParam(defaultValue = "ASC") String sortDirection) {
-		// 페이징 계산
-		int startRow = (page - 1) * size;
+    // ✅ [클럽 수정] club_id 기준으로 수정
+    @PutMapping("/{club_id}")
+    public int updateClub(@PathVariable("club_id") int clubId, @RequestBody Club club) {
+        club.setClubId(clubId);
+        return clubService.update(club);
+    }
 
-		// 파라미터 구성
-		Map<String, Object> params = new HashMap<>();
-		params.put("searchKeyword", searchKeyword);
-		params.put("startRow", startRow);
-		params.put("pageSize", size);
-		params.put("sortColumn", sortColumn);
-		params.put("sortDirection", sortDirection);
+    // ✅ [클럽 삭제] club_id 기준으로 삭제
+    @DeleteMapping("/{club_id}")
+    public int deleteClub(@PathVariable("club_id") int clubId) {
+        return clubService.delete(clubId);
+    }
 
-		// 데이터 조회
-		List<Club> clubList = clubService.list(params);
-		int totalCount = clubService.getTotalCount(params);
+    // ✅ [클럽 목록 조회] 페이징 + 검색 + 정렬 지원
+    @GetMapping
+    public Map<String, Object> listClubs(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchKeyword,
+            @RequestParam(defaultValue = "ranking") String sortColumn,
+            @RequestParam(defaultValue = "ASC") String sortDirection
+    ) {
+        int startRow = (page - 1) * size;
 
-		// 결과 리턴
-		Map<String, Object> result = new HashMap<>();
-		result.put("data", clubList);
-		result.put("total", totalCount);
-		result.put("page", page);
-		result.put("size", size);
+        Map<String, Object> params = new HashMap<>();
+        params.put("searchKeyword", searchKeyword);
+        params.put("startRow", startRow);
+        params.put("pageSize", size);
+        params.put("sortColumn", sortColumn);
+        params.put("sortDirection", sortDirection);
 
-		return result;
-	}
+        List<Club> clubList = clubService.list(params);
+        int totalCount = clubService.getTotalCount(params);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", clubList);
+        result.put("total", totalCount);
+        result.put("page", page);
+        result.put("size", size);
+
+        return result;
+    }
 }

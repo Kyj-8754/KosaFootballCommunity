@@ -7,10 +7,28 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface ClubDAO {
-    Club getClub(Integer clubId);
-    int insert(Club club);
-    int update(Club club);
-    int delete(int clubId);
-    List<Club> list(Map<String, Object> params);
-    int getTotalCount(Map<String, Object> params);
+
+	// 클럽 단건 조회 (by clubId)
+	Club getClub(Integer clubId);
+
+	// ✅ 클럽 단건 조회 (by teamCode)
+	Club getClubByTeamCode(String teamCode);
+	
+	Club getClubByName(String name);
+
+
+	// 클럽 등록
+	int insert(Club club);
+
+	// 클럽 수정
+	int update(Club club);
+
+	// 클럽 삭제
+	int delete(int clubId);
+
+	// 클럽 리스트 (검색, 정렬, 페이징 포함)
+	List<Club> list(Map<String, Object> params);
+
+	// 클럽 전체 개수
+	int getTotalCount(Map<String, Object> params);
 }

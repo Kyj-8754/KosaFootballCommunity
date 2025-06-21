@@ -1,56 +1,63 @@
 package com.msa.kyj_prj.club;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 클럽 정보를 담는 DTO 클래스 MyBatis에서 tbl_club 테이블과 매핑됨
+ * 클럽 정보를 담는 DTO 클래스 (tbl_club 테이블과 매핑됨)
  */
-@Data // Getter, Setter, toString, equals, hashCode 자동 생성
-@NoArgsConstructor // 기본 생성자
-@AllArgsConstructor // 전체 필드를 사용하는 생성자
-@Builder // 객체 생성 시 Builder 패턴 사용 가능
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Club {
 
-    // 클럽 ID (AUTO_INCREMENT)
+    @JsonProperty("club_id")
     private int clubId;
 
-    // 클럽 이름
+    @JsonProperty("team_code") 
+    private String teamCode;
+
+    @JsonProperty("club_name")
     private String clubName;
 
-    // 클럽 리더의 회원 ID
+    @JsonProperty("leader_user_id")
     private String leaderUserId;
 
-    // 클럽 로고 이미지 경로
+    @JsonProperty("logo_path")
     private String logoPath;
 
-    // 클럽 레이팅 점수
+    @JsonProperty("rating")
     private int rating;
 
-    // 클럽 순위
+    @JsonProperty("ranking")
     private int ranking;
 
-    // 클럽 승리 횟수
+    @JsonProperty("win_count")
     private int winCount;
 
-    // 클럽 무승부 횟수
+    @JsonProperty("draw_count")
     private int drawCount;
 
-    // 클럽 패배 횟수
+    @JsonProperty("loss_count")
     private int lossCount;
 
-    // 클럽 소개 설명
+    @JsonProperty("description")
     private String description;
 
-    // 클럽 생성일시 (기본값: 현재 시간)
+    @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
-    // 수동 추가: Lombok이 작동하지 않을 경우를 대비한 setter
+    // 수동 setter 예시 (Lombok 대비용)
     public void setClubId(int clubId) {
         this.clubId = clubId;
+    }
+
+    public void setTeamCode(String teamCode) {
+        this.teamCode = teamCode;
     }
 }
