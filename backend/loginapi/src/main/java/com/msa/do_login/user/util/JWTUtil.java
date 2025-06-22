@@ -50,12 +50,12 @@ public class JWTUtil {
 		// int time = (10) * days; //테스트는 분단위로 나중에 60*24 (일)단위변경
 
 		try {
-			String jwtStr = Jwts.builder().header().add(valueMap) // 헤더 부분
-					.and().claims(payloads) // payload 부분 설정
-					.issuedAt(Date.from(ZonedDateTime.now().toInstant())) // JWT 발급시간 설정
-					.expiration(Date.from(ZonedDateTime.now().plusMinutes(time).toInstant())) // 만료기간 설정
-//		                .expiration(Date.from(ZonedDateTime.now().plusDays(time).toInstant())) //만료기간 설정
-					.signWith(Keys.hmacShaKeyFor(getSecretKey()), Jwts.SIG.HS256).compact();
+			String jwtStr = Jwts.builder().header().add("typ", "JWT").add("alg", "HS256") // 헤더 설정
+					.and().claims(payloads) // 클레임 정보
+					.issuedAt(Date.from(ZonedDateTime.now().toInstant())) // 발급 시간
+					.expiration(Date.from(ZonedDateTime.now().plusMinutes(time).toInstant())) // 만료 시간
+					.signWith(Keys.hmacShaKeyFor(getSecretKey()), Jwts.SIG.HS256) // 서명
+					.compact();
 
 			log.info("jwtStr...  : " + jwtStr);
 			return jwtStr;

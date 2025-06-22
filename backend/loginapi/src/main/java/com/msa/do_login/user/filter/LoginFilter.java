@@ -35,9 +35,13 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 			log.info("로그인 성공시 처리 핸들러 .............");
 			log.info("인증된 로그인 정보 : {}", authentication);
 			log.info("인증된 로그인 아이디 : {}", authentication.getName());
-
+			com.msa.do_login.user.dto.UserDTO userDTO =(com.msa.do_login.user.dto.UserDTO) authentication.getPrincipal();
 			// JWT에 추가할 정보로 아이디가 있는 Map 객체를 생성한다
-			final Map<String, Object> claim = Map.of("uid", authentication.getName());
+			final Map<String, Object> claim = Map.of(
+					"userId", userDTO.getUserId(),
+					"userNo", userDTO.getUserNo(),
+					"userName", userDTO.getUserName(),
+					"authCode", userDTO.getAuthCode());
 
 			Map<String, String> keyMap = Map.of("accessToken", jwtUtil.generateToken(claim, 1), // Access Token 유효기간 1일로
 																								// 생성
