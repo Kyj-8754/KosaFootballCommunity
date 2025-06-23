@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,7 @@ public class StadiumService{
 
 	
     private static final int STEP = 1000;
-    private static final int DELAY_MS = 20000;
+    private static final int DELAY_MS = 5000;
 	
 	
 
@@ -59,62 +60,6 @@ public class StadiumService{
 	public Stadium getStadium(String SVCID) {
 		return stadiumDAO.getStadium(SVCID);
 	}
-	
-	
-	// 비교하는 함수
-//	public void compareAndUpdateIfChanged(String svcId) throws IOException, InterruptedException {
-//	    // 1. API에서 최신 데이터 가져오기
-//		Map<String, Object> newDatas = fetchDetailData(svcId);
-//		
-//		
-//	    // 2. DB에서 기존 데이터 가져오기
-//		Stadium oldData = getStadium(svcId);
-//
-//	    if (oldData == null || newDatas == null || newDatas.isEmpty()) return;
-//	    
-//	    Map<String, Object> newData = ((List<Map<String, Object>>) newDatas.get("data")).get(0);
-//	    
-//	    boolean changed = false;
-//
-//	    if (!Objects.equals(oldData.getSVCNM(), newData.get("SVCNM"))) {
-//	        oldData.setSVCNM((String) newData.get("SVCNM"));
-//	        changed = true;
-//	    }
-//	    if (!Objects.equals(oldData.getPLACENM(), newData.get("PLACENM"))) {
-//	        oldData.setPLACENM((String) newData.get("PLACENM"));
-//	        changed = true;
-//	    }
-//	    if (!Objects.equals(oldData.getTELNO(), newData.get("TELNO"))) {
-//	        oldData.setTELNO((String) newData.get("TELNO"));
-//	        changed = true;
-//	    }
-//	    if (!Objects.equals(oldData.getV_MIN(), newData.get("V_MIN"))) {
-//	        oldData.setV_MIN((String) newData.get("V_MIN"));
-//	        changed = true;
-//	    }
-//	    if (!Objects.equals(oldData.getV_MAX(), newData.get("V_MAX"))) {
-//	        oldData.setV_MAX((String) newData.get("V_MAX"));
-//	        changed = true;
-//	    }
-//	    if (!Objects.equals(oldData.getNOTICE(), newData.get("NOTICE"))) {
-//	        oldData.setNOTICE((String) newData.get("NOTICE"));
-//	        changed = true;
-//	    }
-//	    if (!Objects.equals(oldData.getADRES(), newData.get("ADRES"))) {
-//	        oldData.setADRES((String) newData.get("ADRES"));
-//	        changed = true;
-//	    }
-//	   
-//	    // 3. 변경된 경우만 UPDATE 실행
-//	    if (changed) {
-//	        stadiumDAO.update(oldData);
-//	    }
-//	    
-//	
-//            Thread.sleep(DELAY_MS); 
-//
-//	    
-//	}
 	
 		
 		
@@ -331,6 +276,7 @@ public class StadiumService{
 		
 		
 		// 구장 업데이트
+		@Scheduled(cron = "0 35 9 * * *")
 		public void syncAll() throws Exception {
 		    System.out.println("데이터 업데이트 시작");
 		    LocalDateTime start = LocalDateTime.now();
