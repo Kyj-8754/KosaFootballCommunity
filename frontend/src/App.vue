@@ -27,9 +27,17 @@ const token = ref(localStorage.getItem('accessToken'))
 const decodeJwtPayload = (tokenStr) => {
   try {
     const base64Payload = tokenStr.split('.')[1]
-    const payload = JSON.parse(atob(base64Payload))
+    const decoded = atob(base64Payload)
+    const payload = JSON.parse(decoded)
+
+    // userName만 디코딩 (서버에서 encode 했을 경우만)
+    if (payload.userName) {
+      payload.userName = decodeURIComponent(payload.userName)
+    }
+
     return payload
   } catch (e) {
+    console.error("JWT 디코딩 실패:", e)
     return {}
   }
 }
@@ -57,4 +65,5 @@ provide('userId', userId)
 provide('userNo', userNo)
 provide('userName', userName)
 provide('authCode', authCode)
+console.log(userName);
 </script>
