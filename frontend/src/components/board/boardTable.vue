@@ -57,3 +57,26 @@ function formatDate(dateStr) {
   return dateStr ? dateStr.replace('T', ' ') : ''
 }
 </script>
+
+<style scoped>
+.board-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.board-table th,
+.board-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ccc; /* 회색 가로줄 */
+}
+
+.board-table tbody tr:hover {
+  background-color: #f9f9f9; /* 선택 시 강조 효과 (선택사항) */
+}
+
+.board-table thead {
+  background-color: #f1f1f1; /* 헤더 배경 (선택사항) */
+  border-top: 2px solid #888;
+}
+</style>
