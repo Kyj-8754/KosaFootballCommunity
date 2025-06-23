@@ -73,7 +73,7 @@
 	})	// 보내는용도로 만든 객체
 
 	onMounted(() => {
-		axios.get('/api/member/detailView', { params: { userid }})
+		axios.get('/login_api/member/detailView', { params: { userid }})
 		.then(res => {
 			memberDB.value = res.data.memberDB
 			form.userid = memberDB.value.userid

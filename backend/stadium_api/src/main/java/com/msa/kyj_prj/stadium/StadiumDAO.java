@@ -9,12 +9,13 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface StadiumDAO {
 	public Stadium getStadium(String svcid);
-//	public int update(Board board);
+	public List<String> findAllSvcIds();
+	public int update(Stadium stadium);
 	public int regist(Map<String, Object> stadium);
+	public int registPatch(Map<String, Object> stadium);
+	public void callSyncStadiumProcedure();
 	public List<Stadium> list(Map<String, Object> map);
-//	public List<Board> list_admin(Map<String, Object> map);
-//	public int getTotalCount(Map<String, Object> map);
-//	public int getTotalCount_admin(Map<String, Object> map);
+	public int getTotalCount(Map<String, Object> map);
 //	public int increseView(int bno);
-//	public int delete(int bno);
+	public void insertApiDetailLog(Map<String, Object> log);
 }

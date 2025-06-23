@@ -69,7 +69,7 @@
 
 	// 페이지 구동시 자동 마운트
 	onMounted(() => {
-		axios.get('/api/member/detailView', { params: { userid }})
+		axios.get('/login_api/member/detailView', { params: { userid }})
 			.then(res => {
 				memberDB.value = res.data.memberDB
 			})
