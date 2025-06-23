@@ -3,39 +3,38 @@ package com.msa.kyj_prj.alarm;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-import lombok.RequiredArgsConstructor;
+// import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSocketMessageBroker
-@RequiredArgsConstructor
+// @RequiredArgsConstructor // ⛔ StompHandler를 주입받지 않으므로 임시 제거
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final StompHandler stompHandler; // 사용자 인증/세션 관리용 인터셉터
+    // ⛔ 현재 미사용 처리 (추후 인증 처리 시 다시 활성화)
+    // private final StompHandler stompHandler;
 
+    // ✅ WebSocket 연결 엔드포인트 정의
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // 프론트에서 연결할 기본 WebSocket 주소: ws://localhost:8080/ws-stomp
-        registry.addEndpoint("/ws-stomp")
-                .setAllowedOrigins("*") // CORS 허용 (개발 단계에선 *)
-                .withSockJS();          // SockJS 사용 (IE 등 호환성)
+        registry.addEndpoint("/ws-stomp").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:5173").withSockJS();
     }
 
+    // ✅ 메시지 브로커 설정 (SimpleBroker 사용)
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // 클라이언트가 메시지를 구독할 prefix (받을 때)
-        registry.enableSimpleBroker("/sub", "/queue");
-
-        // 클라이언트가 메시지를 보낼 때 사용하는 prefix
+        registry.enableSimpleBroker("/topic", "/queue");
         registry.setApplicationDestinationPrefixes("/pub");
-
-        // 1:1 사용자 전용 메시지 구독용 prefix
         registry.setUserDestinationPrefix("/user");
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(stompHandler); // CONNECT, SUBSCRIBE 등 가로채기
-    }
+    // ⛔ 인증 핸들러 비활성화 (나중에 필요 시 다시 활성화)
+    // @Override
+    // public void configureClientInboundChannel(ChannelRegistration registration) {
+    //     registration.interceptors(stompHandler);
+    // }
 }

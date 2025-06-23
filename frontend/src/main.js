@@ -1,15 +1,25 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import router from './router/index.js'
+import { createApp } from 'vue';
+import App from './App.vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import router from './router/index.js';
 import './main.css';
-import { createPinia } from 'pinia'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
-const app = createApp(App)
-const pinia = createPinia()
+import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 
-pinia.use(piniaPluginPersistedstate) 
+// ✅ Toastification import
+import Toast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';  // 스타일도 반드시 import
+
+const app = createApp(App);
+const pinia = createPinia();
+
+pinia.use(piniaPluginPersistedstate);
+
 app.use(pinia);
 app.use(router);
-app.mount('#app')
+
+// ✅ Toast 등록
+app.use(Toast);
+
+app.mount('#app');
