@@ -25,6 +25,11 @@
                 BoardList
             </router-link>
           </li>
+           <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'Stadium_List' }">
+                구장
+            </router-link>
+          </li>
         </ul>
       </div>
     </nav>
