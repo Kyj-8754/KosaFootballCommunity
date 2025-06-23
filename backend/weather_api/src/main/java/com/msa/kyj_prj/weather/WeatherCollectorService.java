@@ -19,6 +19,7 @@ public class WeatherCollectorService {
 
     public void collectAndStoreForecasts() {
         List<Location> locations = locationService.getAllLocations();
+        weatherDAO.truncateWeather();
 
         for (Location loc : locations) {
             // API 호출

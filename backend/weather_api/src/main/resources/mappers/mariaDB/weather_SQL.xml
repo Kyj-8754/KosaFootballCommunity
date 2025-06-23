@@ -16,13 +16,10 @@
             #{weather_code}, #{weather_value}
         )
     </insert>
-
-    <!-- 지역 기준 단기 예보 조회 -->
-    <select id="selectWeatherByRegion" parameterType="string" resultType="com.msa.kyj_prj.weather.Weather">
-        SELECT *
-        FROM weather
-        WHERE weather_region = #{region}
-        ORDER BY weather_fcst_date, weather_fcst_time
-    </select>
+    
+    <!-- 단기 예보 데이터 전체 삭제 (TRUNCATE) -->
+    <delete id="truncateWeather">
+        TRUNCATE TABLE weather
+    </delete>
 
 </mapper>
