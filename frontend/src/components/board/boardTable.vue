@@ -1,5 +1,14 @@
 <template>
   <table class="board-table">
+    <colgroup>
+      <col style="width: 8%" />
+      <col style="width: 12%" />
+      <col style="width: 12%" />
+      <col style="width: 28%" />
+      <col style="width: 15%" />
+      <col style="width: 10%" />
+      <col style="width: 10%" />
+    </colgroup>
     <thead v-if="showHeader">
       <tr>
         <th>글 번호</th>
