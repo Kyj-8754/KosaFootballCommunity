@@ -72,10 +72,10 @@
 
 
 <script setup>
-	import { computed, watch, reactive, ref} from 'vue'
+	import { computed, watch, reactive, ref, inject} from 'vue'
 	import axios from 'axios'
 	import { useRouter, useRoute } from 'vue-router'
-
+	inject 
 	const router = useRouter() // 보낼 경로
 	const route = useRoute() // 현재 경로
 	const searchTypes = [
@@ -129,7 +129,7 @@
 	}
 	// 값 변경시 다시 list 가져오도록 요청
 	function fetchData(pageNo, size, searchValue) {
-		axios.get(`/api/stadium/list`,{
+		axios.get(`/stadium_api/stadium/list`,{
 			params:{
 				pageNo,
 				searchType: searchType.value || '',
