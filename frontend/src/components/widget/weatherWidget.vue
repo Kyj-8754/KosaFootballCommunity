@@ -8,10 +8,20 @@
         <WeatherDetail :data="current" />
       </div>
     </div>
-
     <!-- 하단 시간별 예보 -->
     <ForecastTimeline :forecasts="forecastList" />
   </div>
+  <!--
+  <div class="weather-widget">
+    <div class="top-section">
+      <WeatherImageBox :sky="current.SKY" :pty="current.PTY" />
+      <div class="info-section">
+        <RegionSelector v-model="region" />
+        <WeatherDetail :data="current" />
+      </div>
+    <ForecastTimeline :forecasts="forecastList" />
+    </div>
+  </div>-->
 </template>
 
 
@@ -62,6 +72,7 @@ watchEffect(async () => {
   background-color: #f3f4f6;
   border-radius: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  width: 365px;
 }
 
 .top-section {
@@ -74,6 +85,7 @@ watchEffect(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 8px;
 }
 
 .info-section {
@@ -81,6 +93,7 @@ watchEffect(async () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  /*margin-right: 8px;*/
 }
 
 </style>

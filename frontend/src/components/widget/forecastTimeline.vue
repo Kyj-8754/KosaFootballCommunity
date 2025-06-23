@@ -1,20 +1,30 @@
-<!-- ForecastTimeline.vue -->
 <template>
-  <div class="bg-white rounded border p-2 space-y-2">
-    <div
-      v-for="item in forecasts"
-      :key="item.fcst_time"
-      class="border-b pb-1 last:border-none"
-    >
-      <div class="text-xs text-gray-500">
-        {{ formatTime(item.fcst_time) }}
-      </div>
-      <div class="text-sm">
-        {{ getIcon(item) }} {{ item.TMP }}℃ / {{ item.POP }}% / {{ ptyText(item.PTY) }}
-      </div>
-    </div>
+  <div class="bg-white rounded-xl border p-3 shadow-sm overflow-x-auto">
+    <table class="table-auto text-center w-full min-w-[480px]">
+      <thead>
+        <tr class="text-xs text-gray-500 border-b">
+          <th class="px-2 py-1">시간</th>
+          <th class="px-2 py-1">날씨</th>
+          <th class="px-2 py-1">기온 / 강수확률</th>
+          <th class="px-2 py-1">강수형태</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="item in forecasts"
+          :key="item.fcst_time"
+          class="text-sm border-b last:border-none hover:bg-gray-50"
+        >
+          <td class="px-2 py-1">{{ formatTime(item.fcst_time) }}</td>
+          <td class="px-2 py-1 text-lg">{{ getIcon(item) }}</td>
+          <td class="px-2 py-1">{{ item.TMP }}℃ / {{ item.POP }}%</td>
+          <td class="px-2 py-1">{{ ptyText(item.PTY) }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
+
 
 <script setup>
 const props = defineProps({
