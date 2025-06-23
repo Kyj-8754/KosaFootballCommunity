@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "dompurify": "^3.2.6",

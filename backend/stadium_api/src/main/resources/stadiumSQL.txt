@@ -20,3 +20,94 @@ CREATE TABLE `stadium` (
   `state` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`SVCID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- kosa_db.stadium_comment definition
+
+CREATE TABLE `stadium_comment` (
+  `comment_no` int NOT NULL AUTO_INCREMENT,
+  `content` text NOT NULL,
+  `regist_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_date` datetime DEFAULT NULL,
+  `status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '1',
+  `svcid` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `userid` varchar(100) NOT NULL,
+  PRIMARY KEY (`comment_no`),
+  KEY `fk_stadium_comment_to_stadium` (`svcid`),
+  CONSTRAINT `fk_stadium_comment_to_stadium` FOREIGN KEY (`svcid`) REFERENCES `stadium` (`SVCID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- kosa_db.stadium_patch definition
+
+CREATE TABLE `stadium_patch` (
+  `SVCID` varchar(30) NOT NULL,
+  `SVCNM` varchar(50) DEFAULT NULL,
+  `PLACENM` varchar(100) DEFAULT NULL,
+  `X` varchar(100) DEFAULT NULL,
+  `Y` varchar(100) DEFAULT NULL,
+  `IMG_PATH` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `TELNO` varchar(100) DEFAULT NULL,
+  `V_MIN` varchar(100) DEFAULT NULL,
+  `V_MAX` varchar(100) DEFAULT NULL,
+  `NOTICE` text,
+  `SUBPLACENM` varchar(255) DEFAULT NULL,
+  `ORGNM` varchar(100) DEFAULT NULL,
+  `SVCENDTELNO` varchar(100) DEFAULT NULL,
+  `AREANM` varchar(100) DEFAULT NULL,
+  `ADRES` varchar(255) DEFAULT NULL,
+  `DTLCONT` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`SVCID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+DELIMITER $$
+
+CREATE PROCEDURE sync_stadium_state()
+BEGIN
+    UPDATE stadium SET STATE = NULL;
+
+    INSERT INTO stadium (
+        SVCID, SVCNM, PLACENM, X, Y, IMG_PATH, TELNO,
+        V_MIN, V_MAX, NOTICE, SUBPLACENM, ORGNM,
+        SVCENDTELNO, AREANM, ADRES, DTLCONT, STATE
+    )
+    SELECT 
+        sp.SVCID, sp.SVCNM, sp.PLACENM, sp.X, sp.Y, sp.IMG_PATH, sp.TELNO,
+        sp.V_MIN, sp.V_MAX, sp.NOTICE, sp.SUBPLACENM, sp.ORGNM,
+        sp.SVCENDTELNO, sp.AREANM, sp.ADRES, sp.DTLCONT, 'new'
+    FROM stadium_patch sp
+    LEFT JOIN stadium s ON sp.SVCID = s.SVCID
+    WHERE s.SVCID IS NULL;
+
+    UPDATE stadium s
+    LEFT JOIN stadium_patch sp ON s.SVCID = sp.SVCID
+    SET s.STATE = 'delete'
+    WHERE sp.SVCID IS NULL;
+
+    UPDATE stadium s
+    JOIN stadium_patch sp ON s.SVCID = sp.SVCID
+    SET s.STATE = 'update'
+    WHERE (
+        IFNULL(s.SVCNM, '')       != IFNULL(sp.SVCNM, '') OR
+        IFNULL(s.PLACENM, '')     != IFNULL(sp.PLACENM, '') OR
+        IFNULL(s.X, 0)            != IFNULL(sp.X, 0) OR
+        IFNULL(s.Y, 0)            != IFNULL(sp.Y, 0) OR
+        IFNULL(s.IMG_PATH, '')    != IFNULL(sp.IMG_PATH, '') OR
+        IFNULL(s.TELNO, '')       != IFNULL(sp.TELNO, '') OR
+        IFNULL(s.V_MIN, '')       != IFNULL(sp.V_MIN, '') OR
+        IFNULL(s.V_MAX, '')       != IFNULL(sp.V_MAX, '') OR
+        IFNULL(s.NOTICE, '')      != IFNULL(sp.NOTICE, '') OR
+        IFNULL(s.SUBPLACENM, '')  != IFNULL(sp.SUBPLACENM, '') OR
+        IFNULL(s.ORGNM, '')       != IFNULL(sp.ORGNM, '') OR
+        IFNULL(s.SVCENDTELNO, '') != IFNULL(sp.SVCENDTELNO, '') OR
+        IFNULL(s.AREANM, '')      != IFNULL(sp.AREANM, '') OR
+        IFNULL(s.ADRES, '')       != IFNULL(sp.ADRES, '') OR
+        IFNULL(s.DTLCONT, '')     != IFNULL(sp.DTLCONT, '')
+    );
+
+    TRUNCATE TABLE stadium_patch;
+END $$
+
+SHOW ERRORS;
+
+SHOW WARNINGS;
+
+DELIMITER ;
