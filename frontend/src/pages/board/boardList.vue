@@ -17,6 +17,7 @@ import BoardFilter from '@/components/board/boardFilter.vue'
 import BoardNoticeList from '@/components/board/boardNoticeList.vue'
 import BoardTable from '@/components/board/boardTable.vue'
 import Pagination from '@/components/pagination.vue'
+import WeatherWidget from '@/components/widget/WeatherWidget.vue'
 
 const router = useRouter()
 

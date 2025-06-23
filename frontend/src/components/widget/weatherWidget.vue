@@ -1,16 +1,19 @@
-<!-- WeatherWidget.vue -->
 <template>
-  <div class="weather-widget p-4 bg-gray-100 rounded-md w-[360px] mx-auto">
-    <div class="flex space-x-2 mb-2">
+  <div class="weather-widget">
+    <!-- 상단 영역 -->
+    <div class="top-section">
       <WeatherImageBox :sky="current.SKY" :pty="current.PTY" />
-      <div class="flex flex-col space-y-1 w-full">
+      <div class="info-section">
         <RegionSelector v-model="region" />
         <WeatherDetail :data="current" />
       </div>
     </div>
+
+    <!-- 하단 시간별 예보 -->
     <ForecastTimeline :forecasts="forecastList" />
   </div>
 </template>
+
 
 <script setup>
 import { ref, watchEffect } from 'vue'
@@ -50,9 +53,34 @@ watchEffect(async () => {
 })
 </script>
 
-
 <style scoped>
 .weather-widget {
   font-family: sans-serif;
+  width: 300px;
+  padding: 16px;
+  margin: 0 auto;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
+
+.top-section {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.top-section > *:first-child {
+  flex: 0 0 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 </style>
