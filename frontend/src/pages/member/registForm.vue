@@ -115,7 +115,7 @@ const checkDuplicateId = async () => {
   }
 
   try {
-    const response = await fetch('/api/user/isExistUserId', {
+    const response = await fetch('/api/user/na/isExistUserId', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json;charset=utf-8' },
       body: JSON.stringify({ userId: form.userId })
@@ -165,7 +165,7 @@ const onSubmit = async () => {
   delete payload.userPwd2
 
   try {
-    const response = await fetch('/api/user/register', {
+    const response = await fetch('/api/user/na/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json;charset=utf-8' },
       body: JSON.stringify(payload)
