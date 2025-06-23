@@ -17,10 +17,15 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": {
+      "/stadium_api": {
         target: "http://localhost:8080",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
+        rewrite: (path) => path.replace(/^\/stadium_api/, ""),
+      },
+      "/login_api": {
+        target: "http://localhost:8081",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/login_api/, ""),
       },
     },
   },

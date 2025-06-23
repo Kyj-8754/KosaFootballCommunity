@@ -104,7 +104,7 @@
 					<form id="regist" @submit.prevent="regist">
 						<div class="container mt-4" style="max-width: 1000px;">
 							<div class="border rounded p-3">
-								<strong class="mb-2 d-block">용진</strong>
+								<strong class="mb-2 d-block">{{ userId }}</strong>
 								<div class="d-flex align-items-center">
 									<textarea type="text" ref="textRef" @input="adjustHeight" class="form-control me-2" v-model="form.content" style="resize: none; overflow: hidden; min-height: 80px; max-height: 300px;" required></textarea>
 									<button  type="submit" class="btn btn-secondary flex-shrink-0">등록</button>
@@ -123,11 +123,14 @@
 </template>
 <script setup>
 import DOMPurify from 'dompurify'; // notice관련 문제 해결중
-  import {ref, onMounted, reactive, computed, watch} from 'vue'
+  import {ref, onMounted, reactive, computed, watch, inject} from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import axios from 'axios'
   import { Calendar  } from 'v-calendar'
   import 'v-calendar/style.css'
+
+  //아이디 관련
+  const userId = inject('userId')
 
   //탭관련
   const activeTab = ref('overview')
@@ -210,13 +213,13 @@ watch(selectedDate, (newVal) => {
 
 	// 게시물 불러오기
 	const fetchStadiumData = async () => {
-		const res = await axios.get('/api/stadium/detailView', { params: { SVCID } });
+		const res = await axios.get('/stadium_api/stadium/detailView', { params: { SVCID } });
 		stadiumDB.value = res.data.stadiumDB;
 	};	
 
 	//게시물의 댓글 불러오기
 	const fetchComments = async () => {
-		const res = await axios.get('/api/comment/list', { params: { SVCID } });
+		const res = await axios.get('/stadium_api/comment/list', { params: { SVCID } });
 		commentDB.value = res.data.commentDB;
 	};
 
@@ -230,7 +233,7 @@ watch(selectedDate, (newVal) => {
 		const confirmRegist = confirm("댓글 등록하시겠습니까?")
 		if (!confirmRegist) return
 
-		axios.post('/api/comment/regist', form)
+		axios.post('/stadium_api/comment/regist', form)
 		.then(res => {
 		if (!res.data.error) {
 			fetchComments();
@@ -250,7 +253,7 @@ watch(selectedDate, (newVal) => {
 		const confirmRegist = confirm("수정하시겠습니까?")
 		if (!confirmRegist) return
 
-		axios.post('/api/comment/update', editForm)
+		axios.post('/stadium_api/comment/update', editForm)
 			.then(res => {
 			if (!res.data.error) {
 				fetchComments();
@@ -266,7 +269,7 @@ watch(selectedDate, (newVal) => {
 		const confirmRegist = confirm("삭제하시겠습니까?")
 		if (!confirmRegist) return
 		
-		axios.post('/api/comment/delete', { comment_no })
+		axios.post('/stadium_api/comment/delete', { comment_no })
 			.then(res => {
 				if (!res.data.error) {
 				fetchComments();
