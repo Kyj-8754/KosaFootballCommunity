@@ -14,12 +14,4 @@ public class LocationService {
     public List<Location> getAllLocations() {
         return locationDAO.getAllLocations();
     }
-
-    public void insertLocation(Location location) {
-        locationDAO.insertLocation(location);
-    }
-
-    public void deleteLocation(String weather_location) {
-        locationDAO.deleteLocation(weather_location);
-    }
 }

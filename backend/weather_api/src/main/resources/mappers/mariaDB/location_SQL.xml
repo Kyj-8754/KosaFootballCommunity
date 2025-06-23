@@ -9,18 +9,4 @@
         SELECT * FROM location
     </select>
 
-    <!-- 지역 추가 -->
-    <insert id="insertLocation" parameterType="com.msa.kyj_prj.location.Location">
-        INSERT INTO location (
-            weather_location, weather_location_x, weather_location_y
-        ) VALUES (
-            #{weather_location}, #{weather_location_x}, #{weather_location_y}
-        )
-    </insert>
-
-    <!-- 지역 삭제 -->
-    <delete id="deleteLocation" parameterType="string">
-        DELETE FROM location WHERE weather_location = #{weather_location}
-    </delete>
-
 </mapper>

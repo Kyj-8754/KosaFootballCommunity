@@ -7,6 +7,4 @@ import java.util.List;
 @Mapper
 public interface LocationDAO {
     List<Location> getAllLocations();
-    void insertLocation(Location location);
-    void deleteLocation(String weather_location);
 }
