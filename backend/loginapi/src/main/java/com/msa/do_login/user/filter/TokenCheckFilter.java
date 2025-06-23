@@ -34,11 +34,12 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 		// 요청 URL을 얻는다
 		final String path = request.getRequestURI();
 
-		// API 아니면 본래 처리를 할 수 있게 진행한다
-		if (!path.startsWith("/api/")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+		if (path.startsWith("/user/na/") || 
+			    path.startsWith("/generateToken") || 
+			    path.startsWith("/refreshToken")) {
+			    filterChain.doFilter(request, response);
+			    return;
+			}
 
 		log.info("이부분에서 JWT 토큰이 존재하고 유효한지 확인한다");
 		log.info("jwtUtil = {}", jwtUtil);
@@ -92,16 +93,16 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 	private void setAuthentication(HttpServletRequest request) throws AccessTokenException {
 		Map<String, Object> payload = validateAccessToken(request);
 		// uid
-		String uid = (String) payload.get("uid");
-
-		log.info("uid: " + uid);
+		String userId = (String) payload.get("userId");
+		log.info("userId: " + userId);
 
 		// uid에 대한 시큐리티 로그인 객체를 얻는다
-		UserDetails userDetails = userVODetailsService.loadUserByUsername(uid);
-
+		UserDetails userDetails = userVODetailsService.loadUserByUsername(userId);
+		System.out.println(userDetails);
 		// userDetails 객체를 사용하여 인증객체로 생성한다
-		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
-				userDetails.getAuthorities());
+		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+				userDetails.getUsername(), null, userDetails.getAuthorities());
+		System.out.println(authentication);
 
 		// 스프링 시큐리티에 인증객체를 설정한다
 		SecurityContextHolder.getContext().setAuthentication(authentication);

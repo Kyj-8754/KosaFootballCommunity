@@ -35,13 +35,11 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 			log.info("로그인 성공시 처리 핸들러 .............");
 			log.info("인증된 로그인 정보 : {}", authentication);
 			log.info("인증된 로그인 아이디 : {}", authentication.getName());
-			com.msa.do_login.user.dto.UserDTO userDTO =(com.msa.do_login.user.dto.UserDTO) authentication.getPrincipal();
+			com.msa.do_login.user.dto.UserDTO userDTO = (com.msa.do_login.user.dto.UserDTO) authentication
+					.getPrincipal();
 			// JWT에 추가할 정보로 아이디가 있는 Map 객체를 생성한다
-			final Map<String, Object> claim = Map.of(
-					"userId", userDTO.getUserId(),
-					"userNo", userDTO.getUserNo(),
-					"userName", userDTO.getUserName(),
-					"authCode", userDTO.getAuthCode());
+			final Map<String, Object> claim = Map.of("userId", userDTO.getUserId(), "userNo", userDTO.getUserNo(),
+					"userName", userDTO.getUserName(), "auth", "ROLE_"+userDTO.getAuthCode());
 
 			Map<String, String> keyMap = Map.of("accessToken", jwtUtil.generateToken(claim, 1), // Access Token 유효기간 1일로
 																								// 생성
@@ -53,6 +51,10 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 		// 로그인 실패시 처리 핸들러 등록
 		this.setAuthenticationFailureHandler((request, response, exception) -> {
 			log.info("로그인 실패시 처리 핸들러 등록 .............");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+			response.setContentType("application/json; charset=UTF-8");
+			objectMapper.writeValue(response.getWriter(),
+					Map.of("res_code", "401", "res_msg", "아이디 또는 비밀번호가 잘못되었습니다."));
 		});
 	}
 

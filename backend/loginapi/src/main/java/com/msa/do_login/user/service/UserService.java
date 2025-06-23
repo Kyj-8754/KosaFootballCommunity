@@ -2,6 +2,7 @@ package com.msa.do_login.user.service;
 
 import java.security.SecureRandom;
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	private static final SecureRandom RANDOM = new SecureRandom();
-	
+
 	// 회원에게 부여할 랜덤 코드 검증 로직
 	private String generateUniqueUserCode(int length) {
 		String code;
@@ -61,6 +62,11 @@ public class UserService {
 	// 존재하는 아이디 여부 확인
 	public LocalAccount getLocalAccount(String userId) {
 		return userDAO.getLocalAccount(userId);
+	}
+
+	// 회원 정보 가져오기
+	public Optional<UserVO> getMemberByUserId(String userId) {
+		return userDAO.findByUserId(userId);
 	}
 
 }
