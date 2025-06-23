@@ -67,7 +67,7 @@
 	   	<!-- 댓글 섹션 -->
 				<div class="container mt-4" style="max-width: 1000px;">
 					<template v-for="comment in commentDB" :key="comment.comment_no">
-						<div class="card mb-2">
+							<div class="card mb-2">
 							<div class="card-body p-3">
 								<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
 									<div class="fw-bold">{{ comment.userid }}</div>
@@ -76,8 +76,8 @@
 									</div>
 								</div>
 								<div class="mb-2">{{ comment.content }}</div>
-									<button class="btn btn-sm btn-outline-secondary me-1" @click="editComment(comment)">수정</button>
-									<button class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.comment_no)">삭제</button>
+								<button class="btn btn-sm btn-outline-secondary me-1" @click="editComment(comment)">수정</button>
+								<button class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.comment_no)">삭제</button>
 							</div>
 						</div>
 						<!-- 댓글 수정 창 -->
@@ -160,7 +160,7 @@ watch(selectedDate, (newVal) => {
   const route = useRoute()	// 현재 경로
   const SVCID = route.query.SVCID // 현재 경로의 SCVID
   const stadiumDB = ref({ list: [] })	// 게시물 
- const commentDB = ref({ list: [] })	// 댓글 
+  const commentDB = ref({ list: [] })	// 댓글 
 
 	//댓글 입력 폼
 	const form = reactive({
@@ -204,7 +204,7 @@ watch(selectedDate, (newVal) => {
 	// 페이지 로딩 시 
 	onMounted(() => {
 		fetchStadiumData();	// 게시판
-		// fetchComments();	// 댓글
+		fetchComments();	// 댓글
 		if (textRef.value) adjustHeight();	// 댓글창 조절
 	});
 
@@ -214,20 +214,13 @@ watch(selectedDate, (newVal) => {
 		stadiumDB.value = res.data.stadiumDB;
 	};	
 
-	// 게시물의 댓글 불러오기
-	// const fetchComments = async () => {
-	// 	const res = await axios.get('/api/comment/list', { params: { bno } });
-	// 	commentDB.value = res.data.commentDB;
-	// };
+	//게시물의 댓글 불러오기
+	const fetchComments = async () => {
+		const res = await axios.get('/api/comment/list', { params: { SVCID } });
+		commentDB.value = res.data.commentDB;
+	};
 
-	// 게시물 수정하기 넘어감
-	// function goToUpdateForm() {
-	// 	router.push({
-	// 	name: 'Board_UpdateForm',
-	// 	query: { bno: boardDB.value.bno }
-	// 	})
-	// }
-
+	// 구장 목록으로 넘어가기
 	function goToList(){
 		router.push({name: 'Stadium_List'})
 	}
@@ -283,7 +276,7 @@ watch(selectedDate, (newVal) => {
 			})
 	}
 
-	// // 페이지 로딩시 로그인 되어있다면 해당 정보를 form에 입력
+	// 페이지 로딩시 로그인 되어있다면 해당 정보를 form에 입력
 	// onMounted(() => {
 	// 	if (memberStore.authenticated) {
 	// 		form.writer = memberStore.userid

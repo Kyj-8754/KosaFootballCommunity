@@ -1,7 +1,7 @@
 <template>
 	<div class="text-end bg-light py-2 px-4">
-        <router-link :to="{ name: 'Member_LoginForm' }">로그인</router-link> /
-        <router-link :to="{ name: 'Member_RegistForm' }"> 회원 가입</router-link> 
+        <!-- <router-link :to="{ name: 'Member_LoginForm' }">로그인</router-link> /
+        <router-link :to="{ name: 'Member_RegistForm' }"> 회원 가입</router-link>  -->
 	</div>
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
       <span class="navbar-brand ps-2">TodoList App</span>
