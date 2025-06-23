@@ -45,4 +45,5 @@
 		FROM local_account 
 		WHERE user_no = #{userNo}
 	</select>
+
 </mapper>

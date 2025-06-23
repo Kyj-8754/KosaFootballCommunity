@@ -18,7 +18,7 @@ public interface UserDAO {
 
 	boolean existsByUserCode(String userCode);
 
-	LocalAccount findAccountByUserNo(int userNo);
+	public LocalAccount findAccountByUserNo(int userNo);
 
-	Optional<UserVO> findByUserId(String username);
+	public Optional<UserVO> findByUserId(String username);
 }

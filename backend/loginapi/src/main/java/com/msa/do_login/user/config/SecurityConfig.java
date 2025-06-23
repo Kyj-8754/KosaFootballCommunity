@@ -92,10 +92,11 @@ public class SecurityConfig {
 		http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http.authorizeHttpRequests(authroize -> authroize
-				.requestMatchers("/user/register", "/user/isExistUserId", "/generateToken", "/refreshToken").permitAll()
-				.requestMatchers("/api/v1/user/**").hasAnyAuthority("ROLE_A3", "ROLE_A2", "ROLE_A1") // 여러개의 권한 중 하나라도 있으면 성공
-				.requestMatchers("/api/v1/manager/**").hasAnyAuthority("ROLE_A2", "ROLE_A1")
-				.requestMatchers("/api/v1/admin/**").hasAnyAuthority("ROLE_A1") // 반드시 해당 권한만 허가
+				.requestMatchers("/user/na/**", "/generateToken", "/refreshToken").permitAll()
+				.requestMatchers("/user/filter/myPage").authenticated()
+				.requestMatchers("/user/**").hasAnyAuthority("ROLE_A3", "ROLE_A2", "ROLE_A1") // 여러개의 권한 중 하나라도 있으면 성공
+				.requestMatchers("/manager/**").hasAnyAuthority("ROLE_A2", "ROLE_A1")
+				.requestMatchers("/admin/**").hasAnyAuthority("ROLE_A1") // 반드시 해당 권한만 허가
 				.anyRequest().permitAll() // /home url은 비회원이 사용할 수 있음
 		);
 

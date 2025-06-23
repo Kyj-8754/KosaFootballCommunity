@@ -33,14 +33,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 const userId = ref('')
 const userPwd = ref('')
+const token = inject('token')
 const router = useRouter()
-
 const login = async () => {
   try {
     const response = await axios.post('/api/generateToken', {
@@ -49,21 +49,21 @@ const login = async () => {
     },{
       withCredentials: true
     })
+		console.log('✅ 로그인 응답:', response.data)
+		const data = response.data
+    // 로컬 스토리지에 저장
+    localStorage.setItem('accessToken', data.accessToken)
+    localStorage.setItem('refreshToken', data.refreshToken)
 
-    const data = response.data
-    if (data.res_code === "400") {
-      alert(data.res_msg)
-      userId.value = ''
-      userPwd.value = ''
-    } else {
-      router.push('/')
-    }
+		token.value = data.accessToken
+    router.push('/')
   } catch (error) {
-    if (error.response && error.response.data?.res_msg) {
-      alert(error.response.data.res_msg)
-    } else {
+    if (error.response.status === 401) {
+    	alert("로그인 실패: " + error.response.data.res_msg);
+  	}else {
       alert("로그인 요청 중 오류가 발생했습니다.")
     }
+		userId.value = ''
     userPwd.value = ''
   }
 }
