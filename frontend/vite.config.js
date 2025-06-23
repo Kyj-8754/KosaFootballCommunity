@@ -32,6 +32,11 @@ export default defineConfig({
         target: "http://localhost:8080",
         changeOrigin: true,
       },
+            // 첨부파일 프록시
+      "/api/widget": {
+        target: "http://localhost:8081",
+        changeOrigin: true,
+      },
     },
     
   },

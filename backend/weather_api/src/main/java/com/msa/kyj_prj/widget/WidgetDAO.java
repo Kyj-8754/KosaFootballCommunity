@@ -3,7 +3,7 @@ package com.msa.kyj_prj.widget;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.data.repository.query.Param;
+import org.apache.ibatis.annotations.Param;
 
 import com.msa.kyj_prj.weather.Weather;
 
