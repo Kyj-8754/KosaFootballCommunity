@@ -36,3 +36,42 @@ const search = () => {
   })
 }
 </script>
+
+<style scoped>
+.board-filter {
+  display: flex;
+  justify-content: center;   /* 정중앙 정렬 */
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1rem auto;
+}
+
+.board-filter select,
+.board-filter input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.board-filter input {
+  width: 300px; /* ⬅ 기존보다 더 넓게 조정 */
+}
+
+.board-filter button {
+  padding: 6px 14px;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.board-filter button:hover {
+  background-color: #0056b3;
+}
+
+</style>

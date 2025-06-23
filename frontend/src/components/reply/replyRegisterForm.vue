@@ -50,6 +50,7 @@ const submitComment = () => {
   border-top: 1px solid #ccc;
   padding-top: 1rem;
 }
+
 textarea {
   width: 100%;
   resize: vertical;
@@ -58,12 +59,26 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
   margin-top: 0.5rem;
 }
+
 button {
   padding: 6px 12px;
+  background-color: #007bff;
+  border: 1px solid #007bff;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
+
+button:hover {
+  background-color: #0056b3;
+}
+
 </style>

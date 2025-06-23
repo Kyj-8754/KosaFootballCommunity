@@ -84,29 +84,37 @@ onMounted(fetchNotices)
 .notice-list {
   margin-bottom: 1rem;
 }
-.notice-list .board-table {
-  background-color: #ced4da;
+
+.board-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #f9f9f9;
 }
 
-/* 텍스트 링크 스타일 */
-.toggle-text {
-  text-align: right;
-  font-size: 0.9rem;
-  color: #007bff;
-  cursor: pointer;
-  margin-top: 0.25rem;
-  padding-right: 0.25rem;
+.board-table th,
+.board-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  font-size: 0.95rem;
 }
-.toggle-text:hover {
-  text-decoration: underline;
+
+.board-table thead {
+  background-color: #f1f1f1;
+  border-top: 2px solid #888;
+}
+
+.board-table tbody tr:hover {
+  background-color: #f5f5f5;
 }
 
 .toggle-row {
   cursor: pointer;
-  background-color: #ced4da;
+  background-color: #f1f1f1;
   font-size: 0.9rem;
   padding: 0.5rem 0;
-  text-align: center; /* 정중앙 정렬 */
+  text-align: center;
+  border-bottom: 1px solid #ccc;
 }
 .toggle-row:hover {
   text-decoration: underline;

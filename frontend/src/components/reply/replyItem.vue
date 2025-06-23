@@ -110,4 +110,26 @@ textarea {
   width: 100%;
   resize: vertical;
 }
+.actions button,
+.edit-actions button {
+  padding: 6px 12px;
+  background-color: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.actions button:hover,
+.edit-actions button:hover {
+  background-color: #e0e0e0;
+}
+
+.actions button:disabled,
+.edit-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 </style>
