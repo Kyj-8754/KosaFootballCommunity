@@ -7,6 +7,7 @@
 			<main class="main-area">
 				<h1><Strong>환영 합니다.</Strong></h1>
         <button @click="test">구장 리스트 불러오기</button>
+        <button @click="update">구장 업데이트</button>
 				<div>
             <p>현재 시간: {{ serverTime }}</p>
         </div>
@@ -57,6 +58,17 @@
   axios.post('/api/stadium/test')
     .then(res => {
       console.log('데이터 받음:', res.data)
+    })
+    .catch(err => {
+      console.error('API 호출 실패:', err)
+    })
+}
+
+
+function update() {
+  axios.post('/api/stadium/update')
+    .then(res => {
+      console.log('업데이트 시작')
     })
     .catch(err => {
       console.error('API 호출 실패:', err)
