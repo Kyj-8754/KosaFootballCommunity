@@ -27,7 +27,7 @@ const router = createRouter({
         { path: '/board/registForm', name: 'Board_RegistForm', component: Board_RegistForm },
         { path: '/board/updateForm', name: 'Board_UpdateForm', component: Board_UpdateForm },
         { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: Stadium_DetailView },
-        { path: '/stadium/lst',  name: 'Stadium_List', component: Stadium_List },
+        { path: '/stadium/list',  name: 'Stadium_List', component: Stadium_List },
         { path: '/:paths(.*)*', name: 'NotFound', component: NotFound },
     ]
 })

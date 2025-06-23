@@ -142,7 +142,7 @@
 
 	// url 변경시 반응
 	function makeUrl(pageNo) {
-		const base = `list?pageNo=${pageNo}&size=${pageResponse.size}`
+		const base = `list?pageNo=${pageNo}`
 		const params = []
 
   if (searchType.value && searchType.value !== '전체') {
