@@ -27,6 +27,7 @@
       :comments="comments"
       @edit="editComment"
       @delete="deleteComment"
+      @reply="addComment"
     />
   </div>
 </template>
