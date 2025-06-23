@@ -15,12 +15,7 @@
     <!-- 작성일 / 수정일 -->
     <div class="date-row">
       <span>작성일: {{ formatDate(post.board_created_at) }}</span>
-      <span>수정일: {{ formatDate(post.board_modified_at) }}</span>
-    </div>
-
-    <!-- 첨부파일 -->
-    <div v-if="post.attachment" class="attachment">
-      📎 <a :href="`/download/${post.attachment}`" download>{{ post.attachment }}</a>
+      <span v-if="post.board_modified_at">수정일: {{ formatDate(post.board_modified_at) }}</span>
     </div>
   </div>
 </template>

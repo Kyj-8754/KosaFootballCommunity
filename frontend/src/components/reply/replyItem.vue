@@ -21,16 +21,41 @@
       </template>
     </div>
 
-    <!-- 수정 / 삭제 -->
+    <!-- 수정 / 삭제 / 대댓글 -->
     <div class="actions" v-if="!isEditing">
       <button @click="isEditing = true">수정</button>
       <button @click="$emit('delete', comment.reply_id)">삭제</button>
+      <button v-if="!comment.parent_reply_id" @click="toggleReplying">{{ isReplying ? '취소' : '답글' }}</button>
     </div>
+
+    <!-- 대댓글 입력창 -->
+    <CommentForm
+      v-if="isReplying"
+      :boardId="comment.board_id"
+      :userNo="1"
+      :userName="'댓글 테스트 사용자'"
+      :parentReplyId="comment.reply_id"
+      @submit="handleReplySubmit"
+    />
+
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import CommentForm from '@/components/reply/replyRegisterForm.vue'
+
+const isReplying = ref(false)
+
+const toggleReplying = () => {
+  isReplying.value = !isReplying.value
+}
+
+const handleReplySubmit = (replyData) => {
+  emit('reply', replyData)
+  isReplying.value = false
+}
+
 
 const props = defineProps({
   comment: {
@@ -39,7 +64,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['edit', 'delete'])
+const emit = defineEmits(['edit', 'delete', 'reply'])
 
 const isEditing = ref(false)
 const editedContent = ref(props.comment.reply_content)
