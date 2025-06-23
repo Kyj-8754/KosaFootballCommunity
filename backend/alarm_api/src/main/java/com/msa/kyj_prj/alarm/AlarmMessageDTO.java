@@ -9,4 +9,7 @@ public class AlarmMessageDTO {
     private String receiverId; // 받는 사람 (알림 대상)
     private int clubId;        // 클럽 ID
     private String message;    // 메시지 내용
+    private String url; // 알림 클릭 시 이동할 경로
+
 }
+

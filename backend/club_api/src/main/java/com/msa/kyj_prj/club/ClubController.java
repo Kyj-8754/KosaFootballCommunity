@@ -20,25 +20,26 @@ public class ClubController {
     public Club getClubByTeamCode(@PathVariable String teamCode) {
         return clubService.findByTeamCode(teamCode);
     }
-// 포스트맨 테스트를 하기위해 임시로 주석처리
-//    // ✅ [클럽 등록] 로그인된 유저의 세션에서 leader_user_id 주입
-//    @PostMapping
-//    public int insertClub(@RequestBody Club club, HttpSession session) {
-//        String loginUserId = (String) session.getAttribute("loginUserid");
-//        if (loginUserId == null) {
-//            throw new RuntimeException("로그인이 필요합니다.");
-//        }
-//        club.setLeaderUserId(loginUserId); // 🔥 자동으로 팀장 설정
-//        return clubService.insert(club);
-//    }
-    
-    @PostMapping // 포스트맨 테스트용 코드 입니다
-    public int insertClub(@RequestBody Club club) {
-        // ⚠️ 임시 하드코딩 (Postman 테스트용)
-        club.setLeaderUserId("testuser001"); // DB에 존재하는 아이디를 직접 지정
+
+    // ✅ [클럽 등록] 로그인된 유저의 세션에서 leader_user_id 주입
+    @PostMapping
+    public int insertClub(@RequestBody Club club, HttpSession session) {
+        String loginUserId = (String) session.getAttribute("loginUserid");
+        if (loginUserId == null || loginUserId.isEmpty()) {
+            throw new RuntimeException("로그인이 필요합니다.");
+        }
+        club.setLeaderUserId(loginUserId); // 🔥 자동으로 팀장 설정
         return clubService.insert(club);
     }
 
+    /*
+    // 🔧 Postman 테스트용 하드코딩 버전 (임시로만 사용)
+    @PostMapping
+    public int insertClub(@RequestBody Club club) {
+        club.setLeaderUserId("testuser001"); // DB에 있는 유저 ID 하드코딩
+        return clubService.insert(club);
+    }
+    */
 
     // ✅ [중복 체크] 클럽 이름 중복 여부 확인
     @GetMapping("/check-name")
