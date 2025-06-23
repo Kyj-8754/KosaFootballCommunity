@@ -93,7 +93,7 @@ const fetchLiked = async () => {
   try {
     const response = await axios.post('/board_api/board/like/check', {
       board_id: post.value.board_id,
-      user_no: userNo
+      user_no: userNo?.value ?? null
     })
 
     liked.value = response.data.liked
@@ -111,14 +111,14 @@ const toggleLike = async () => {
       await axios.post('/board_api/board/like', null, {
         params: {
           board_id: post.value.board_id,
-          user_no: userNo
+          user_no: userNo?.value ?? null
         }
       })
     } else {
       await axios.delete('/board_api/board/like', {
         params: {
           board_id: post.value.board_id,
-          user_no: userNo
+          user_no: userNo?.value ?? null
         }
       })
     }
