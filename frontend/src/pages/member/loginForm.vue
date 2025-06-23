@@ -43,7 +43,7 @@ const token = inject('token')
 const router = useRouter()
 const login = async () => {
   try {
-    const response = await axios.post('/api/generateToken', {
+    const response = await axios.post('/login_api/generateToken', {
       userId: userId.value,
       userPwd: userPwd.value
     },{
