@@ -40,7 +40,7 @@ const current = ref({})
 const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
 
 watchEffect(async () => {
-  const res = await axios.get('/api/widget/forecast', {
+  const res = await axios.get('/widget_api/widget/forecast', {
     params: { region: region.value, date: today }
   })
 

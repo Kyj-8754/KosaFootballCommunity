@@ -29,7 +29,7 @@ const fileRef = ref(null)
 
 const fetchPost = async () => {
   try {
-    const response = await axios.get(`/api/board/${postId}`)
+    const response = await axios.get(`/board_api/board/${postId}`)
     const data = response.data
     form.value = {
       category: data.board_category,
@@ -37,7 +37,7 @@ const fetchPost = async () => {
       content: data.board_content
     }
 
-    const fileRes = await axios.get(`/api/file/list/${postId}`)
+    const fileRes = await axios.get(`/board_api/file/list/${postId}`)
     initialFiles.value = fileRes.data
   } catch (err) {
     console.error('게시글 불러오기 실패:', err)
@@ -52,7 +52,7 @@ const submitEdit = async () => {
   }
 
   try {
-    await axios.put(`/api/board/${postId}`, {
+    await axios.put(`/board_api/board/${postId}`, {
       board_category: form.value.category,
       board_title: form.value.title,
       board_content: form.value.content

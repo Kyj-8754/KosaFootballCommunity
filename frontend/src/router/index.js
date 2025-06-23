@@ -12,16 +12,14 @@ import Member_RegistForm from '@/pages/member/registForm.vue';
 import Member_DetailView from '@/pages/member/detailView.vue';
 import Member_UpdateForm from '@/pages/member/updateForm.vue';
 import Member_List from '@/pages/member/list.vue';
-import Stadium_DetailView from '@/pages/stadium/detailView.vue';
-import Stadium_List from '@/pages/stadium/list.vue';
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path:'/board/boardlist', component: boardList },
-        { path:'/board/boardregisterform', component: boardRegisterForm },
-        { path: '/board/boarddetail/:id', component: boardDetail },
-        { path: '/board/boardeditform/:id', component: boardEditForm },
+        { path:'/board/boardlist', name: 'boardList', component: boardList },
+        { path:'/board/boardregisterform', name: 'boardRegisterForm', component: boardRegisterForm },
+        { path: '/board/boarddetail/:id', name: 'boardDetail', component: boardDetail },
+        { path: '/board/boardeditform/:id', name: 'boardEditForm', component: boardEditForm },
         { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: Stadium_DetailView },
         { path: '/', name: 'Home', component: Home },
         { path: '/member/loginForm', name: 'Member_LoginForm', component: Member_LoginForm },

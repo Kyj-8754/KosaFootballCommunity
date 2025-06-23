@@ -29,7 +29,7 @@ const submitPost = async () => {
   }
 
   try {
-    const response = await axios.post('/api/board', {
+    const response = await axios.post('/board_api/board', {
       board_category: form.value.category,
       board_title: form.value.title,
       board_content: form.value.content,

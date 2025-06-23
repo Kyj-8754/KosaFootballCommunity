@@ -18,24 +18,17 @@ export default defineConfig({
   server: {
     proxy: {
       // 게시판 프록시
-      "/api/board": {
-        target: "http://localhost:8080",
+      "/board_api": {
+        target: "http://localhost:8082",
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/board_api/, ""),
       },
-      // 게시판 프록시
-      "/api/reply": {
-        target: "http://localhost:8080",
+      // 위젯 프록시
+      "/widget_api": {
+        target: "http://localhost:8083",
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/widget_api/, ""),
       },
-      // 첨부파일 프록시
-      "/api/file": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-      },
-      // 첨부파일 프록시
-      "/api/widget": {
-        target: "http://localhost:8081",
-        changeOrigin: true,
       "/stadium_api": {
         target: "http://localhost:8080",
         changeOrigin: true,
@@ -47,6 +40,5 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/login_api/, ""),
       },
     },
-    
   },
 })

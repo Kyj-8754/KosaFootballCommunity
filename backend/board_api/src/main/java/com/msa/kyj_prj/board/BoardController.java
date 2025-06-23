@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/board")
+@RequestMapping("/board")
 public class BoardController {
 	
 	@Autowired
