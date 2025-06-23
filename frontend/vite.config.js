@@ -32,10 +32,19 @@ export default defineConfig({
         target: "http://localhost:8080",
         changeOrigin: true,
       },
-            // 첨부파일 프록시
+      // 첨부파일 프록시
       "/api/widget": {
         target: "http://localhost:8081",
         changeOrigin: true,
+      "/stadium_api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/stadium_api/, ""),
+      },
+      "/login_api": {
+        target: "http://localhost:8081",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/login_api/, ""),
       },
     },
     
