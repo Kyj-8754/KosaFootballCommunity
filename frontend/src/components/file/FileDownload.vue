@@ -25,7 +25,7 @@ const files = ref([])
 
 const fetchFiles = async () => {
   try {
-    const res = await axios.get(`/api/file/list/${props.boardId}`)
+    const res = await axios.get(`/board_api/file/list/${props.boardId}`)
     files.value = res.data
   } catch (err) {
     console.error('파일 목록 조회 실패:', err)

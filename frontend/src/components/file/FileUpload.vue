@@ -61,7 +61,7 @@ const removeQueuedFile = (index) => {
 
 const removeUploadedFile = async (fileId, index) => {
   try {
-    await axios.delete(`/api/file/delete/${fileId}`)
+    await axios.delete(`/board_api/file/delete/${fileId}`)
     uploadedFiles.value.splice(index, 1)
   } catch (err) {
     alert('파일 삭제 실패')
@@ -80,7 +80,7 @@ const uploadAllFiles = async (boardId) => {
   const resultList = []
   for (const formData of formDataList) {
     try {
-      const res = await axios.post('/api/file/upload', formData)
+      const res = await axios.post('/board_api/file/upload', formData)
       if (res.data.file_id) {
         resultList.push(res.data.file_id)
       }

@@ -1,6 +1,6 @@
 <template>
 	<template v-if="isAuthenticated">
-    <router-link :to="{ name: 'Member_DetailView', query: { userno: userNo } }">내 정보</router-link> /
+    <router-link :to="{ name: 'Member_DetailView', query: { userno: userNo } }">{{userName}} 내 정보</router-link> /
     <a href="#" @click.prevent="logout">로그아웃</a>
   </template>
   <template v-else>
@@ -21,7 +21,7 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Board_List' }">
+            <router-link class="nav-link" :to="{ name: 'boardList' }">
                 BoardList
             </router-link>
           </li>
@@ -51,6 +51,7 @@ import logoImage from '@/assets/image/bannerlogo.jpg'
 const token = inject('token')
 const userNo = inject('userNo')
 const logout = inject('logout')
+const userName = inject('userName')
 
 // 로그인 여부 계산
 const isAuthenticated = computed(() => !!token?.value)

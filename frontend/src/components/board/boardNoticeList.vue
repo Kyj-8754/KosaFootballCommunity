@@ -62,7 +62,7 @@ function formatDate(dateStr) {
 
 const fetchNotices = async () => {
   try {
-    const response = await axios.get('/api/board/list', {
+    const response = await axios.get('/board_api/board/list', {
       params: {
         category: '공지사항'
       }

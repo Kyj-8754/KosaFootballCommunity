@@ -4,7 +4,6 @@
     <BoardNoticeList @view="handleViewPost" />
     <BoardTable :posts="filteredPosts" :showHeader="false" @view="handleViewPost" />
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="handlePageChange" />
-    <WeatherWidget />
   </div>
 </template>
 
@@ -17,7 +16,6 @@ import BoardFilter from '@/components/board/boardFilter.vue'
 import BoardNoticeList from '@/components/board/boardNoticeList.vue'
 import BoardTable from '@/components/board/boardTable.vue'
 import Pagination from '@/components/pagination.vue'
-import WeatherWidget from '@/components/widget/WeatherWidget.vue'
 
 const router = useRouter()
 
@@ -35,7 +33,7 @@ const searchFilters = ref({
 const fetchPosts = async () => {
   try {
     const params = { ...searchFilters.value }
-    const response = await axios.get('/api/board/list', { params })
+    const response = await axios.get('/board_api/board/list', { params })
     posts.value = response.data
   } catch (error) {
     console.error('게시글 목록 불러오기 실패:', error)

@@ -19,8 +19,8 @@
     <CommentForm
       v-if="post"
       :boardId="post.board_id"
-      :userNo="1"
-      :userName="'댓글 테스트 사용자'"
+      :userNo="userNo"
+      :userName="userName"
       @submit="addComment"
     />
     <CommentList
@@ -34,7 +34,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import axios from 'axios'
 
 import PostHeader from '@/components/board/boardHeader.vue'
@@ -53,11 +53,12 @@ const post = ref(null)
 const comments = ref([])
 const liked = ref(false)
 const likeCount = ref(0)
-const userNo = 1 // 테스트용 유저 번호
+const userNo = inject('userNo')
+const userName = inject('userName')
 
 const fetchPost = async () => {
   try {
-    const response = await axios.get(`/api/board/${postId}`)
+    const response = await axios.get(`/board_api/board/${postId}`)
     post.value = response.data
   } catch (error) {
     console.error('게시글 조회 실패:', error)
@@ -67,7 +68,7 @@ const fetchPost = async () => {
 
 const fetchComments = async () => {
   try {
-    const response = await axios.get(`/api/reply/list/${postId}`)
+    const response = await axios.get(`/board_api/reply/list/${postId}`)
     comments.value = response.data
   } catch (error) {
     console.error('댓글 목록 조회 실패:', error)
@@ -78,7 +79,7 @@ const fetchComments = async () => {
 const fetchLikeCount = async () => {
   if (!post.value) return
   try {
-    const response = await axios.get('/api/board/like/count', {
+    const response = await axios.get('/board_api/board/like/count', {
       params: { board_id: post.value.board_id }
     })
     likeCount.value = response.data.likeCount
@@ -90,7 +91,7 @@ const fetchLikeCount = async () => {
 const fetchLiked = async () => {
   if (!post.value) return
   try {
-    const response = await axios.post('/api/board/like/check', {
+    const response = await axios.post('/board_api/board/like/check', {
       board_id: post.value.board_id,
       user_no: userNo
     })
@@ -107,14 +108,14 @@ const toggleLike = async () => {
 
   try {
     if (!liked.value) {
-      await axios.post('/api/board/like', null, {
+      await axios.post('/board_api/board/like', null, {
         params: {
           board_id: post.value.board_id,
           user_no: userNo
         }
       })
     } else {
-      await axios.delete('/api/board/like', {
+      await axios.delete('/board_api/board/like', {
         params: {
           board_id: post.value.board_id,
           user_no: userNo
@@ -144,7 +145,7 @@ const handleDelete = async () => {
   if (!confirmed) return
 
   try {
-    await axios.delete(`/api/board/${post.value.board_id}`)
+    await axios.delete(`/board_api/board/${post.value.board_id}`)
     alert('게시글이 삭제되었습니다.')
     router.push('/board/list')
   } catch (error) {
@@ -155,7 +156,7 @@ const handleDelete = async () => {
 
 const addComment = async (replyData) => {
   try {
-    await axios.post('/api/reply', replyData)
+    await axios.post('/board_api/reply', replyData)
     await fetchComments()
   } catch (error) {
     console.error('댓글 등록 실패:', error)
@@ -165,7 +166,7 @@ const addComment = async (replyData) => {
 
 const editComment = async (replyId, newContent) => {
   try {
-    await axios.put(`/api/reply/${replyId}`, {
+    await axios.put(`/board_api/reply/${replyId}`, {
       reply_content: newContent
     })
     await fetchComments()
@@ -180,7 +181,7 @@ const deleteComment = async (replyId) => {
   if (!confirmed) return
 
   try {
-    await axios.delete(`/api/reply/${replyId}`)
+    await axios.delete(`/board_api/reply/${replyId}`)
     await fetchComments()
   } catch (error) {
     console.error('댓글 삭제 실패:', error)
@@ -193,7 +194,7 @@ onMounted(async () => {
     const from = route.query.from
 
     if (from !== 'edit') {
-      await axios.post(`/api/board/${postId}/increaseViewcount`)
+      await axios.post(`/board_api/board/${postId}/increaseViewcount`)
     }
 
     if (from) {
