@@ -7,12 +7,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import axios from 'axios'
 
 import BoardHeaderForm from '@/components/board/boardRegisterHeader.vue'
 import QuillEditor from '@/components/board/boardEditer.vue'
 import FileUpload from '@/components/file/FileUpload.vue' // 👈 추가
+
+const userNo = inject('userNo')
+const userName = inject('userName')
 
 const form = ref({
   category: '',
@@ -33,10 +36,10 @@ const submitPost = async () => {
       board_category: form.value.category,
       board_title: form.value.title,
       board_content: form.value.content,
-      user_no: 1, // 🔸 테스트용
-      user_name: '테스트용 이름'
+      user_no: userNo?.value ?? null,
+      user_name: userName?.value ?? null
     })
-
+    
     const boardId = response.data.board_id
     console.log('등록 결과:', response.data)
 

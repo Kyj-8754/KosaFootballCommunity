@@ -32,8 +32,8 @@
     <CommentForm
       v-if="isReplying"
       :boardId="comment.board_id"
-      :userNo="1"
-      :userName="'댓글 테스트 사용자'"
+      :userNo="userNo"
+      :userName="userName"
       :parentReplyId="comment.reply_id"
       @submit="handleReplySubmit"
     />
@@ -42,8 +42,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import CommentForm from '@/components/reply/replyRegisterForm.vue'
+
+const userNo = inject('userNo')
+const userName = inject('userName')
 
 const isReplying = ref(false)
 
