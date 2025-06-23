@@ -12,6 +12,8 @@ public interface StadiumDAO {
 	public List<String> findAllSvcIds();
 	public int update(Stadium stadium);
 	public int regist(Map<String, Object> stadium);
+	public int registPatch(Map<String, Object> stadium);
+	public void callSyncStadiumProcedure();
 	public List<Stadium> list(Map<String, Object> map);
 	public int getTotalCount(Map<String, Object> map);
 //	public int increseView(int bno);

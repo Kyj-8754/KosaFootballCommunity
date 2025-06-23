@@ -60,7 +60,7 @@ public class StadiumController {
 
 	// 구장 업데이트
 	@PostMapping("update")
-	public void syncAll() throws IOException, InterruptedException{
+	public void syncAll() throws Exception{
 		stadiumService.syncAll();
 	}
 	

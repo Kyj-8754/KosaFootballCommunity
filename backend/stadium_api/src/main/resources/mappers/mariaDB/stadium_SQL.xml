@@ -107,11 +107,53 @@
 		)
 	</insert>
 	
+	<insert id="registPatch">
+		insert into STADIUM_PATCH (
+			SVCID, 
+			SVCNM, 
+			PLACENM,
+			X,
+			Y,
+			IMG_PATH,
+			TELNO,
+			v_min,
+			v_max,
+			notice,
+			SUBPLACENM,
+			ORGNM,
+			SVCENDTELNO,
+			AREANM,
+			ADRES,
+			DTLCONT 
+		) values (
+			#{SVCID}, 
+			#{SVCNM}, 
+			#{PLACENM},
+			#{X},
+			#{Y},
+			#{IMG_PATH},
+			#{TELNO},
+			#{V_MIN},
+			#{V_MAX},
+			#{NOTICE},
+			#{SUBPLACENM},
+			#{ORGNM},
+			#{SVCENDTELNO},
+			#{AREANM},
+			#{ADRES},
+			#{DTLCONT}
+		)
+	</insert>
+	
 	
 	
 	<insert id="insertApiDetailLog" parameterType="map">
 	  INSERT INTO stadium_api_detail (svcid, code, message)
 	  VALUES (#{svcid}, #{code}, #{message})
 	</insert>
+	
+	<select id="callSyncStadiumProcedure" statementType="CALLABLE">
+        CALL sync_stadium_state()
+    </select>
 	
 </mapper>
