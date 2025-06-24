@@ -36,7 +36,8 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 
 		if (path.startsWith("/user/na/") || 
 			    path.startsWith("/generateToken") || 
-			    path.startsWith("/refreshToken")) {
+			    path.startsWith("/refreshToken") || 
+			    path.startsWith("/kakao/callback")) {
 			    filterChain.doFilter(request, response);
 			    return;
 			}

@@ -44,8 +44,10 @@ implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	// https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client
 	implementation 'org.mariadb.jdbc:mariadb-java-client:3.1.4'
 	
-	// JWT 관련 설
+	// JWT 관련 설정 
 	implementation 'io.jsonwebtoken:jjwt:0.12.3'
+	// webclient 설정 
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 
