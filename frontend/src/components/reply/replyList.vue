@@ -40,15 +40,32 @@ import CommentItem from '@/components/reply/replyItem.vue'
 import Pagination from '@/components/pagination.vue'
 
 const props = defineProps({
-  comments: {
-    type: Array,
-    required: true
+  comments: Array,
+  userNo: Number,
+  initialPage: {
+    type: Number,
+    default: 1
   }
 })
 
+const currentPage = ref(1)
+let initialized = false
+
+watch(
+  () => props.comments,
+  (newComments) => {
+    if (!initialized && newComments.length > 0) {
+      const parentCount = newComments.filter(c => c.parent_reply_id === null).length
+      const lastPage = Math.max(1, Math.ceil(parentCount / perPage))
+      currentPage.value = lastPage
+      initialized = true
+    }
+  },
+  { immediate: true, deep: true }
+)
+
 const emit = defineEmits(['like', 'edit', 'delete', 'reply'])
 
-const currentPage = ref(1)
 const perPage = 5
 
 const handleReply = (replyData) => emit('reply', replyData)
