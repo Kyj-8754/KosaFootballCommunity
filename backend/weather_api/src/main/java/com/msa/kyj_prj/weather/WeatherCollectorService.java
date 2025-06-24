@@ -23,19 +23,42 @@ public class WeatherCollectorService {
         weatherDAO.truncateWeather();
 
         for (Location loc : locations) {
-            // API 호출
-            List<Weather> forecasts = WeatherApiUtil.fetchForecast(
-                loc.getWeather_location_x(),
-                loc.getWeather_location_y(),
-                loc.getWeather_location()
-            );
+            boolean success = false;
 
-            // DB 저장
-            for (Weather weather : forecasts) {
-                weatherDAO.insertWeather(weather);
+            while (!success) {
+                try {
+                    System.out.println("▶▶ [" + loc.getWeather_location() + "] 호출 시작");
+
+                    List<Weather> forecasts = WeatherApiUtil.fetchForecast(
+                        loc.getWeather_location_x(),
+                        loc.getWeather_location_y(),
+                        loc.getWeather_location()
+                    );
+
+                    for (Weather weather : forecasts) {
+                        weatherDAO.insertWeather(weather);
+                    }
+
+                    success = true; // 성공 시 루프 종료
+                    System.out.println("✅ [" + loc.getWeather_location() + "] 수집 성공");
+
+                } catch (Exception e) {
+                    System.err.println("❌ [" + loc.getWeather_location() + "] 수집 실패: " + e.getMessage());
+
+                    // 실패 후 10초 대기
+                    try {
+                        Thread.sleep(10_000);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        return; // 스레드 인터럽트 시 전체 종료
+                    }
+                }
             }
         }
+
+        System.out.println("✅ 모든 지역 수집 완료");
     }
+
 
     // 매일 0시와 12시에 자동 실행
     @Scheduled(cron = "0 0 0,12 * * *")
