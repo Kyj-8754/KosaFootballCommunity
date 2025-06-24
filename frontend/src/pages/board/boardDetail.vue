@@ -15,7 +15,13 @@
       @toggle-like="toggleLike"
     />
     <FileDownload v-if="post" :board-id="post.board_id" />
-    <PostActionButtons v-if="post" @edit="handleEdit" @delete="handleDelete" />
+    <PostActionButtons
+      v-if="post"
+      :userNo="userNo"
+      :postUserNo="post.user_no"
+      @edit="handleEdit"
+      @delete="handleDelete"
+    />
     <CommentForm
       v-if="post"
       :boardId="post.board_id"

@@ -1,5 +1,5 @@
 <template>
-  <div class="post-action-buttons">
+  <div class="post-action-buttons" v-if="userNo === postUserNo">
     <button @click="emit('edit')">수정</button>
     <button @click="emit('delete')">삭제</button>
   </div>
@@ -7,6 +7,11 @@
 
 <script setup>
 const emit = defineEmits(['edit', 'delete'])
+
+const props = defineProps({
+  userNo: Number,
+  postUserNo: Number
+})
 </script>
 
 <style scoped>

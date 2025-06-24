@@ -74,8 +74,13 @@ const fetchNotices = async () => {
 }
 
 const visibleNotices = computed(() => {
-  return expanded.value ? notices.value : notices.value.slice(0, 3)
+  if (expanded.value) {
+    return notices.value.slice(0, 10); // 최대 10개까지만
+  } else {
+    return notices.value.slice(0, 3); // 기본 3개
+  }
 })
+
 
 onMounted(fetchNotices)
 </script>
