@@ -1,6 +1,7 @@
 <template>
   <div class="board-list-container">
     <CategoryButtons @select="handleCategorySelect" />
+    <SortButtons :sort="sortOptions" @update:sort="updateSort" />
     <BoardFilter @search="handleSearch" />
     <BoardNoticeList @view="handleViewPost" />
     <BoardTable :posts="filteredPosts" :showHeader="false" @view="handleViewPost" />
@@ -14,6 +15,7 @@ import BoardFilter from '@/components/board/boardFilter.vue'
 import BoardNoticeList from '@/components/board/boardNoticeList.vue'
 import BoardTable from '@/components/board/boardTable.vue'
 import Pagination from '@/components/pagination.vue'
+import SortButtons from '@/components/board/boardSortButton.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -30,6 +32,17 @@ const searchFilters = ref({
   keyword: ''
 })
 
+const sortOptions = ref({
+  column: '',
+  direction: ''
+})
+
+const updateSort = (newSort) => {
+  sortOptions.value = newSort
+  currentPage.value = 1
+  fetchPosts()
+}
+
 // ✅ 카테고리 버튼 클릭 시
 const handleCategorySelect = (category) => {
   searchFilters.value.category = category
@@ -40,7 +53,11 @@ const handleCategorySelect = (category) => {
 const fetchPosts = async () => {
   try {
     const response = await axios.get('/board_api/board/list', {
-      params: { ...searchFilters.value }
+      params: {
+        ...searchFilters.value,
+        sortColumn: sortOptions.value.column,
+        sortDirection: sortOptions.value.direction
+      }
     })
     posts.value = response.data
   } catch (error) {

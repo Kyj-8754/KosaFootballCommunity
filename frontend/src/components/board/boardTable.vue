@@ -1,7 +1,7 @@
 <template>
   <table class="board-table">
     <colgroup>
-      <col style="width: 8%" />
+      <!--<col style="width: 8%" />-->
       <col style="width: 12%" />
       <col style="width: 12%" />
       <col style="width: 28%" />
@@ -11,7 +11,7 @@
     </colgroup>
     <thead v-if="showHeader">
       <tr>
-        <th>글 번호</th>
+        <!--<th>글 번호</th>-->
         <th>카테고리</th>
         <th>작성자</th>
         <th>제목</th>
@@ -22,7 +22,7 @@
     </thead>
     <tbody>
       <tr v-for="post in posts" :key="post.board_id">
-        <td>{{ post.board_id }}</td>
+        <!--<td>{{ post.board_id }}</td>-->
         <td>{{ post.board_category }}</td>
         <td>{{ post.user_name }}</td>
         <td @click="viewPost(post.board_id)" style="cursor: pointer; color: blue;">
