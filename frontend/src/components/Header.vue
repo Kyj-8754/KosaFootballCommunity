@@ -1,8 +1,13 @@
 <template>
-	<div class="text-end bg-light py-2 px-4">
-        <router-link :to="{ name: 'Member_LoginForm' }">로그인</router-link> /
-        <router-link :to="{ name: 'Member_RegistForm' }"> 회원 가입</router-link> 
-	</div>
+	<template v-if="isAuthenticated">
+    <router-link :to="{ name: 'Member_DetailView', query: { userno: userNo } }">{{userName}} 내 정보</router-link> /
+    <a href="#" @click.prevent="logout">로그아웃</a>
+  </template>
+  <template v-else>
+    <router-link :to="{ name: 'Member_LoginForm' }">로그인</router-link> /
+    <router-link :to="{ name: 'Member_RegistForm' }">회원 가입</router-link>
+  </template>
+
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
       <span class="navbar-brand ps-2">TodoList App</span>
       <button class="navbar-toggler" type="button" @click="isNavShow = !isNavShow">
@@ -16,8 +21,13 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" :to="{ name: 'Board_List' }">
+            <router-link class="nav-link" :to="{ name: 'boardList' }">
                 BoardList
+            </router-link>
+          </li>
+           <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'Stadium_List' }">
+                구장
             </router-link>
           </li>
         </ul>
@@ -27,11 +37,24 @@
 	<header class="header border-bottom"
 		style="height: 250px; overflow: hidden;">
     <router-link to="/">
-     <img :src="logoImage" alt="사이트 배너" style="width: 100%; height: auto; object-fit: cover;"> 
+      <img :src="logoImage" alt="사이트 배너" style="width: 100%; height: auto; object-fit: cover;">
     </router-link>
-	</header>
+    <img :src="logoImage" alt="사이트 배너" style="width: 100%; height: auto; object-fit: cover; cursor: not-allowed; opacity: 0.6;">
+  </header>
 </template>
 
 <script setup>
-import logoImage from '@/assets/image/bannerlogo.jpg';
+import { inject, computed, ref } from 'vue'
+import logoImage from '@/assets/image/bannerlogo.jpg'
+
+// token과 logout 함수 inject
+const token = inject('token')
+const userNo = inject('userNo')
+const logout = inject('logout')
+const userName = inject('userName')
+
+// 로그인 여부 계산
+const isAuthenticated = computed(() => !!token?.value)
+
+const isNavShow = ref(false)
 </script>

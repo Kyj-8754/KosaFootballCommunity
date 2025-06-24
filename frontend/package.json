@@ -9,14 +9,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@stomp/stompjs": "^7.1.1",
+=======
+>>>>>>> 9921eb7084e36395e6d217e7fa1eb2a3825fb1a4
     "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "dompurify": "^3.2.6",
     "pinia": "^3.0.2",
     "pinia-plugin-persistedstate": "^4.3.0",
+<<<<<<< HEAD
     "sockjs-client": "^1.6.1",
+=======
+    "v-calendar": "^3.1.2",
+>>>>>>> 9921eb7084e36395e6d217e7fa1eb2a3825fb1a4
     "vue": "^3.5.13",
     "vue-csspin": "^0.1.12",
     "vue-router": "^4.5.1",
