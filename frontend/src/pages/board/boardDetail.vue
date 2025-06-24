@@ -31,6 +31,7 @@
     />
     <CommentList
       :comments="comments"
+      :userNo="userNo"
       @edit="editComment"
       @delete="deleteComment"
       @reply="addComment"
