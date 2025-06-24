@@ -22,12 +22,15 @@
     </div>
 
     <!-- 수정 / 삭제 / 대댓글 -->
+<!-- 수정 / 삭제 / 대댓글 -->
     <div class="actions" v-if="!isEditing">
-      <button @click="isEditing = true">수정</button>
-      <button @click="$emit('delete', comment.reply_id)">삭제</button>
+      <template v-if="userNo === comment.user_no">
+        <button @click="isEditing = true">수정</button>
+        <button @click="$emit('delete', comment.reply_id)">삭제</button>
+      </template>
       <button v-if="!comment.parent_reply_id" @click="toggleReplying">{{ isReplying ? '취소' : '답글' }}</button>
     </div>
-
+    
     <!-- 대댓글 입력창 -->
     <CommentForm
       v-if="isReplying"
