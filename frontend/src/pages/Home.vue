@@ -8,6 +8,7 @@
 				<h1><Strong>환영 합니다.</Strong></h1>
         <button @click="test">구장 리스트 불러오기</button>
         <button @click="update">구장 업데이트</button>
+        <weatherWidget/>
 				<div>
             <p>현재 시간: {{ serverTime }}</p>
         </div>
@@ -43,6 +44,7 @@
 
   import {ref, onMounted} from 'vue'
   import axios from 'axios'
+  import weatherWidget from '@/components/widget/weatherWidget.vue'
 
   const serverTime = ref('')
   const pageResponse = ref({ list: [] })
