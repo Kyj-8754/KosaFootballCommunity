@@ -19,6 +19,7 @@
       v-if="post"
       :userNo="userNo"
       :postUserNo="post.user_no"
+      :authCode="authCode"
       @edit="handleEdit"
       @delete="handleDelete"
     />
