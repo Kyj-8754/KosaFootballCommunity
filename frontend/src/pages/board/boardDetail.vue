@@ -62,6 +62,7 @@ const liked = ref(false)
 const likeCount = ref(0)
 const userNo = inject('userNo')
 const userName = inject('userName')
+const authCode = inject('authCode')
 
 const fetchPost = async () => {
   try {

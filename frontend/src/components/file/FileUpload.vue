@@ -100,15 +100,52 @@ defineExpose({ uploadAllFiles })
 
 <style scoped>
 .file-upload {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #fefefe;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
+
+.file-upload input[type="file"] {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.file-upload h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+}
+
 ul {
-  padding-left: 1rem;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
 }
+
 li {
-  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
 }
+
 button {
-  margin-left: 0.5rem;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  border: 1px solid #dc3545;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #a71d2a;
 }
 </style>
+

@@ -49,15 +49,46 @@ watch(() => props.boardId, fetchFiles)
 
 <style scoped>
 .file-download {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
+
+.file-download h5 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 ul {
-  padding-left: 1rem;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
 }
+
 li {
-  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
 }
+
 button {
-  margin-left: 0.5rem;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
 }
 </style>
