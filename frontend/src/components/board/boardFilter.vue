@@ -1,13 +1,6 @@
 <template>
   <div class="board-filter">
-    <select v-model="category">
-      <option value="">카테고리</option>
-      <option>공지사항</option>
-      <option>자유게시판</option>
-    </select>
-
     <select v-model="criteria">
-      <option value="">검색 기준</option>
       <option value="tc">제목+내용</option>
       <option value="title">제목</option>
       <option value="content">내용</option>
@@ -22,15 +15,13 @@
 <script setup>
 import { ref } from 'vue'
 
-const category = ref('')
-const criteria = ref('')
+const criteria = ref('tc')
 const keyword = ref('')
 
 const emit = defineEmits(['search'])
 
 const search = () => {
   emit('search', {
-    category: category.value,
     criteria: criteria.value,
     keyword: keyword.value,
   })
@@ -40,7 +31,7 @@ const search = () => {
 <style scoped>
 .board-filter {
   display: flex;
-  justify-content: center;   /* 정중앙 정렬 */
+  justify-content: center;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
@@ -56,7 +47,7 @@ const search = () => {
 }
 
 .board-filter input {
-  width: 300px; /* ⬅ 기존보다 더 넓게 조정 */
+  width: 300px;
 }
 
 .board-filter button {
@@ -73,5 +64,4 @@ const search = () => {
 .board-filter button:hover {
   background-color: #0056b3;
 }
-
 </style>
