@@ -144,7 +144,7 @@
 	}
 	// 값 변경시 다시 list 가져오도록 요청
 	function fetchData(pageNo, size, searchValue) {
-		axios.get(`/api/member/list?pageNo=${pageNo}&size=${size}&searchValue=${encodeURIComponent(searchValue || '')}`)
+		axios.get(`/login_api/member/list?pageNo=${pageNo}&size=${size}&searchValue=${encodeURIComponent(searchValue || '')}`)
 			.then(res => {
 			Object.assign(pageResponse, res.data.pageResponse)
 			})
