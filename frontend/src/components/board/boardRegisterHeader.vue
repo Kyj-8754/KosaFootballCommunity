@@ -5,7 +5,7 @@
     <option
       v-for="cat in categories"
       :key="cat"
-      :disabled="cat === '공지사항' && authCode !== 'A1'"
+      :disabled="cat === '공지사항' && authCode !== 'ROLE_A1'"
     >
       {{ cat }}
     </option>

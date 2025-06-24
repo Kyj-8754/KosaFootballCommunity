@@ -8,11 +8,12 @@
 
 <script setup>
 import { ref, inject } from 'vue'
+import { useRouter } from 'vue-router' // ✅ 추가
 import axios from 'axios'
 
 import BoardHeaderForm from '@/components/board/boardRegisterHeader.vue'
 import QuillEditor from '@/components/board/boardEditer.vue'
-import FileUpload from '@/components/file/FileUpload.vue' // 👈 추가
+import FileUpload from '@/components/file/FileUpload.vue'
 
 const userNo = inject('userNo')
 const userName = inject('userName')
@@ -23,7 +24,8 @@ const form = ref({
   content: ''
 })
 
-const fileUploader = ref(null) // 👈 FileUpload 참조
+const fileUploader = ref(null)
+const router = useRouter() // ✅ Router 인스턴스 생성
 
 const submitPost = async () => {
   if (!form.value.category || !form.value.title || !form.value.content.trim()) {
@@ -39,18 +41,16 @@ const submitPost = async () => {
       user_no: userNo?.value ?? null,
       user_name: userName?.value ?? null
     })
-    
+
     const boardId = response.data.board_id
     console.log('등록 결과:', response.data)
 
-    // 🔸 게시글 등록 성공 후 파일 업로드 실행
     if (fileUploader.value) {
       await fileUploader.value.uploadAllFiles(boardId)
     }
 
     alert('게시글이 등록되었습니다.')
-    // 이동 시:
-    // router.push(`/board/boarddetail/${boardId}`)
+    router.push('/board/boardlist') // ✅ 리스트 페이지로 이동
   } catch (error) {
     console.error('게시글 등록 실패:', error)
     alert('게시글 등록에 실패했습니다.')
