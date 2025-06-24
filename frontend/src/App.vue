@@ -9,14 +9,16 @@
         <router-view />
       </div>
     </div>
-     <Footer />
+    <Footer />
   </div>
+  <scrollUp />
 </template>
 
 <script setup>
 import Header from '@/components/Header.vue'
-import NavArea from './components/NavArea.vue'
-import Footer from './components/Footer.vue'
+import NavArea from '@/components/NavArea.vue'
+import Footer from '@/components/Footer.vue'
+import scrollUp from '@/components/scrollUp.vue'
 
 import { provide, ref, computed } from 'vue'
 
