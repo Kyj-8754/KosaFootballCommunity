@@ -1,9 +1,15 @@
 <template>
   <div class="board-header-form">
-    <select v-model="form.category">
-      <option disabled value="">카테고리</option>
-      <option v-for="cat in categories" :key="cat">{{ cat }}</option>
-    </select>
+  <select v-model="form.category">
+    <option disabled value="">카테고리</option>
+    <option
+      v-for="cat in categories"
+      :key="cat"
+      :disabled="cat === '공지사항' && authCode !== 'A1'"
+    >
+      {{ cat }}
+    </option>
+  </select>
 
     <input type="text" v-model="form.title" placeholder="제목을 입력해주세요" />
 
@@ -13,6 +19,10 @@
 
 
 <script setup>
+import { inject } from 'vue'
+
+const authCode = inject('authCode')
+
 const categories = [
   '공지사항',
   '자유게시판',
