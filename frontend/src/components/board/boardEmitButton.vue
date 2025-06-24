@@ -1,6 +1,9 @@
 <template>
-  <div class="post-action-buttons" v-if="userNo === postUserNo">
-    <button @click="emit('edit')">수정</button>
+  <div
+    class="post-action-buttons"
+    v-if="canEditOrDelete"
+  >
+    <button v-if="canEdit" @click="emit('edit')">수정</button>
     <button @click="emit('delete')">삭제</button>
   </div>
 </template>
@@ -10,9 +13,15 @@ const emit = defineEmits(['edit', 'delete'])
 
 const props = defineProps({
   userNo: Number,
-  postUserNo: Number
+  postUserNo: Number,
+  authCode: String
 })
+
+const canEdit = props.userNo === props.postUserNo
+const canDelete = props.userNo === props.postUserNo || props.authCode === 'ROLE_A1'
+const canEditOrDelete = canEdit || canDelete
 </script>
+
 
 <style scoped>
 .post-action-buttons {

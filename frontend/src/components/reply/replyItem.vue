@@ -21,16 +21,29 @@
       </template>
     </div>
 
+
     <!-- 수정 / 삭제 / 대댓글 -->
-<!-- 수정 / 삭제 / 대댓글 -->
     <div class="actions" v-if="!isEditing">
-      <template v-if="userNo === comment.user_no">
-        <button @click="isEditing = true">수정</button>
-        <button @click="$emit('delete', comment.reply_id)">삭제</button>
-      </template>
-      <button v-if="!comment.parent_reply_id" @click="toggleReplying">{{ isReplying ? '취소' : '답글' }}</button>
+      <!-- 수정: 작성자만 -->
+      <button v-if="userNo === comment.user_no" @click="isEditing = true">수정</button>
+
+      <!-- 삭제: 작성자 또는 관리자 -->
+      <button
+        v-if="userNo === comment.user_no || authCode === 'ROLE_A1'"
+        @click="$emit('delete', comment.reply_id)"
+      >
+        삭제
+      </button>
+
+      <!-- 답글: 부모 댓글일 때만 -->
+      <button
+        v-if="!comment.parent_reply_id"
+        @click="toggleReplying"
+      >
+        {{ isReplying ? '취소' : '답글' }}
+      </button>
     </div>
-    
+        
     <!-- 대댓글 입력창 -->
     <CommentForm
       v-if="isReplying"
@@ -50,6 +63,7 @@ import CommentForm from '@/components/reply/replyRegisterForm.vue'
 
 const userNo = inject('userNo')
 const userName = inject('userName')
+const authCode = inject('authCode')
 
 const isReplying = ref(false)
 
