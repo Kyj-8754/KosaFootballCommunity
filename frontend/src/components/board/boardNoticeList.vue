@@ -87,7 +87,7 @@ onMounted(fetchNotices)
 
 <style scoped>
 .notice-list {
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .board-table {
