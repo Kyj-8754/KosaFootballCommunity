@@ -40,7 +40,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 					.getPrincipal();
 			// JWT에 추가할 정보로 아이디가 있는 Map 객체를 생성한다
 			final Map<String, Object> claim = Map.of("userId", userDTO.getUserId(), "userNo", userDTO.getUserNo(),
-					"userName", URLEncoder.encode(userDTO.getUserName(), StandardCharsets.UTF_8), "auth", "ROLE_"+userDTO.getAuthCode());
+					"userName", URLEncoder.encode(userDTO.getUserName(), StandardCharsets.UTF_8), "authCode", "ROLE_"+userDTO.getAuthCode());
 
 			Map<String, String> keyMap = Map.of("accessToken", jwtUtil.generateToken(claim, 1), // Access Token 유효기간 1일로
 																								// 생성
