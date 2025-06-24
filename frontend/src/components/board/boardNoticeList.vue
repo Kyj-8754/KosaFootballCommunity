@@ -2,7 +2,7 @@
   <div class="notice-list" v-if="notices.length">
     <table class="board-table">
         <colgroup>
-          <col style="width: 8%" />
+          <!--<col style="width: 8%" />-->
           <col style="width: 12%" />
           <col style="width: 12%" />
           <col style="width: 28%" />
@@ -12,7 +12,7 @@
         </colgroup>
         <thead>
             <tr>
-            <th>글 번호</th>
+            <!--<th>글 번호</th>-->
             <th>카테고리</th>
             <th>작성자</th>
             <th>제목</th>
@@ -23,7 +23,7 @@
         </thead>
         <tbody>
             <tr v-for="(notice, idx) in visibleNotices" :key="notice.board_id">
-                <td>{{ notice.board_id }}</td>
+                <!--<td>{{ notice.board_id }}</td>-->
                 <td>{{ notice.board_category }}</td>
                 <td>{{ notice.user_name }}</td>
                 <td @click="$emit('view', notice.board_id)" style="cursor: pointer; color: blue;">
