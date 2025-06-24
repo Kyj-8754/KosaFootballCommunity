@@ -5,7 +5,6 @@
     <BoardNoticeList @view="handleViewPost" />
     <BoardTable :posts="filteredPosts" :showHeader="false" @view="handleViewPost" />
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="handlePageChange" />
-    <weatherWidget/>
   </div>
 </template>
 
@@ -15,7 +14,6 @@ import BoardFilter from '@/components/board/boardFilter.vue'
 import BoardNoticeList from '@/components/board/boardNoticeList.vue'
 import BoardTable from '@/components/board/boardTable.vue'
 import Pagination from '@/components/pagination.vue'
-import weatherWidget from '@/components/widget/weatherWidget.vue'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
