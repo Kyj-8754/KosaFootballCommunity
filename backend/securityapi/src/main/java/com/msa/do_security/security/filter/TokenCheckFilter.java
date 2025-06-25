@@ -1,11 +1,13 @@
 package com.msa.do_security.security.filter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.msa.do_security.security.exception.AccessTokenException;
@@ -27,6 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 public class TokenCheckFilter extends OncePerRequestFilter {
 	private final JWTUtil jwtUtil;
 	private final UserVODetailsService userVODetailsService;
+	private final List<String> excludedPaths;
+	private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -34,13 +38,12 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 		// 요청 URL을 얻는다
 		final String path = request.getRequestURI();
 
-		if (path.startsWith("/user/na/") || 
-			    path.startsWith("/generateToken") || 
-			    path.startsWith("/refreshToken") || 
-			    path.startsWith("/kakao/callback")) {
-			    filterChain.doFilter(request, response);
-			    return;
+		for (String pattern : excludedPaths) {
+			if (pathMatcher.match(pattern, path)) {
+				filterChain.doFilter(request, response);
+				return;
 			}
+		}
 
 		log.info("이부분에서 JWT 토큰이 존재하고 유효한지 확인한다");
 		log.info("jwtUtil = {}", jwtUtil);

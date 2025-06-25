@@ -8,7 +8,7 @@ import com.msa.do_login.user.vo.LocalAccount;
 import com.msa.do_login.user.vo.UserVO;
 
 @Mapper
-public interface UserDAO {
+public interface LoginDAO {
 
 	public void insertUser(UserVO user);
 
