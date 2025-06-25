@@ -67,7 +67,7 @@ const router = useRouter()
 const login = async () => {
   try {
     const res = await axios.post(
-      '/api/generateToken',
+      '/security_api/generateToken',
       {
         userId: userId.value,
         userPwd: userPwd.value,

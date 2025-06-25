@@ -15,22 +15,18 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  server: {
-    proxy: {
-      "/security_api": {
-        target: "http://localhost:8081",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/security_api/, ""),
-      },
+server: {
+  proxy: {
+    "/security_api": {
+      target: "http://localhost:8081",
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/security_api/, ""),
+    },
+    "/login_api": {
+      target: "http://localhost:8080",
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/login_api/, ""),
     },
   },
-  server: {
-    proxy: {
-      "/api": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/security_api/, ""),
-      },
-    },
-  },
+},
 })
