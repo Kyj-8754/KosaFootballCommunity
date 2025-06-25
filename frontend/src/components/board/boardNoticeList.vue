@@ -3,9 +3,9 @@
     <table class="board-table">
         <colgroup>
           <!--<col style="width: 8%" />-->
-          <col style="width: 12%" />
-          <col style="width: 12%" />
-          <col style="width: 28%" />
+          <col style="width: 15%" />
+          <col style="width: 15%" />
+          <col style="width: 35%" />
           <col style="width: 15%" />
           <col style="width: 10%" />
           <col style="width: 10%" />
@@ -102,6 +102,7 @@ onMounted(fetchNotices)
   width: 100%;
   border-collapse: collapse;
   background-color: #f9f9f9;
+  table-layout: fixed; /* ✅ 반드시 추가 */
 }
 
 .board-table th,
@@ -110,6 +111,9 @@ onMounted(fetchNotices)
   text-align: center;
   border-bottom: 1px solid #ccc;
   font-size: 0.95rem;
+  white-space: nowrap;        /* 줄바꿈 방지 */
+  overflow: hidden;           /* 넘친 내용 숨김 */
+  text-overflow: ellipsis;    /* ...으로 생략 */
 }
 
 .board-table thead {

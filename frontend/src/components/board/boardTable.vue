@@ -2,9 +2,9 @@
   <table class="board-table">
     <colgroup>
       <!--<col style="width: 8%" />-->
-      <col style="width: 12%" />
-      <col style="width: 12%" />
-      <col style="width: 28%" />
+      <col style="width: 15%" />
+      <col style="width: 15%" />
+      <col style="width: 35%" />
       <col style="width: 15%" />
       <col style="width: 10%" />
       <col style="width: 10%" />
@@ -70,13 +70,18 @@ function formatDate(dateStr) {
 .board-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; /* ✅ 반드시 추가 */
 }
 
 .board-table th,
 .board-table td {
   padding: 10px;
   text-align: center;
+  font-size: 0.95rem;
   border-bottom: 1px solid #ccc; /* 회색 가로줄 */
+  white-space: nowrap;        /* 줄바꿈 방지 */
+  overflow: hidden;           /* 넘친 내용 숨김 */
+  text-overflow: ellipsis;    /* ...으로 생략 */
 }
 
 .board-table tbody tr:hover {
@@ -87,4 +92,13 @@ function formatDate(dateStr) {
   background-color: #f1f1f1; /* 헤더 배경 (선택사항) */
   border-top: 2px solid #888;
 }
+
+.board-table td span {
+  display: inline-block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 </style>
