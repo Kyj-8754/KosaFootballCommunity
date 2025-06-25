@@ -15,4 +15,5 @@ public class Comment {
 	private String regist_date;		//글 등록일
 	private String modified_date;	//글 수정일
 	private String status;			//글 상태
+	private Double rating;
 }
