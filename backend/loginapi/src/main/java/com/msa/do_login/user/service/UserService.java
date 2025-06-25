@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-	private final LoginDAO userDAO;
+	private final LoginDAO loginDAO;
 	private final PasswordEncoder passwordEncoder;
 	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	private static final SecureRandom RANDOM = new SecureRandom();
@@ -29,7 +29,7 @@ public class UserService {
 		// 회원 코드 중복 확인
 		do {
 			code = generateRandomCode(length);
-		} while (userDAO.existsByUserCode(code));
+		} while (loginDAO.existsByUserCode(code));
 		return code;
 	}
 
@@ -51,22 +51,22 @@ public class UserService {
 				.userPhone(dto.getUserPhone()).userPostCode(dto.getUserPostcode()).userAddr(dto.getUserAddr())
 				.userDetailAddr(dto.getUserDetailAddr()).userGender(dto.getUserGender()).authCode("A3")
 				.userCode(userCode).userRegDate(new Date()).build();
-		userDAO.insertUser(user);
+		loginDAO.insertUser(user);
 		String encodedPwd = passwordEncoder.encode(dto.getUserPwd());
 		// 2. LocalAccount 생성 및 저장
 		LocalAccount account = LocalAccount.builder().userNo(user.getUserNo()).userId(dto.getUserId())
 				.userPwd(encodedPwd).build();
-		userDAO.insertLocalAccount(account);
+		loginDAO.insertLocalAccount(account);
 	}
 
 	// 존재하는 아이디 여부 확인
 	public LocalAccount getLocalAccount(String userId) {
-		return userDAO.getLocalAccount(userId);
+		return loginDAO.getLocalAccount(userId);
 	}
 
 	// 회원 정보 가져오기
 	public Optional<UserVO> getMemberByUserId(String userId) {
-		return userDAO.findByUserId(userId);
+		return loginDAO.findByUserId(userId);
 	}
 
 }
