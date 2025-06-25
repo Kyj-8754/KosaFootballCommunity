@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router' // ✅ 추가
 import axios from 'axios'
 
@@ -56,4 +56,11 @@ const submitPost = async () => {
     alert('게시글 등록에 실패했습니다.')
   }
 }
+
+onMounted(() => {
+  if (!userNo?.value || !userName?.value) {
+    alert('로그인이 필요한 페이지입니다.')
+    router.push('/board/boardlist')  // ✅ 로그인 페이지 경로에 맞게 수정
+  }
+})
 </script>
