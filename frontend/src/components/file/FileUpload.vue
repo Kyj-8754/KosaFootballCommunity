@@ -133,6 +133,7 @@ defineExpose({ uploadAllFiles })
 <style scoped>
 .file-upload {
   margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
   padding: 1rem;
   background-color: #fefefe;
   border: 1px solid #ccc;
