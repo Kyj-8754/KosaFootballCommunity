@@ -8,6 +8,22 @@
     <CategoryButtons @select="handleCategorySelect" />
     <BoardNoticeList @view="handleViewPost" />
     <BoardTable :posts="filteredPosts" :showHeader="false" @view="handleViewPost" />
+    <div style="text-align: right; margin-top: 1.5rem;">
+      <button
+        @click="router.push('/board/boardregisterform')"
+        style="
+          background-color: #007bff;
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          font-size: 0.95rem;
+          cursor: pointer;
+        "
+      >
+        글쓰기
+      </button>
+    </div>
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="handlePageChange" />
   </div>
 </template>
