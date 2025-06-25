@@ -1,4 +1,4 @@
-package com.msa.do_login.user.filter;
+package com.msa.do_security.security.filter;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -12,7 +12,7 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.util.StreamUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.msa.do_login.user.util.JWTUtil;
+import com.msa.do_security.security.util.JWTUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +36,7 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 			log.info("로그인 성공시 처리 핸들러 .............");
 			log.info("인증된 로그인 정보 : {}", authentication);
 			log.info("인증된 로그인 아이디 : {}", authentication.getName());
-			com.msa.do_login.user.dto.UserDTO userDTO = (com.msa.do_login.user.dto.UserDTO) authentication
+			com.msa.do_security.security.dto.UserDTO userDTO = (com.msa.do_security.security.dto.UserDTO) authentication
 					.getPrincipal();
 			// JWT에 추가할 정보로 아이디가 있는 Map 객체를 생성한다
 			final Map<String, Object> claim = Map.of("userId", userDTO.getUserId(), "userNo", userDTO.getUserNo(),
