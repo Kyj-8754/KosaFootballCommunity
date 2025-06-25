@@ -69,10 +69,14 @@ onMounted(() => {
 .quill-editor {
   border: 1px solid #ccc;
   border-radius: 6px;
+  max-height: 500px; /* 전체 컨테이너도 제한 가능 */
+  overflow: hidden;   /* 외부 확장은 방지 */
 }
 
 .quill-editor :deep(.ql-editor) {
-  min-height: 400px;
+  min-height: 800px;
+  max-height: 800px;       /* ✅ 높이 제한 */
+  overflow-y: auto;        /* ✅ 세로 스크롤 */
   padding: 12px;
   font-size: 1rem;
 }
