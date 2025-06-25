@@ -15,7 +15,7 @@
 <update id="update">
 	update stadium_comment set
 	content = #{content},
-	modified_date = SYSDATE
+	modified_date = CURRENT_TIMESTAMP
 	Where comment_no = #{comment_no}
 </update>
 
