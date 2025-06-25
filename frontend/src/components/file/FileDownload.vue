@@ -34,7 +34,7 @@ const fetchFiles = async () => {
 
 const download = (fileId) => {
   // 파일 다운로드: a 태그로 직접 트리거
-  const url = `/api/file/download/${fileId}`
+  const url = `/board_api/file/download/${fileId}`  // ✅ 수정된 경로
   const link = document.createElement('a')
   link.href = url
   link.setAttribute('download', '') // 다운로드 트리거
