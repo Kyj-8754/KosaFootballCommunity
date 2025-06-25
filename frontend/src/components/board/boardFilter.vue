@@ -35,7 +35,7 @@ const search = () => {
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-  margin: 1rem 0; /* ✅ 수평 auto 제거 */
+  margin: 1rem 0 0 0;
 }
 
 .board-filter select,

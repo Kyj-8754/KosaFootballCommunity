@@ -40,7 +40,7 @@ const toggleCategory = (value) => {
   gap: 1rem;
   border-top: 2px solid #ddd;     /* ✅ 상단 선 추가 */
   padding-top: 0.5rem;            /* ✅ 상단 패딩 (기존 bottom → top) */
-  margin: 1.5rem 0 0;             /* ✅ 하단 여백 제거 */
+  margin: 0.5rem 0 0;
   flex-wrap: wrap;
 }
 
