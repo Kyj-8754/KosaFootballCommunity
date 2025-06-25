@@ -20,18 +20,9 @@
 
 <script setup>
 import { inject } from 'vue'
+import { categories } from '@/assets/board/boardCategory.js'
 
 const authCode = inject('authCode')
-
-const categories = [
-  '공지사항',
-  '자유게시판',
-  '임시 게시판1',
-  '임시 게시판2',
-  '임시 게시판3',
-  '임시 게시판4',
-  '임시 게시판5'
-]
 
 const props = defineProps({
   form: Object,
