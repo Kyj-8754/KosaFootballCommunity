@@ -3,12 +3,15 @@
     <!-- 파일 선택 -->
     <input type="file" multiple @change="handleFileSelect" />
 
-    <!-- 대기 중인 파일 목록 -->
+    <!-- 업로드 예정 파일 -->
     <div v-if="queuedFiles.length">
       <h5>업로드 예정 파일</h5>
+      <p style="margin: 0.5rem 0; font-size: 0.9rem; color: #555;">
+        현재 용량: {{ totalSizeMB.toFixed(1) }}MB / 50MB
+      </p>
       <ul>
         <li v-for="(file, index) in queuedFiles" :key="file.name">
-          {{ file.name }}
+          {{ file.name }} ({{ formatSize(file.size) }})
           <button @click="removeQueuedFile(index)">삭제</button>
         </li>
       </ul>
@@ -19,7 +22,7 @@
       <h5>기존 첨부 파일</h5>
       <ul>
         <li v-for="(file, index) in uploadedFiles" :key="file.file_id">
-          {{ file.file_original_name }}
+          {{ file.file_original_name }} ({{ formatSize(file.file_size) }})
           <button @click="removeUploadedFile(file.file_id, index)">삭제</button>
         </li>
       </ul>
@@ -28,19 +31,16 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import axios from 'axios'
 
-// props: 수정 모드에서 초기 파일 목록 받기
 const props = defineProps({
   initialFiles: { type: Array, default: () => [] },
 })
-
-// emit: 부모가 업로드 성공 후 file_id들을 받을 수 있도록
 const emit = defineEmits(['uploaded'])
 
-const queuedFiles = ref([]) // 업로드 대기
-const uploadedFiles = ref([...props.initialFiles]) // 이미 업로드된 것들
+const queuedFiles = ref([])
+const uploadedFiles = ref([...props.initialFiles])
 
 watch(
   () => props.initialFiles,
@@ -50,9 +50,44 @@ watch(
   { immediate: true }
 )
 
+const MAX_SINGLE_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_TOTAL_SIZE = 50 * 1024 * 1024 // 50MB
+
+const formatSize = (bytes) => {
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + 'KB'
+  return (bytes / (1024 * 1024)).toFixed(1) + 'MB'
+}
+
+const totalSizeMB = computed(() => {
+  const uploaded = uploadedFiles.value.reduce((sum, f) => sum + (f.file_size || 0), 0)
+  const queued = queuedFiles.value.reduce((sum, f) => sum + f.size, 0)
+  return (uploaded + queued) / (1024 * 1024)
+})
+
 const handleFileSelect = (e) => {
-  queuedFiles.value = [...queuedFiles.value, ...e.target.files]
-  e.target.value = '' // 같은 파일 재선택 가능하게 초기화
+  const selected = Array.from(e.target.files)
+  const validFiles = []
+
+  let currentTotal = uploadedFiles.value.reduce((sum, f) => sum + (f.file_size || 0), 0) +
+                     queuedFiles.value.reduce((sum, f) => sum + f.size, 0)
+
+  for (const file of selected) {
+    if (file.size > MAX_SINGLE_FILE_SIZE) {
+      alert(`${file.name}은 10MB를 초과하여 업로드할 수 없습니다.`)
+      continue
+    }
+
+    if (currentTotal + file.size > MAX_TOTAL_SIZE) {
+      alert(`총 첨부파일 용량이 50MB를 초과할 수 없습니다.`)
+      break
+    }
+
+    currentTotal += file.size
+    validFiles.push(file)
+  }
+
+  queuedFiles.value = [...queuedFiles.value, ...validFiles]
+  e.target.value = ''
 }
 
 const removeQueuedFile = (index) => {
@@ -68,7 +103,6 @@ const removeUploadedFile = async (fileId, index) => {
   }
 }
 
-// 게시글 등록 이후 파일 업로드 수행
 const uploadAllFiles = async (boardId) => {
   const formDataList = queuedFiles.value.map(file => {
     const formData = new FormData()
@@ -89,12 +123,10 @@ const uploadAllFiles = async (boardId) => {
     }
   }
 
-  // 업로드 성공한 파일 id 전달
   emit('uploaded', resultList)
   queuedFiles.value = []
 }
 
-// 외부에서 uploadAllFiles를 쓸 수 있게 expose
 defineExpose({ uploadAllFiles })
 </script>
 
@@ -148,4 +180,3 @@ button:hover {
   background-color: #a71d2a;
 }
 </style>
-
