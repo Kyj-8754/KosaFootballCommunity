@@ -156,7 +156,7 @@ const handleDelete = async () => {
   try {
     await axios.delete(`/board_api/board/${post.value.board_id}`)
     alert('게시글이 삭제되었습니다.')
-    router.push('/board/list')
+    router.push('/board/boardlist')
   } catch (error) {
     console.error('삭제 실패:', error)
     alert('게시글 삭제에 실패했습니다.')
