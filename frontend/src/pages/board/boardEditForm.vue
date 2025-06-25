@@ -66,16 +66,32 @@ const fetchPost = async () => {
 }
 
 const submitEdit = async () => {
-  if (!form.value.category || !form.value.title || !form.value.content.trim()) {
+  const title = form.value.title.trim()
+  const content = form.value.content.trim()
+
+  if (!form.value.category || !title || !content) {
     alert('모든 항목을 입력해주세요.')
+    return
+  }
+
+  // 제목 글자 수 제한
+  if (title.length > 100) {
+    alert('제목은 100자 이하로 입력해주세요.')
+    return
+  }
+
+  // 내용 바이트 수 제한 (UTF-8 기준 16MB)
+  const contentByteLength = new Blob([content]).size
+  if (contentByteLength > 16_777_215) {
+    alert('내용이 너무 깁니다. 최대 16MB까지 입력할 수 있습니다.')
     return
   }
 
   try {
     await axios.put(`/board_api/board/${postId}`, {
       board_category: form.value.category,
-      board_title: form.value.title,
-      board_content: form.value.content
+      board_title: title,
+      board_content: content
     })
 
     if (fileRef.value) {
