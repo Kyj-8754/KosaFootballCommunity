@@ -1,4 +1,4 @@
-package com.msa.do_login.user.filter;
+package com.msa.do_security.security.filter;
 
 import java.io.IOException;
 import java.util.Map;
@@ -8,9 +8,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.msa.do_login.user.exception.AccessTokenException;
-import com.msa.do_login.user.service.UserVODetailsService;
-import com.msa.do_login.user.util.JWTUtil;
+import com.msa.do_security.security.exception.AccessTokenException;
+import com.msa.do_security.security.service.UserVODetailsService;
+import com.msa.do_security.security.util.JWTUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;

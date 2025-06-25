@@ -1,4 +1,4 @@
-package com.msa.do_login.user.service;
+package com.msa.do_security.security.service;
 
 import java.util.Optional;
 
@@ -7,10 +7,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.msa.do_login.user.dao.UserDAO;
-import com.msa.do_login.user.dto.UserDTO;
-import com.msa.do_login.user.vo.LocalAccount;
-import com.msa.do_login.user.vo.UserVO;
+import com.msa.do_security.security.dao.UserDAO;
+import com.msa.do_security.security.dto.UserDTO;
+import com.msa.do_security.security.vo.LocalAccount;
+import com.msa.do_security.security.vo.UserVO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

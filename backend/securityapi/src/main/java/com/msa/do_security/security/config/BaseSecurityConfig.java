@@ -1,4 +1,4 @@
-package com.msa.do_login.user.config;
+package com.msa.do_security.security.config;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -16,11 +16,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.msa.do_login.user.filter.LoginFilter;
-import com.msa.do_login.user.filter.RefreshTokenFilter;
-import com.msa.do_login.user.filter.TokenCheckFilter;
-import com.msa.do_login.user.service.UserVODetailsService;
-import com.msa.do_login.user.util.JWTUtil;
+import com.msa.do_security.security.filter.LoginFilter;
+import com.msa.do_security.security.filter.RefreshTokenFilter;
+import com.msa.do_security.security.filter.TokenCheckFilter;
+import com.msa.do_security.security.service.UserVODetailsService;
+import com.msa.do_security.security.util.JWTUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,7 +30,7 @@ import lombok.extern.log4j.Log4j2;
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class BaseSecurityConfig {
 
 	private final ObjectMapper objectMapper;
 	private final JWTUtil jwtUtil;
@@ -90,17 +90,25 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable());
 		// 세션을 사용하지 않음
 		http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-		http.authorizeHttpRequests(authroize -> authroize
-				.requestMatchers("/user/na/**", "/generateToken", "/refreshToken","/kakao/callback").permitAll()
-				.requestMatchers("/user/filter/myPage").authenticated()
-				.requestMatchers("/user/**").hasAnyAuthority("ROLE_A3", "ROLE_A2", "ROLE_A1") // 여러개의 권한 중 하나라도 있으면 성공
-				.requestMatchers("/manager/**").hasAnyAuthority("ROLE_A2", "ROLE_A1")
-				.requestMatchers("/admin/**").hasAnyAuthority("ROLE_A1") // 반드시 해당 권한만 허가
-				.anyRequest().permitAll() // /home url은 비회원이 사용할 수 있음
-		);
+		
+		defaultAuthorizationRules(http);
 
 		return http.build();
 
+	}
+	
+	private void defaultAuthorizationRules(HttpSecurity http) throws Exception {
+		http.authorizeHttpRequests(authroize -> authroize
+				.requestMatchers("/generateToken", "/refreshToken").permitAll()
+				.requestMatchers("/user/**").hasAnyAuthority("ROLE_A3", "ROLE_A2", "ROLE_A1") // 여러개의 권한 중 하나라도 있으면 성공
+				.requestMatchers("/manager/**").hasAnyAuthority("ROLE_A2", "ROLE_A1")
+				.requestMatchers("/admin/**").hasAnyAuthority("ROLE_A1")
+				.anyRequest().permitAll()); // 반드시 해당 권한만 허가)
+
+		// 확장 기능 
+		customizeAuthorization(http);
+	}
+	
+	protected void customizeAuthorization(HttpSecurity http) throws Exception {
 	}
 }

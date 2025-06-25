@@ -1,4 +1,4 @@
-package com.msa.do_login.user.exception;
+package com.msa.do_security.security.exception;
 
 import java.io.IOException;
 import java.util.Date;
