@@ -1,19 +1,21 @@
 package com.msa.do_security.security.config;
 
+import java.util.List;
+
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer.AuthorizationManagerRequestMatcherRegistry;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer.AuthorizedUrl;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.msa.do_security.security.filter.LoginFilter;
@@ -25,10 +27,7 @@ import com.msa.do_security.security.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-@Configuration
 @Log4j2
-@EnableWebSecurity
-@EnableMethodSecurity
 @RequiredArgsConstructor
 public class BaseSecurityConfig {
 
@@ -79,7 +78,7 @@ public class BaseSecurityConfig {
 		// UsernamePasswordAuthenticationFilter 필더 객체 실행 전에 동작할 TokenCheckFilter 객체를
 		// 생성하여 설정한다
 		// 해당 소스 작성후 : 브라우저에서 /api/sample/test URL을 실행한다
-		http.addFilterBefore(new TokenCheckFilter(jwtUtil, userVODetailsService),
+		http.addFilterBefore(new TokenCheckFilter(jwtUtil, userVODetailsService, getExcludedPaths()),
 				UsernamePasswordAuthenticationFilter.class);
 
 		// TokenCheckFilter 필더 객체 실행 전에 동작할 RefreshTokenFilter 객체를 생성하여 설정한다
@@ -90,25 +89,42 @@ public class BaseSecurityConfig {
 		http.csrf(csrf -> csrf.disable());
 		// 세션을 사용하지 않음
 		http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		
+
 		defaultAuthorizationRules(http);
 
 		return http.build();
 
 	}
-	
-	private void defaultAuthorizationRules(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests(authroize -> authroize
-				.requestMatchers("/generateToken", "/refreshToken").permitAll()
-				.requestMatchers("/user/**").hasAnyAuthority("ROLE_A3", "ROLE_A2", "ROLE_A1") // 여러개의 권한 중 하나라도 있으면 성공
-				.requestMatchers("/manager/**").hasAnyAuthority("ROLE_A2", "ROLE_A1")
-				.requestMatchers("/admin/**").hasAnyAuthority("ROLE_A1")
-				.anyRequest().permitAll()); // 반드시 해당 권한만 허가)
 
-		// 확장 기능 
-		customizeAuthorization(http);
+	private void defaultAuthorizationRules(HttpSecurity http) throws Exception {
+		http.authorizeHttpRequests(authroize -> {
+			authroize.requestMatchers("/generateToken").permitAll();
+			authroize.requestMatchers("/refreshToken").permitAll();
+
+			try {
+				customizeAuthorization(authroize);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			authroize.requestMatchers("/user/**").hasAnyAuthority("ROLE_A3", "ROLE_A2", "ROLE_A1"); // 여러개의 권한 중 하나라도
+																									// 있으면 성공
+			authroize.requestMatchers("/manager/**").hasAnyAuthority("ROLE_A2", "ROLE_A1");
+			authroize.requestMatchers("/admin/**").hasAnyAuthority("ROLE_A1");
+
+			authroize.anyRequest().permitAll();
+		}); // 반드시 해당 권한만 허가)
+
+		// 확장 기능
+		// customizeAuthorization(http);
 	}
-	
-	protected void customizeAuthorization(HttpSecurity http) throws Exception {
+
+	protected void customizeAuthorization(
+			AuthorizationManagerRequestMatcherRegistry authorizeHttpRequestsCustomizer) throws Exception {
+	}
+
+	protected List<String> getExcludedPaths() {
+		return List.of("/generateToken", "/refreshToken");
 	}
 }

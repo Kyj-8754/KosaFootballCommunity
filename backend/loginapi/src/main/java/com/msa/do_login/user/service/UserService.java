@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.msa.do_login.user.dao.UserDAO;
+import com.msa.do_login.user.dao.LoginDAO;
 import com.msa.do_login.user.dto.UserRegisterDTO;
 import com.msa.do_login.user.vo.LocalAccount;
 import com.msa.do_login.user.vo.UserVO;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-	private final UserDAO userDAO;
+	private final LoginDAO userDAO;
 	private final PasswordEncoder passwordEncoder;
 	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	private static final SecureRandom RANDOM = new SecureRandom();
