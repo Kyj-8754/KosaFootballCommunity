@@ -10,7 +10,12 @@
     <!-- 내용 or 수정창 -->
     <div class="content">
       <template v-if="isEditing">
-        <textarea v-model="editedContent" rows="3"></textarea>
+          <textarea
+            v-model="editedContent"
+            rows="3"
+            maxlength="1000"
+            style="height: 80px; resize: none; overflow: auto;"
+          ></textarea>
         <div class="edit-actions">
           <button @click="confirmEdit">확인</button>
           <button @click="cancelEdit">취소</button>

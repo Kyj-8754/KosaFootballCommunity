@@ -164,6 +164,12 @@ const handleDelete = async () => {
 }
 
 const addComment = async (replyData) => {
+  const maxLength = 1000
+  if (replyData.reply_content.length > maxLength) {
+    alert(`댓글은 최대 ${maxLength}자까지 입력할 수 있습니다.`)
+    return
+  }
+
   try {
     await axios.post('/board_api/reply', replyData)
     await fetchComments()
@@ -174,6 +180,12 @@ const addComment = async (replyData) => {
 }
 
 const editComment = async (replyId, newContent) => {
+  // ✅ 1000자 제한 검증
+  if (newContent.length > 1000) {
+    alert('댓글은 1000자 이하로 입력해주세요.')
+    return
+  }
+
   try {
     await axios.put(`/board_api/reply/${replyId}`, {
       reply_content: newContent
