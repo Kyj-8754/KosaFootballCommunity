@@ -55,7 +55,7 @@
   })
 
   function test() {
-  axios.post('/api/stadium/test')
+  axios.post('/stadium_api/stadium/test')
     .then(res => {
       console.log('데이터 받음:', res.data)
     })
@@ -66,7 +66,7 @@
 
 
 function update() {
-  axios.post('/api/stadium/update')
+  axios.post('/stadium_api/stadium/update')
     .then(res => {
       console.log('업데이트 시작')
     })

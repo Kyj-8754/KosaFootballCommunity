@@ -47,6 +47,7 @@
 					</div>
 					<!-- 지도 -->
 					<div v-show="activeTab === 'map'">
+						<div id="map" style="width:100%;height:350px;"></div>
 						<div>
 							주소 : {{ stadiumDB.adres }}
 						</div>
@@ -202,7 +203,7 @@
 
 <script setup>
 	import DOMPurify from 'dompurify'; // notice관련 문제 해결중
-	import {ref, onMounted, reactive, computed, watch, inject} from 'vue'
+	import {ref, onMounted, reactive, computed, watch, inject, nextTick} from 'vue'
 	import { useRoute, useRouter } from 'vue-router'
 	import axios from 'axios'
 	import { Calendar  } from 'v-calendar'
@@ -294,6 +295,15 @@
 	const fetchStadiumData = async () => {
 		const res = await axios.get('/stadium_api/stadium/detailView', { params: { SVCID } });
 		stadiumDB.value = res.data.stadiumDB;
+		
+		 // kakao 객체가 있을 때만 지도 로딩 시도
+  if (window.kakao && window.kakao.maps) {
+    window.kakao.maps.load(() => {
+      kakaoMap(); // 실제 지도 로직
+    });
+  } else {
+    console.warn("카카오 맵 SDK가 아직 로드되지 않았습니다.");
+  }
 	};	
 
 	//게시물의 댓글 불러오기
@@ -301,6 +311,7 @@
 		const res = await axios.get('/stadium_api/comment/list', { params: { SVCID } });
 		commentDB.value = res.data.commentDB;
 	};
+
 
 	// 구장 목록으로 넘어가기
 	function goToList(){
@@ -392,4 +403,41 @@ const getStarFillForComment = (rating, n) => {
   if (rating >= n - 0.5) return '50%';
   return '0%';
 };
+
+
+// 맵 api 수정중
+watch(activeTab, async tab => {
+  if (tab === 'map') {
+    await nextTick();               // 지도 div가 실제로 DOM에 렌더링되고,
+    kakaoMap();              // width/height가 잡힌 뒤에 호출
+  }
+});
+
+const kakaoMap = () => {
+  	const { x, y } = stadiumDB.value;
+
+
+  	// 지도 SDK가 로드된 이후에 실행
+    const mapContainer = document.getElementById('map');
+	const centerPos    = new kakao.maps.LatLng(y, x);
+
+	// 이미지 지도에 표시할 마커입니다
+	var marker = {
+		position: centerPos, 
+	};
+
+var staticMapContainer  = mapContainer, // 이미지 지도를 표시할 div
+    staticMapOption = { 
+        center: centerPos, // 이미지 지도의 중심좌표
+        level: 3, // 이미지 지도의 확대 레벨
+        marker // 이미지 지도에 표시할 마커
+    };	
+	
+	// 이미지 지도를 생성합니다
+	new window.kakao.maps.StaticMap(mapContainer, staticMapOption);
+	
+};
 </script>
+
+
+
