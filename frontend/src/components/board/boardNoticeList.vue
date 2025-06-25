@@ -29,7 +29,7 @@
               {{ notice.board_title }}
             </td>
             <td>
-              <span>{{ notice.board_modified_at ? formatDate(notice.board_modified_at) : formatDate(notice.board_created_at) }}</span>
+              <span>{{ formatDate(notice.board_created_at) }}</span>
             </td>
             <td>{{ notice.board_viewcount }}</td>
             <td>{{ notice.board_likecount }}</td>

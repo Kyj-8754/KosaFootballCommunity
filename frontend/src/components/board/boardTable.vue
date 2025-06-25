@@ -28,7 +28,7 @@
           {{ post.board_title }}
         </td>
         <td>
-          <span>{{ post.board_modified_at ? formatDate(post.board_modified_at) : formatDate(post.board_created_at) }}</span>
+          <span>{{ formatDate(post.board_created_at) }}</span>
         </td>
         <td>{{ post.board_viewcount }}</td>
         <td>{{ post.board_likecount }}</td>
