@@ -35,14 +35,26 @@ onMounted(() => {
         const file = item.getAsFile()
         const reader = new FileReader()
 
-        reader.onload = (event) => {
-          const base64 = event.target?.result
-          if (typeof base64 === 'string') {
-            const range = quill.getSelection(true)
-            quill.insertEmbed(range.index, 'image', base64)
-            quill.setSelection(range.index + 1)
-          }
+        // reader.onload 안에 아래 코드 추가
+      reader.onload = (event) => {
+        const base64 = event.target?.result
+        if (typeof base64 === 'string') {
+          const range = quill.getSelection(true)
+          quill.insertEmbed(range.index, 'image', base64)
+          quill.setSelection(range.index + 1)
+
+          // ✅ 이미지 스타일 강제 적용
+          setTimeout(() => {
+            const img = quill.root.querySelector(`img[src="${base64}"]`)
+            if (img) {
+              img.style.maxWidth = '100%'
+              img.style.height = 'auto'
+              img.style.display = 'block'
+              img.style.margin = '1rem auto'
+            }
+          }, 0)
         }
+      }
 
         reader.readAsDataURL(file)
         e.preventDefault() // 기본 이미지 붙여넣기 방지
