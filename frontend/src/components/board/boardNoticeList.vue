@@ -1,5 +1,5 @@
 <template>
-  <div class="notice-list" v-if="notices.length">
+  <div class="notice-list">
     <table class="board-table">
         <colgroup>
           <!--<col style="width: 8%" />-->
@@ -21,27 +21,35 @@
             <th>추천수</th>
             </tr>
         </thead>
-        <tbody>
-            <tr v-for="(notice, idx) in visibleNotices" :key="notice.board_id">
-                <!--<td>{{ notice.board_id }}</td>-->
-                <td>{{ notice.board_category }}</td>
-                <td>{{ notice.user_name }}</td>
-                <td @click="$emit('view', notice.board_id)" style="cursor: pointer; color: blue;">
-                {{ notice.board_title }}
-                </td>
-                <td>
-                  <span>{{ notice.board_modified_at ? formatDate(notice.board_modified_at) : formatDate(notice.board_created_at) }}</span>
-                </td>
-                <td>{{ notice.board_viewcount }}</td>
-                <td>{{ notice.board_likecount }}</td>
-            </tr>
+        <tbody v-if="visibleNotices.length > 0">
+          <tr v-for="(notice, idx) in visibleNotices" :key="notice.board_id">
+            <td>{{ notice.board_category }}</td>
+            <td>{{ notice.user_name }}</td>
+            <td @click="$emit('view', notice.board_id)" style="cursor: pointer; color: blue;">
+              {{ notice.board_title }}
+            </td>
+            <td>
+              <span>{{ notice.board_modified_at ? formatDate(notice.board_modified_at) : formatDate(notice.board_created_at) }}</span>
+            </td>
+            <td>{{ notice.board_viewcount }}</td>
+            <td>{{ notice.board_likecount }}</td>
+          </tr>
 
-            <!-- 🔽 더보기 / 간략히 row -->
-            <tr v-if="notices.length > 3">
-                <td colspan="7" class="toggle-row" @click="expanded = !expanded">
-                    {{ expanded ? '간략히' : '더보기' }}
-                </td>
-            </tr>
+          <!-- 🔽 더보기 / 간략히 row -->
+          <tr v-if="notices.length > 3">
+            <td colspan="7" class="toggle-row" @click="expanded = !expanded">
+              {{ expanded ? '간략히' : '더보기' }}
+            </td>
+          </tr>
+        </tbody>
+
+        <!-- 🔻 공지사항 없음 표시 -->
+        <tbody v-else>
+          <tr>
+            <td colspan="7" style="padding: 20px; text-align: center; color: #777;">
+              공지사항이 없습니다.
+            </td>
+          </tr>
         </tbody>
     </table>
   </div>

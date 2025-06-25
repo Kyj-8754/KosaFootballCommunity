@@ -1,5 +1,5 @@
 <template>
-  <div class="category-buttons">
+  <div class="category-tabs">
     <button
       v-for="cat in categories"
       :key="cat"
@@ -17,42 +17,51 @@ import { ref } from 'vue'
 const emit = defineEmits(['select'])
 
 const categories = [
-    '공지사항', 
-    '자유게시판', 
-    '임시 게시판1', 
-    '임시 게시판2', 
-    '임시 게시판3', 
-    '임시 게시판4', 
-    '임시 게시판5'
+  '공지사항',
+  '자유게시판',
+  '임시 게시판1',
+  '임시 게시판2',
+  '임시 게시판3',
+  '임시 게시판4',
+  '임시 게시판5'
 ]
+
 const selected = ref('')
 
 const toggleCategory = (value) => {
   selected.value = selected.value === value ? '' : value
-  emit('select', selected.value) // ''일 경우 전체
+  emit('select', selected.value)
 }
 </script>
 
 <style scoped>
-.category-buttons {
+.category-tabs {
   display: flex;
-  justify-content: left;
-  gap: 0.5rem;
-  margin: 1.5rem auto 1rem; /* ⬅ 상단 여백 추가됨 (기존 margin-bottom → margin 전체) */
+  gap: 1rem;
+  border-top: 2px solid #ddd;     /* ✅ 상단 선 추가 */
+  padding-top: 0.5rem;            /* ✅ 상단 패딩 (기존 bottom → top) */
+  margin: 1.5rem 0 0;             /* ✅ 하단 여백 제거 */
+  flex-wrap: wrap;
 }
 
-.category-buttons button {
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  background-color: white;
+.category-tabs button {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 1rem;
+  padding: 8px 4px;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+  color: #333;
+  transition: all 0.2s;
 }
 
-.category-buttons button.active {
-  background-color: #007bff;
-  color: white;
+.category-tabs button:hover {
+  color: #007bff;
+}
+
+.category-tabs button.active {
   border-color: #007bff;
+  color: #007bff;
+  font-weight: bold;
 }
 </style>

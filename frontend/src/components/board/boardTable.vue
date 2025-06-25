@@ -20,9 +20,8 @@
         <th>추천수</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody v-if="posts.length > 0">
       <tr v-for="post in posts" :key="post.board_id">
-        <!--<td>{{ post.board_id }}</td>-->
         <td>{{ post.board_category }}</td>
         <td>{{ post.user_name }}</td>
         <td @click="viewPost(post.board_id)" style="cursor: pointer; color: blue;">
@@ -33,6 +32,15 @@
         </td>
         <td>{{ post.board_viewcount }}</td>
         <td>{{ post.board_likecount }}</td>
+      </tr>
+    </tbody>
+
+    <!-- 🔻 검색 결과 없음 표시 -->
+    <tbody v-else>
+      <tr>
+        <td colspan="6" style="padding: 20px; text-align: center; color: #777;">
+          검색 결과가 없습니다.
+        </td>
       </tr>
     </tbody>
   </table>

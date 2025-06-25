@@ -1,11 +1,11 @@
 <template>
   <div class="board-list-container">
-    <CategoryButtons @select="handleCategorySelect" />
     <!-- 소트와 필터를 같은 줄에 배치 -->
     <div class="sort-filter-row">
       <BoardFilter @search="handleSearch" />
       <SortButtons :sort="sortOptions" @update:sort="updateSort" />
     </div>
+    <CategoryButtons @select="handleCategorySelect" />
     <BoardNoticeList @view="handleViewPost" />
     <BoardTable :posts="filteredPosts" :showHeader="false" @view="handleViewPost" />
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="handlePageChange" />
