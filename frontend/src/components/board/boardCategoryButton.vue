@@ -36,7 +36,7 @@ const toggleCategory = (value) => {
 <style scoped>
 .category-buttons {
   display: flex;
-  justify-content: center;
+  justify-content: left;
   gap: 0.5rem;
   margin: 1.5rem auto 1rem; /* ⬅ 상단 여백 추가됨 (기존 margin-bottom → margin 전체) */
 }

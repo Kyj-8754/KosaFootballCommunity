@@ -35,22 +35,26 @@ public class WeatherCollectorService {
                         loc.getWeather_location()
                     );
 
+                    // 결과 유효성 검사
+                    if (forecasts == null || forecasts.isEmpty()) {
+                        throw new RuntimeException("예보 데이터가 없음");
+                    }
+
                     for (Weather weather : forecasts) {
                         weatherDAO.insertWeather(weather);
                     }
 
-                    success = true; // 성공 시 루프 종료
+                    success = true;
                     System.out.println("✅ [" + loc.getWeather_location() + "] 수집 성공");
 
                 } catch (Exception e) {
                     System.err.println("❌ [" + loc.getWeather_location() + "] 수집 실패: " + e.getMessage());
 
-                    // 실패 후 10초 대기
                     try {
                         Thread.sleep(10_000);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
-                        return; // 스레드 인터럽트 시 전체 종료
+                        return;
                     }
                 }
             }

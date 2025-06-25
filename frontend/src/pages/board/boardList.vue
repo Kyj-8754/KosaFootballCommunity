@@ -1,8 +1,11 @@
 <template>
   <div class="board-list-container">
     <CategoryButtons @select="handleCategorySelect" />
-    <SortButtons :sort="sortOptions" @update:sort="updateSort" />
-    <BoardFilter @search="handleSearch" />
+    <!-- 소트와 필터를 같은 줄에 배치 -->
+    <div class="sort-filter-row">
+      <BoardFilter @search="handleSearch" />
+      <SortButtons :sort="sortOptions" @update:sort="updateSort" />
+    </div>
     <BoardNoticeList @view="handleViewPost" />
     <BoardTable :posts="filteredPosts" :showHeader="false" @view="handleViewPost" />
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="handlePageChange" />
@@ -93,3 +96,12 @@ const totalPages = computed(() =>
 
 onMounted(fetchPosts)
 </script>
+
+<style scoped>
+.sort-filter-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+}
+</style>
