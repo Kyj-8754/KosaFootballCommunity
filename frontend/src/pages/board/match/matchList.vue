@@ -1,8 +1,7 @@
 <!-- matchList.vue -->
 <template>
   <div class="match-list">
-    <MatchSearchBar @search="fetchMatches" />
-    <MatchFilterBar @filter="fetchMatches" />
+    <MatchQueryBar @query="fetchMatches" />
     <MatchItemList :matches="matches" />
     <Pagination
     :currentPage="currentPage"
@@ -15,8 +14,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
-import MatchSearchBar from '@/components/board/match/matchSearchBar.vue'
-import MatchFilterBar from '@/components/board/match/matchFilterBar.vue'
+import MatchQueryBar from '@/components/board/match/matchQueryBar.vue'
 import MatchItemList from '@/components/board/match/matchItemList.vue'
 import Pagination from '@/components/pagination.vue'
 
