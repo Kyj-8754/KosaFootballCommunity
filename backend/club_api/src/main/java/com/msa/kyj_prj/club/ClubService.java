@@ -6,11 +6,17 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.msa.kyj_prj.club.member.ClubMember;
+import com.msa.kyj_prj.club.member.ClubMemberDAO;
+
 @Service
 public class ClubService {
 
 	@Autowired
 	private ClubDAO clubDAO;
+
+	@Autowired
+	private ClubMemberDAO clubMemberDAO; // ✅ 클럽 멤버 DAO 주입
 
 	// 클럽 단건 조회 (by clubId)
 	public Club getClub(Integer clubId) {
@@ -26,16 +32,31 @@ public class ClubService {
 		return getClubByTeamCode(teamCode);
 	}
 
-	// 클럽 등록
+	
+	// ✅ 클럽 등록 + 팀장 자동 등록
 	public int insert(Club club) {
-		return clubDAO.insert(club);
+	    int result = clubDAO.insert(club); // 1. 클럽 생성
+
+	    Integer clubId = club.getClub_id();   // 2. 생성된 club_id (useGeneratedKeys로 주입됨)
+	    Integer userNo = club.getUser_no();   // ✅ 클럽 생성자 user_no 가져오기
+
+	    // 3. 팀장을 club_member 테이블에 자동 등록
+	    ClubMember leader = new ClubMember();
+	    leader.setClub_id(clubId);
+	    leader.setUser_no(userNo);           // ✅ 기존 user_id → user_no로 수정
+	    leader.setRole("LEADER");            // 팀장 역할 지정
+
+	    clubMemberDAO.insert(leader);        // 4. 클럽 멤버 등록
+
+	    return result;
 	}
 
-	// 클럽 이릅으로 단던 조회
+
+
+	// 클럽 이름으로 단건 조회
 	public Club findByName(String name) {
 		return clubDAO.getClubByName(name);
 	}
-
 
 	// 클럽 목록 조회 (검색 + 페이징 + 정렬 포함)
 	public List<Club> list(Map<String, Object> params) {

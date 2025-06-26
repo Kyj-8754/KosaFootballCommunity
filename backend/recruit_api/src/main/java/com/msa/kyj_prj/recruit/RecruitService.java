@@ -37,20 +37,6 @@ public class RecruitService {
 
 	// 모집글 등록
 	public void create_recruit(RecruitBoard recruit) {
-	    if (recruit.getClub_id() == null || recruit.getClub_id() == 0) {
-	        // 유저 번호를 기반으로 리더 클럽 조회
-	    	// ✔ 올바른 코드
-	    	List<Integer> clubIds = recruit_dao.findClubIdsByLeaderUserNo(recruit.getUser_no());
-
-	        if (clubIds == null || clubIds.isEmpty()) {
-	            throw new RuntimeException("⚠️ 해당 유저는 리더로 등록된 클럽이 없습니다.");
-	        } else if (clubIds.size() > 1) {
-	            throw new RuntimeException("⚠️ 리더 클럽이 2개 이상입니다. 정확한 club_id를 명시해야 합니다.");
-	        }
-
-	        recruit.setClub_id(clubIds.get(0));
-	    }
-
 	    recruit_dao.insert(recruit);
 	}
 

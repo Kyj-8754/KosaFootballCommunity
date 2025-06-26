@@ -12,17 +12,16 @@ import lombok.NoArgsConstructor;
 public class RecruitBoard {
 
     private int bno;               // 게시물 번호 (PK)
-    private Integer club_id;       // ✅ nullable 처리 (서버에서 자동 주입)
-
+    private int club_id;       // ✅ nullable 처리 (서버에서 자동 주입)
+    private String club_name;  // 클럽 이름
+    
     private String title;          // 제목
     private String content;        // 내용
-    private String writer;         // 작성자 (user_id)
+    private int user_no;         // 작성자 (user_id)
 
     private String reg_date;       // 등록일
-    private int view_count;        // 조회수
     private String modified_date;  // 수정일
+    private int view_count;        // 조회수
 
-    private boolean closed = false;        // 모집 마감 여부 기본값
-    private String club_name;              // 출력용 클럽명 (JOIN)
-    private int user_no;                   // 팀장 여부 확인용
+    private int is_closed;// 모집 마감 여부 기본값
 }

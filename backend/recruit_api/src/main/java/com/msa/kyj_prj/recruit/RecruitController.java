@@ -64,26 +64,9 @@ public class RecruitController {
                                                  @RequestParam String user_id) {
         RecruitBoard original = recruit_service.get_recruit(bno);
 
-        if (!original.getWriter().equals(user_id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("작성자만 수정할 수 있습니다.");
-        }
 
         board.setBno(bno);
         recruit_service.update_recruit(board);
         return ResponseEntity.ok("수정 완료");
     }
-
-//    // 모집글 삭제 - 작성자만 가능 		// 삭제 기능은 나중에 추가 
-//    @DeleteMapping("/{bno}")
-//    public ResponseEntity<String> delete_recruit(@PathVariable int bno,
-//                                                 @RequestParam String user_id) {
-//        RecruitBoard original = recruit_service.get_recruit(bno);
-//
-//        if (!original.getWriter().equals(user_id)) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("작성자만 삭제할 수 있습니다.");
-//        }
-//
-//        recruit_service.delete_recruit(bno);
-//        return ResponseEntity.ok("삭제 완료");
-//    }
 }

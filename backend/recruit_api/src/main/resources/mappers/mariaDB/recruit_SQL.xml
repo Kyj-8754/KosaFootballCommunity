@@ -40,8 +40,8 @@
 
   <!-- ✅ 모집글 등록 -->
   <insert id="insert" parameterType="com.msa.kyj_prj.recruit.RecruitBoard">
-    INSERT INTO tbl_recruit_board (club_id, title, content, writer, is_closed)
-    VALUES (#{club_id}, #{title}, #{content}, #{writer}, #{closed})
+    INSERT INTO tbl_recruit_board (club_id, title, content, user_no)
+    VALUES (#{club_id}, #{title}, #{content}, #{user_no})
   </insert>
 
   <!-- ✅ 모집글 수정 -->
@@ -50,7 +50,7 @@
     SET title = #{title},
         content = #{content},
         modified_date = NOW(),
-        is_closed = #{closed}
+        is_closed = #{is_closed}
     WHERE bno = #{bno}
   </update>
 
@@ -60,42 +60,4 @@
     SET view_count = view_count + 1
     WHERE bno = #{bno}
   </update>
-
-  <!-- ✅ 모집글 삭제 -->
-  <delete id="delete" parameterType="int">
-    DELETE FROM tbl_recruit_board
-    WHERE bno = #{bno}
-  </delete>
-
-  <!-- ✅ 팀장 여부 확인 (user_no 기준) -->
-  <select id="is_club_leader" resultType="int" parameterType="map">
-    SELECT COUNT(*)
-    FROM tbl_club
-    WHERE club_id = #{club_id}
-      AND user_no = #{user_no}
-  </select>
-
-  <!-- ✅ user_id로 user_no 조회 -->
-  <select id="findUserNoByUserId" parameterType="string" resultType="int">
-    SELECT user_no
-    FROM user
-    WHERE user_id = #{user_id}
-  </select>
-
-  <!-- ✅ user_id(문자열)로 club_id 조회 -->
-  <select id="findClubIdByUserId" resultType="int" parameterType="string">
-    SELECT club_id
-    FROM tbl_club
-    WHERE leader_user_id = #{writer}
-  </select>
-
-  <!-- ✅ user_no(숫자)로 club_id 조회 (옵션 2 방식 핵심) -->
-  <select id="findClubIdsByLeaderUserNo" resultType="int">
-  SELECT club_id
-  FROM tbl_club
-  WHERE user_no = #{user_no}
-</select>
-
-
-
 </mapper>

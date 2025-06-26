@@ -6,18 +6,17 @@
 <mapper namespace="com.msa.kyj_prj.club.apply.ClubApplyDAO">
 
     <!-- 지원서 등록 -->
-    <insert id="insert" parameterType="com.msa.kyj_prj.club.apply.ClubApply">
+    <insert id="insert">
         INSERT INTO tbl_club_apply (
-            bno,
-            applicant_id,
-            apply_date,
-            status
-        ) VALUES (
-            #{bno},
-            #{applicant_id},
-            NOW(),
-            #{status}
-        )
+    	bno,
+    	appli_user_no,
+    	club_id
+	)
+		VALUES (
+    	#{bno},
+    	#{appli_user_no},
+    	#{club_id}
+	)
     </insert>
 
     <!-- 모집글 번호로 신청 목록 조회 -->
@@ -27,34 +26,19 @@
         WHERE bno = #{bno}
     </select>
 
-    <!-- 지원 ID로 단건 조회 -->
-    <select id="findById" parameterType="int" resultType="com.msa.kyj_prj.club.apply.ClubApply">
-        SELECT *
-        FROM tbl_club_apply
-        WHERE apply_id = #{applyId}
-    </select>
-
-    <!-- 상태 업데이트 -->
+    <!-- 모집글 승인/거부 업데이트 -->
     <update id="updateStatus" parameterType="map">
         UPDATE tbl_club_apply
         SET status = #{status}
-        WHERE apply_id = #{applyId}
+        WHERE apply_id = #{apply_id}
     </update>
 
     <!-- 특정 유저가 이미 신청했는지 확인 -->
-    <select id="findByBnoAndApplicant" parameterType="map" resultType="com.msa.kyj_prj.club.apply.ClubApply">
-        SELECT *
-        FROM tbl_club_apply
-        WHERE bno = #{bno}
-          AND applicant_id = #{applicant_id}
+    <select id="findByBnoAndApplicant" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM tbl_club_apply
+	    WHERE bno = #{bno}
+	    AND appli_user_no = #{appli_user_no}
     </select>
     
-    <select id="findLeaderIdByBno" parameterType="int" resultType="String">
-    SELECT c.leader_user_id
-    FROM tbl_recruit_board r
-    JOIN tbl_club c ON r.club_id = c.club_id
-    WHERE r.bno = #{bno}
-	</select>
-
-
 </mapper>

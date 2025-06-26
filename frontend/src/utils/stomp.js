@@ -15,7 +15,7 @@ export function connectWebSocket(userId, onMessage) {
     return;
   }
 
-  const socket = new SockJS('http://localhost:8082/ws'); // WebSocket 백엔드 URL
+  const socket = new SockJS('http://localhost:8086/ws'); // WebSocket 백엔드 URL
   stompClient = Stomp.over(socket);
 
 // ✅ 로그 비활성화 (에러 방지 방식)

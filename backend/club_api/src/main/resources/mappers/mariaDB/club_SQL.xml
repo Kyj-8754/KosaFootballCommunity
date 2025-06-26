@@ -30,7 +30,7 @@
     </select>
 
     <!-- ✅ 등록 (user_no 포함하도록 수정됨) -->
-    <insert id="insert" parameterType="com.msa.kyj_prj.club.Club">
+    <insert id="insert" parameterType="com.msa.kyj_prj.club.Club" useGeneratedKeys="true" keyProperty="club_id">
         INSERT INTO tbl_club (
             team_code,
             club_name,
