@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+# 환경설정 파일 중 민감한 정보 포함된 파일 무시
+src/main/resources/application-secret.properties

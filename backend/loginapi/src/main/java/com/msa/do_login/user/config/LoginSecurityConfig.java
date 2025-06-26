@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AuthorizeH
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.msa.do_security.security.config.BaseSecurityConfig;
+import com.msa.do_security.security.service.OAuth2UserService;
 import com.msa.do_security.security.service.UserVODetailsService;
 import com.msa.do_security.security.util.JWTUtil;
 
@@ -19,21 +20,23 @@ import com.msa.do_security.security.util.JWTUtil;
 @EnableMethodSecurity
 public class LoginSecurityConfig extends BaseSecurityConfig {
 	
-	public LoginSecurityConfig(ObjectMapper objectMapper, JWTUtil jwtUtil, UserVODetailsService userVODetailsService) {
-		super(objectMapper, jwtUtil, userVODetailsService);
+	public LoginSecurityConfig(ObjectMapper objectMapper, JWTUtil jwtUtil, UserVODetailsService userVODetailsService, OAuth2UserService oAuth2UserService) {
+		super(objectMapper, jwtUtil, userVODetailsService, oAuth2UserService);
 	}
 
 	@Override
 	protected void customizeAuthorization(AuthorizationManagerRequestMatcherRegistry authorize) throws Exception {
 		((AuthorizedUrl) authorize.requestMatchers("/user/na/**")).permitAll();
 		((AuthorizedUrl) authorize.requestMatchers("/kakao/callback")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/oauth/authorize/**")).permitAll();
+		
 	}
 
 	@Override
 	protected List<String> getExcludedPaths() {
 		return Stream.concat(
 			super.getExcludedPaths().stream(),
-			Stream.of("/user/na/**", "/kakao/callback")
+			Stream.of("/user/na/**", "/kakao/callback", "/oauth/authorize/**")
 		).toList();
 	}
 }
