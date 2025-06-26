@@ -5,71 +5,97 @@
 
 <mapper namespace="com.msa.kyj_prj.recruit.RecruitDAO">
 
-<select id="find_all" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
-  SELECT r.*, c.club_name
-  FROM tbl_recruit_board r
-  JOIN tbl_club c ON r.club_id = c.club_id
-  ORDER BY r.bno DESC
-</select>
+<!-- ✅ 전체 목록 (최신순) -->
+  <select id="find_all" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    ORDER BY r.bno DESC
+  </select>
 
-<!-- 인기순 정렬 -->
-<select id="find_all_order_by_view_count" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
-  SELECT r.*, c.club_name
-  FROM tbl_recruit_board r
-  JOIN tbl_club c ON r.club_id = c.club_id
-  ORDER BY r.view_count DESC
-</select>
+  <!-- ✅ 인기순 정렬 -->
+  <select id="find_all_order_by_view_count" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    ORDER BY r.view_count DESC
+  </select>
 
-<!-- 클럽별 목록 -->
-<select id="find_by_club_id" parameterType="int" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
-  SELECT r.*, c.club_name
-  FROM tbl_recruit_board r
-  JOIN tbl_club c ON r.club_id = c.club_id
-  WHERE r.club_id = #{club_id}
-  ORDER BY r.bno DESC
-</select>
+  <!-- ✅ 클럽별 모집글 목록 -->
+  <select id="find_by_club_id" parameterType="int" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    WHERE r.club_id = #{club_id}
+    ORDER BY r.bno DESC
+  </select>
 
+  <!-- ✅ 모집글 단건 조회 -->
+  <select id="find_by_id" parameterType="int" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    WHERE r.bno = #{bno}
+  </select>
 
-<!-- 단건 조회 -->
-<select id="find_by_id" parameterType="int" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
-  SELECT r.*, c.club_name
-  FROM tbl_recruit_board r
-  JOIN tbl_club c ON r.club_id = c.club_id
-  WHERE r.bno = #{bno}
-</select>
-<!-- 등록 -->
-<insert id="insert" parameterType="com.msa.kyj_prj.recruit.RecruitBoard">
-  INSERT INTO tbl_recruit_board (club_id, title, content, writer)
-  VALUES (#{club_id}, #{title}, #{content}, #{writer})
-</insert>
+  <!-- ✅ 모집글 등록 -->
+  <insert id="insert" parameterType="com.msa.kyj_prj.recruit.RecruitBoard">
+    INSERT INTO tbl_recruit_board (club_id, title, content, writer, is_closed)
+    VALUES (#{club_id}, #{title}, #{content}, #{writer}, #{closed})
+  </insert>
 
-<!-- 수정 -->
-<update id="update" parameterType="com.msa.kyj_prj.recruit.RecruitBoard">
-  UPDATE tbl_recruit_board
-  SET title = #{title},
-      content = #{content}
-  WHERE bno = #{bno}
-</update>
+  <!-- ✅ 모집글 수정 -->
+  <update id="update" parameterType="com.msa.kyj_prj.recruit.RecruitBoard">
+    UPDATE tbl_recruit_board
+    SET title = #{title},
+        content = #{content},
+        modified_date = NOW(),
+        is_closed = #{closed}
+    WHERE bno = #{bno}
+  </update>
 
-<!-- 조회수 증가 -->
-<update id="increase_view_count" parameterType="int">
-  UPDATE tbl_recruit_board
-  SET view_count = view_count + 1
-  WHERE bno = #{bno}
-</update>
+  <!-- ✅ 조회수 증가 -->
+  <update id="increase_view_count" parameterType="int">
+    UPDATE tbl_recruit_board
+    SET view_count = view_count + 1
+    WHERE bno = #{bno}
+  </update>
 
-<!-- 삭제 -->
-<delete id="delete" parameterType="int">
-  DELETE FROM tbl_recruit_board
-  WHERE bno = #{bno}
-</delete>
+  <!-- ✅ 모집글 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM tbl_recruit_board
+    WHERE bno = #{bno}
+  </delete>
 
-<!-- 팀장 여부 확인 -->
-<select id="is_club_leader" resultType="int" parameterType="map">
-  SELECT COUNT(*)
+  <!-- ✅ 팀장 여부 확인 (user_no 기준) -->
+  <select id="is_club_leader" resultType="int" parameterType="map">
+    SELECT COUNT(*)
+    FROM tbl_club
+    WHERE club_id = #{club_id}
+      AND user_no = #{user_no}
+  </select>
+
+  <!-- ✅ user_id로 user_no 조회 -->
+  <select id="findUserNoByUserId" parameterType="string" resultType="int">
+    SELECT user_no
+    FROM user
+    WHERE user_id = #{user_id}
+  </select>
+
+  <!-- ✅ user_id(문자열)로 club_id 조회 -->
+  <select id="findClubIdByUserId" resultType="int" parameterType="string">
+    SELECT club_id
+    FROM tbl_club
+    WHERE leader_user_id = #{writer}
+  </select>
+
+  <!-- ✅ user_no(숫자)로 club_id 조회 (옵션 2 방식 핵심) -->
+  <select id="findClubIdsByLeaderUserNo" resultType="int">
+  SELECT club_id
   FROM tbl_club
-  WHERE club_id = #{club_id}
-    AND leader_user_id = #{user_id}
+  WHERE user_no = #{user_no}
 </select>
+
+
 
 </mapper>

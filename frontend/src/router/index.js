@@ -12,13 +12,14 @@ import Member_UpdateForm from '@/pages/member/updateForm.vue'
 import Member_List from '@/pages/member/list.vue'
 
 // 게시판 관련
-import Board_DetailView from '@/pages/board/detailView.vue'
-import Board_List from '@/pages/board/list.vue'
-import Board_RegistForm from '@/pages/board/registForm.vue'
-import Board_UpdateForm from '@/pages/board/updateForm.vue'
+import boardList from "@/pages/board/boardList.vue";
+import boardRegisterForm from '@/pages/board/boardRegisterForm.vue';
+import boardDetail from '@/pages/board/boardDetail.vue';
+import boardEditForm from '@/pages/board/boardEditForm.vue';
 
 // 경기장 관련
 import Stadium_DetailView from '@/pages/stadium/detailView.vue'
+import Stadium_List from '@/pages/stadium/list.vue';
 
 // 클럽 관련
 import Club_List from '@/pages/club/list.vue'
@@ -43,13 +44,14 @@ const routes = [
   { path: '/member/list', name: 'Member_List', component: Member_List },
 
   // 게시판 관련
-  { path: '/board/detailView', name: 'Board_DetailView', component: Board_DetailView },
-  { path: '/board/list', name: 'Board_List', component: Board_List },
-  { path: '/board/registForm', name: 'Board_RegistForm', component: Board_RegistForm },
-  { path: '/board/updateForm', name: 'Board_UpdateForm', component: Board_UpdateForm },
+  { path:'/board/boardlist', name: 'boardList', component: boardList },
+  { path:'/board/boardregisterform', name: 'boardRegisterForm', component: boardRegisterForm },
+  { path: '/board/boarddetail/:id', name: 'boardDetail', component: boardDetail },
+  { path: '/board/boardeditform/:id', name: 'boardEditForm', component: boardEditForm },
 
   // 경기장 관련
-  { path: '/stadium/detailView', name: 'Stadium_DetailView', component: Stadium_DetailView },
+  { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: Stadium_DetailView },
+  { path: '/stadium/list',  name: 'Stadium_List', component: Stadium_List },
 
   // 클럽 관련
   { path: '/club', name: 'Club_List', component: Club_List },

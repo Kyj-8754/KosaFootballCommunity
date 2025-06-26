@@ -8,9 +8,6 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import VCalendar from 'v-calendar'
 import 'v-calendar/style.css'
 
-import { createPinia } from 'pinia';
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
-
 // ✅ Toastification import
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';  // 스타일도 반드시 import

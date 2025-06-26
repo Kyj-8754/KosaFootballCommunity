@@ -53,7 +53,9 @@ export default {
   methods: {
     async fetchClubs() {
       try {
-        const response = await axios.get('/api/clubs')
+        // 🔧 수정 전: /api/clubs
+        // ✅ 수정 후: /clubs_api
+        const response = await axios.get('/club_api/list')
         this.clubs = response.data.data
       } catch (error) {
         console.error('클럽 목록 불러오기 실패:', error)
@@ -75,4 +77,3 @@ export default {
   }
 }
 </script>
-

@@ -33,12 +33,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      // 🔵 clubs_api (포트 8080)
-      '/clubs_api': {
-        target: 'http://localhost:8084',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/clubs_api/, ""),
-      },
+
       // 게시판 프록시
       "/board_api": {
         target: "http://localhost:8082",
@@ -61,21 +56,28 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/login_api/, ""),
       },
-      '/api/club': {
+
+      // // 작업중
+      // club_api
+      '/club_api': {
         target: 'http://localhost:8084',
-        changeOrigin: true
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/club_api/, "/club"),
       },
 
-      // 🟡 recruit_api (포트 8081)
-      '/api/recruits': {
+
+      // 🟡 recruit_api (포트 8085)
+      '/recruits_api': {
         target: 'http://localhost:8085',
-        changeOrigin: true
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/recruits_api/, "/recruits"),
       },
 
-      // 🟢 alarm_api (포트 8082)
-      '/api/alarm': {
+      // 🟢 alarm_api (포트 8086)
+      '/alarm_api': {
         target: 'http://localhost:8086',
-        changeOrigin: true
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/alarm_api/, "/alarm"),
       },
 
       // 선택: WebSocket 서버용 경로 프록시

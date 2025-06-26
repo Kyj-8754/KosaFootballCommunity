@@ -4,70 +4,68 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/clubs")
+@RequestMapping("/club") // ✅ club_api 프록시와 매핑되도록 루트 수정
 public class ClubController {
 
     @Autowired
     private ClubService clubService;
 
-    // ✅ [단건 조회] 팀 코드로 클럽 조회
+ // ✅ 클럽 생성 - JWT 없이 단순 등록
+    @PostMapping("")
+    public void createClub(@RequestBody Club club) {
+        clubService.insert(club); // ✅ create → insert 로 변경
+    }
+
+    
+    // ✅ [단건 조회] 팀 코드로 클럽 조회 - /club/code/{teamCode}
     @GetMapping("/code/{teamCode}")
     public Club getClubByTeamCode(@PathVariable String teamCode) {
         return clubService.findByTeamCode(teamCode);
     }
 
-    // ✅ [클럽 등록] 로그인된 유저의 세션에서 leader_user_id 주입
-    @PostMapping
-    public int insertClub(@RequestBody Club club, HttpSession session) {
-        String loginUserId = (String) session.getAttribute("loginUserid");
-        if (loginUserId == null || loginUserId.isEmpty()) {
-            throw new RuntimeException("로그인이 필요합니다.");
-        }
-        club.setLeaderUserId(loginUserId); // 🔥 자동으로 팀장 설정
-        return clubService.insert(club);
-    }
-
-    /*
-    // 🔧 Postman 테스트용 하드코딩 버전 (임시로만 사용)
-    @PostMapping
-    public int insertClub(@RequestBody Club club) {
-        club.setLeaderUserId("testuser001"); // DB에 있는 유저 ID 하드코딩
-        return clubService.insert(club);
-    }
-    */
-
-    // ✅ [중복 체크] 클럽 이름 중복 여부 확인
+    // ✅ [중복 체크] 클럽 이름 중복 여부 확인 - /club/check-name?name=...
     @GetMapping("/check-name")
     public boolean isClubNameAvailable(@RequestParam String name) {
         return clubService.findByName(name) == null;
     }
 
-    // ✅ [중복 체크] 팀 코드 중복 여부 확인
+ // ✅ 팀 코드 중복 확인 API - 예외 처리 포함
     @GetMapping("/check-teamcode")
-    public boolean isTeamCodeAvailable(@RequestParam String teamCode) {
-        return clubService.findByTeamCode(teamCode) == null;
+    public ResponseEntity<Boolean> isTeamCodeAvailable(@RequestParam(required = false) String teamCode) {
+        try {
+            // 빈 문자열 또는 null이면 잘못된 요청 처리
+            if (teamCode == null || teamCode.trim().isEmpty()) {
+                throw new IllegalArgumentException("팀 코드는 필수 입력값입니다.");
+            }
+
+            boolean isAvailable = clubService.findByTeamCode(teamCode) == null;
+            return ResponseEntity.ok(isAvailable);  // 200 OK + true/false
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);  // 400 Bad Request
+        } catch (Exception e) {
+            // 예기치 못한 서버 오류 처리 (500)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
-    // ✅ [클럽 수정] club_id 기준으로 수정
-    @PutMapping("/{club_id}")
-    public int updateClub(@PathVariable("club_id") int clubId, @RequestBody Club club) {
-        club.setClubId(clubId);
-        return clubService.update(club);
-    }
 
-    // ✅ [클럽 삭제] club_id 기준으로 삭제
-    @DeleteMapping("/{club_id}")
-    public int deleteClub(@PathVariable("club_id") int clubId) {
-        return clubService.delete(clubId);
-    }
 
-    // ✅ [클럽 목록 조회] 페이징 + 검색 + 정렬 지원
-    @GetMapping
+    // ✅ [클럽 목록 조회] - /club/list?page=1&size=10 ...
+    // 🔧 이 메서드는 clubs_api 에 대응되므로 URL 수정하거나 컨트롤러를 분리해도 됨
+    @GetMapping("/list")
     public Map<String, Object> listClubs(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,

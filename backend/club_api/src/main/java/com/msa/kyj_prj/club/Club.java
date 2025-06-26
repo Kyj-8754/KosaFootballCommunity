@@ -1,7 +1,5 @@
 package com.msa.kyj_prj.club;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,48 +14,18 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Club {
 
-    @JsonProperty("club_id")
-    private int clubId;
+    private int club_id;             // 클럽 ID (PK)
+    private String team_code;        // 팀 고유 코드
+    private String club_name;        // 클럽 이름
+    private String user_no;   		 // 팀장의 user_no
+    private String logo_path;        // 클럽 로고 이미지 경로
 
-    @JsonProperty("team_code") 
-    private String teamCode;
+    private int rating;              // 팀 평점
+    private int ranking;             // 팀 순위
+    private int win_count;           // 승
+    private int draw_count;          // 무
+    private int loss_count;          // 패
 
-    @JsonProperty("club_name")
-    private String clubName;
-
-    @JsonProperty("leader_user_id")
-    private String leaderUserId;
-
-    @JsonProperty("logo_path")
-    private String logoPath;
-
-    @JsonProperty("rating")
-    private int rating;
-
-    @JsonProperty("ranking")
-    private int ranking;
-
-    @JsonProperty("win_count")
-    private int winCount;
-
-    @JsonProperty("draw_count")
-    private int drawCount;
-
-    @JsonProperty("loss_count")
-    private int lossCount;
-
-    @JsonProperty("description")
-    private String description;
-
-    @JsonProperty("created_at")
-    private LocalDateTime createdAt;
-
-    // 수동 setter 예시 (Lombok 대비용)
-    public void setClubId(int clubId) {
-        this.clubId = clubId;
-    }
-
-    public void setTeamCode(String teamCode) {
-        this.teamCode = teamCode;
-    }
+    private String description;      // 클럽 소개
+    private String created_at;       // 생성일 (문자열 처리: yyyy-MM-dd HH:mm:ss 등)
 }

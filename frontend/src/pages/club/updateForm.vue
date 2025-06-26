@@ -94,7 +94,9 @@ export default {
   async created() {
     const teamCode = this.$route.params.teamCode;
     try {
-      const response = await axios.get(`/api/clubs/code/${teamCode}`);
+      // 🔧 수정 전: /api/clubs/code/...
+      // ✅ 수정 후:
+      const response = await axios.get(`/club_api/code/${teamCode}`);
       this.club = response.data;
 
       const loginUserid = sessionStorage.getItem('loginUserid');
@@ -107,7 +109,9 @@ export default {
   methods: {
     async submitUpdate() {
       try {
-        await axios.put(`/api/clubs/${this.club.club_id}`, this.club);
+        // 🔧 수정 전: /api/clubs/{club_id}
+        // ✅ 수정 후:
+        await axios.put(`/club_api/${this.club.club_id}`, this.club);
         alert('수정이 완료되었습니다.');
         this.$router.push(`/club/${this.club.team_code}`);
       } catch (error) {
