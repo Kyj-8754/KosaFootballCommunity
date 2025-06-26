@@ -27,7 +27,6 @@ public class MatchController {
         return matchService.getLeagueMatches(params);
     }
 
-
     // 매치 상세 조회
     @GetMapping("/{id}")
     public Match getMatchDetail(@PathVariable("id") Long matchId) {
