@@ -4,7 +4,7 @@
 
     <div v-if="recruit">
       <h4 class="mb-3">{{ recruit.title }}</h4>
-      <p>{{ recruit.content}} </p>
+      <div v-html="recruit.content"></div>
 
       <ul>
         <!-- <li><strong>작성자:</strong> {{ recruit.user_no }}</li> -->

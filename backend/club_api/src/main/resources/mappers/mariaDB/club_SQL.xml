@@ -108,5 +108,21 @@
         FROM tbl_club
         WHERE club_name = #{name}
     </select>
+    
+    
+      <!-- user_no 기반으로 클럽id단건 조회 -->
+    <select id="findClubByUserNo" parameterType="int" resultType="com.msa.kyj_prj.club.Club">
+  	SELECT * FROM tbl_club WHERE user_no = #{userNo} LIMIT 1
+	</select>
+	
+	<!-- ✅ 여러 클럽 조회: 유저가 팀을 여러 개 운영할 수 있는 경우 -->
+	<select id="findClubsByUserNo" parameterType="int" resultType="com.msa.kyj_prj.club.Club">
+  	SELECT * FROM tbl_club WHERE user_no = #{userNo}
+	</select>
+	
+	
+
+
+    
 
 </mapper>

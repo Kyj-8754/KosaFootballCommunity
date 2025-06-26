@@ -51,7 +51,22 @@ public class ClubService {
 	    return result;
 	}
 
+	 // ✅ userNo 기준으로 클럽이 존재하는지 여부 확인
+    public boolean hasClubByUserNo(int userNo) {
+        return clubDAO.findClubByUserNo(userNo) != null;
+    }
+    // userNo 기준으로 여러 클럽을 조회
+    public List<Club> findClubsByUserNo(int userNo) {
+        return clubDAO.findClubsByUserNo(userNo);
+    }
+ // ✅ club_id 1건 조회를 위한 서비스 메서드
+    public Club findClubByUserNo(int userNo) {
+        return clubDAO.findClubByUserNo(userNo);
+    }
 
+    
+    
+    
 
 	// 클럽 이름으로 단건 조회
 	public Club findByName(String name) {
