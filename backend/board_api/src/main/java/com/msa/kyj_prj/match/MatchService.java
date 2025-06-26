@@ -15,6 +15,7 @@ public class MatchService {
     // 소셜매치 목록 호출
     public List<Match> getSocialMatches(Map<String, Object> params) {
         params.put("match_code", "social");
+        System.out.println("params = " + params);
         return matchDAO.selectFilteredMatches(params);
     }
 

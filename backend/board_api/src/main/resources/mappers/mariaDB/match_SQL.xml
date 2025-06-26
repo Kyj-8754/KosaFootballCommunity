@@ -28,11 +28,12 @@
 	            AND m.match_code COLLATE utf8mb4_general_ci = #{match_code}
 	        </if>
 	
-	        <if test="afterDate != null and afterDate != ''">
-	            AND m.match_date >= #{afterDate}
-	        </if>
-	
-	        <if test="(afterDate == null or afterDate == '') and futureOnly != null and futureOnly">
+			<if test="afterDate != null and afterDate != ''">
+			    AND m.match_date BETWEEN CONCAT(#{afterDate}, ' 00:00:00') AND CONCAT(#{afterDate}, ' 23:59:59')
+			</if>
+			
+			<!-- ✅ 없으면 현재 시간 이후 -->
+	        <if test="afterDate == null or afterDate == ''">
 	            AND m.match_date > NOW()
 	        </if>
 	
@@ -60,7 +61,7 @@
 	            AND m.match_title COLLATE utf8mb4_general_ci LIKE CONCAT('%', #{match_title}, '%')
 	        </if>
 	    </trim>
-	    ORDER BY m.match_date DESC
+	    ORDER BY m.match_date ASC
 	</select>
 	
 	<!-- 매치 상세보기 -->
