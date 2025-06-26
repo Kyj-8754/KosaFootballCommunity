@@ -61,6 +61,31 @@ public class ClubController {
         }
     }
 
+ // ✅ 유저 번호(userNo)로 클럽 보유 여부 확인
+    @GetMapping("/hasClub/{userNo}")
+    public ResponseEntity<Map<String, Boolean>> hasClub(@PathVariable int userNo) {
+        boolean exists = clubService.hasClubByUserNo(userNo); // 서비스 로직 호출
+        Map<String, Boolean> result = new HashMap<>();
+        result.put("result", exists); // JSON: { "result": true }
+        return ResponseEntity.ok(result);
+    }
+    // 게시글 등록 화면에서 여러 클럽 조회
+    @GetMapping("/myClubs/{userNo}")
+    public ResponseEntity<List<Club>> getClubsByUser(@PathVariable int userNo) {
+        List<Club> clubs = clubService.findClubsByUserNo(userNo);
+        return ResponseEntity.ok(clubs);
+    }
+    
+    @GetMapping("/getSingleClub/{userNo}")
+    public ResponseEntity<Map<String, Object>> getSingleClub(@PathVariable int userNo) {
+        Club club = clubService.findClubByUserNo(userNo); // LIMIT 1
+        Map<String, Object> result = new HashMap<>();
+
+        // ✅ 필드명이 club_id이므로 getClub_id() 메서드 사용
+        result.put("club_id", club != null ? club.getClub_id() : null);
+
+        return ResponseEntity.ok(result);
+    }
 
 
     // ✅ [클럽 목록 조회] - /club/list?page=1&size=10 ...
