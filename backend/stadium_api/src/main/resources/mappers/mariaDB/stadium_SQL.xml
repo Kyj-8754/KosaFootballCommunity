@@ -6,8 +6,9 @@
 
 <mapper namespace="com.msa.kyj_prj.stadium.StadiumDAO">
 	<sql id="search">
+		where state != 'DELETE'   <!-- ① 무조건 적용 -->
         <if test="searchValue != null and searchValue != ''">
-         WHERE
+         AND
 		    <choose>
 		     <when test="searchType == ''">
 		        (
