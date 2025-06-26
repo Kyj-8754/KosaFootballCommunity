@@ -13,11 +13,13 @@ import Member_DetailView from '@/pages/member/detailView.vue';
 import Member_UpdateForm from '@/pages/member/updateForm.vue';
 import Member_List from '@/pages/member/list.vue';
 import matchList from '@/pages/board/match/matchList.vue';
+import matchDetail from '@/pages/board/match/matchDetail.vue';
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         { path:'/match/matchlist', name: 'matchList', component: matchList },
+        { path:'/match/matchdetail/:id', name: 'matchDetail', component: matchDetail },
         { path:'/board/boardlist', name: 'boardList', component: boardList },
         { path:'/board/boardregisterform', name: 'boardRegisterForm', component: boardRegisterForm },
         { path: '/board/boarddetail/:id', name: 'boardDetail', component: boardDetail },
