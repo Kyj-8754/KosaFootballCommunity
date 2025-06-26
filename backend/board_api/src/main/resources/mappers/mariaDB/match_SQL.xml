@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msa.kyj_prj.match.MatchDAO">
+
+	<!-- 매치 리스트 -->
+	<select id="selectFilteredMatches" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT
+	        m.match_id,
+	        m.match_title,
+	        m.match_created_at,
+	        m.match_date,
+	        m.SVCID,
+	        m.match_closed,
+	        m.gender_condition,
+	        m.match_status,
+	        m.match_board_status,
+	        m.match_code,
+	        s.SVCNM,
+	        s.PLACENM,
+	        s.SUBPLACENM,
+	        s.AREANM
+	    FROM
+	        match m
+	    JOIN
+	        stadium s ON m.SVCID = s.SVCID
+	    <trim prefix="WHERE" prefixOverrides="AND|OR">
+	        <if test="match_code != null and match_code != ''">
+	            AND m.match_code = #{match_code}
+	        </if>
+	
+	        <if test="afterDate != null and afterDate != ''">
+	            AND m.match_date &gt;= #{afterDate}
+	        </if>
+	
+	        <if test="(afterDate == null or afterDate == '') and futureOnly != null and futureOnly">
+	            AND m.match_date &gt; NOW()
+	        </if>
+	
+	        <if test="areanm != null and areanm != ''">
+	            AND s.AREANM = #{areanm}
+	        </if>
+	
+	        <if test="match_closed != null and match_closed != ''">
+	            AND m.match_closed = #{match_closed}
+	        </if>
+	
+	        <if test="gender_condition != null and gender_condition != ''">
+	            AND m.gender_condition = #{gender_condition}
+	        </if>
+	
+	        <if test="match_status != null and match_status != ''">
+	            AND m.match_status = #{match_status}
+	        </if>
+	
+	        <if test="match_board_status != null and match_board_status != ''">
+	            AND m.match_board_status = #{match_board_status}
+	        </if>
+	
+	        <if test="match_title != null and match_title != ''">
+	            AND m.match_title LIKE CONCAT('%', #{match_title}, '%')
+	        </if>
+	    </trim>
+	    ORDER BY m.match_date DESC
+	</select>
+	
+	<!-- 매치 상세보기 -->
+	<select id="selectMatchDetailById" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT
+	        -- match 테이블 전체
+	        m.match_id,
+	        m.match_title,
+	        m.match_created_at,
+	        m.match_modified_at,
+	        m.user_no,
+	        m.match_date,
+	        m.SVCID,
+	        m.match_closed,
+	        m.gender_condition,
+	        m.match_description,
+	        m.match_status,
+	        m.match_board_status,
+	        m.match_code,
+	
+	        -- stadium 테이블
+	        s.SVCNM,
+	        s.PLACENM,
+	        s.X,
+	        s.Y,
+	        s.IMG_PATH,
+	        s.TELNO,
+	        s.NOTICE,
+	        s.SUBPLACENM,
+	        s.ORGNM,
+	        s.SVCENDTELNO,
+	        s.AREANM,
+	        s.ADRES,
+	        s.DTLCONT
+	
+	    FROM
+	        match m
+	    JOIN
+	        stadium s ON m.SVCID = s.SVCID
+	    WHERE
+	        m.match_id = #{match_id}
+	</select>
+	
+
+</mapper>
