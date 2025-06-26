@@ -1,9 +1,13 @@
 package com.msa.do_security.security.config;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,17 +18,24 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.msa.do_security.security.dto.SocialUserDTO;
 import com.msa.do_security.security.filter.LoginFilter;
 import com.msa.do_security.security.filter.RefreshTokenFilter;
 import com.msa.do_security.security.filter.TokenCheckFilter;
+import com.msa.do_security.security.service.OAuth2UserService;
 import com.msa.do_security.security.service.UserVODetailsService;
 import com.msa.do_security.security.util.JWTUtil;
+import com.msa.do_security.security.vo.OAuth2UserVO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+@Configuration
 @Log4j2
 @RequiredArgsConstructor
 public class BaseSecurityConfig {
@@ -32,6 +43,7 @@ public class BaseSecurityConfig {
 	private final ObjectMapper objectMapper;
 	private final JWTUtil jwtUtil;
 	private final UserVODetailsService userVODetailsService;
+	private final OAuth2UserService oAuth2UserService;
 
 	// 비밀번호 암호화를 위한 BCrypt 해시 함수 객체 생성
 	@Bean
@@ -82,14 +94,41 @@ public class BaseSecurityConfig {
 		// TokenCheckFilter 필더 객체 실행 전에 동작할 RefreshTokenFilter 객체를 생성하여 설정한다
 		// 해당 소스 작성후 : 브라우저에서 /refreshToken URL을 실행한다
 		http.addFilterBefore(new RefreshTokenFilter("/refreshToken", objectMapper, jwtUtil), TokenCheckFilter.class);
-
+		
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		// csrf 비활성화
 		http.csrf(csrf -> csrf.disable());
 		// 세션을 사용하지 않음
 		http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		defaultAuthorizationRules(http);
+		
+		// 소셜로그인
+        http.oauth2Login(oauth2 -> oauth2
+            .userInfoEndpoint(userInfo -> userInfo
+                .userService(oAuth2UserService)
+            )
+            .successHandler((request, response, authentication) -> {
+                OAuth2UserVO oAuthUser = (OAuth2UserVO) authentication.getPrincipal();
+                SocialUserDTO socialUserDTO = (SocialUserDTO)authentication
+    					.getPrincipal();
 
+                // JWT claim 설정
+                Map<String, Object> claims = Map.of(
+                    "userId", socialUserDTO.getUserId(),
+                    "userNo", socialUserDTO.getUserNo(),
+                    "userName", URLEncoder.encode(socialUserDTO.getUserName(), StandardCharsets.UTF_8),
+                    "authCode", "ROLE_"+socialUserDTO.getAuthCode()
+                );
+
+    			Map<String, String> keyMap = Map.of("accessToken", jwtUtil.generateToken(claims, 1), //Access Token 유효기간 1일로 생성
+						"refreshToken", jwtUtil.generateToken(claims, 5)); //Refresh Token 유효기간 10일로 생성
+
+
+                new ObjectMapper().writeValue(response.getWriter(), keyMap);
+            })
+        );
+		
 		return http.build();
 
 	}
@@ -124,5 +163,17 @@ public class BaseSecurityConfig {
 
 	protected List<String> getExcludedPaths() {
 		return List.of("/generateToken", "/refreshToken");
+	}
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+	    CorsConfiguration config = new CorsConfiguration();
+	    config.setAllowedOrigins(List.of("http://localhost:5173")); // Vue 개발 서버
+	    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	    config.setAllowedHeaders(List.of("*"));
+	    config.setAllowCredentials(true);
+
+	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", config);
+	    return source;
 	}
 }
