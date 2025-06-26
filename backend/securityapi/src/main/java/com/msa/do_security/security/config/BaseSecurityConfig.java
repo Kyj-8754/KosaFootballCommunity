@@ -98,6 +98,7 @@ public class BaseSecurityConfig {
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		// csrf 비활성화
 		http.csrf(csrf -> csrf.disable());
+		http.formLogin(form -> form.disable());
 		// 세션을 사용하지 않음
 		http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
@@ -141,10 +142,8 @@ public class BaseSecurityConfig {
 			try {
 				customizeAuthorization(authroize);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 			authroize.requestMatchers("/user/**").hasAnyAuthority("ROLE_A3", "ROLE_A2", "ROLE_A1"); // 여러개의 권한 중 하나라도
 																									// 있으면 성공
 			authroize.requestMatchers("/manager/**").hasAnyAuthority("ROLE_A2", "ROLE_A1");
@@ -152,9 +151,6 @@ public class BaseSecurityConfig {
 
 			authroize.anyRequest().permitAll();
 		}); // 반드시 해당 권한만 허가)
-
-		// 확장 기능
-		// customizeAuthorization(http);
 	}
 
 	protected void customizeAuthorization(
