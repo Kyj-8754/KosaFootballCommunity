@@ -12,7 +12,7 @@
       </div>
 
       <div class="info-col">
-        <div class="summary">
+        <div class="summary" @click="goToDetail(match.match_id)" style="cursor: pointer;">
           {{ formatTime(match.match_date) }} {{ match.match_title }}
         </div>
         <div class="location">{{ match.PLACENM }} {{ match.SUBPLACENM }}</div>
@@ -35,6 +35,7 @@
 
 <script setup>
 import { defineProps } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   matches: {
@@ -42,6 +43,12 @@ const props = defineProps({
     required: true
   }
 })
+
+const router = useRouter()
+
+const goToDetail = (matchId) => {
+  router.push(`/match/matchdetail/${matchId}`)
+}
 
 const formatDate = (datetimeStr) => {
   const date = new Date(datetimeStr)

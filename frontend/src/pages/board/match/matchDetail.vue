@@ -8,7 +8,11 @@
     <MatchInfoCard :match="match" />
 
     <!-- 상세 설명 -->
-    <MatchDescription :description="match.match_description" />
+    <<MatchDescription
+    :notice="match.NOTICE"
+    :detail="match.DTLCONT"
+    :description="match.match_description"
+    />
   </div>
 </template>
 

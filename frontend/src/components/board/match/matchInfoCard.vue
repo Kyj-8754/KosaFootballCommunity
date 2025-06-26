@@ -1,35 +1,32 @@
-<!-- components/board/match/detail/MatchInfoCard.vue -->
 <template>
   <div class="info-card">
+    <!-- 이미지 영역 -->
+    <img :src="imageUrl" alt="구장 이미지" class="venue-img" />
+
     <!-- 구장 정보 -->
     <div class="venue">
-      <div class="placenm">{{ match.PLACENM }} {{ match.SUBPLACENM }}</div>
-      <div class="price">{{ match.match_price?.toLocaleString() || '가격 미정' }}원</div>
+      <div class="placenm">{{ match.SVCNM }} - {{ match.PLACENM }} {{ match.SUBPLACENM }}</div>
+      <div class="price">가격 미정</div>
       <button class="apply-button">신청하기</button>
     </div>
 
-    <!-- 주소 및 버튼 -->
+    <!-- 주소 및 전화번호 -->
     <div class="address">
-      <div>{{ match.ADRES }}</div>
-      <div>{{ match.DTLCONT }}</div>
+      <div>주소: {{ match.AREANM }} {{ match.ADRES }}</div>
+      <div>대표전화: {{ match.TELNO || '정보없음' }}</div>
+      <div>운영전화: {{ match.SVCENDTELNO || '정보없음' }}</div>
       <div class="button-row">
         <button @click="copyAddress">주소복사</button>
         <button @click="$emit('map', match)">지도보기</button>
       </div>
     </div>
 
-    <!-- 
-    <div class="description">
-      {{ match.match_description || '매치 상세 정보가 없습니다.' }}
-    </div> -->
-
-    <!-- 추가 정보 -->
+    <!-- 기타 정보 -->
     <div class="meta">
-      <span>{{ match.ORGNM?.includes('실내') ? '실내' : '실외' }}</span>
-      <span>{{ genderLabel(match.gender_condition) }}</span>
-      <span>현재 인원 수 : {{ match.match_now_count || 12 }} / {{ match.match_max_count || 18 }}</span>
-      <span>{{ match.match_title }}</span>
-      <span>매니저 : ○ ○ ○</span>
+      <span>성별 제한: {{ genderLabel(match.gender_condition) }}</span>
+      <span>현재 인원 수: 12 / 18</span>
+      <span>매치 상태: {{ statusLabel(match.match_status) }}</span>
+      <span>매치 종류: {{ codeLabel(match.match_code) }}</span>
     </div>
   </div>
 </template>
@@ -52,8 +49,23 @@ const genderLabel = (code) => {
   return '성별 무관'
 }
 
+const statusLabel = (code) => {
+  switch (code) {
+    case 'waiting': return '대기중'
+    case 'active': return '진행중'
+    case 'completed': return '진행 완료'
+    default: return code
+  }
+}
+
+const codeLabel = (code) => {
+  return code === 'social' ? '소셜매치' : code === 'league' ? '리그매치' : code
+}
+
+const imageUrl = `https://yeyak.seoul.go.kr/web/common/file/FileDown.do?file_id=${props.match.IMG_PATH}`
+
 const copyAddress = async () => {
-  const fullAddr = `${props.match.ADRES || ''} ${props.match.DTLCONT || ''}`
+  const fullAddr = `${props.match.AREANM || ''} ${props.match.ADRES || ''}`
   await navigator.clipboard.writeText(fullAddr)
   alert('주소가 복사되었습니다.')
 }
@@ -66,6 +78,13 @@ const copyAddress = async () => {
   padding: 16px;
   margin-top: 12px;
   background-color: #f9f9f9;
+}
+.venue-img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
 }
 .venue {
   display: flex;
@@ -96,13 +115,6 @@ const copyAddress = async () => {
   margin-top: 4px;
   display: flex;
   gap: 8px;
-}
-.description {
-  margin: 8px 0;
-  padding: 8px;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
 }
 .meta {
   display: flex;
