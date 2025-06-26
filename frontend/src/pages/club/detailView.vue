@@ -46,8 +46,8 @@
             <div class="col">
               <div class="border rounded p-3 h-100">
                 <strong>간단한 팀 정보</strong>
-                <p class="mb-1"><strong>팀명:</strong> {{ club.club_name }}</p>
-                <p class="mb-0"><strong>팀 코드:</strong> {{ club.team_code }}</p>
+                <!-- <p class="mb-1"><strong>팀명:</strong> {{ club.club_name }}</p>
+                <p class="mb-0"><strong>팀 코드:</strong> {{ club.team_code }}</p> -->
               </div>
             </div>
 
@@ -87,7 +87,9 @@ export default {
   async created() {
     const teamCode = this.$route.params.teamCode;
     try {
-      const response = await axios.get(`/api/clubs/code/${teamCode}`);
+      // 🔧 수정 전: /api/clubs/code/${teamCode}
+      // ✅ 수정 후: /club_api/code/${teamCode}
+      const response = await axios.get(`/club_api/code/${teamCode}`);
       this.club = response.data;
 
       const loginUserid = sessionStorage.getItem('loginUserid');

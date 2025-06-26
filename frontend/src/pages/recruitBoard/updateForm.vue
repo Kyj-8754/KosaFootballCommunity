@@ -3,26 +3,25 @@
     <h2 class="fw-bold mb-3">모집글 수정</h2>
 
     <form @submit.prevent="submitForm">
+      <!-- 제목 -->
       <div class="mb-3">
         <label class="form-label">제목</label>
         <input v-model="form.title" class="form-control" required />
       </div>
 
+      <!-- 내용 -->
       <div class="mb-3">
         <label class="form-label">내용</label>
         <textarea v-model="form.content" class="form-control" rows="6" required></textarea>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label">작성자</label>
-        <input v-model="form.writer" class="form-control" required />
-      </div>
+      <!-- 작성자 (숨김 처리) -->
+      <input type="hidden" v-model="form.writer" /> <!-- ✅ 수정 불가하게 숨김 처리 -->
 
-      <div class="mb-3">
-        <label class="form-label">클럽 ID</label>
-        <input v-model="form.club_id" type="number" class="form-control" required />
-      </div>
+      <!-- 클럽 ID (읽기 전용 처리) -->
+      <input type="hidden" v-model="form.club_id" /> <!-- ✅ 수정 방지 -->
 
+      <!-- 버튼 영역 -->
       <button class="btn btn-primary">수정</button>
       <router-link to="/recruitBoard" class="btn btn-secondary ms-2">취소</router-link>
     </form>
@@ -47,7 +46,7 @@ export default {
   async created() {
     const bno = this.$route.params.bno;
     try {
-      const response = await axios.get(`/api/recruits/${bno}`);
+      const response = await axios.get(`/recruits_api/${bno}`); // ✅ 프록시 경로 적용
       this.form = response.data;
     } catch (e) {
       alert('모집글을 불러오는 데 실패했습니다.');
@@ -57,10 +56,16 @@ export default {
   methods: {
     async submitForm() {
       const bno = this.$route.params.bno;
-      const user_id = this.form.writer; // 실제로는 로그인된 사용자에서 가져오는 것이 적절
+      const loginUserid = sessionStorage.getItem('loginUserid');
+      if (!loginUserid) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      const user_id = loginUserid;
 
       try {
-        await axios.put(`/api/recruits/${bno}?user_id=${user_id}`, this.form);
+        await axios.put(`/recruits_api/${bno}?user_id=${user_id}`, this.form); // ✅ 프록시 경로 적용
         alert('수정이 완료되었습니다.');
         this.$router.push(`/recruitBoard/${bno}`);
       } catch (e) {

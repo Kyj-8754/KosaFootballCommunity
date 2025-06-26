@@ -1,9 +1,13 @@
 package com.msa.kyj_prj.recruit;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
+import java.util.HashMap;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+import java.util.Map;
+import java.util.HashMap;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -32,24 +36,50 @@ public class RecruitService {
 	}
 
 	// 모집글 등록
-	public void create_recruit(RecruitBoard board) {
-		recruit_dao.insert(board);
+	public void create_recruit(RecruitBoard recruit) {
+	    if (recruit.getClub_id() == null || recruit.getClub_id() == 0) {
+	        // 유저 번호를 기반으로 리더 클럽 조회
+	    	// ✔ 올바른 코드
+	    	List<Integer> clubIds = recruit_dao.findClubIdsByLeaderUserNo(recruit.getUser_no());
+
+	        if (clubIds == null || clubIds.isEmpty()) {
+	            throw new RuntimeException("⚠️ 해당 유저는 리더로 등록된 클럽이 없습니다.");
+	        } else if (clubIds.size() > 1) {
+	            throw new RuntimeException("⚠️ 리더 클럽이 2개 이상입니다. 정확한 club_id를 명시해야 합니다.");
+	        }
+
+	        recruit.setClub_id(clubIds.get(0));
+	    }
+
+	    recruit_dao.insert(recruit);
 	}
+
+
 
 	// 모집글 수정
 	public void update_recruit(RecruitBoard board) {
 		recruit_dao.update(board);
 	}
 
-	// 모집글 삭제
-	public void delete_recruit(int bno) {
-		recruit_dao.delete(bno);
-	}
+//	// 모집글 삭제
+//	public void delete_recruit(int bno) {
+//		recruit_dao.delete(bno);
+//	}
 
-	// 팀장 여부 확인
-	public boolean is_club_leader(String user_id, int club_id) {
-		return recruit_dao.is_club_leader(user_id, club_id) > 0;
-	}
+//	// 팀장 여부 확인
+//	public boolean is_club_leader(int user_no, int club_id) {
+//	    return recruit_dao.is_club_leader(user_no, club_id) > 0;
+//	}
+
+//	public boolean is_club_leader(int userNo, int clubId) {
+//	    Map<String, Object> map = new HashMap<>();
+//	    map.put("user_no", userNo);
+//	    map.put("club_id", clubId);
+//
+//	    int result = recruitDAO.is_club_leader(map);
+//	    return result > 0; // ✅ int → boolean 변환
+//	}
+
 
 	// 조회수 증가
 	public void increase_view_count(int bno) {

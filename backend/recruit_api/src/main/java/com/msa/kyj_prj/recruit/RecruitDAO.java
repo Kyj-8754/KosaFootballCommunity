@@ -25,12 +25,18 @@ public interface RecruitDAO {
 
 	// 모집글 수정
 	void update(RecruitBoard board);
+//
+//	// 모집글 삭제
+//	void delete(@Param("bno") int bno);
 
-	// 모집글 삭제
-	void delete(@Param("bno") int bno);
+	// 팀장인지 아닌지 검사 로직
+//	int is_club_leader(@Param("user_no") int user_no, @Param("club_id") int club_id);
 
-	// 팀장 여부 확인
-	int is_club_leader(@Param("user_id") String user_id, @Param("club_id") int club_id);
+	 // user_no로 본인이 리더인 클럽의 club_id 조회
+    
+ // user_no로 리더 클럽 전체 조회
+    List<Integer> findClubIdsByLeaderUserNo(int user_no);
+
 
 	// 조회수 증가
 	void increase_view_count(@Param("bno") int bno);

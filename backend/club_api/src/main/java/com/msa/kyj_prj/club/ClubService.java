@@ -31,19 +31,11 @@ public class ClubService {
 		return clubDAO.insert(club);
 	}
 
+	// 클럽 이릅으로 단던 조회
 	public Club findByName(String name) {
 		return clubDAO.getClubByName(name);
 	}
 
-	// 클럽 수정
-	public int update(Club club) {
-		return clubDAO.update(club);
-	}
-
-	// 클럽 삭제
-	public int delete(int clubId) {
-		return clubDAO.delete(clubId);
-	}
 
 	// 클럽 목록 조회 (검색 + 페이징 + 정렬 포함)
 	public List<Club> list(Map<String, Object> params) {

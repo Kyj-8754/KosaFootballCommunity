@@ -50,6 +50,7 @@
 
 <script>
 import axios from 'axios'
+import { inject } from 'vue'
 
 export default {
   name: 'Club_RegistForm',
@@ -57,21 +58,38 @@ export default {
     return {
       club: {
         club_name: '',
-        team_code: ''
+        team_code: '',
+        user_no: '' // 여기에 inject된 값이 들어감
       },
       codeDuplicateResult: null,
       nameDuplicateResult: null
     }
   },
+
+ mounted() {
+  const userNo = inject('userNo')
+
+  if (!userNo || !userNo.value) {
+    console.warn('⚠️ userNo가 주입되지 않았거나 값이 없습니다.')
+    // 선택적으로 라우터 이동 가능:
+    // this.$router.push('/login')
+  } else {
+    this.club.user_no = userNo.value
+  }
+},
+
+
+
+
   methods: {
-    // ✅ 팀 코드 중복 확인
+    // ✅ 팀 코드 중복 확인 (수정된 경로)
     async checkCodeDuplicate() {
       if (!this.club.team_code) {
         alert('팀 코드를 입력하세요.');
         return;
       }
       try {
-        const res = await axios.get('/api/clubs/check-teamcode', {
+        const res = await axios.get('/club_api/check-teamcode', { // 바뀐 주소 
           params: { teamCode: this.club.team_code }
         });
         this.codeDuplicateResult = res.data;
@@ -88,7 +106,7 @@ export default {
         return;
       }
       try {
-        const res = await axios.get('/api/clubs/check-name', {
+        const res = await axios.get('/club_api/check-name', { // 바뀐 주소
           params: { name: this.club.club_name }
         });
         this.nameDuplicateResult = res.data;
@@ -98,7 +116,7 @@ export default {
       }
     },
 
-    // ✅ 등록
+    // ✅ 클럽 등록 
     async submitClub() {
       if (this.codeDuplicateResult === false) {
         alert('팀 코드가 중복되었습니다. 다른 코드를 입력하세요.');
@@ -109,9 +127,9 @@ export default {
         return;
       }
       try {
-        await axios.post('/api/clubs', this.club);
+        await axios.post('/club_api', this.club); // 바뀐 주소
         alert('클럽이 등록되었습니다. 이어서 클럽 프로필을 작성하세요.');
-        this.$router.push(`/club/${this.club.team_code}`);
+        this.$router.push(`/club/${this.club.team_code}`); 
       } catch (error) {
         console.error('클럽 등록 실패:', error);
         alert('등록에 실패했습니다.');

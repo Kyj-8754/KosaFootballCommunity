@@ -2,6 +2,7 @@
   <div class="container my-5" style="max-width: 900px;">
     <h2 class="fw-bold mb-3">모집글 등록</h2>
 
+    <!-- 모집글 등록 폼 -->
     <form @submit.prevent="submitForm">
       <div class="mb-3">
         <label class="form-label">제목</label>
@@ -15,83 +16,74 @@
             v-model:content="content"
             contentType="html"
             theme="snow"
-            ref="quillRef"
           />
         </div>
       </div>
 
-      <!-- 작성자 및 클럽ID는 숨김 처리 -->
-      <input type="hidden" v-model="writer" />
-      <input type="hidden" v-model="club_id" />
-
+      <!-- 등록 버튼 -->
       <button class="btn btn-primary">등록</button>
+      <!-- 목록으로 이동 -->
       <router-link to="/recruitBoard" class="btn btn-secondary ms-2">취소</router-link>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, inject } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import axios from 'axios'
 
-const title = ref('')
-const content = ref('')
-const writer = ref(sessionStorage.getItem('loginUserid') || '')
-const club_id = ref('') // 실제 로직에서 세션 또는 URL 기반으로 세팅
-
-const quillRef = ref(null)
+// ✅ 로그인 사용자 정보 주입 (Pinia 또는 provide/inject 방식)
+const userNoRef = inject('userNo')     // DB의 유저 기본키 (user_no)
+const userIdRef = inject('userId')     // 로그인 아이디 (user_id)
+const route = useRoute()
 const router = useRouter()
 
+// ✅ club_id는 현재 경로의 query 파라미터에서 받음 (예: ?club_id=3)
+const club_id = ref(route.query.club_id || '')
+
+// ✅ 폼 입력값 상태
+const title = ref('')
+const content = ref('')
+
+// ✅ 컴포넌트 마운트 시 로그인 여부 확인
 onMounted(() => {
-  const quill = quillRef.value?.getQuill()
-  if (!quill) return
-
-  quill.root.addEventListener('paste', async (e) => {
-    const clipboardItems = e.clipboardData?.items
-    if (!clipboardItems) return
-
-    for (const item of clipboardItems) {
-      if (item.type.indexOf('image') !== -1) {
-        const file = item.getAsFile()
-        const reader = new FileReader()
-
-        reader.onload = (event) => {
-          const base64 = event.target?.result
-          if (typeof base64 === 'string') {
-            const range = quill.getSelection(true)
-            quill.insertEmbed(range.index, 'image', base64)
-            quill.setSelection(range.index + 1)
-          }
-        }
-
-        reader.readAsDataURL(file)
-        e.preventDefault()
-        break
-      }
-    }
-  })
+  if (!userNoRef || !userNoRef.value) {
+    alert('로그인 후 이용해 주세요.')
+    router.push('/member/loginForm')  // 로그인 페이지로 강제 이동
+  }
 })
 
+// ✅ 모집글 등록 요청
 const submitForm = async () => {
+  // 로그인 상태 확인
+  if (!userNoRef || !userNoRef.value) {
+    alert('로그인 후 이용할 수 있습니다.')
+    router.push('/member/loginForm')
+    return
+  }
+
   try {
-    await axios.post(`/api/recruits?user_id=${writer.value}`, {
-      title: title.value,
-      content: content.value,
-      writer: writer.value,
-      club_id: club_id.value
-    })
-    alert('등록이 완료되었습니다.')
-    router.push('/recruitBoard')
-  } catch (e) {
-    if (e.response && e.response.status === 403) {
-      alert('팀장만 모집글을 작성할 수 있습니다.')
-    } else {
-      alert('등록에 실패했습니다.')
-    }
-    console.error(e)
+    // ✅ 게시글 등록 요청 (JWT 포함)
+await axios.post(`/recruits_api/regist`, {
+  title: title.value,
+  content: content.value,
+  user_no: parseInt(userNoRef.value),
+  writer: userIdRef.value
+}, {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+  }
+})
+
+    alert('모집글이 성공적으로 등록되었습니다.')
+    router.push(`/recruitBoard`)  // 소속 클럽 모집글 목록으로 이동
+
+  } catch (error) {
+    console.error('등록 실패', error)
+    alert('등록에 실패했습니다. 서버 로그를 확인해주세요.')
   }
 }
 </script>

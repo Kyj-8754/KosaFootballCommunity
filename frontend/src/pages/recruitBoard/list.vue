@@ -71,26 +71,24 @@ export default {
     this.fetchRecruits();
   },
   methods: {
-    async fetchRecruits(sortType = '') {
-      try {
-        const url = sortType === 'popular'
-          ? '/api/recruits?sort=popular'
-          : '/api/recruits';
+  async fetchRecruits(sortType = '') {
+    try {
+      const url = sortType === 'popular' ? '/recruits_api?sort=popular' : '/recruits_api';  // ✅ 정상 경로
+      const response = await axios.get(url);
+      this.recruits = response.data;
+    } catch (e) {
+      alert('모집글을 불러오는 데 실패했습니다.');
+      console.error(e);
+    }
+  },
 
-        const response = await axios.get(url);
-        this.recruits = response.data;
-      } catch (e) {
-        alert('모집글을 불러오는 데 실패했습니다.');
-        console.error(e);
-      }
-    },
-    formatDate(dateTime) {
+  formatDate(dateTime) {
     if (!dateTime || typeof dateTime !== 'string') return '';
 
-   // 공백 또는 'T' 기준으로 앞부분(날짜)만 추출
-   return dateTime.split(' ')[0].split('T')[0];
-    }
+    // 공백 또는 'T' 기준으로 앞부분(날짜)만 추출
+    return dateTime.split(' ')[0].split('T')[0];
+  },  
+}
 
-  }
-};
+}
 </script>
