@@ -19,8 +19,16 @@
       </div>
 
       <div class="type-col">
-        {{ match.match_status }} {{ match.gender_condition === 'all' ? '성별무관' : match.gender_condition + '전용' }}
+        <div class="badge" :class="'status-' + match.match_status">
+          {{ getStatusLabel(match.match_status) }}
+        </div>
+
+        <div class="badge gender" v-if="match.gender_condition !== 'all'">
+          {{ match.gender_condition === 'male' ? '남성전용' : '여성전용' }}
+        </div>
+        <div class="badge gender" v-else>성별무관</div>
       </div>
+
     </div>
   </div>
 </template>
@@ -43,6 +51,19 @@ const formatDate = (datetimeStr) => {
 const formatTime = (datetimeStr) => {
   const date = new Date(datetimeStr)
   return `${date.getHours().toString().padStart(2, '0')}:00시`
+}
+
+const getStatusLabel = (code) => {
+  switch (code) {
+    case 'waiting':
+      return '대기중'
+    case 'active':
+      return '진행중'
+    case 'completed':
+      return '진행 완료'
+    default:
+      return code
+  }
 }
 </script>
 
@@ -94,4 +115,31 @@ const formatTime = (datetimeStr) => {
   white-space: nowrap;
   font-size: 14px;
 }
+
+.badge {
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-top: 4px;
+  margin-right: 4px;
+  color: white;
+}
+
+.status-waiting {
+  background-color: #ffc107; /* 노랑 */
+}
+
+.status-active {
+  background-color: #007bff; /* 파랑 */
+}
+
+.status-completed {
+  background-color: #28a745; /* 초록 */
+}
+
+.gender {
+  background-color: #6c757d; /* 회색 */
+}
+
 </style>
