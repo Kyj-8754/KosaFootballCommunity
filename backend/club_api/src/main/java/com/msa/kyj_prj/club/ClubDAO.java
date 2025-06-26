@@ -24,4 +24,5 @@ public interface ClubDAO {
 
 	// 클럽 전체 개수
 	int getTotalCount(Map<String, Object> params);
+	
 }

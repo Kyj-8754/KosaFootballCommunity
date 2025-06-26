@@ -71,7 +71,7 @@ await axios.post(`/recruits_api/regist`, {
   title: title.value,
   content: content.value,
   user_no: parseInt(userNoRef.value),
-  writer: userIdRef.value
+  club_id: club_id.value
 }, {
   headers: {
     Authorization: `Bearer ${localStorage.getItem("accessToken")}`

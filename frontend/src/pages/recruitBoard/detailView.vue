@@ -4,10 +4,10 @@
 
     <div v-if="recruit">
       <h4 class="mb-3">{{ recruit.title }}</h4>
-      <p>{{ recruit.content }}</p>
+      <p>{{ recruit.content}} </p>
 
       <ul>
-        <li><strong>작성자:</strong> {{ recruit.writer }}</li>
+        <!-- <li><strong>작성자:</strong> {{ recruit.user_no }}</li> -->
         <li><strong>조회수:</strong> {{ recruit.view_count }}</li>
         <li><strong>등록일:</strong> {{ formatDate(recruit.reg_date) }}</li>
       </ul>
@@ -37,6 +37,7 @@ import axios from 'axios'
 
 // ✅ 전역 주입값
 const token = inject('token')
+const userId = inject('userId') // ✅ 추가: 로그인된 사용자 ID 주입
 const router = useRouter()
 const route = useRoute()
 
@@ -46,6 +47,7 @@ const isApplied = ref(false)
 
 const isLoggedIn = computed(() => !!token?.value)
 
+// ✅ 모집글 가져오기
 const fetchRecruit = async () => {
   const bno = route.params.bno
   try {
@@ -57,6 +59,7 @@ const fetchRecruit = async () => {
   }
 }
 
+// ✅ 가입 신청 처리
 const handleApply = async () => {
   if (!isLoggedIn.value) {
     alert('가입 신청을 하려면 로그인해야 합니다.')
@@ -65,17 +68,22 @@ const handleApply = async () => {
   }
 
   const bno = recruit.value?.bno
-  if (!bno) {
-    alert('모집글 정보가 없습니다.')
+  if (!bno || !userId?.value) {
+    alert('모집글 정보 또는 사용자 정보가 없습니다.')
     return
   }
 
   try {
-    await axios.post('/club_api/apply', { bno }, {
+    // ✅ appli_user_no를 함께 보냄
+    await axios.post('/club_api/apply', {
+      bno: bno,
+      appli_user_no: userId.value
+    }, {
       headers: {
         Authorization: `Bearer ${token?.value}`
       }
     })
+
     isApplied.value = true
     alert('✅ 가입 신청이 완료되었습니다.')
   } catch (e) {
@@ -84,6 +92,7 @@ const handleApply = async () => {
   }
 }
 
+// ✅ 날짜 포맷 함수
 const formatDate = (dateTime) => {
   if (!dateTime || typeof dateTime !== 'string') return ''
   return dateTime.split(' ')[0].split('T')[0]
@@ -94,3 +103,4 @@ onMounted(() => {
   fetchRecruit()
 })
 </script>
+
