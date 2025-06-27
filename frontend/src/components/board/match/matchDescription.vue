@@ -45,12 +45,12 @@ const props = defineProps({
   }
 })
 
-const activeTab = ref('notice')
+const activeTab = ref('description')
 
 const tabs = [
+  { key: 'description', label: '매치 설명' },
   { key: 'notice', label: '공지사항' },
-  { key: 'detail', label: '안내사항' },
-  { key: 'description', label: '매치 설명' }
+  { key: 'detail', label: '안내사항' }
 ]
 </script>
 
