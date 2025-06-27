@@ -127,5 +127,13 @@
 	    WHERE match_id = #{match_id}
 	      AND user_no = #{user_no}
 	</delete>
+	
+	<!-- 특정 매치의 참가자 수 조회 -->
+	<select id="countMatchParticipants" resultType="int" parameterType="long">
+	    SELECT COUNT(*)
+	    FROM match_participant
+	    WHERE match_id = #{matchId}
+	    	AND user_status = 'approve'
+	</select>
 
 </mapper>

@@ -44,7 +44,7 @@
     <!-- 기타 정보 -->
     <div class="meta">
       <span>성별 제한: {{ genderLabel(match.gender_condition) }}</span>
-      <span>현재 인원 수: 12 / 18</span>
+      <span>현재 인원 수: {{ currentCount }} / 18</span>
       <span>매치 상태: {{ statusLabel(match.match_status) }}</span>
       <span>매치 종류: {{ codeLabel(match.match_code) }}</span>
     </div>
@@ -58,6 +58,7 @@ import axios from 'axios'
 const userNo = inject('userNo')
 const isApplied = ref(false)
 const showMap = ref(false)
+const currentCount = ref(0)
 
 const props = defineProps({
   match: {
@@ -185,14 +186,30 @@ const cancelParticipation = async () => {
     })
     alert('참가 신청이 취소되었습니다.')
     await checkIsApplied()
+    await fetchParticipantCount()
   } catch (e) {
     console.error('취소 실패:', e)
     alert('참가 신청 취소에 실패했습니다.')
   }
 }
 
+const fetchParticipantCount = async () => {
+  try {
+    const res = await axios.get('/board_api/match/participants/count', {
+      params: {
+        matchId: props.match.match_id
+      }
+    })
+    currentCount.value = res.data
+  } catch (e) {
+    console.error('인원 수 조회 실패:', e)
+    currentCount.value = 0
+  }
+}
+
 onMounted(() => {
   checkIsApplied()
+  fetchParticipantCount()
 })
 </script>
 

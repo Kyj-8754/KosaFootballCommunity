@@ -51,5 +51,8 @@ public class MatchService {
         matchDAO.cancelMatchParticipant(param);
     }
 
-
+    // 매치 인원 수 조회
+    public int getMatchParticipantCount(Long matchId) {
+        return matchDAO.countMatchParticipants(matchId);
+    }
 }
