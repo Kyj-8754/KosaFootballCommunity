@@ -11,16 +11,18 @@
 					</div>
 						<!-- 우측: 달력 -->
 						<div class="col-md-7">
-							<h5>예약 가능 날짜 선택</h5>
-							<Calendar
-							v-model="selectedDate"
-							:attributes="calendarAttributes"
-							:min-date="new Date()" 
-							is-inline
-							/>
-							<div class="mt-3">
-							<strong>선택된 날짜: </strong>{{ selectedDate }}
-							</div>
+							 <v-calendar
+								is-expanded
+								:attributes="[
+								{
+								key: 'available',
+								dates: availableDates,
+								highlight: true,
+								contentClass: 'available-date'
+								}
+								]"
+								@dayclick="onDayClick"
+								/>
   					</div>
 				</div>
 				<!-- 상단 버튼들 -->
@@ -203,7 +205,7 @@
 
 <script setup>
 	import DOMPurify from 'dompurify'; // notice관련 문제 해결중
-	import {ref, onMounted, reactive, computed, watch, inject, nextTick} from 'vue'
+	import {ref, onMounted, reactive, computed, watch, inject} from 'vue'
 	import { useRoute, useRouter } from 'vue-router'
 	import axios from 'axios'
 	import { Calendar  } from 'v-calendar'
@@ -217,19 +219,39 @@
 	// 달력관련 시작
 	const selectedDate = ref(null)
 
-	const availableDatesRaw = [new Date().toISOString().split('T')[0],'2025-06-22', '2025-06-26']
-	const calendarAttributes = computed(() => [
-	{
-		key: 'available',
-		dates: availableDatesRaw,
-		highlight: { class: 'bg-primary text-white' },
-		popover: { label: '예약 가능' }
-	}
-	])
+	const availableDates = [
+		'2025-06-24',
+  '2025-06-25',
+  '2025-06-26',
+  '2025-06-29'
+	]
 
-	watch(selectedDate, (newVal) => {
-		console.log('선택한 날짜:', newVal)
-	})
+	const formatDate = (date) => {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+// const isDateDisabled = (date) => {
+//   const dateStr = formatDate(date)
+//   return !availableDates.includes(dateStr)
+// }
+
+
+
+const onDayClick = (day) => {
+  const dateStr = formatDate(day.date)
+
+  if (!availableDates.includes(dateStr)) {
+    return // 예약 불가 날짜는 무시
+  }
+
+  alert(`예약 창으로 이동: ${dateStr}`)
+}
+
+
+
 	// 달력관련 끝
 
 	const safeNotice = computed(() => {
@@ -285,9 +307,10 @@
 	};
   
 	// 페이지 로딩 시 
-	onMounted(() => {
-		fetchStadiumData();	// 게시판
+	onMounted(async() => {
+		await fetchStadiumData();	// 게시판
 		fetchComments();	// 댓글
+		loadKakaoMapScript()     // ← Kakao 지도 로딩
 		if (textRef.value) adjustHeight();	// 댓글창 조절
 	});
 
@@ -295,15 +318,6 @@
 	const fetchStadiumData = async () => {
 		const res = await axios.get('/stadium_api/stadium/detailView', { params: { SVCID } });
 		stadiumDB.value = res.data.stadiumDB;
-		
-		 // kakao 객체가 있을 때만 지도 로딩 시도
-  if (window.kakao && window.kakao.maps) {
-    window.kakao.maps.load(() => {
-      kakaoMap(); // 실제 지도 로직
-    });
-  } else {
-    console.warn("카카오 맵 SDK가 아직 로드되지 않았습니다.");
-  }
 	};	
 
 	//게시물의 댓글 불러오기
@@ -404,39 +418,52 @@ const getStarFillForComment = (rating, n) => {
   return '0%';
 };
 
+// 스크립트를 동적으로 삽입하고 지도 초기화, 키를 숨기기 위해서 관리
+const loadKakaoMapScript = () => {
+  const script = document.createElement('script')
+  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAOMAP_API_KEY}&autoload=false`
+  script.async = true
+  document.head.appendChild(script)
 
-// 맵 api 수정중
-watch(activeTab, async tab => {
-  if (tab === 'map') {
-    await nextTick();               // 지도 div가 실제로 DOM에 렌더링되고,
-    kakaoMap();              // width/height가 잡힌 뒤에 호출
+  script.onload = () => {
+    window.kakao.maps.load(() => {
+      initKakaoMap()
+    })
   }
-});
+}
 
-const kakaoMap = () => {
-  	const { x, y } = stadiumDB.value;
+// 지도 초기화 함수
+const initKakaoMap = () => {
+	// X,Y받기
+  const { x, y } = stadiumDB.value
+  if (!x || !y) {
+    console.warn('좌표 없음')
+    return
+  }
+  console.log(x,y);
+  	const centerPos = new kakao.maps.LatLng(Number(y), Number(x));
+  	// 이미지 지도에 표시할 마커입니다
+	  
+	  const container = document.getElementById('map')
+	  const options = {
+		  center: centerPos,
+		  level: 3
+		}
+		
+		 const map = new window.kakao.maps.Map(container, options)
+		
+		const marker = new kakao.maps.Marker({
+		  position: centerPos
+		})
 
+		
+		marker.setMap(map)
 
-  	// 지도 SDK가 로드된 이후에 실행
-    const mapContainer = document.getElementById('map');
-	const centerPos    = new kakao.maps.LatLng(y, x);
+  kakao.maps.event.addListener(map, 'tilesloaded', () => {
+    map.setCenter(centerPos)
+  })
+}
 
-	// 이미지 지도에 표시할 마커입니다
-	var marker = {
-		position: centerPos, 
-	};
-
-var staticMapContainer  = mapContainer, // 이미지 지도를 표시할 div
-    staticMapOption = { 
-        center: centerPos, // 이미지 지도의 중심좌표
-        level: 3, // 이미지 지도의 확대 레벨
-        marker // 이미지 지도에 표시할 마커
-    };	
-	
-	// 이미지 지도를 생성합니다
-	new window.kakao.maps.StaticMap(mapContainer, staticMapOption);
-	
-};
 </script>
 
 
