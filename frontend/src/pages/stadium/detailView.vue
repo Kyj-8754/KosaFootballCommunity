@@ -205,7 +205,7 @@
 
 <script setup>
 	import DOMPurify from 'dompurify'; // notice관련 문제 해결중
-	import {ref, onMounted, reactive, computed, watch, inject} from 'vue'
+	import {ref, onMounted, reactive, computed, inject} from 'vue'
 	import { useRoute, useRouter } from 'vue-router'
 	import axios from 'axios'
 	import { Calendar  } from 'v-calendar'
@@ -248,6 +248,7 @@ const onDayClick = (day) => {
   }
 
   alert(`예약 창으로 이동: ${dateStr}`)
+  router.push({name: 'Stadium_Reservation', query: {date: dateStr, SVCID: SVCID}})
 }
 
 
@@ -325,6 +326,12 @@ const onDayClick = (day) => {
 		const res = await axios.get('/stadium_api/comment/list', { params: { SVCID } });
 		commentDB.value = res.data.commentDB;
 	};
+
+	// 예약 현황 불러오기
+	// const fetchReservationData = async () => {
+	// 	const res = await axios.get('/stadium_api/stadium/detailView', { params: { SVCID } });
+	// 	stadiumDB.value = res.data.stadiumDB;
+	// };
 
 
 	// 구장 목록으로 넘어가기

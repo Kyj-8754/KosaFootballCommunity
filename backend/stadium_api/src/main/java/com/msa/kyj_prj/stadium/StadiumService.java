@@ -288,6 +288,11 @@ public class StadiumService{
 	        
 	        System.out.println("업데이트 걸린 시간: " + duration.getSeconds());
 		}
+		
+		//
+		public void getreservationForm(String SVCID, String date) {
+			stadiumDAO.getreservationForm(SVCID, date);
+		}
 }
 
 
