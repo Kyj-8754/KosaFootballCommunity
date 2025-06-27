@@ -10,7 +10,7 @@
     <div class="venue">
       <div class="placenm">{{ match.svcnm }} - {{ match.placenm }} [{{ match.subplacenm }}]</div>
       <div class="price">가격 미정</div>
-      <button class="apply-button">신청하기</button>
+      <button class="apply-button" @click="applyToMatch">신청하기</button>
     </div>
 
     <!-- 주소 및 전화번호 -->
@@ -38,7 +38,10 @@
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted, nextTick } from 'vue'
+import { defineProps, ref, onMounted, nextTick, inject } from 'vue'
+import axios from 'axios'
+
+const userNo = inject('userNo')
 
 const props = defineProps({
   match: {
@@ -109,6 +112,22 @@ const loadMap = () => {
     kakaoMapReady()
   }
 }
+
+const applyToMatch = async () => {
+  try {
+    const payload = {
+      match_id: props.match.match_id,
+      user_no: userNo?.value // TODO: 로그인 사용자 ID로 교체
+    }
+
+    await axios.post('/board_api/match/apply', payload)
+    alert('매치 참가 신청이 완료되었습니다!')
+  } catch (error) {
+    console.error('신청 실패:', error)
+    alert('매치 참가 신청에 실패했습니다.')
+  }
+}
+
 </script>
 
 <style scoped>

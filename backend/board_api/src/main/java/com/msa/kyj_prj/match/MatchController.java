@@ -32,4 +32,11 @@ public class MatchController {
     public Match getMatchDetail(@PathVariable("id") Long matchId) {
         return matchService.getMatchDetail(matchId);
     }
+    
+    // 매치 참가 신청
+    @PostMapping("/apply")
+    public void applyToMatch(@RequestBody MatchParticipant participant) {
+        matchService.applyToMatch(participant);
+    }
+
 }
