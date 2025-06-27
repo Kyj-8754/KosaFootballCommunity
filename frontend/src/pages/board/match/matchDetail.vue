@@ -8,9 +8,9 @@
     <MatchInfoCard :match="match" />
 
     <!-- 상세 설명 -->
-    <<MatchDescription
-    :notice="match.NOTICE"
-    :detail="match.DTLCONT"
+    <MatchDescription
+    :notice="match.notice"
+    :detail="match.dtlcont"
     :description="match.match_description"
     />
   </div>
@@ -41,6 +41,7 @@ const fetchMatchDetail = async () => {
 
 onMounted(() => {
   fetchMatchDetail()
+  console.log('✅ 받은 match 데이터:', match)
 })
 </script>
 

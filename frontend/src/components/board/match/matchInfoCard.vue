@@ -5,16 +5,16 @@
 
     <!-- 구장 정보 -->
     <div class="venue">
-      <div class="placenm">{{ match.SVCNM }} - {{ match.PLACENM }} {{ match.SUBPLACENM }}</div>
+      <div class="placenm">{{ match.svcnm }} - {{ match.placenm }} [{{ match.subplacenm }}]</div>
       <div class="price">가격 미정</div>
       <button class="apply-button">신청하기</button>
     </div>
 
     <!-- 주소 및 전화번호 -->
     <div class="address">
-      <div>주소: {{ match.AREANM }} {{ match.ADRES }}</div>
-      <div>대표전화: {{ match.TELNO || '정보없음' }}</div>
-      <div>운영전화: {{ match.SVCENDTELNO || '정보없음' }}</div>
+      <div>주소: {{ match.areanm }} {{ match.adres }}</div>
+      <div>대표전화: {{ match.telno || '정보없음' }}</div>
+      <div>운영전화: {{ match.svcendtelno || '정보없음' }}</div>
       <div class="button-row">
         <button @click="copyAddress">주소복사</button>
         <button @click="$emit('map', match)">지도보기</button>
@@ -62,10 +62,10 @@ const codeLabel = (code) => {
   return code === 'social' ? '소셜매치' : code === 'league' ? '리그매치' : code
 }
 
-const imageUrl = `https://yeyak.seoul.go.kr/web/common/file/FileDown.do?file_id=${props.match.IMG_PATH}`
+const imageUrl = `${props.match.img_PATH}`
 
 const copyAddress = async () => {
-  const fullAddr = `${props.match.AREANM || ''} ${props.match.ADRES || ''}`
+  const fullAddr = `${props.match.adres || ''}`
   await navigator.clipboard.writeText(fullAddr)
   alert('주소가 복사되었습니다.')
 }
