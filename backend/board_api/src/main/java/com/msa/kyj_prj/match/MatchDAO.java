@@ -23,4 +23,7 @@ public interface MatchDAO {
     
     // 매치 신청 취소
     int cancelMatchParticipant(Map<String, Object> param);
+    
+    // 매치 인원 조회
+    int countMatchParticipants(Long matchId);
 }

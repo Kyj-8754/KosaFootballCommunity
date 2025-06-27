@@ -51,4 +51,9 @@ public class MatchController {
         matchService.cancelMatchParticipant(matchId, userNo);
     }
 
+    // 매치 인원 수 조회
+    @GetMapping("/participants/count")
+    public int getMatchParticipantCount(@RequestParam Long matchId) {
+        return matchService.getMatchParticipantCount(matchId);
+    }
 }
