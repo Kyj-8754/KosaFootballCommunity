@@ -10,9 +10,20 @@
     <div class="venue">
       <div class="placenm">{{ match.svcnm }} - {{ match.placenm }} [{{ match.subplacenm }}]</div>
       <div class="price">가격 미정</div>
-      <!-- 버튼 조건부 비활성화 -->
-      <button class="apply-button" @click="applyToMatch" :disabled="isApplied">
-        {{ isApplied ? '신청완료' : '신청하기' }}
+      <!-- 신청하기 버튼 (아직 신청 안 한 경우만 보임) -->
+      <button 
+        v-if="!isApplied" 
+        class="apply-button"
+        @click="applyToMatch">
+        신청하기
+      </button>
+
+      <!-- 신청취소 버튼 (신청한 경우만 보임) -->
+      <button 
+        v-else
+        class="apply-button"
+        @click="cancelParticipation">
+        신청취소
       </button>
     </div>
 
@@ -46,7 +57,6 @@ import axios from 'axios'
 
 const userNo = inject('userNo')
 const isApplied = ref(false)
-const loading = ref(false)
 const showMap = ref(false)
 
 const props = defineProps({
@@ -137,14 +147,12 @@ const checkIsApplied = async () => {
     isApplied.value = false
   }
 }
-
 const applyToMatch = async () => {
   if (!userNo || userNo.value == null) {
     alert('로그인 후 이용해주세요.')
     return
   }
 
-  loading.value = true
   try {
     const payload = {
       match_id: props.match.match_id,
@@ -153,12 +161,33 @@ const applyToMatch = async () => {
 
     await axios.post('/board_api/match/apply', payload)
     alert('매치 참가 신청이 완료되었습니다!')
-    await checkIsApplied() // ✅ 상태 갱신은 항상 DB 기준
+    await checkIsApplied()
   } catch (error) {
     console.error('신청 실패:', error)
     alert('매치 참가 신청에 실패했습니다.')
-  } finally {
-    loading.value = false
+  }
+}
+
+const cancelParticipation = async () => {
+  if (!userNo || userNo.value == null) {
+    alert('로그인 후 이용해주세요.')
+    return
+  }
+
+  if (!confirm('참가 신청을 취소하시겠습니까?')) return
+
+  try {
+    await axios.delete('/board_api/match/cancel', {
+      params: {
+        matchId: props.match.match_id,
+        userNo: userNo.value
+      }
+    })
+    alert('참가 신청이 취소되었습니다.')
+    await checkIsApplied()
+  } catch (e) {
+    console.error('취소 실패:', e)
+    alert('참가 신청 취소에 실패했습니다.')
   }
 }
 

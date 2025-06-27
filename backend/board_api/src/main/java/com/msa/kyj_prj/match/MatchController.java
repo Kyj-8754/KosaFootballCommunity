@@ -46,7 +46,7 @@ public class MatchController {
     }
     
     // 매치 신청 취소
-    @PutMapping("/cancel")
+    @DeleteMapping("/cancel")
     public void cancelMatchParticipant(@RequestParam Long matchId, @RequestParam Integer userNo) {
         matchService.cancelMatchParticipant(matchId, userNo);
     }
