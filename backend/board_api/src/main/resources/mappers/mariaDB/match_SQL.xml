@@ -97,6 +97,19 @@
 	        stadium s ON m.SVCID COLLATE utf8mb4_general_ci = s.SVCID COLLATE utf8mb4_general_ci
 	    WHERE
 	        m.match_id = #{match_id}
-	</select>	
+	</select>
+	
+	<!-- 매치 참가 신청 -->
+	<insert id="insertMatchParticipant" parameterType="com.msa.kyj_prj.match.MatchParticipant">
+	    INSERT INTO match_participant (
+	        match_id,
+	        club_id,
+	        user_no
+	    ) VALUES (
+	        #{match_id},
+	        #{club_id},
+	        #{user_no}
+	    )
+	</insert>	
 
 </mapper>

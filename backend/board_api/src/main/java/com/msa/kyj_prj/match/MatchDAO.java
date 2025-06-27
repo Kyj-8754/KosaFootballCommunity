@@ -14,4 +14,7 @@ public interface MatchDAO {
 
     // 매치 상세내용 호출
     Match selectMatchDetailById(@Param("match_id") Long match_id);
+    
+    // 매치 신청
+    void insertMatchParticipant(MatchParticipant participant);
 }
