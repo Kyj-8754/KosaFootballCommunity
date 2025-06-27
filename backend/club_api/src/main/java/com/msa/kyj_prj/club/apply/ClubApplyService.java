@@ -14,28 +14,37 @@ public class ClubApplyService {
     private final ClubApplyDAO clubApplyDAO;
     private static final Logger log = LoggerFactory.getLogger(ClubApplyService.class);
 
-    /**
-     * ✅ 클럽 가입 신청 처리 서비스
-     * 1. 모집글 번호(bno)로 작성자(writer) 조회
-     * 2. writer가 팀장인 클럽의 club_id 조회
-     * 3. 신청 정보 DB에 저장
-     * 4. 알림 메시지 DTO 생성 후 반환
-     */
-    public AlarmMessageDTO applyToRecruit(ClubApply clubApply, String user_no) {
-    	AlarmMessageDTO alarm = new AlarmMessageDTO();
-        int result = clubApplyDAO.insert(clubApply);        // INSERT 수행
-        
-        if(result == 1) {
-        	// ✅ 4. 알림 메시지 구성
-        	alarm.setType("CLUB_APPLY");
-        	alarm.setSenderId(clubApply.getAppli_user_no()); // 신청자 ID
-        	alarm.setReceiverId(String.valueOf(user_no));                    // 팀장 ID
-        	alarm.setClubId(clubApply.getClub_id());                        // 클럽 ID
-        	alarm.setMessage(clubApply.getApply_id() + " 님이 클럽가입을 신청했습니다.");
-        	// alarm.setUrl("/club/...") // 🔄 알림 클릭 시 이동할 URL (선택 구현)
-        } else {
-        	return null;
+    public AlarmMessageDTO applyToRecruit(ClubApply clubApply, int user_no) {
+        // 1. bno로 club_id 조회 → DB에서 직접 조회
+        Integer clubId = clubApplyDAO.findClubIdByBno(clubApply.getBno());
+        if (clubId == null) {
+            log.warn("❗ club_id를 찾을 수 없음 (bno: {})", clubApply.getBno());
+            return null;
         }
+        clubApply.setClub_id(clubId); // 반드시 set
+
+        // 2. bno로 팀장 user_no(팀장 ID) 조회 → DB에서 직접 조회
+        Integer UserNo = clubApplyDAO.findUserNoByBno(clubApply.getBno());
+        if (UserNo == null) { // ★ 변수명 일치!
+            log.warn("❗ 팀장 user_no를 찾을 수 없음 (bno: {})", clubApply.getBno());
+            return null;
+        }
+
+        // 3. DB에 신청 정보 insert
+        int result = clubApplyDAO.insert(clubApply);
+        if (result != 1) {
+            log.error("❌ 클럽 신청 정보 저장 실패!");
+            return null;
+        }
+
+        // 4. 알림 메시지 구성
+        AlarmMessageDTO alarm = new AlarmMessageDTO();
+        alarm.setType("CLUB_APPLY");
+        alarm.setSenderId(String.valueOf(clubApply.getAppli_user_no()));  // 신청자 ID
+        alarm.setReceiverId(String.valueOf(UserNo));                // 팀장 ID
+        alarm.setClubId(clubId);                                          // 클럽 ID
+        alarm.setMessage(clubApply.getAppli_user_no() + " 님이 클럽가입을 신청했습니다.");
+        // alarm.setUrl("/club/...") // (선택 구현)
 
         return alarm;
     }
