@@ -38,5 +38,17 @@ public class MatchController {
     public void applyToMatch(@RequestBody MatchParticipant participant) {
         matchService.applyToMatch(participant);
     }
+    
+    // 매치 참가 신청 여부 확인
+    @GetMapping("/applied")
+    public boolean checkUserApplied(@RequestParam Long matchId, @RequestParam Integer userNo) {
+        return matchService.hasUserApplied(matchId, userNo);
+    }
+    
+    // 매치 신청 취소
+    @PutMapping("/cancel")
+    public void cancelMatchParticipant(@RequestParam Long matchId, @RequestParam Integer userNo) {
+        matchService.cancelMatchParticipant(matchId, userNo);
+    }
 
 }
