@@ -29,16 +29,17 @@ import { useAlarmStore } from '@/stores/alarmStore';
 const alarmStore = useAlarmStore();
 
 onMounted(() => {
-  // ✅ 테스트용 유저 ID 하드코딩 (알림 수신 대상)
-  const testUserId = 'user001';
+  // ✅ 테스트용 유저 PK(번호, 예: 1, 55 등)로 하드코딩
+  const userNo = 1;
 
   // ✅ WebSocket 연결 및 메시지 수신 시 알림 push
-  connectWebSocket(testUserId, (msg) => {
+  connectWebSocket(userNo, (msg) => {
     alarmStore.pushAlarm(msg);
   });
 
-  // ⚠️ 추후 로그인 연동 시 여기서 실제 사용자 정보에서 userId 가져오도록 수정 필요
+  // ⚠️ 추후 로그인 연동 시 userNo 값을 로그인 결과에서 할당하도록 수정
 });
+
 
 
 

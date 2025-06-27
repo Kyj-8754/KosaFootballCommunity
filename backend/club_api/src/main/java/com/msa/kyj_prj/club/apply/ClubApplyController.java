@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,39 +17,43 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ClubApplyController {
 
-	private final ClubApplyService clubApplyService;
-	private final RestTemplate restTemplate;
+    private final ClubApplyService clubApplyService;
+    private final RestTemplate restTemplate; // ✅ @Bean 등록된 RestTemplate을 DI로 사용
 
-	@Value("${alarm.api.url}")
-	private String alarmApiUrl;
+    @Value("${alarm.api.url}")
+    private String alarmApiUrl;  // ✅ 알람 서버 URL (properties에서 주입)
 
+    /**
+     * 클럽(모집) 가입 신청 엔드포인트
+     * - 1. 클럽 신청 처리 및 알림 메시지 DTO 생성(서비스 레이어)
+     * - 2. 알람 서버(8086)로 REST POST 전송
+     */
+    @PostMapping
+    public ResponseEntity<String> applyToRecruit(@RequestBody ClubApply clubApply) {
+        // 1. 신청자 user_no 추출 (보통 JSON에서 자동 매핑됨)
+        int user_no = clubApply.getAppli_user_no();
 
-	@PostMapping
-	public ResponseEntity<String> applyToRecruit(@RequestBody ClubApply clubApply) {
-	    // ✅ appli_user_no 필드에서 사용자 번호(user_no) 추출
-		int user_no = clubApply.getAppli_user_no();  // 이미 JSON 안에 포함되어 있음
+        // 2. 서비스 레이어에서 신청 처리 및 알림 DTO 반환
+        AlarmMessageDTO alarm = clubApplyService.applyToRecruit(clubApply, user_no);
 
-	    // ✅ 클럽 신청 처리 서비스 호출
-	    AlarmMessageDTO alarm = clubApplyService.applyToRecruit(clubApply, user_no);
+        if (alarm == null) {
+            // 서비스에서 null 반환 == 신청, 팀장 조회, DB저장 등 실패!
+            return ResponseEntity.badRequest().body("팀장 정보를 찾을 수 없습니다.");
+        }
 
-	    if (alarm == null) {
-	        // ❌ 팀장 정보를 찾을 수 없거나 클럽 ID 조회 실패 시
-	        return ResponseEntity.badRequest().body("팀장 정보를 찾을 수 없습니다.");
-	    }
+        // 3. 알람 서버(8086)로 REST POST 전송
+        try {
+            restTemplate.postForEntity(alarmApiUrl + "/alarm/send", alarm, Void.class);
+            // 200 OK 리턴: 신청 성공 + 알림 전송 성공
+            return ResponseEntity.ok("클럽 신청 및 알림 전송 완료");
+        } catch (Exception e) {
+            // 알람 서버 장애, 네트워크 등으로 전송 실패 시
+            System.err.println("🔴 알림 전송 실패: " + e.getMessage());
+            // 프론트에서는 "신청은 성공했지만 알림만 실패"라는 의미로 메시지 전달
+            return ResponseEntity.internalServerError().body("신청 성공, 그러나 알림 전송 실패");
+        }
+    }
 
-	    // ✅ 알림 서버 (알람 API)로 전송
-	    try {
-	        restTemplate.postForEntity(alarmApiUrl + "/api/alarm/send", alarm, Void.class);
-	        return ResponseEntity.ok("클럽 신청 및 알림 전송 완료");
-	    } catch (Exception e) {
-	        System.err.println("🔴 알림 전송 실패: " + e.getMessage());
-	        return ResponseEntity.internalServerError().body("신청 성공, 그러나 알림 전송 실패");
-	    }
-	}
-
-
-	// 📌 추후 확장 기능 예정:
-	// - 모집글별 신청 목록 조회
-	// - 신청 상태 변경 (승인/거절)
-	// - 특정 신청 내역 조회
+    // 🔽 확장: 추후 모집글별 신청 목록 조회/상태 변경/단건 조회 등 추가 가능
+    // @GetMapping, @PatchMapping, @DeleteMapping 등으로 별도 엔드포인트 추가 예정
 }

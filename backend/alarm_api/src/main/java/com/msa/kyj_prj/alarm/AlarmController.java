@@ -24,9 +24,9 @@ public class AlarmController {
 	@MessageMapping("/alarm/message")
 	public void handleAlarmMessage(AlarmMessageDTO message) {
 		System.out.println("📥 STOMP 수신 메시지: " + message);
+		System.out.println("🚩 브로드캐스트 경로: /topic/alarm/" + message.getReceiverId());
 
-		messagingTemplate.convertAndSend("/sub/chat/room/" + message.getClubId(), // 클럽별 구독 채널
-				message);
+		messagingTemplate.convertAndSend("/topic/alarm/" + message.getReceiverId(), message);
 	}
 
 	/**
@@ -37,8 +37,7 @@ public class AlarmController {
 	@ResponseBody
 	public void sendAlarmViaRest(@RequestBody AlarmMessageDTO message) {
 		System.out.println("📥 REST 수신 메시지: " + message);
-
-		messagingTemplate.convertAndSend("/sub/chat/room/" + message.getClubId(), // 동일한 클럽 채널로 알림
-				message);
+		System.out.println("🚩 브로드캐스트 경로: /topic/alarm/" + message.getReceiverId());
+		messagingTemplate.convertAndSend("/topic/alarm/" + message.getReceiverId(), message);
 	}
 }
