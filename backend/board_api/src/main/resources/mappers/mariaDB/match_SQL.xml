@@ -111,5 +111,21 @@
 	        #{user_no}
 	    )
 	</insert>	
+	
+	<!-- 참가 여부 확인 (취소 제외) -->
+	<select id="checkUserApplied" resultType="int" parameterType="map">
+	    SELECT COUNT(*)
+	    FROM match_participant
+	    WHERE match_id = #{match_id}
+	      AND user_no = #{user_no}
+	      AND user_status != 'cancelled'
+	</select>
+	
+	<!-- 매치 참가 취소 (물리 삭제) -->
+	<delete id="cancelMatchParticipant" parameterType="map">
+	    DELETE FROM match_participant
+	    WHERE match_id = #{match_id}
+	      AND user_no = #{user_no}
+	</delete>
 
 </mapper>

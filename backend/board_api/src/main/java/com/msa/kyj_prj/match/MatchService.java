@@ -3,6 +3,7 @@ package com.msa.kyj_prj.match;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,5 +34,22 @@ public class MatchService {
     public void applyToMatch(MatchParticipant participant) {
         matchDAO.insertMatchParticipant(participant);
     }
+
+    // 매치 참가 여부 확인
+    public boolean hasUserApplied(Long matchId, Integer userNo) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("match_id", matchId);
+        param.put("user_no", userNo);
+        return matchDAO.checkUserApplied(param) > 0;
+    }
+    
+    // 매치 신청 취소
+    public void cancelMatchParticipant(Long matchId, Integer userNo) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("match_id", matchId);
+        param.put("user_no", userNo);
+        matchDAO.cancelMatchParticipant(param);
+    }
+
 
 }

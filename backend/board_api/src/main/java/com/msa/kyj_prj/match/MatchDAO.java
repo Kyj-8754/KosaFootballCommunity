@@ -17,4 +17,10 @@ public interface MatchDAO {
     
     // 매치 신청
     void insertMatchParticipant(MatchParticipant participant);
+    
+    // 매치 신청 여부 확인
+    int checkUserApplied(Map<String, Object> param);
+    
+    // 매치 신청 취소
+    int cancelMatchParticipant(Map<String, Object> param);
 }

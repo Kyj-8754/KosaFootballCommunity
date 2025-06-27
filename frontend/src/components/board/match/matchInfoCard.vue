@@ -10,7 +10,10 @@
     <div class="venue">
       <div class="placenm">{{ match.svcnm }} - {{ match.placenm }} [{{ match.subplacenm }}]</div>
       <div class="price">가격 미정</div>
-      <button class="apply-button" @click="applyToMatch">신청하기</button>
+      <!-- 버튼 조건부 비활성화 -->
+      <button class="apply-button" @click="applyToMatch" :disabled="isApplied">
+        {{ isApplied ? '신청완료' : '신청하기' }}
+      </button>
     </div>
 
     <!-- 주소 및 전화번호 -->
@@ -42,6 +45,9 @@ import { defineProps, ref, onMounted, nextTick, inject } from 'vue'
 import axios from 'axios'
 
 const userNo = inject('userNo')
+const isApplied = ref(false)
+const loading = ref(false)
+const showMap = ref(false)
 
 const props = defineProps({
   match: {
@@ -50,7 +56,7 @@ const props = defineProps({
   }
 })
 
-const showMap = ref(false)
+const imageUrl = `${props.match.img_PATH}`
 
 const toggleMap = async () => {
   showMap.value = !showMap.value
@@ -78,8 +84,6 @@ const statusLabel = (code) => {
 const codeLabel = (code) => {
   return code === 'social' ? '소셜매치' : code === 'league' ? '리그매치' : code
 }
-
-const imageUrl = `${props.match.img_PATH}`
 
 const copyAddress = async () => {
   const fullAddr = `${props.match.areanm || ''} ${props.match.adres || ''}`
@@ -113,21 +117,54 @@ const loadMap = () => {
   }
 }
 
+// ✅ 신청 여부를 항상 DB에서 확인
+const checkIsApplied = async () => {
+  if (!userNo || userNo.value == null) {
+    isApplied.value = false
+    return
+  }
+
+  try {
+    const res = await axios.get('/board_api/match/applied', {
+      params: {
+        matchId: props.match.match_id,
+        userNo: userNo.value
+      }
+    })
+    isApplied.value = res.data
+  } catch (e) {
+    console.error('참가 여부 확인 실패:', e)
+    isApplied.value = false
+  }
+}
+
 const applyToMatch = async () => {
+  if (!userNo || userNo.value == null) {
+    alert('로그인 후 이용해주세요.')
+    return
+  }
+
+  loading.value = true
   try {
     const payload = {
       match_id: props.match.match_id,
-      user_no: userNo?.value // TODO: 로그인 사용자 ID로 교체
+      user_no: userNo.value
     }
 
     await axios.post('/board_api/match/apply', payload)
     alert('매치 참가 신청이 완료되었습니다!')
+    await checkIsApplied() // ✅ 상태 갱신은 항상 DB 기준
   } catch (error) {
     console.error('신청 실패:', error)
     alert('매치 참가 신청에 실패했습니다.')
+  } finally {
+    loading.value = false
   }
 }
 
+onMounted(() => {
+  checkIsApplied()
+})
 </script>
 
 <style scoped>
