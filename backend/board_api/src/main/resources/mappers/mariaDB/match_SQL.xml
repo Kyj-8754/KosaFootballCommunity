@@ -86,13 +86,11 @@
 	        s.Y,
 	        s.IMG_PATH,
 	        s.TELNO,
-	        s.NOTICE,
 	        s.SUBPLACENM,
 	        s.ORGNM,
 	        s.SVCENDTELNO,
 	        s.AREANM,
-	        s.ADRES,
-	        s.DTLCONT
+	        s.ADRES
 	    FROM
 	        `match` m
 	    JOIN

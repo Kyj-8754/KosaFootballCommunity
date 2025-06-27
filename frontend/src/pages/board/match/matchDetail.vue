@@ -9,8 +9,6 @@
 
     <!-- 상세 설명 -->
     <MatchDescription
-    :notice="match.notice"
-    :detail="match.dtlcont"
     :description="match.match_description"
     />
   </div>

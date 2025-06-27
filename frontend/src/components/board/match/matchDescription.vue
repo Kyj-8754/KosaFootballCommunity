@@ -14,8 +14,6 @@
 
     <!-- 탭별 내용 출력 -->
     <div class="tab-content">
-      <div v-if="activeTab === 'notice'" v-html="noticeHtml" />
-      <div v-if="activeTab === 'detail'" v-html="detailHtml" />
       <div v-if="activeTab === 'description'" v-html="descriptionHtml" />
     </div>
   </div>
@@ -25,22 +23,16 @@
 import { ref, computed, defineProps } from 'vue'
 
 const props = defineProps({
-  notice: { type: String, default: '' },
-  detail: { type: String, default: '' },
   description: { type: String, default: '' }
 })
 
 const activeTab = ref('description')
 
 const tabs = [
-  { key: 'description', label: '매치 설명' },
-  { key: 'notice', label: '공지사항' },
-  { key: 'detail', label: '안내사항' }
+  { key: 'description', label: '매치 설명' }
 ]
 
 // HTML 렌더링용 computed
-const noticeHtml = computed(() => props.notice || '<p>공지사항이 없습니다.</p>')
-const detailHtml = computed(() => props.detail || '<p>상세 안내 정보가 없습니다.</p>')
 const descriptionHtml = computed(() => props.description || '<p>매치 설명이 없습니다.</p>')
 </script>
 
