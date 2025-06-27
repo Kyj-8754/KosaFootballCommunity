@@ -81,7 +81,7 @@ const copyAddress = async () => {
 }
 .venue-img {
   width: 100%;
-  max-height: 200px;
+  max-height: 400px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 12px;
