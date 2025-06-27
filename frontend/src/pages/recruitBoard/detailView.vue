@@ -38,6 +38,7 @@ import axios from 'axios'
 // ✅ 전역 주입값
 const token = inject('token')
 const userId = inject('userId') // ✅ 추가: 로그인된 사용자 ID 주입
+const userNo = inject('userNo')
 const router = useRouter()
 const route = useRoute()
 
@@ -73,16 +74,16 @@ const handleApply = async () => {
     return
   }
 
-  try {
-    // ✅ appli_user_no를 함께 보냄
-    await axios.post('/club_api/apply', {
-      bno: bno,
-      appli_user_no: userId.value
-    }, {
-      headers: {
-        Authorization: `Bearer ${token?.value}`
-      }
-    })
+try {
+  await axios.post('/club_api/apply', {
+    bno: bno,
+    appli_user_no: Number(userNo.value)  // int 타입으로 변환!
+  }, {
+    headers: {
+      Authorization: `Bearer ${token?.value}`
+    }
+  })
+
 
     isApplied.value = true
     alert('✅ 가입 신청이 완료되었습니다.')

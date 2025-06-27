@@ -35,10 +35,26 @@
 
     <!-- 특정 유저가 이미 신청했는지 확인 -->
     <select id="findByBnoAndApplicant" parameterType="map" resultType="int">
-	    SELECT COUNT(*)
-	    FROM tbl_club_apply
-	    WHERE bno = #{bno}
-	    AND appli_user_no = #{appli_user_no}
-    </select>
+    SELECT COUNT(*)
+    FROM tbl_club_apply
+    WHERE bno = #{bno}
+    AND appli_user_no = #{appli_user_no}
+	</select>
+	
+	<!-- bno로 club_id 조회 -->
+	<select id="findClubIdByBno" parameterType="int" resultType="int">
+    SELECT club_id
+    FROM tbl_recruit_board
+    WHERE bno = #{bno}
+	</select>
+	
+	<!-- bno로 모집글의 팀장(user_no) 조회 -->
+	<select id="findUserNoByBno" parameterType="int" resultType="int">
+    SELECT user_no
+    FROM tbl_recruit_board
+    WHERE bno = #{bno}
+	</select>
+
+
     
 </mapper>

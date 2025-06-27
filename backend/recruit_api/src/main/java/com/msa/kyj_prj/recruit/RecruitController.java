@@ -54,8 +54,6 @@ public class RecruitController {
 	}
 
 	
-	
-
 
     // 모집글 수정 - 작성자만 가능
     @PutMapping("/{bno}")
