@@ -1,7 +1,10 @@
 <template>
   <div class="info-card">
-    <!-- 이미지 영역 -->
-    <img :src="imageUrl" alt="구장 이미지" class="venue-img" />
+    <!-- 이미지 or 지도 영역 -->
+    <div v-if="!showMap">
+      <img :src="imageUrl" alt="구장 이미지" class="venue-img" />
+    </div>
+    <div v-else id="map" class="kakao-map"></div>
 
     <!-- 구장 정보 -->
     <div class="venue">
@@ -15,9 +18,12 @@
       <div>주소: {{ match.areanm }} {{ match.adres }}</div>
       <div>대표전화: {{ match.telno || '정보없음' }}</div>
       <div>운영전화: {{ match.svcendtelno || '정보없음' }}</div>
+      <!-- 템플릿 내 버튼 부분 -->
       <div class="button-row">
-        <button @click="copyAddress">주소복사</button>
-        <button @click="$emit('map', match)">지도보기</button>
+        <button class="btn-blue" @click="copyAddress">주소복사</button>
+        <button class="btn-blue" @click="toggleMap">
+          {{ showMap ? '사진보기' : '지도보기' }}
+        </button>
       </div>
     </div>
 
@@ -32,9 +38,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
-
-const emit = defineEmits(['map'])
+import { defineProps, ref, onMounted, nextTick } from 'vue'
 
 const props = defineProps({
   match: {
@@ -42,6 +46,16 @@ const props = defineProps({
     required: true
   }
 })
+
+const showMap = ref(false)
+
+const toggleMap = async () => {
+  showMap.value = !showMap.value
+  if (showMap.value) {
+    await nextTick()
+    loadMap()
+  }
+}
 
 const genderLabel = (code) => {
   if (code === 'male') return '남성 전용'
@@ -65,24 +79,49 @@ const codeLabel = (code) => {
 const imageUrl = `${props.match.img_PATH}`
 
 const copyAddress = async () => {
-  const fullAddr = `${props.match.adres || ''}`
+  const fullAddr = `${props.match.areanm || ''} ${props.match.adres || ''}`
   await navigator.clipboard.writeText(fullAddr)
   alert('주소가 복사되었습니다.')
+}
+
+const loadMap = () => {
+  const kakaoMapReady = () => {
+    window.kakao.maps.load(() => {
+      const container = document.getElementById('map')
+      const options = {
+        center: new window.kakao.maps.LatLng(props.match.y, props.match.x),
+        level: 3
+      }
+      const map = new window.kakao.maps.Map(container, options)
+      new window.kakao.maps.Marker({
+        map,
+        position: options.center
+      })
+    })
+  }
+
+  if (!window.kakao || !window.kakao.maps) {
+    const script = document.createElement('script')
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=93d2abfcd442ea0ead3eed0dce1e66b3&autoload=false`
+    script.onload = kakaoMapReady
+    document.head.appendChild(script)
+  } else {
+    kakaoMapReady()
+  }
 }
 </script>
 
 <style scoped>
-.info-card {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 16px;
-  margin-top: 12px;
-  background-color: #f9f9f9;
-}
 .venue-img {
   width: 100%;
   max-height: 400px;
   object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+.kakao-map {
+  width: 100%;
+  height: 400px;
   border-radius: 8px;
   margin-bottom: 12px;
 }
@@ -111,16 +150,40 @@ const copyAddress = async () => {
   font-size: 14px;
   margin-bottom: 8px;
 }
-.button-row {
-  margin-top: 4px;
-  display: flex;
-  gap: 8px;
-}
 .meta {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   font-size: 14px;
   margin-top: 8px;
+}
+.info-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 12px;
+  margin-bottom: 24px; /* ✅ 다른 컴포넌트와 간격 확보 */
+  background-color: #f9f9f9;
+}
+
+.btn-blue {
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-blue:hover {
+  background-color: #0056b3;
+}
+
+.button-row {
+  margin-top: 4px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 </style>
