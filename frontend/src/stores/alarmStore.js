@@ -6,16 +6,23 @@ export const useAlarmStore = defineStore('alarm', {
   state: () => ({
     alarms: [],         // 알림 목록
     unread_count: 0,    // 읽지 않은 알림 수
-    // currentUserId: null  // 🔒 (선택) 로그인 유저 ID 연동 시 사용
+    currentUserId: null  // 🔒 (선택) 로그인 유저 ID 연동 시 사용
   }),
 
   actions: {
+    // ✅ 로그인 시 호출
+      setCurrentUserNo(userNo) { 
+      this.currentUserNo = userNo;
+    },
+        
+    
     // ✅ WebSocket 수신 시 호출
     pushAlarm(alarm) {
       const toast = useToast();
 
-      // (선택) 로그인 유저와 비교해서 본인 알림인지 확인하려면 아래 사용
-      // if (this.currentUserId && alarm.receiverId !== this.currentUserId) return;
+    // ✅ 내 user_no와 수신자(receiverId)가 다르면 무시 (보안/최적화)
+      if (this.currentUserNo && String(alarm.receiverId) !== String(this.currentUserNo)) return;
+
 
       // 📌 알림 추가
       this.alarms.unshift({
@@ -49,8 +56,5 @@ export const useAlarmStore = defineStore('alarm', {
       this.unread_count = 0;
     },
 
-    // setCurrentUserId(userId) {
-    //   this.currentUserId = userId;
-    // }
   }
 });

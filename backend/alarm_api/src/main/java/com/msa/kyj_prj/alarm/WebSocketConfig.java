@@ -24,9 +24,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // ✅ STOMP 메시지 브로커 설정
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/sub");          // ✅ 클라이언트가 subscribe할 경로 (알림 수신)
-        registry.setApplicationDestinationPrefixes("/alarm"); // ✅ 클라이언트가 send할 경로 (알림 발신)
+        registry.enableSimpleBroker("/topic", "/sub"); // 둘 다 활성화!  
+        registry.setApplicationDestinationPrefixes("/alarm");
     }
+
 
     // ⛔ 인증 관련 핸들러는 현재 사용 안 함 (로그인 연동 시 활성화 가능)
     // @Autowired
