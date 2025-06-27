@@ -1,6 +1,6 @@
 <template>
   <div class="match-description-card">
-    <!-- 탭 버튼 영역 -->
+    <!-- 탭 버튼 -->
     <div class="tab-buttons">
       <button
         v-for="tab in tabs"
@@ -12,37 +12,22 @@
       </button>
     </div>
 
-    <!-- 탭별 내용 -->
+    <!-- 탭별 내용 출력 -->
     <div class="tab-content">
-      <p v-if="activeTab === 'notice'">
-        {{ notice || '공지사항이 없습니다.' }}
-      </p>
-      <p v-if="activeTab === 'detail'">
-        {{ detail || '상세 안내 정보가 없습니다.' }}
-      </p>
-      <p v-if="activeTab === 'description'">
-        {{ description || '매치 설명이 없습니다.' }}
-      </p>
+      <div v-if="activeTab === 'notice'" v-html="noticeHtml" />
+      <div v-if="activeTab === 'detail'" v-html="detailHtml" />
+      <div v-if="activeTab === 'description'" v-html="descriptionHtml" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref, computed, defineProps } from 'vue'
 
 const props = defineProps({
-  notice: {
-    type: String,
-    default: ''
-  },
-  detail: {
-    type: String,
-    default: ''
-  },
-  description: {
-    type: String,
-    default: ''
-  }
+  notice: { type: String, default: '' },
+  detail: { type: String, default: '' },
+  description: { type: String, default: '' }
 })
 
 const activeTab = ref('description')
@@ -52,6 +37,11 @@ const tabs = [
   { key: 'notice', label: '공지사항' },
   { key: 'detail', label: '안내사항' }
 ]
+
+// HTML 렌더링용 computed
+const noticeHtml = computed(() => props.notice || '<p>공지사항이 없습니다.</p>')
+const detailHtml = computed(() => props.detail || '<p>상세 안내 정보가 없습니다.</p>')
+const descriptionHtml = computed(() => props.description || '<p>매치 설명이 없습니다.</p>')
 </script>
 
 <style scoped>
@@ -82,11 +72,14 @@ const tabs = [
   border-color: #007bff;
 }
 
-.tab-content p {
-  white-space: pre-wrap;
-  line-height: 1.5;
+.tab-content {
   font-size: 14px;
   color: #333;
-  margin: 0;
+  line-height: 1.6;
+}
+
+.tab-content img {
+  max-width: 100%;
+  height: auto;
 }
 </style>
