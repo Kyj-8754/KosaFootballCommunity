@@ -12,6 +12,7 @@ import Board_RegistForm from '@/pages/board/registForm.vue';
 import Board_UpdateForm from '@/pages/board/updateForm.vue';
 import Stadium_DetailView from '@/pages/stadium/detailView.vue';
 import Stadium_List from '@/pages/stadium/list.vue';
+import Stadium_Reservation from '@/pages/stadium/reservation.vue';
 
 const router = createRouter({
     history: createWebHistory(),
@@ -28,6 +29,7 @@ const router = createRouter({
         { path: '/board/updateForm', name: 'Board_UpdateForm', component: Board_UpdateForm },
         { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: Stadium_DetailView },
         { path: '/stadium/list',  name: 'Stadium_List', component: Stadium_List },
+        { path: '/stadium/reservation',  name: 'Stadium_Reservation', component: Stadium_Reservation },
         { path: '/:paths(.*)*', name: 'NotFound', component: NotFound },
     ]
 })

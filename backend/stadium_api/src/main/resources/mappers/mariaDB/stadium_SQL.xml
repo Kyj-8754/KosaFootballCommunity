@@ -156,5 +156,9 @@
 	<select id="callSyncStadiumProcedure" statementType="CALLABLE">
         CALL sync_stadium_state()
     </select>
+    
+    <select id="callSyncStadiumProcedure" statementType="CALLABLE">
+        CALL sync_stadium_state()
+    </select>
 	
 </mapper>
