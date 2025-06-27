@@ -162,7 +162,7 @@ const loadMap = () => {
   border-radius: 8px;
   padding: 16px;
   margin-top: 12px;
-  margin-bottom: 24px; /* ✅ 다른 컴포넌트와 간격 확보 */
+  margin-bottom: 12px; /* ✅ 다른 컴포넌트와 간격 확보 */
   background-color: #f9f9f9;
 }
 
