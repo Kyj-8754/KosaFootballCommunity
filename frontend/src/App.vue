@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import {provide, ref, computed,onMounted } from 'vue';
+import { provide, ref, computed, onMounted, watch } from 'vue';
 import Header from '@/components/Header.vue';
 import NavArea from '@/components/NavArea.vue';
 import Footer from '@/components/Footer.vue';
@@ -27,22 +27,6 @@ import { connectWebSocket } from '@/utils/stomp';
 import { useAlarmStore } from '@/stores/alarmStore';
 
 const alarmStore = useAlarmStore();
-
-onMounted(() => {
-  // ✅ 테스트용 유저 PK(번호, 예: 1, 55 등)로 하드코딩
-  const userNo = 1;
-
-  // ✅ WebSocket 연결 및 메시지 수신 시 알림 push
-  connectWebSocket(userNo, (msg) => {
-    alarmStore.pushAlarm(msg);
-  });
-
-  // ⚠️ 추후 로그인 연동 시 userNo 값을 로그인 결과에서 할당하도록 수정
-});
-
-
-
-
 
 // 반응형 token 상태 정의
 const token = ref(localStorage.getItem('accessToken'))
@@ -74,11 +58,33 @@ const logout = () => {
   location.href = '/'
 }
 
-// 전역으로 token만 제공
+// 전역 provide (기존과 동일)
 provide('token', token)
 provide('logout', logout)
 provide('userId', userId)
 provide('userNo', userNo)
 provide('userName', userName)
 provide('authCode', authCode)
+
+
+onMounted(() => {
+
+  // ✅ JWT에서 추출한 userNo를 사용해 웹소켓 연결
+  if (userNo.value) {
+    connectWebSocket(userNo.value, (msg) => {
+      alarmStore.pushAlarm(msg);
+    });
+  }
+  // ✅ userNo 값이 바뀔 때(로그인/로그아웃) 웹소켓 연결 재설정
+  watch(userNo, (newNo, oldNo) => {
+    if (newNo) {
+      connectWebSocket(newNo, (msg) => {
+        alarmStore.pushAlarm(msg);
+      });
+    }
+    // (참고: 필요하면 이전 소켓 연결 해제 로직 추가 가능)
+  });
+  // ⚠️ 추후 로그인 연동 시 userNo 값을 JWT에서 동적으로 할당하도록 수정
+});
+
 </script>
