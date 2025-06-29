@@ -40,13 +40,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const userId = ref('')
 const userPwd = ref('')
 const router = useRouter()
+const token = inject('token')
 
 const login = async () => {
   try {
@@ -58,7 +59,7 @@ const login = async () => {
       },
       { withCredentials: true }
     )
-
+		console.log("✅ 응답 성공:", res.status, res.data);
     localStorage.setItem('accessToken', res.data.accessToken)
     localStorage.setItem('refreshToken', res.data.refreshToken)
 		token.value = res.data.accessToken
@@ -67,6 +68,8 @@ const login = async () => {
     alert('로그인 실패: ' + (err.response?.data?.res_msg || '오류 발생'))
     userId.value = ''
     userPwd.value = ''
+		console.error("❌ 실패 상태코드:", err.response?.status);
+  	console.error("❌ 실패 응답:", err.response?.data);
   }
 }
 
