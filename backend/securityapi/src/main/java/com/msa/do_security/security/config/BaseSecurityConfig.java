@@ -27,7 +27,7 @@ import com.msa.do_security.security.dto.SocialUserDTO;
 import com.msa.do_security.security.filter.LoginFilter;
 import com.msa.do_security.security.filter.RefreshTokenFilter;
 import com.msa.do_security.security.filter.TokenCheckFilter;
-import com.msa.do_security.security.service.OAuth2UserService;
+import com.msa.do_security.security.service.OAuth2UserVOService;
 import com.msa.do_security.security.service.UserVODetailsService;
 import com.msa.do_security.security.util.JWTUtil;
 import com.msa.do_security.security.vo.OAuth2UserVO;
@@ -43,7 +43,7 @@ public class BaseSecurityConfig {
 	private final ObjectMapper objectMapper;
 	private final JWTUtil jwtUtil;
 	private final UserVODetailsService userVODetailsService;
-	private final OAuth2UserService oAuth2UserService;
+	private final OAuth2UserVOService oAuth2UserService;
 
 	// 비밀번호 암호화를 위한 BCrypt 해시 함수 객체 생성
 	@Bean
