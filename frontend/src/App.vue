@@ -18,10 +18,28 @@ import Header from '@/components/Header.vue'
 import NavArea from './components/NavArea.vue'
 import Footer from './components/Footer.vue'
 
-import { provide, ref, computed } from 'vue'
+import { provide, ref, computed, onMounted } from 'vue'
 
-// 반응형 token 상태 정의
-const token = ref(localStorage.getItem('accessToken'))
+// 1. 토큰 상태
+const token = ref('')
+
+// 2. 토큰 설정 함수
+const setToken = (newToken) => {
+  token.value = newToken
+  if (newToken) {
+    localStorage.setItem('accessToken', newToken)
+  } else {
+    localStorage.removeItem('accessToken')
+  }
+}
+
+// 3. 마운트 시 로컬스토리지에서 토큰 로딩
+onMounted(() => {
+  const savedToken = localStorage.getItem('accessToken')
+  if (savedToken) {
+    token.value = savedToken
+  }
+})
 
 // ✅ JWT Payload 디코딩 함수
 const decodeJwtPayload = (tokenStr) => {
@@ -59,11 +77,11 @@ const logout = () => {
 }
 
 // 전역으로 token만 제공
+provide('setToken', setToken)
 provide('token', token)
 provide('logout', logout)
 provide('userId', userId)
 provide('userNo', userNo)
 provide('userName', userName)
 provide('authCode', authCode)
-console.log(userName);
 </script>
