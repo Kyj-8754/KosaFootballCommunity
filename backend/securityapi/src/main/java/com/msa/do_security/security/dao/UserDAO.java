@@ -28,4 +28,6 @@ public interface UserDAO {
     
     LocalAccount findAccountByUserNo(int userNo);
     
+    
+    
 }

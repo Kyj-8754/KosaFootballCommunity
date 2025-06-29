@@ -104,32 +104,6 @@ public class BaseSecurityConfig {
 
 		defaultAuthorizationRules(http);
 		
-		// 소셜로그인
-        http.oauth2Login(oauth2 -> oauth2
-            .userInfoEndpoint(userInfo -> userInfo
-                .userService(oAuth2UserService)
-            )
-            .successHandler((request, response, authentication) -> {
-                OAuth2UserVO oAuthUser = (OAuth2UserVO) authentication.getPrincipal();
-                SocialUserDTO socialUserDTO = (SocialUserDTO)authentication
-    					.getPrincipal();
-
-                // JWT claim 설정
-                Map<String, Object> claims = Map.of(
-                    "userId", socialUserDTO.getUserId(),
-                    "userNo", socialUserDTO.getUserNo(),
-                    "userName", URLEncoder.encode(socialUserDTO.getUserName(), StandardCharsets.UTF_8),
-                    "authCode", "ROLE_"+socialUserDTO.getAuthCode()
-                );
-
-    			Map<String, String> keyMap = Map.of("accessToken", jwtUtil.generateToken(claims, 1), //Access Token 유효기간 1일로 생성
-						"refreshToken", jwtUtil.generateToken(claims, 5)); //Refresh Token 유효기간 10일로 생성
-
-
-                new ObjectMapper().writeValue(response.getWriter(), keyMap);
-            })
-        );
-		
 		return http.build();
 
 	}
@@ -138,7 +112,9 @@ public class BaseSecurityConfig {
 		http.authorizeHttpRequests(authroize -> {
 			authroize.requestMatchers("/generateToken").permitAll();
 			authroize.requestMatchers("/refreshToken").permitAll();
-
+			authroize.requestMatchers("/login").permitAll();
+			authroize.requestMatchers("/login?error").permitAll();
+			authroize.requestMatchers("/.well-known/**").permitAll();
 			try {
 				customizeAuthorization(authroize);
 			} catch (Exception e) {
@@ -158,7 +134,7 @@ public class BaseSecurityConfig {
 	}
 
 	protected List<String> getExcludedPaths() {
-		return List.of("/generateToken", "/refreshToken");
+		return List.of("/generateToken", "/refreshToken","/oauth/**","/login","/login?error","/oauth/callback/**","/.well-known/**");
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
