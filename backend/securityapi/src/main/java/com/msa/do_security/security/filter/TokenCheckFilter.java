@@ -39,7 +39,9 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 		final String path = request.getRequestURI();
 
 		for (String pattern : excludedPaths) {
+			log.info("패턴 검사 중: pattern = {}, path = {}", pattern, path);
 			if (pathMatcher.match(pattern, path)) {
+				log.info("요청 경로 {} 는 제외 대상 패턴 {} 과 매칭됨. 필터 통과.", path, pattern);
 				filterChain.doFilter(request, response);
 				return;
 			}

@@ -27,22 +27,13 @@ public class LoginSecurityConfig extends BaseSecurityConfig {
 	public LoginSecurityConfig(ObjectMapper objectMapper, JWTUtil jwtUtil, UserVODetailsService userVODetailsService, OAuth2UserVOService oAuth2UserService) {
 		super(objectMapper, jwtUtil, userVODetailsService, oAuth2UserService);
 	}
-
+	
 	@Override
 	protected void customizeAuthorization(AuthorizationManagerRequestMatcherRegistry authorize) throws Exception {
 		((AuthorizedUrl) authorize.requestMatchers("/user/na/**")).permitAll();
-		((AuthorizedUrl) authorize.requestMatchers("/kakao/callback")).permitAll();
-		((AuthorizedUrl) authorize.requestMatchers("/oauth/authorize/**")).permitAll();
-		
+		((AuthorizedUrl) authorize.requestMatchers("/oauth/**")).permitAll();
 	}
-
-	@Override
-	protected List<String> getExcludedPaths() {
-		return Stream.concat(
-			super.getExcludedPaths().stream(),
-			Stream.of("/user/na/**", "/kakao/callback", "/oauth/authorize/**")
-		).toList();
-	}
+	
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration config = new CorsConfiguration();

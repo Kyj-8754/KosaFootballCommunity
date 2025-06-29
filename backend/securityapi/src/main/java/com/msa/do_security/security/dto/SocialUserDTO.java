@@ -20,7 +20,7 @@ public class SocialUserDTO extends User{
 	private String userName;
 	private String authCode;
 	
-	private SocialUserDTO(String userId, String userPwd, Collection<GrantedAuthority> authorities) {
+	public SocialUserDTO(String userId, String userPwd, Collection<GrantedAuthority> authorities) {
 		super(userId, userPwd, authorities);
 		this.userId = userId;
 		this.userPwd = userPwd;
