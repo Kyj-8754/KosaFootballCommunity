@@ -20,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OAuth2UserService extends DefaultOAuth2UserService {
+public class OAuth2UserVOService extends DefaultOAuth2UserService {
 
     private final UserDAO userDAO;
     private final HttpSession session;

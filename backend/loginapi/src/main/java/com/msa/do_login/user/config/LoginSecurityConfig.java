@@ -15,7 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.msa.do_security.security.config.BaseSecurityConfig;
-import com.msa.do_security.security.service.OAuth2UserService;
+import com.msa.do_security.security.service.OAuth2UserVOService;
 import com.msa.do_security.security.service.UserVODetailsService;
 import com.msa.do_security.security.util.JWTUtil;
 
@@ -24,7 +24,7 @@ import com.msa.do_security.security.util.JWTUtil;
 @EnableMethodSecurity
 public class LoginSecurityConfig extends BaseSecurityConfig {
 	
-	public LoginSecurityConfig(ObjectMapper objectMapper, JWTUtil jwtUtil, UserVODetailsService userVODetailsService, OAuth2UserService oAuth2UserService) {
+	public LoginSecurityConfig(ObjectMapper objectMapper, JWTUtil jwtUtil, UserVODetailsService userVODetailsService, OAuth2UserVOService oAuth2UserService) {
 		super(objectMapper, jwtUtil, userVODetailsService, oAuth2UserService);
 	}
 
