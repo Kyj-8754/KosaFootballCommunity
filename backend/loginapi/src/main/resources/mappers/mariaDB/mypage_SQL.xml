@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msa.do_login.myPage.dao.MyPageDAO">
+	<!-- 회원 번호로 회원 정보 불러오기 -->
+	<select id="getUserVO" parameterType="int" resultType="com.msa.do_login.user.vo.UserVO">
+		SELECT * 
+		FROM user
+		WHERE user_no = #{userNo}
+	</select>
+	<!-- 회원 번호로 회원 계정 불러오기 -->
+	<select id="getLocalAccount" parameterType="int" resultType="com.msa.do_login.user.vo.LocalAccount">
+		SELECT * 
+		FROM local_account
+		WHERE user_no = #{userNo}
+	</select>
+	<!-- 스타일 코드로 스타일 명칭 불러오기 -->
+	<select id="getUserStyle" parameterType="int" resultType="com.msa.do_login.user.vo.UserStyle">
+		SELECT * 
+		FROM user_style
+		WHERE style_code = #{styleCode}
+	</select>
+	<!-- 능력치 코드로 능력치 명칭 불러오기 -->
+	<select id="getUserStat" parameterType="int" resultType="com.msa.do_login.user.vo.UserStat">
+		SELECT * 
+		FROM user_stat
+		WHERE stat_code = #{statCode}
+	</select>
+	
+</mapper>

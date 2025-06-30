@@ -18,12 +18,12 @@ export default defineConfig({
 server: {
   proxy: {
     "/security_api": {
-      target: "http://localhost:8081",
+      target: "http://localhost:8110",
       changeOrigin: true,
       rewrite: (path) => path.replace(/^\/security_api/, ""),
     },
     "/login_api": {
-      target: "http://localhost:8080",
+      target: "http://localhost:8111",
       changeOrigin: true,
       rewrite: (path) => path.replace(/^\/login_api/, ""),
     },
