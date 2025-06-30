@@ -1,4 +1,4 @@
-package com.msa.do_login.user.util;
+package com.msa.do_security.security.util;
 
 import java.time.ZonedDateTime;
 import java.util.Base64;
@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class JWTUtil {
-	@Value("${com.msa.do_login.jwt.secret}")
+	@Value("${com.msa.do_security.jwt.secret}")
 	private String key; // 서버만 알고 있는 비밀키값
 
 	public byte[] getSecretKey() {

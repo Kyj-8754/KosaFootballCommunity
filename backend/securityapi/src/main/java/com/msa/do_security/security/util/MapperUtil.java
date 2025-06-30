@@ -1,4 +1,4 @@
-package com.msa.do_login.user.util;
+package com.msa.do_security.security.util;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
