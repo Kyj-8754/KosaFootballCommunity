@@ -40,8 +40,9 @@ const matchId = Number(route.params.id)
 
 const fetchLogs = async () => {
   try {
-    const res = await axios.get(`/match-log/${matchId}`)
+    const res = await axios.get(`/board_api/match-log/${matchId}`)
     logs.value = res.data
+    console.log('logs:', logs.value)
   } catch (e) {
     console.error('로그 조회 실패:', e)
   }
@@ -50,7 +51,7 @@ const fetchLogs = async () => {
 const deleteLog = async (index) => {
   try {
     const logId = logs.value[index].log_id
-    await axios.delete(`/match-log/delete/${logId}`)
+    await axios.delete(`/board_api/match-log/delete/${logId}`)
     await fetchLogs()
   } catch (e) {
     console.error('삭제 실패:', e)
@@ -69,7 +70,7 @@ const updateLog = async ({ index, team, member, logCode, memo }) => {
       log_type: logCode,
       log_memo: memo
     }
-    await axios.put('/match-log/update', payload)
+    await axios.put('/board_api/match-log/update', payload)
     await fetchLogs()
   } catch (e) {
     console.error('수정 실패:', e)
@@ -92,7 +93,7 @@ const submitLog = async () => {
   }
 
   try {
-    await axios.post('/match-log/add', payload)
+    await axios.post('/board_api/match-log/add', payload)
     alert('로그가 등록되었습니다.')
     await fetchLogs()
   } catch (e) {

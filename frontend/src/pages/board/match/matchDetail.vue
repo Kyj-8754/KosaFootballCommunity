@@ -11,6 +11,8 @@
     <MatchDescription
     :description="match.match_description"
     />
+
+    <MatchLogButton :match-id="match.match_id" />
   </div>
 </template>
 
@@ -23,6 +25,7 @@ import axios from 'axios'
 import MatchTitleBar from '@/components/board/match/matchTitleBar.vue'
 import MatchInfoCard from '@/components/board/match/matchInfoCard.vue'
 import MatchDescription from '@/components/board/match/matchDescription.vue'
+import MatchLogButton from '@/components/board/match/matchLogPageButton.vue'
 
 const route = useRoute()
 const match = ref(null)
