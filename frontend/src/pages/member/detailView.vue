@@ -8,48 +8,16 @@
 					</div>
 					<table class="table table-group-divider">
 						<tbody>
-							<tr>
-								<th scope="row">아이디</th>
-								<td>{{memberDB.userid}}</td>
-							</tr>
-							<tr>
-								<th scope="row">이름</th>
-								<td>{{memberDB.name}}</td>
-							</tr>
-							<tr>
-								<th scope="row">생년월일</th>
-								<td>{{memberDB.birthdate}}</td>
-							</tr>
-							<tr>
-								<th scope="row">핸드폰</th>
-								<td>{{memberDB.phone_no}}</td>
-							</tr>
-							<tr>
-								<th scope="row">주소</th>
-								<td>{{memberDB.roadaddress}}{{memberDB.jibunaddress}}</td>
-							</tr>
-							<tr>
-								<th scope="row">상세주소</th>
-								<td>{{memberDB.detail_add}}</td>
-							</tr>
-							<tr>
-								<th scope="row">최근 로그인</th>
-								<td>{{memberDB.loginTime}}</td>
-							</tr>
-							<tr>
-								<th scope="row">탈퇴 여부</th>
-								<td>{{memberDB.is_deleted}}</td>
-							</tr>
-							<tr>
-								<th scope="row">탈퇴일</th>
-								<td>{{memberDB.deleted_at}}</td>
-							</tr>
+							<tr><th class="text-start">이름</th><td class="text-start">{{ member.userName }}</td></tr>
+							<tr><th class="text-start w-25">아이디</th><td class="text-start">{{ member.userId }}</td></tr>
 						</tbody>
 					</table>
 					<div class="mt-4 d-flex justify-content-center gap-3">
-						<router-link :to="{name: 'Home'}"  class="btn btn-outline-primary">메인으로</router-link> 
-						<router-link :to="{name: 'Member_UpdateForm',  query:  {userid: memberDB.userid}}" class="btn btn-primary">회원 수정</router-link> 
-						<a id="unregist" @click="unregist" class="btn btn-danger">회원탈퇴</a>
+						<router-link :to="{name: 'Home'}"  class="btn btn-outline-primary">신청내역</router-link>
+						<router-link :to="{name: 'Home'}"  class="btn btn-outline-primary">사용 내역</router-link> 
+						<router-link :to="{name: 'Home'}"  class="btn btn-outline-primary">친구</router-link> 
+						<router-link :to="{name: 'Home'}"  class="btn btn-outline-primary">친구가 신청한 매치</router-link> 
+						<router-link :to="{name: 'Member_UpdateForm',  query:  {userid: member.userid}}" class="btn btn-primary">프로필 수정</router-link> 
 					</div>
 				</div>
 			</main>
@@ -58,20 +26,25 @@
 </template>
 
 <script setup>
-	import {ref, onMounted} from 'vue'
-	import { useRoute, useRouter } from 'vue-router'
-	import axios from 'axios'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import axios from 'axios'
 
-	const router = useRouter()
-	const route = useRoute()
-	const userid = route.query.userid
-	const memberDB = ref({ list: [] })
+const route = useRoute()
+const member = ref(null)
 
-	// 페이지 구동시 자동 마운트
-	onMounted(() => {
-		axios.get('/api/member/detailView', { params: { userid }})
-			.then(res => {
-				memberDB.value = res.data.memberDB
-			})
-	})
+const fetchMemberDetail = async () => {
+  try {
+    const userNo = route.query.userno
+		console.log(userNo);
+    const res = await axios.get(`/login_api/mypage/detailView/${userNo}`)
+		console.log('응답 결과:', res)
+    member.value = res.data.member
+  } catch (e) {
+    console.error('회원 정보 로딩 실패:', e)
+    member.value = null
+  }
+}
+
+onMounted(fetchMemberDetail)
 </script>
