@@ -36,13 +36,13 @@ export default defineConfig({
 
       // 게시판 프록시
       "/board_api": {
-        target: "http://localhost:8082",
+        target: "http://localhost:8131",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/board_api/, ""),
       },
       // 위젯 프록시
       "/widget_api": {
-        target: "http://localhost:8083",
+        target: "http://localhost:8130",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/widget_api/, ""),
       },
