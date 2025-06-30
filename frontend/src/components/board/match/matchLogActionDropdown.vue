@@ -1,6 +1,6 @@
 <template>
   <div class="log-action-dropdown">
-    <label for="action-select">행동 선택</label>
+    <label for="action-select"></label>
     <select id="action-select" v-model="selectedAction">
       <option disabled value="">행동을 선택하세요</option>
       <option v-for="action in actions" :key="action" :value="action">

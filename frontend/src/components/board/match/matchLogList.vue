@@ -11,10 +11,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(log, index) in logs" :key="index">
+      <tr v-for="(log, index) in logs" :key="log.log_id">
         <!-- 수정 모드일 경우 -->
         <template v-if="editingIndex === index">
-          <td>{{ log.timestamp }}</td>
+          <td>{{ log.log_created_at }}</td>
           <td>
             <LogTeamDropdown v-model="editForm.team" />
           </td>
@@ -35,11 +35,11 @@
 
         <!-- 일반 보기 모드 -->
         <template v-else>
-          <td>{{ log.timestamp }}</td>
-          <td>{{ log.team }}</td>
-          <td>{{ log.member }}</td>
-          <td>{{ log.logCode }}</td>
-          <td>{{ log.memo }}</td>
+          <td>{{ log.log_created_at }}</td>
+          <td>{{ log.club_id }}</td>
+          <td>{{ log.user_no }}</td>
+          <td>{{ log.log_type }}</td>
+          <td>{{ log.log_memo }}</td>
           <td>
             <button @click="startEdit(index)">수정</button>
             <button @click="$emit('delete', index)">삭제</button>
@@ -52,9 +52,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import LogTeamDropdown from './dropdowns/LogTeamDropdown.vue'
-import LogMemberDropdown from './dropdowns/LogMemberDropdown.vue'
-import LogCodeDropdown from './dropdowns/LogCodeDropdown.vue'
+import LogTeamDropdown from '@/components/board/match/matchLogTeamDropdown.vue'
+import LogMemberDropdown from '@/components/board/match/matchLogMemberDropdown.vue'
+import LogCodeDropdown from '@/components/board/match/matchLogActionDropdown.vue'
 
 const props = defineProps({
   logs: {
@@ -77,10 +77,10 @@ const startEdit = (index) => {
   editingIndex.value = index
   const log = props.logs[index]
   editForm.value = {
-    team: log.team,
-    member: log.member,
-    logCode: log.logCode,
-    memo: log.memo
+    team: log.club_id,
+    member: log.user_no,
+    logCode: log.log_type,
+    memo: log.log_memo
   }
 }
 
@@ -89,7 +89,13 @@ const cancelEdit = () => {
 }
 
 const saveEdit = (index) => {
-  emit('update', { index, ...editForm.value })
+  emit('update', {
+    index,
+    team: editForm.value.team,
+    member: editForm.value.member,
+    logCode: editForm.value.logCode,
+    memo: editForm.value.memo
+  })
   editingIndex.value = null
 }
 </script>
