@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msa.kyj_prj.match.MatchDAO">
+
+	<!-- 매치 리스트 -->
+	<select id="selectFilteredMatches" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT
+	        m.match_id,
+	        m.match_title,
+	        m.match_created_at,
+	        m.match_date,
+	        m.SVCID,
+	        m.match_closed,
+	        m.gender_condition,
+	        m.match_status,
+	        m.match_board_status,
+	        m.match_code,
+	        s.SVCNM,
+	        s.PLACENM,
+	        s.SUBPLACENM,
+	        s.AREANM
+	    FROM
+	        `match` m
+	    JOIN
+	        stadium s ON m.SVCID COLLATE utf8mb4_general_ci = s.SVCID COLLATE utf8mb4_general_ci
+	    <trim prefix="WHERE" prefixOverrides="AND|OR">
+	        <if test="match_code != null and match_code != ''">
+	            AND m.match_code COLLATE utf8mb4_general_ci = #{match_code}
+	        </if>
+	
+			<if test="afterDate != null and afterDate != ''">
+			    AND m.match_date BETWEEN CONCAT(#{afterDate}, ' 00:00:00') AND CONCAT(#{afterDate}, ' 23:59:59')
+			</if>
+			
+			<!-- ✅ 없으면 현재 시간 이후 -->
+	        <if test="afterDate == null or afterDate == ''">
+	            AND m.match_date > NOW()
+	        </if>
+	
+	        <if test="areanm != null and areanm != ''">
+	            AND s.AREANM COLLATE utf8mb4_general_ci = #{areanm}
+	        </if>
+	
+	        <if test="match_closed != null and match_closed != ''">
+	            AND m.match_closed COLLATE utf8mb4_general_ci = #{match_closed}
+	        </if>
+	
+	        <if test="gender_condition != null and gender_condition != ''">
+	            AND m.gender_condition COLLATE utf8mb4_general_ci = #{gender_condition}
+	        </if>
+	
+	        <if test="match_status != null and match_status != ''">
+	            AND m.match_status COLLATE utf8mb4_general_ci = #{match_status}
+	        </if>
+	
+	        <if test="match_board_status != null and match_board_status != ''">
+	            AND m.match_board_status COLLATE utf8mb4_general_ci = #{match_board_status}
+	        </if>
+	
+	        <if test="match_title != null and match_title != ''">
+	            AND m.match_title COLLATE utf8mb4_general_ci LIKE CONCAT('%', #{match_title}, '%')
+	        </if>
+	    </trim>
+	    ORDER BY m.match_date ASC
+	</select>
+	
+	<!-- 매치 상세보기 -->
+	<select id="selectMatchDetailById" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT
+	        m.match_id,
+	        m.match_title,
+	        m.match_created_at,
+	        m.match_modified_at,
+	        m.user_no,
+	        m.match_date,
+	        m.SVCID,
+	        m.match_closed,
+	        m.gender_condition,
+	        m.match_description,
+	        m.match_status,
+	        m.match_board_status,
+	        m.match_code,
+	        s.SVCNM,
+	        s.PLACENM,
+	        s.X,
+	        s.Y,
+	        s.IMG_PATH,
+	        s.TELNO,
+	        s.SUBPLACENM,
+	        s.ORGNM,
+	        s.SVCENDTELNO,
+	        s.AREANM,
+	        s.ADRES
+	    FROM
+	        `match` m
+	    JOIN
+	        stadium s ON m.SVCID COLLATE utf8mb4_general_ci = s.SVCID COLLATE utf8mb4_general_ci
+	    WHERE
+	        m.match_id = #{match_id}
+	</select>
+	
+	<!-- 매치 참가 신청 -->
+	<insert id="insertMatchParticipant" parameterType="com.msa.kyj_prj.match.MatchParticipant">
+	    INSERT INTO match_participant (
+	        match_id,
+	        club_id,
+	        user_no
+	    ) VALUES (
+	        #{match_id},
+	        #{club_id},
+	        #{user_no}
+	    )
+	</insert>	
+	
+	<!-- 참가 여부 확인 (취소 제외) -->
+	<select id="checkUserApplied" resultType="int" parameterType="map">
+	    SELECT COUNT(*)
+	    FROM match_participant
+	    WHERE match_id = #{match_id}
+	      AND user_no = #{user_no}
+	      AND user_status != 'cancelled'
+	</select>
+	
+	<!-- 매치 참가 취소 (물리 삭제) -->
+	<delete id="cancelMatchParticipant" parameterType="map">
+	    DELETE FROM match_participant
+	    WHERE match_id = #{match_id}
+	      AND user_no = #{user_no}
+	</delete>
+	
+	<!-- 특정 매치의 참가자 수 조회 -->
+	<select id="countMatchParticipants" resultType="int" parameterType="long">
+	    SELECT COUNT(*)
+	    FROM match_participant
+	    WHERE match_id = #{matchId}
+	    	AND user_status = 'approve'
+	</select>
+
+</mapper>

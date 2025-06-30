@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msa.kyj_prj.match.log.MatchLogDAO">
+
+  <!-- 로그 전체 조회 -->
+  <select id="selectLogsByMatchId" parameterType="long" resultType="com.msa.kyj_prj.match.log.MatchLog">
+    SELECT *
+    FROM match_log
+    WHERE match_id = #{match_id}
+    ORDER BY log_created_at DESC
+  </select>
+
+  <!-- 로그 등록 -->
+  <insert id="insertMatchLog" parameterType="com.msa.kyj_prj.match.log.MatchLog">
+    INSERT INTO match_log (
+      match_id,
+      log_type,
+      club_id,
+      user_no,
+      log_memo
+    ) VALUES (
+      #{match_id},
+      #{log_type},
+      #{club_id},
+      #{user_no},
+      #{log_memo}
+    )
+  </insert>
+
+  <!-- 로그 수정 -->
+  <update id="updateMatchLog" parameterType="com.msa.kyj_prj.match.log.MatchLog">
+    UPDATE match_log
+    SET log_type = #{log_type},
+        club_id = #{club_id},
+        user_no = #{user_no},
+        log_memo = #{log_memo}
+    WHERE log_id = #{log_id}
+  </update>
+
+  <!-- 로그 삭제 -->
+  <delete id="deleteMatchLog" parameterType="long">
+    DELETE FROM match_log
+    WHERE log_id = #{log_id}
+  </delete>
+
+</mapper>
+

@@ -1,0 +1,13 @@
+-- kosa_db.tbl_club_member definition
+
+CREATE TABLE `tbl_club_member` (
+  `club_id` int(11) NOT NULL,
+  `user_no` int(11) NOT NULL,
+  `role` enum('LEADER','MEMBER') DEFAULT 'MEMBER',
+  `joined_at` datetime DEFAULT current_timestamp(),
+  `left_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`club_id`),
+  KEY `fk_club_member_user` (`user_no`),
+  CONSTRAINT `fk_club_member_club` FOREIGN KEY (`club_id`) REFERENCES `tbl_club` (`club_id`),
+  CONSTRAINT `fk_club_member_user` FOREIGN KEY (`user_no`) REFERENCES `user` (`user_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
