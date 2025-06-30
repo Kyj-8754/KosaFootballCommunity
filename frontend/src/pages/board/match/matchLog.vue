@@ -79,7 +79,7 @@ const updateLog = async ({ index, team, member, logCode, memo }) => {
 }
 
 const submitLog = async () => {
-  if (!selectedTeam.value || !selectedMember.value || !selectedLogCode.value) {
+  if (!selectedMember.value || !selectedLogCode.value) {
     alert('모든 항목을 선택해주세요.')
     return
   }
