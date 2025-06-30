@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.msa.kyj_prj.club.ClubDAO">
+
+    <!-- ✅ 공통 컬럼 추출 -->
+    <sql id="clubColumns">
+        club_id AS club_id,
+        team_code AS team_code,
+        club_name AS club_name,
+        user_no AS user_no,
+        logo_path AS logo_path,
+        rating AS rating,
+        ranking AS ranking,
+        win_count AS win_count,
+        draw_count AS draw_count,
+        loss_count AS loss_count,
+        description AS description,
+        created_at AS created_at
+    </sql>
+
+    <!-- 단건 조회 -->
+    <select id="getClub" resultType="com.msa.kyj_prj.club.Club" parameterType="int">
+        SELECT
+            <include refid="clubColumns"/>
+        FROM tbl_club
+        WHERE club_id = #{club_id}
+    </select>
+
+    <!-- ✅ 등록 (user_no 포함하도록 수정됨) -->
+    <insert id="insert" parameterType="com.msa.kyj_prj.club.Club" useGeneratedKeys="true" keyProperty="club_id">
+        INSERT INTO tbl_club (
+            team_code,
+            club_name,
+            user_no,        <!-- ✅ 수정: user_no 추가 -->
+            created_at
+        ) VALUES (
+            #{team_code},
+            #{club_name},
+            #{user_no},     <!-- ✅ 수정: user_no 파라미터 추가 -->
+            NOW()
+        )
+    </insert>
+
+    <!-- 수정 -->
+    <update id="update" parameterType="com.msa.kyj_prj.club.Club">
+        UPDATE tbl_club SET
+            club_name = #{club_name},
+            user_no = #{user_no},
+            logo_path = #{logo_path},
+            rating = #{rating},
+            ranking = #{ranking},
+            win_count = #{win_count},
+            draw_count = #{draw_count},
+            loss_count = #{loss_count},
+            description = #{description}
+        WHERE club_id = #{club_id}
+    </update>
+
+    <!-- 전체 목록 (검색 + 페이징 + 정렬 포함) -->
+    <select id="list" parameterType="map" resultType="com.msa.kyj_prj.club.Club">
+        SELECT
+            <include refid="clubColumns"/>
+        FROM tbl_club
+        <where>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                club_name LIKE CONCAT('%', #{searchKeyword}, '%')
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'rating'">rating</when>
+            <when test="sortColumn == 'ranking'">ranking</when>
+            <when test="sortColumn == 'club_name'">club_name</when>
+            <otherwise>ranking</otherwise>
+        </choose>
+        <choose>
+            <when test="sortDirection == 'DESC'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+        LIMIT #{startRow}, #{pageSize}
+    </select>
+
+    <!-- 전체 개수 (검색 포함) -->
+    <select id="getTotalCount" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM tbl_club
+        <where>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                club_name LIKE CONCAT('%', #{searchKeyword}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- team_code 기반 단건 조회 -->
+    <select id="getClubByTeamCode" parameterType="string" resultType="com.msa.kyj_prj.club.Club">
+        SELECT
+            <include refid="clubColumns"/>
+        FROM tbl_club
+        WHERE team_code = #{teamCode}
+    </select>
+
+    <!-- club_name 기반 단건 조회 -->
+    <select id="getClubByName" parameterType="string" resultType="com.msa.kyj_prj.club.Club">
+        SELECT
+            <include refid="clubColumns"/>
+        FROM tbl_club
+        WHERE club_name = #{name}
+    </select>
+    
+    
+      <!-- user_no 기반으로 클럽id단건 조회 -->
+    <select id="findClubByUserNo" parameterType="int" resultType="com.msa.kyj_prj.club.Club">
+  	SELECT * FROM tbl_club WHERE user_no = #{userNo} LIMIT 1
+	</select>
+	
+	<!-- ✅ 여러 클럽 조회: 유저가 팀을 여러 개 운영할 수 있는 경우 -->
+	<select id="findClubsByUserNo" parameterType="int" resultType="com.msa.kyj_prj.club.Club">
+  	SELECT * FROM tbl_club WHERE user_no = #{userNo}
+	</select>
+	
+	
+
+
+    
+
+</mapper>

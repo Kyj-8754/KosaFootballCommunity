@@ -25,6 +25,7 @@
       </button>
     </div>
     <Pagination :currentPage="currentPage" :totalPages="totalPages" @changePage="handlePageChange" />
+    <weatherWidget/>
   </div>
 </template>
 
