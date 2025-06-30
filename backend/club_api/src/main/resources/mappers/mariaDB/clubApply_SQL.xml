@@ -10,12 +10,16 @@
         INSERT INTO tbl_club_apply (
     	bno,
     	appli_user_no,
-    	club_id
+    	club_id,
+    	status,
+    	apply_date
 	)
 		VALUES (
     	#{bno},
     	#{appli_user_no},
-    	#{club_id}
+    	#{club_id},
+    	#{status},
+        NOW()
 	)
     </insert>
 
@@ -33,13 +37,6 @@
         WHERE apply_id = #{apply_id}
     </update>
 
-    <!-- 특정 유저가 이미 신청했는지 확인 -->
-    <select id="findByBnoAndApplicant" parameterType="map" resultType="int">
-    SELECT COUNT(*)
-    FROM tbl_club_apply
-    WHERE bno = #{bno}
-    AND appli_user_no = #{appli_user_no}
-	</select>
 	
 	<!-- bno로 club_id 조회 -->
 	<select id="findClubIdByBno" parameterType="int" resultType="int">
@@ -54,7 +51,44 @@
     FROM tbl_recruit_board
     WHERE bno = #{bno}
 	</select>
-
+	
+	<!-- 클럽 가입신청 취소시 24시간 재신청 제한 삭제 -->
+	<update id="cancelByBnoAndApplicant" parameterType="map">
+    UPDATE tbl_club_apply
+    SET status = 'canceled', apply_date = NOW()
+    WHERE bno = #{bno}
+      AND appli_user_no = #{appli_user_no}
+	</update>
+	
+	<select id="findRecentCanceledApply" parameterType="map" resultType="com.msa.kyj_prj.club.apply.ClubApply">
+    SELECT *
+    FROM tbl_club_apply
+    WHERE bno = #{bno}
+      AND appli_user_no = #{appli_user_no}
+      AND status = 'canceled'
+      AND apply_date >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+    ORDER BY apply_date DESC
+    LIMIT 1
+	</select>
+	
+	<!-- 재신청 시 상태만 pending으로 복원 -->
+	<update id="updateStatusToPending" parameterType="map">
+    UPDATE tbl_club_apply
+    SET status = 'pending', apply_date = NOW()
+    WHERE bno = #{bno}
+      AND appli_user_no = #{appli_user_no}
+	</update>
+	
+	<!-- 최신 신청기록 검색 -->
+	<select id="findLastApplyByBnoAndApplicant" parameterType="map" resultType="com.msa.kyj_prj.club.apply.ClubApply">
+    SELECT *
+    FROM tbl_club_apply
+    WHERE bno = #{bno}
+      AND appli_user_no = #{appli_user_no}
+    ORDER BY apply_date DESC
+    LIMIT 1
+	</select>
+	
 
     
 </mapper>
