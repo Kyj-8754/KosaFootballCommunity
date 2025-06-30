@@ -111,3 +111,13 @@ CREATE TABLE IF NOT EXISTS `reference_list` (
 	`ref_to_user_no`	INT(11)	NOT NULL,
 	`ref_date`	VARCHAR(255)	NULL
 );
+
+CREATE TABLE IF NOT EXISTS social_account (
+    social_no      INT AUTO_INCREMENT,
+    user_no        INT NOT NULL,
+    provider       VARCHAR(20) NOT NULL,
+    provider_id    VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`social_no`),
+    UNIQUE KEY uk_provider_user (provider, provider_id),
+    CONSTRAINT fk_social_user FOREIGN KEY (user_no) REFERENCES user(user_no)
+);

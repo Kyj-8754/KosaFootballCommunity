@@ -1,7 +1,8 @@
 <template>
   <div class="container">
-      <Header />
-      <div class="row">
+    <Header />
+
+    <div class="row">
       <div class="col-md-2">
         <NavArea />
       </div>
@@ -9,27 +10,62 @@
         <router-view />
       </div>
     </div>
-     <Footer />
+
+    <AlarmToast /> <!-- 🔔 알림 토스트 전역 표시 -->
+
+    <Footer />
   </div>
+  <scrollUp />
 </template>
 
 <script setup>
-import Header from '@/components/Header.vue'
-import NavArea from './components/NavArea.vue'
-import Footer from './components/Footer.vue'
+import { provide, ref, computed, onMounted, watch } from 'vue';
+import Header from '@/components/Header.vue';
+import NavArea from '@/components/NavArea.vue';
+import Footer from '@/components/Footer.vue';
+import AlarmToast from '@/components/common/AlarmToast.vue';
+import { connectWebSocket } from '@/utils/stomp';
+import { useAlarmStore } from '@/stores/alarmStore';
+import scrollUp from '@/components/scrollUp.vue'
 
-import { provide, ref, computed } from 'vue'
+const alarmStore = useAlarmStore();
 
-// 반응형 token 상태 정의
-const token = ref(localStorage.getItem('accessToken'))
+// 1. 토큰 상태
+const token = ref('')
+
+// 2. 토큰 설정 함수
+const setToken = (newToken) => {
+  token.value = newToken
+  if (newToken) {
+    localStorage.setItem('accessToken', newToken)
+  } else {
+    localStorage.removeItem('accessToken')
+  }
+}
+
+// 3. 마운트 시 로컬스토리지에서 토큰 로딩
+onMounted(() => {
+  const savedToken = localStorage.getItem('accessToken')
+  if (savedToken) {
+    token.value = savedToken
+  }
+})
 
 // ✅ JWT Payload 디코딩 함수
 const decodeJwtPayload = (tokenStr) => {
   try {
     const base64Payload = tokenStr.split('.')[1]
-    const payload = JSON.parse(atob(base64Payload))
+    const decoded = atob(base64Payload)
+    const payload = JSON.parse(decoded)
+
+    // userName만 디코딩 (서버에서 encode 했을 경우만)
+    if (payload.userName) {
+      payload.userName = decodeURIComponent(payload.userName)
+    }
+
     return payload
   } catch (e) {
+    console.error("JWT 디코딩 실패:", e)
     return {}
   }
 }
@@ -40,7 +76,7 @@ const payload = computed(() => token.value ? decodeJwtPayload(token.value) : {})
 const userId = computed(() => payload.value.userId || null)
 const userNo = computed(() => payload.value.userNo || null)
 const userName = computed(() => payload.value.userName || null)
-const authCode = computed(() => payload.value.authCode || null)
+const authCode = computed(() => payload.value.auth || null)
 
 // 로그아웃 함수
 const logout = () => {
@@ -51,10 +87,33 @@ const logout = () => {
 }
 
 // 전역으로 token만 제공
+provide('setToken', setToken)
 provide('token', token)
 provide('logout', logout)
 provide('userId', userId)
 provide('userNo', userNo)
 provide('userName', userName)
 provide('authCode', authCode)
+
+
+onMounted(() => {
+
+  // ✅ JWT에서 추출한 userNo를 사용해 웹소켓 연결
+  if (userNo.value) {
+    connectWebSocket(userNo.value, (msg) => {
+      alarmStore.pushAlarm(msg);
+    });
+  }
+  // ✅ userNo 값이 바뀔 때(로그인/로그아웃) 웹소켓 연결 재설정
+  watch(userNo, (newNo, oldNo) => {
+    if (newNo) {
+      connectWebSocket(newNo, (msg) => {
+        alarmStore.pushAlarm(msg);
+      });
+    }
+    // (참고: 필요하면 이전 소켓 연결 해제 로직 추가 가능)
+  });
+  // ⚠️ 추후 로그인 연동 시 userNo 값을 JWT에서 동적으로 할당하도록 수정
+});
+
 </script>
