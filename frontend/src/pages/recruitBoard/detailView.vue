@@ -7,19 +7,25 @@
       <div v-html="recruit.content"></div>
 
       <ul>
-        <!-- <li><strong>작성자:</strong> {{ recruit.user_no }}</li> -->
         <li><strong>조회수:</strong> {{ recruit.view_count }}</li>
         <li><strong>등록일:</strong> {{ formatDate(recruit.reg_date) }}</li>
       </ul>
 
       <div class="mb-3">
-        <!-- 버튼은 항상 보이지만, 클릭 시 로그인 여부 판단 -->
+        <!-- ✅ 상태에 따라 버튼 분기: 미신청이면 신청, 이미 신청이면 취소 -->
         <button
+          v-if="!isApplied"
           class="btn btn-outline-primary btn-sm me-2"
-          :disabled="isApplied"
           @click="handleApply"
         >
-          {{ isApplied ? '가입 신청 완료' : '가입 신청' }}
+          가입 신청
+        </button>
+        <button
+          v-else
+          class="btn btn-outline-secondary btn-sm me-2"
+          @click="handleCancel"
+        >
+          가입 취소
         </button>
       </div>
 
@@ -37,15 +43,16 @@ import axios from 'axios'
 
 // ✅ 전역 주입값
 const token = inject('token')
-const userId = inject('userId') // ✅ 추가: 로그인된 사용자 ID 주입
+const userId = inject('userId')
 const userNo = inject('userNo')
 const router = useRouter()
 const route = useRoute()
 
 // ✅ 반응형 변수들
 const recruit = ref(null)
-const isApplied = ref(false)
+const isApplied = ref(false) // 가입 상태(백엔드 연동)
 
+// ✅ 로그인 체크(토큰 존재 여부)
 const isLoggedIn = computed(() => !!token?.value)
 
 // ✅ 모집글 가져오기
@@ -60,6 +67,22 @@ const fetchRecruit = async () => {
   }
 }
 
+// ✅ [중요 추가] 내 가입 신청 상태를 불러오는 함수
+const fetchApplyStatus = async () => {
+  if (!userNo.value) return
+  try {
+    const res = await axios.get('/club_api/apply/status', {
+      params: {
+        bno: route.params.bno,
+        user_no: userNo.value
+      }
+    })
+    isApplied.value = res.data.is_applied
+  } catch (e) {
+    isApplied.value = false
+  }
+}
+
 // ✅ 가입 신청 처리
 const handleApply = async () => {
   if (!isLoggedIn.value) {
@@ -69,27 +92,64 @@ const handleApply = async () => {
   }
 
   const bno = recruit.value?.bno
-  if (!bno || !userId?.value) {
+  if (!bno || !userNo?.value) {
     alert('모집글 정보 또는 사용자 정보가 없습니다.')
     return
   }
 
-try {
-  await axios.post('/club_api/apply', {
-    bno: bno,
-    appli_user_no: Number(userNo.value)  // int 타입으로 변환!
-  }, {
-    headers: {
-      Authorization: `Bearer ${token?.value}`
-    }
-  })
+  try {
+    await axios.post('/club_api/apply', {
+      bno: bno,
+      appli_user_no: Number(userNo.value)  // int 타입 변환
+    }, {
+      headers: {
+        Authorization: `Bearer ${token?.value}`
+      }
+    })
 
-
-    isApplied.value = true
+    isApplied.value = true // 상태 즉시 반영
     alert('✅ 가입 신청이 완료되었습니다.')
   } catch (e) {
+    // 🔴 [여기부터 수정/추가]
     console.error('가입 신청 실패:', e)
-    alert('❌ 가입 신청 중 오류가 발생했습니다.')
+    // ✅ 서버에서 보낸 상세 메시지가 있으면 사용자에게 보여줌
+    if (e.response && e.response.data) {
+      alert(`❌ 가입 신청 실패: ${e.response.data}`)
+    } else {
+      alert('❌ 가입 신청 중 오류가 발생했습니다.')
+    }
+    // 🔴 [여기까지 수정/추가]
+  }
+}
+
+// ✅ [추가] 가입 취소 처리 함수
+const handleCancel = async () => {
+  const bno = recruit.value?.bno
+  if (!bno || !userNo?.value) {
+    alert('모집글 정보 또는 사용자 정보가 없습니다.')
+    return
+  }
+  try {
+    await axios.delete('/club_api/apply', {
+      data: { // axios delete는 body에 data로 보내야 함
+        bno: bno,
+        appli_user_no: Number(userNo.value)
+      },
+      headers: {
+        Authorization: `Bearer ${token?.value}`
+      }
+    })
+    isApplied.value = false // 상태 즉시 반영
+    alert('✅ 가입 신청이 취소되었습니다.')
+  } catch (e) {
+    // 🔴 [여기부터 수정/추가]
+    console.error('가입 취소 실패:', e)
+    if (e.response && e.response.data) {
+      alert(`❌ 가입 취소 실패: ${e.response.data}`)
+    } else {
+      alert('❌ 가입 취소 중 오류가 발생했습니다.')
+    }
+    // 🔴 [여기까지 수정/추가]
   }
 }
 
@@ -99,9 +159,9 @@ const formatDate = (dateTime) => {
   return dateTime.split(' ')[0].split('T')[0]
 }
 
-// ✅ 컴포넌트 로드시 모집글 불러오기
+// ✅ 컴포넌트 마운트시 모집글/가입 상태를 모두 불러옴
 onMounted(() => {
   fetchRecruit()
+  fetchApplyStatus()
 })
 </script>
-

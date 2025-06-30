@@ -54,15 +54,12 @@ public class RecruitController {
 	}
 
 	
-
     // 모집글 수정 - 작성자만 가능
     @PutMapping("/{bno}")
     public ResponseEntity<String> update_recruit(@PathVariable int bno,
                                                  @RequestBody RecruitBoard board,
                                                  @RequestParam String user_id) {
         RecruitBoard original = recruit_service.get_recruit(bno);
-
-
         board.setBno(bno);
         recruit_service.update_recruit(board);
         return ResponseEntity.ok("수정 완료");
