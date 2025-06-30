@@ -1,9 +1,6 @@
 package com.msa.do_security.security.config;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -23,14 +20,12 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.msa.do_security.security.dto.SocialUserDTO;
 import com.msa.do_security.security.filter.LoginFilter;
 import com.msa.do_security.security.filter.RefreshTokenFilter;
 import com.msa.do_security.security.filter.TokenCheckFilter;
 import com.msa.do_security.security.service.OAuth2UserVOService;
 import com.msa.do_security.security.service.UserVODetailsService;
 import com.msa.do_security.security.util.JWTUtil;
-import com.msa.do_security.security.vo.OAuth2UserVO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -119,9 +114,7 @@ public class BaseSecurityConfig {
 				customizeAuthorization(authroize);
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
-			authroize.requestMatchers("/user/**").hasAnyAuthority("ROLE_A3", "ROLE_A2", "ROLE_A1"); // 여러개의 권한 중 하나라도
-																									// 있으면 성공
+			} 
 			authroize.requestMatchers("/manager/**").hasAnyAuthority("ROLE_A2", "ROLE_A1");
 			authroize.requestMatchers("/admin/**").hasAnyAuthority("ROLE_A1");
 
@@ -134,7 +127,14 @@ public class BaseSecurityConfig {
 	}
 
 	protected List<String> getExcludedPaths() {
-		return List.of("/generateToken", "/refreshToken","/oauth/**","/login","/login?error","/oauth/callback/**","/.well-known/**");
+		return List.of("/generateToken",
+				"/refreshToken",
+				"/oauth/**",
+				"/login",
+				"/login?error",
+				"/oauth/callback/**",
+				"/.well-known/**",
+				"/user/na/**");
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
