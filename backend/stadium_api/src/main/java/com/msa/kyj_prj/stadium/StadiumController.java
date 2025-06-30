@@ -64,6 +64,10 @@ public class StadiumController {
 		stadiumService.syncAll();
 	}
 	
-	
+	// 구장 업데이트
+	@PostMapping("reservationForm")
+	public void reservationForm(@RequestParam String SVCID, @RequestParam String date) throws Exception{
+		stadiumService.getreservationForm(SVCID, date);
+	}
 	
 }

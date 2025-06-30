@@ -1,12 +1,9 @@
 package com.msa.do_login.user.controller;
 
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.msa.do_login.user.dto.UserRegisterDTO;
 import com.msa.do_login.user.service.UserService;
-import com.msa.do_login.user.vo.UserVO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
