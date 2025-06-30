@@ -1,7 +1,7 @@
 <template>
   <div class="log-input-form">
     <!-- 팀 선택 드롭다운 -->
-    <LogTeamDropdown v-model="selectedTeam" />
+    <LogTeamDropdown v-model="selectedTeam" :match-id="matchId" />
 
     <!-- 회원 선택 드롭다운 -->
     <LogMemberDropdown v-model="selectedMember" :team="selectedTeam" />
