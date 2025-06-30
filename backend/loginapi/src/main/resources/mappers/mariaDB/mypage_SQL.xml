@@ -28,5 +28,10 @@
 		FROM user_stat
 		WHERE stat_code = #{statCode}
 	</select>
-	
+	<!-- 회원 번호로 소셜 계정 불러오기 -->
+	<select id="getSocialAccount" parameterType="int" resultType="com.msa.do_security.security.vo.SocialAccountVO">
+		SELECT * 
+		FROM social_account
+		WHERE user_no = #{userNo}
+	</select>
 </mapper>
