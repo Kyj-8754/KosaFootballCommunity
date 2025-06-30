@@ -52,13 +52,13 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/stadium_api/, ""),
       },
       "/login_api": {
-        target: "http://localhost:8110",
+        target: "http://localhost:8111",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/login_api/, ""),
       },
 
        "/security_api": {
-      target: "http://localhost:8111",
+      target: "http://localhost:8110",
       changeOrigin: true,
       rewrite: (path) => path.replace(/^\/security_api/, ""),
     },
