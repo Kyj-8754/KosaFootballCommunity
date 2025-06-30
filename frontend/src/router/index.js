@@ -22,7 +22,10 @@ import boardEditForm from '@/pages/board/boardEditForm.vue';
 // 경기장 관련
 import Stadium_DetailView from '@/pages/stadium/detailView.vue'
 import Stadium_List from '@/pages/stadium/list.vue';
-import Stadium_Reservation from '@/pages/stadium/reservation.vue';
+import Stadium_Reservation from '@/pages/reservation/reservationForm.vue';
+
+// 예약/결제 관련
+import Reservation_Form from '@/pages/reservation/reservationForm.vue';
 
 // 클럽 관련
 import Club_List from '@/pages/club/list.vue'
@@ -58,6 +61,9 @@ const routes = [
   { path:'/board/boardregisterform', name: 'boardRegisterForm', component: boardRegisterForm },
   { path: '/board/boarddetail/:id', name: 'boardDetail', component: boardDetail },
   { path: '/board/boardeditform/:id', name: 'boardEditForm', component: boardEditForm },
+
+  // 예약 결제 관련
+  { path:'/reservation/reservationForm', name: 'reservaion_Form', component: Reservation_Form} ,
 
   // 경기장 관련
   { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: Stadium_DetailView },
