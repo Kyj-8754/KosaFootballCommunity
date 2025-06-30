@@ -217,14 +217,8 @@
 	//탭관련
 	const activeTab = ref('overview')
 	// 달력관련 시작
-	const selectedDate = ref(null)
 
-	const availableDates = [
-		'2025-06-24',
-  '2025-06-25',
-  '2025-06-26',
-  '2025-06-29'
-	]
+	const availableDates = ref([])
 
 	const formatDate = (date) => {
   const y = date.getFullYear()
@@ -243,12 +237,12 @@
 const onDayClick = (day) => {
   const dateStr = formatDate(day.date)
 
-  if (!availableDates.includes(dateStr)) {
+  if (!availableDates.value.includes(dateStr)) {
     return // 예약 불가 날짜는 무시
   }
 
   alert(`예약 창으로 이동: ${dateStr}`)
-  router.push({name: 'Stadium_Reservation', query: {date: dateStr, SVCID: SVCID}})
+  router.push({name: 'reservaion_Form', query: {date: dateStr, SVCID: SVCID}})
 }
 
 
@@ -262,7 +256,7 @@ const onDayClick = (day) => {
 	const router = useRouter() // 보낼 경로
 	const route = useRoute()	// 현재 경로
 	const SVCID = route.query.SVCID // 현재 경로의 SCVID
-	const stadiumDB = ref({ list: [] })	// 게시물 
+	const stadiumDB = ref({})	// 게시물 
 	const commentDB = ref({ list: [] })	// 댓글 
 
 	//댓글 입력 폼
@@ -318,7 +312,8 @@ const onDayClick = (day) => {
 	// 게시물 불러오기
 	const fetchStadiumData = async () => {
 		const res = await axios.get('/stadium_api/stadium/detailView', { params: { SVCID } });
-		stadiumDB.value = res.data.stadiumDB;
+		stadiumDB.value = res.data.stadiumDB.stadium;
+		availableDates.value = res.data.stadiumDB.slot.map(item => item.slot_DATE);
 	};	
 
 	//게시물의 댓글 불러오기
@@ -326,13 +321,6 @@ const onDayClick = (day) => {
 		const res = await axios.get('/stadium_api/comment/list', { params: { SVCID } });
 		commentDB.value = res.data.commentDB;
 	};
-
-	// 예약 현황 불러오기
-	// const fetchReservationData = async () => {
-	// 	const res = await axios.get('/stadium_api/stadium/detailView', { params: { SVCID } });
-	// 	stadiumDB.value = res.data.stadiumDB;
-	// };
-
 
 	// 구장 목록으로 넘어가기
 	function goToList(){

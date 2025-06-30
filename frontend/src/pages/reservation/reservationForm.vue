@@ -1,6 +1,6 @@
 <template>
     
-	<h2>결제창 만들거임 ㅇㅋ? </h2>
+	<h2>구장 예약</h2>
 
  <div class="container mt-5">
     <!-- 🏟 구장 정보 -->
@@ -70,24 +70,11 @@ import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute();
 const SVCID = route.query.SVCID;
-const selectedDate = route.query.date;
+const date = route.query.date;
 
-	//아이디 관련
-const userId = inject('userId')
-const userName = inject('userName')
-const stadiumDB = ref({ list: [] })	// 게시물 
-
-const user = ref({
-  name: '홍길동',
-  phone: '010-1234-5678'
-})
-
-const timeSlots = ref([
-  '06:00', '07:00', '08:00', '09:00',
-  '10:00', '11:00', '12:00', '13:00',
-  '14:00', '15:00', '16:00', '17:00',
-  '18:00', '19:00', '20:00', '21:00'
-])
+//아이디 관련
+const userNo = inject('userNo')
+const reservationDB = ref({})	// 게시물 
 
 const reservation = ref({
   date: selectedDate,
@@ -110,14 +97,14 @@ const confirmReservation = () => {
   // 여기에 axios 등으로 POST 처리 가능
 }
 
-	// 게시물 불러오기
-	const fetchStadiumData = async () => {
-		const res = await axios.get('/stadium_api/stadium/detailView', { params: { SVCID } });
-		stadiumDB.value = res.data.stadiumDB;
+	// 예약 관련 가져오기
+	const fetchReservationData = async () => {
+		const res = await axios.post('/reservation_api/reservation/reservationForm', { params: { SVCID: SVCID , date: date , userNo : userNo} });
+		reservationDB.value = res.data.reservationDB;
 	};	
 
 onMounted(async () => {
- await fetchStadiumData();
+ await fetchReservationData();
 })
 </script>
 
