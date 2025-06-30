@@ -1,99 +1,176 @@
 <template>
-    <div class="container-fluid main-container">
-		<div class="row h-100">
-			<main class="main-area d-flex justify-content-center">
-				<div class="container d-flex justify-content-center align-items-center min-vh-100">
-				<div class="card shadow p-4 rounded w-100" style="max-width: 600px;">
-					<h1 class="text-center mb-4">회원 정보 수정</h1>
-					<form class="row g-3 needs-validation"  @submit.prevent="update" name="update" id="update" novalidate>
-						<div class="mb-3">
-							<label for="validationuserid" class="form-label">아이디</label>
-							<div class="input-group has-validation">
-								<input type="text" class="form-control" v-model="form.userid" name="userid" id="userid" aria-describedby="inputGroupPrepend" readonly="readonly">
-							</div>
-						</div>
-						<div class="mb-3">
-							<label for="validationpasswd" class="form-label">비밀번호</label>
-							<div class="input-group has-validation">
-								<input type="password" class="form-control"  v-model="form.passwd" name="passwd" id="passwd" aria-describedby="inputGroupPrepend" required>
-								<div class="invalid-feedback" id="passwdFeedback">
-									기존 비밀번호를 입력해 주세요.
-								</div>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label for="validationNewpasswd" class="form-label">새 비밀번호</label>
-							<div class="input-group has-validation">
-								<input type="password" class="form-control" v-model="form.newPasswd" :class="PasswdValid ? 'is-valid' : 'is-invalid'" name="newPasswd" id="newPasswd" aria-describedby="inputGroupPrepend" required>
-									<div class="invalid-feedback" id="passwdFeedback">
-										비밀번호는 8자 이상이며, 영문자/숫자/특수문자를 포함해야 합니다.
-									</div>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label for="validationNewpasswd2" class="form-label">새 비밀번호확인</label>
-							<div class="input-group has-validation">
-								<input type="password" class="form-control" v-model="form.newPasswd2" :class="passwdMatch ? 'is-valid' : 'is-invalid'" name="newPasswd2" id="newPasswd2" aria-describedby="inputGroupPrepend" required>
-								<div class="invalid-feedback" id="passwd2Feedback">비밀번호가 같지 않습니다.</div>
-							</div>
-						</div>
-						<div class="mb-3">
-							<label for="validationName" class="form-label">이름</label>
-							<div class="input-group has-validation">
-								<input type="text" class="form-control" v-model="form.name" name="name" id="name" aria-describedby="inputGroupPrepend" readonly="readonly">
-							</div>
-						</div>
-						<div class="d-flex justify-content-center gap-2">
-							<button class="btn btn-primary" type="submit">수정</button>
-						</div>
-					</form>
-				</div>
-			</div>
-			</main>
-		</div>
-	</div>
+  <div class="update-container">
+    <form @submit.prevent="onSubmit" class="update-form">
+      <h3>회원 정보 수정</h3>
+
+      <!-- userNo 숨김 처리 -->
+      <input type="hidden" v-model="form.userNo" />
+
+      <div class="mb-3">
+        <label for="name" class="form-label">이름</label>
+        <input type="text" id="name" v-model="form.userName" required class="form-control" />
+      </div>
+
+      <div class="mb-3">
+        <label for="birth" class="form-label">생년월일</label>
+        <input type="date" id="birth" v-model="form.userBirth" required class="form-control" />
+      </div>
+
+      <div class="mb-3">
+        <label for="phone" class="form-label">전화번호</label>
+        <input type="text" id="phone" v-model="form.userPhone" maxlength="16" class="form-control" />
+      </div>
+
+      <div class="mb-3 d-flex gap-2">
+        <div class="flex-grow-1">
+          <label for="zipcode" class="form-label">우편번호</label>
+          <input type="text" id="zipcode" v-model="form.userPostcode" class="form-control" readonly />
+        </div>
+        <div class="mt-4">
+          <input type="button" @click="findZipcode" value="우편찾기" class="btn btn-outline-secondary" />
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="address" class="form-label">주소</label>
+        <input type="text" id="address" v-model="form.userAddr" class="form-control" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label for="detail_address" class="form-label">상세주소</label>
+        <input type="text" id="detail_address" v-model="form.userDetailAddr" class="form-control" />
+      </div>
+
+      <div class="link-area">
+        <input type="submit" value="변경" class="btn btn-primary" />
+        <router-link :to="`/detailView/${form.userNo}`" class="btn btn-outline-secondary">취소</router-link>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script setup>
-	import {ref, onMounted, computed, reactive} from 'vue'
-	import { useRoute, useRouter } from 'vue-router'
-	import axios from 'axios'
+import { ref, onMounted, inject } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 
-	const router = useRouter()
-	const route = useRoute()
-	const userid = route.query.userid // 경로의 매개변수 받아오기
+const route = useRoute()
+const router = useRouter()
+const token = inject('token')
 
-	const memberDB = ref({ })
-	const form = reactive({
-		userid: '',
-		passwd: '',
-		newPasswd: '',
-		newPasswd2: '',
-		name: '',
-	})	// 보내는용도로 만든 객체
+// ✅ userNo 포함
+const form = ref({
+  userNo: '',
+  userId: '',
+  userName: '',
+  userBirth: '',
+  userPhone: '',
+  userPostcode: '',
+  userAddr: '',
+  userDetailAddr: ''
+})
 
-	onMounted(() => {
-		axios.get('/login_api/member/detailView', { params: { userid }})
-		.then(res => {
-			memberDB.value = res.data.memberDB
-			form.userid = memberDB.value.userid
-			form.name = memberDB.value.name
-		})
-	}) // api에서 DB에 값 불러오기
+const fetchMemberDetail = async () => {
+  const userNo = route.query.userNo
+  if (!userNo) {
+    alert('회원 번호가 전달되지 않았습니다.')
+    router.push('/')
+    return
+  }
 
+  try {
+    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo}`, {
+      headers: {
+        Authorization: `Bearer ${token.value}`
+      }
+    })
 
-	//비밀번호 검사 로직 (영문자, 숫자, 특수문자는 1개 이상, 최소 길이 8자)
-	const validatePassword = (value) => {
-		const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+=-]).{8,}$/;
-		return pwRegex.test(value);
-	}
- 
-	// 비밀번호 검사 같은지 검사 로직
-	const checkPasswordMatch = (value, value2) => {
-		return value.length > 0 && value2.length > 0 && value === value2;
-	}
-	
-	// 실시간 검사하도록 computed
-	const PasswdValid = computed(() => validatePassword(form.newPasswd))
-	const passwdMatch = computed(() => checkPasswordMatch(form.newPasswd, form.newPasswd2))
+    const data = res.data.member
+
+    // ✅ 속성별 대입 + userNo 저장
+    form.value.userNo = userNo
+    form.value.userId = data.userId
+    form.value.userName = data.userName
+    form.value.userBirth = data.userBirth?.substring(0, 10) || ''
+    form.value.userPhone = data.userPhone
+    form.value.userPostcode = data.userPostcode
+    form.value.userAddr = data.userAddr
+    form.value.userDetailAddr = data.userDetailAddr
+  } catch (err) {
+    console.error('회원 정보 조회 실패:', err)
+    alert('회원 정보를 불러오지 못했습니다.')
+    router.push('/')
+  }
+}
+
+const onSubmit = async () => {
+  try {
+    const res = await fetch('/api/update', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8'
+      },
+      body: JSON.stringify(form.value)
+    })
+    const result = await res.json()
+    alert(result.res_msg)
+    if (result.res_code !== '400') {
+      router.push(`/detailView/${form.value.userId}`)
+    }
+  } catch (err) {
+    console.error('회원 정보 수정 중 오류 발생:', err)
+    alert('회원 정보 수정 중 오류 발생')
+  }
+}
+
+const findZipcode = () => {
+  new window.daum.Postcode({
+    oncomplete: (data) => {
+      form.value.userPostcode = data.zonecode
+      form.value.userAddr = data.address
+    }
+  }).open()
+}
+
+onMounted(() => {
+  fetchMemberDetail()
+
+  if (!window.daum?.Postcode) {
+    const script = document.createElement('script')
+    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'
+    document.body.appendChild(script)
+  }
+})
 </script>
+
+<style scoped>
+.update-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+.update-form {
+  background-color: white;
+  padding: 40px;
+  width: 600px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+.update-form h3 {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+.update-form label {
+  font-weight: bold;
+}
+.update-form .form-control {
+  margin-bottom: 15px;
+}
+.link-area {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+</style>

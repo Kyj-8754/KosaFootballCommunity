@@ -12,6 +12,7 @@ import Member_DetailView from '@/pages/member/detailView.vue';
 import Member_UpdateForm from '@/pages/member/updateForm.vue';
 import Member_List from '@/pages/member/list.vue';
 import Member_SocialRegister from '@/pages/member/socialRegister.vue';
+import Member_MyPage from '@/pages/member/myPage.vue'
 
 // 게시판 관련
 import boardList from "@/pages/board/boardList.vue";
@@ -52,6 +53,7 @@ const routes = [
   { path: '/member/updateForm', name: 'Member_UpdateForm', component: Member_UpdateForm },
   { path: '/member/list', name: 'Member_List', component: Member_List },
   { path: '/member/socialRegister', name: 'Member_SocialRegister', component: Member_SocialRegister },
+  { path: '/member/myPage', name: 'Member_MyPage', component: Member_MyPage },
 
   // 게시판 관련
   { path:'/board/boardlist', name: 'boardList', component: boardList },
