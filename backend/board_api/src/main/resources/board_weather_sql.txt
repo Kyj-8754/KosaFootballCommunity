@@ -143,3 +143,17 @@ CREATE TABLE `match_participant` (
   `modified_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`match_id`,`user_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- kosa_db.match_log definition
+
+CREATE TABLE `match_log` (
+  `log_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `match_id` bigint(20) NOT NULL,
+  `log_type` varchar(50) NOT NULL,
+  `club_id` int(11) DEFAULT NULL,
+  `user_no` int(11) NOT NULL,
+  `log_created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `log_modified_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `log_memo` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

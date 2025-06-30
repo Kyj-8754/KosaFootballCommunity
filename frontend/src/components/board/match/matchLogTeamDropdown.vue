@@ -1,5 +1,5 @@
 <template>
-  <select v-model="selectedTeam" @change="$emit('update:team', selectedTeam)">
+  <select v-model="selectedTeam">
     <option disabled value="">팀 선택</option>
     <option v-for="team in teams" :key="team" :value="team">{{ team }}</option>
   </select>
@@ -11,11 +11,14 @@ import { ref, watch } from 'vue'
 const props = defineProps({
   modelValue: String
 })
+const emit = defineEmits(['update:modelValue'])
 
-const emit = defineEmits(['update:team'])
-
-const teams = ['팀1', '팀2', '팀3']
 const selectedTeam = ref(props.modelValue || '')
+const teams = ['팀1', '팀2', '팀3']
+
+watch(selectedTeam, (val) => {
+  emit('update:modelValue', val)
+})
 
 watch(() => props.modelValue, (newVal) => {
   selectedTeam.value = newVal
