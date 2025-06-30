@@ -1,6 +1,7 @@
 <template>
   <select v-model="selectedTeam">
     <option disabled value="">팀 선택</option>
+    <option :value="null">선택 안 함</option> <!-- ✅ 선택 안 함 추가 -->
     <option v-for="team in teams" :key="team.club_id" :value="team.club_id">
       {{ team.club_name }}
     </option>
