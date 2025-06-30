@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.msa.kyj_prj.recruit.RecruitDAO">
+
+<!-- ✅ 전체 목록 (최신순) -->
+  <select id="find_all" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    ORDER BY r.bno DESC
+  </select>
+
+  <!-- ✅ 인기순 정렬 -->
+  <select id="find_all_order_by_view_count" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    ORDER BY r.view_count DESC
+  </select>
+
+  <!-- ✅ 클럽별 모집글 목록 -->
+  <select id="find_by_club_id" parameterType="int" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    WHERE r.club_id = #{club_id}
+    ORDER BY r.bno DESC
+  </select>
+
+  <!-- ✅ 모집글 단건 조회 -->
+  <select id="find_by_id" parameterType="int" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    WHERE r.bno = #{bno}
+  </select>
+
+  <!-- ✅ 모집글 등록 -->
+  <insert id="insert" parameterType="com.msa.kyj_prj.recruit.RecruitBoard">
+    INSERT INTO tbl_recruit_board (club_id, title, content, user_no)
+    VALUES (#{club_id}, #{title}, #{content}, #{user_no})
+  </insert>
+
+  <!-- ✅ 모집글 수정 -->
+  <update id="update" parameterType="com.msa.kyj_prj.recruit.RecruitBoard">
+    UPDATE tbl_recruit_board
+    SET title = #{title},
+        content = #{content},
+        modified_date = NOW(),
+        is_closed = #{is_closed}
+    WHERE bno = #{bno}
+  </update>
+
+  <!-- ✅ 조회수 증가 -->
+  <update id="increase_view_count" parameterType="int">
+    UPDATE tbl_recruit_board
+    SET view_count = view_count + 1
+    WHERE bno = #{bno}
+  </update>
+</mapper>

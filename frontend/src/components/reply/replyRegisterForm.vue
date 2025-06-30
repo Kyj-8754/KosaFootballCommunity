@@ -1,10 +1,11 @@
 <template>
   <div class="comment-form">
-    <textarea
-      v-model="newComment"
-      placeholder="내용을 입력해주세요"
-      rows="3"
-    ></textarea>
+  <textarea
+    v-model="newComment"
+    placeholder="내용을 입력해주세요"
+    rows="3"
+    maxlength="1000"
+  ></textarea>
     <div class="form-actions">
       <button @click="submitComment">등록</button>
     </div>
@@ -53,11 +54,14 @@ const submitComment = () => {
 
 textarea {
   width: 100%;
-  resize: vertical;
+  height: 80px;
+  resize: none; /* ✅ 크기 조절 완전 비활성화 */
+  overflow: auto;
   padding: 8px;
   font-size: 0.9rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  box-sizing: border-box; /* ✅ padding 포함한 고정 크기 유지 */
 }
 
 .form-actions {

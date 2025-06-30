@@ -15,7 +15,14 @@
       @toggle-like="toggleLike"
     />
     <FileDownload v-if="post" :board-id="post.board_id" />
-    <PostActionButtons v-if="post" @edit="handleEdit" @delete="handleDelete" />
+    <PostActionButtons
+      v-if="post"
+      :userNo="userNo"
+      :postUserNo="post.user_no"
+      :authCode="authCode"
+      @edit="handleEdit"
+      @delete="handleDelete"
+    />
     <CommentForm
       v-if="post"
       :boardId="post.board_id"
@@ -25,6 +32,7 @@
     />
     <CommentList
       :comments="comments"
+      :userNo="userNo"
       @edit="editComment"
       @delete="deleteComment"
       @reply="addComment"
@@ -55,6 +63,7 @@ const liked = ref(false)
 const likeCount = ref(0)
 const userNo = inject('userNo')
 const userName = inject('userName')
+const authCode = inject('authCode')
 
 const fetchPost = async () => {
   try {
@@ -93,7 +102,7 @@ const fetchLiked = async () => {
   try {
     const response = await axios.post('/board_api/board/like/check', {
       board_id: post.value.board_id,
-      user_no: userNo
+      user_no: userNo?.value ?? null
     })
 
     liked.value = response.data.liked
@@ -111,14 +120,14 @@ const toggleLike = async () => {
       await axios.post('/board_api/board/like', null, {
         params: {
           board_id: post.value.board_id,
-          user_no: userNo
+          user_no: userNo?.value ?? null
         }
       })
     } else {
       await axios.delete('/board_api/board/like', {
         params: {
           board_id: post.value.board_id,
-          user_no: userNo
+          user_no: userNo?.value ?? null
         }
       })
     }
@@ -147,7 +156,7 @@ const handleDelete = async () => {
   try {
     await axios.delete(`/board_api/board/${post.value.board_id}`)
     alert('게시글이 삭제되었습니다.')
-    router.push('/board/list')
+    router.push('/board/boardlist')
   } catch (error) {
     console.error('삭제 실패:', error)
     alert('게시글 삭제에 실패했습니다.')
@@ -155,6 +164,12 @@ const handleDelete = async () => {
 }
 
 const addComment = async (replyData) => {
+  const maxLength = 1000
+  if (replyData.reply_content.length > maxLength) {
+    alert(`댓글은 최대 ${maxLength}자까지 입력할 수 있습니다.`)
+    return
+  }
+
   try {
     await axios.post('/board_api/reply', replyData)
     await fetchComments()
@@ -165,6 +180,12 @@ const addComment = async (replyData) => {
 }
 
 const editComment = async (replyId, newContent) => {
+  // ✅ 1000자 제한 검증
+  if (newContent.length > 1000) {
+    alert('댓글은 1000자 이하로 입력해주세요.')
+    return
+  }
+
   try {
     await axios.put(`/board_api/reply/${replyId}`, {
       reply_content: newContent

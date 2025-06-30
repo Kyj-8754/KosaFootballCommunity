@@ -28,3 +28,6 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# 환경설정
+.env
