@@ -1,6 +1,8 @@
 package com.msa.kyj_prj.match.log;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +30,14 @@ public class MatchLogService {
     // 로그 삭제
     public int deleteMatchLog(Long log_id) {
         return matchLogDAO.deleteMatchLog(log_id);
+    }
+    
+    // 승인된 참가자(user_no) 리스트 조회
+    public List<Map<String, Object>> getApprovedUsers(Long match_id) {
+        return matchLogDAO.selectApprovedUsersByMatchId(match_id);
+    }
+    // 승인된 팀 리스트 조회
+    public List<Map<String, Object>> getApprovedTeamsByMatchId(Long match_id) {
+        return matchLogDAO.selectApprovedTeamsByMatchId(match_id);
     }
 }

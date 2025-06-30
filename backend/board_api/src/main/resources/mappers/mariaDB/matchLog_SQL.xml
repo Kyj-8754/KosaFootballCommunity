@@ -42,6 +42,26 @@
     DELETE FROM match_log
     WHERE log_id = #{log_id}
   </delete>
+  
+	<!-- 매치 참가자 중 승인된 회원 번호 및 이름 조회 -->
+	<select id="selectApprovedUsersByMatchId" parameterType="long" resultType="map">
+	  SELECT 
+	    mp.user_no,
+	    u.user_name
+	  FROM match_participant mp
+	  JOIN user u ON mp.user_no = u.user_no
+	  WHERE mp.match_id = #{match_id}
+	    AND mp.user_status = 'approve'
+	</select>
+	
+	<!-- 매치 참가자 중 승인된 팀 ID와 이름 조회 -->
+	<select id="selectApprovedTeamsByMatchId" parameterType="long" resultType="map">
+	  SELECT DISTINCT c.club_id, c.club_name
+	  FROM match_participant mp
+	  JOIN tbl_club c ON mp.club_id = c.club_id
+	  WHERE mp.match_id = #{match_id}
+	    AND mp.user_status = 'approve'
+	</select>
 
 </mapper>
 
