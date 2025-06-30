@@ -29,7 +29,7 @@
             <router-link :to="{name: 'Home'}" class="btn btn-outline-primary">프로필보기</router-link>
             <router-link :to="{name: 'Home'}" class="btn btn-outline-primary">신청내역</router-link>
             <router-link :to="{name: 'Home'}" class="btn btn-outline-primary">사용 내역</router-link>
-            <router-link :to="{name: 'Home'}" class="btn btn-outline-primary">친구</router-link>
+            <router-link :to="{name: 'Member_Friend', query: { userNo: member.userNo }}" class="btn btn-outline-primary">친구</router-link>
             <router-link :to="{name: 'Home'}" class="btn btn-outline-primary">친구가 신청한 매치</router-link>
             <router-link :to="{name: 'Member_UpdateForm', query: { userNo: member.userNo }}" class="btn btn-primary">프로필 수정</router-link>
           </div>
