@@ -1,0 +1,10 @@
+-- kosa_db.stadium_api_detail definition
+
+CREATE TABLE `stadium_api_detail` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `svcid` varchar(30) DEFAULT NULL,
+  `code` varchar(50) DEFAULT NULL,
+  `message` text,
+  `started_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=282 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

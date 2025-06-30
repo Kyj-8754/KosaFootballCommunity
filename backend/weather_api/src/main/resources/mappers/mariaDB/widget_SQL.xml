@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msa.kyj_prj.widget.WidgetDAO">
+
+	<!-- 지역+날짜 단기 예보 조회 -->
+	<select id="selectEarliest5TimesWeatherByRegionAndDate"
+	        parameterType="map"
+	        resultType="com.msa.kyj_prj.weather.Weather">
+	    SELECT W.*
+	    FROM weather W
+	    JOIN (
+	        SELECT DISTINCT weather_fcst_time
+	        FROM weather
+	        WHERE weather_region = #{weather_region}
+	          AND weather_fcst_date = #{weather_fcst_date}
+	          AND weather_fcst_time > DATE_FORMAT(NOW(), '%H%i')
+	        ORDER BY weather_fcst_time ASC
+	        LIMIT 5
+	    ) T ON W.weather_fcst_time = T.weather_fcst_time
+	       AND W.weather_region = #{weather_region}
+	       AND W.weather_fcst_date = #{weather_fcst_date}
+	    ORDER BY W.weather_fcst_time, W.weather_code
+	</select>
+
+</mapper>

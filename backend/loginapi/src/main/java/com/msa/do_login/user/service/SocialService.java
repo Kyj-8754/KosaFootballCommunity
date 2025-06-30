@@ -25,7 +25,6 @@ import com.msa.do_login.user.dto.SocialUserRegisterDTO;
 import com.msa.do_login.user.vo.SocialAccount;
 import com.msa.do_login.user.vo.UserVO;
 import com.msa.do_security.security.util.JWTUtil;
-import com.msa.do_security.security.vo.SocialAccountVO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

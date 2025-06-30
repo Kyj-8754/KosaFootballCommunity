@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msa.kyj_prj.weather.WeatherDAO">
+
+    <!-- 단기 예보 데이터 INSERT -->
+    <insert id="insertWeather" parameterType="com.msa.kyj_prj.weather.Weather">
+        INSERT INTO weather (
+            weather_region, weather_base_date, weather_base_time,
+            weather_fcst_date, weather_fcst_time,
+            weather_code, weather_value
+        ) VALUES (
+            #{weather_region}, #{weather_base_date}, #{weather_base_time},
+            #{weather_fcst_date}, #{weather_fcst_time},
+            #{weather_code}, #{weather_value}
+        )
+    </insert>
+    
+    <!-- 단기 예보 데이터 전체 삭제 (TRUNCATE) -->
+    <delete id="truncateWeather">
+        TRUNCATE TABLE weather
+    </delete>
+
+</mapper>
