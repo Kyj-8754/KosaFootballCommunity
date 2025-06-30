@@ -1,6 +1,6 @@
 <template>
 	<template v-if="isAuthenticated">
-    <router-link :to="{ name: 'Member_DetailView', query: { userno: userNo } }">{{userName}} 내 정보</router-link> /
+    <router-link :to="{ name: 'Member_MyPage', query: { userNo: userNo } }">{{userName}} 내 정보</router-link> /
     <a href="#" @click.prevent="logout">로그아웃</a>
   </template>
   <template v-else>

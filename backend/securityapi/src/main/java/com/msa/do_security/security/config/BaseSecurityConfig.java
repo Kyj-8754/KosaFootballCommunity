@@ -110,6 +110,7 @@ public class BaseSecurityConfig {
 			authroize.requestMatchers("/login").permitAll();
 			authroize.requestMatchers("/login?error").permitAll();
 			authroize.requestMatchers("/.well-known/**").permitAll();
+			authroize.requestMatchers("/mypage/**").permitAll();
 			try {
 				customizeAuthorization(authroize);
 			} catch (Exception e) {
@@ -134,7 +135,8 @@ public class BaseSecurityConfig {
 				"/login?error",
 				"/oauth/callback/**",
 				"/.well-known/**",
-				"/user/na/**");
+				"/user/na/**",
+				"/mypage/**");
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {

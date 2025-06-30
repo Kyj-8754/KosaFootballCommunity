@@ -52,7 +52,7 @@
               <div class="mb-3 d-flex gap-2">
                 <div class="flex-grow-1">
                   <label for="zipcode" class="form-label">우편번호</label>
-                  <input type="text" v-model="form.userZipcode" id="zipcode" class="form-control" placeholder="우편번호를 입력해주세요" readonly>
+                  <input type="text" v-model="form.userPostcode" id="zipcode" class="form-control" placeholder="우편번호를 입력해주세요" readonly>
                 </div>
                 <div class="mt-4">
                   <input type="button" value="우편찾기" class="btn btn-outline-secondary" @click="findZipcode">
@@ -197,7 +197,7 @@ const onReset = () => {
 const findZipcode = () => {
   new window.daum.Postcode({
     oncomplete: function (data) {
-      form.userZipcode = data.zonecode
+      form.userPostcode = data.zonecode
       form.userAddr = data.address
     }
   }).open()
