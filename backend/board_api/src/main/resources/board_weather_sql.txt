@@ -111,3 +111,35 @@ INSERT INTO location (weather_location, weather_location_x, weather_location_y) 
 ('종로구', '126.978988255925', '37.5735051436739'),
 ('중구', '126.998009728978', '37.5641201543296'),
 ('중랑구', '127.09272484193', '37.6065635856848');
+
+-- kosa_db.`match` definition
+
+CREATE TABLE `match` (
+  `match_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `match_title` varchar(100) NOT NULL,
+  `match_created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `match_modified_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `user_no` int(11) NOT NULL,
+  `match_date` datetime NOT NULL,
+  `SVCID` varchar(30) NOT NULL,
+  `match_closed` varchar(50) NOT NULL DEFAULT 'active',
+  `gender_condition` varchar(50) NOT NULL,
+  `match_description` text DEFAULT NULL,
+  `match_status` varchar(50) NOT NULL DEFAULT 'waiting',
+  `match_board_status` varchar(50) NOT NULL DEFAULT 'active',
+  `match_code` varchar(50) NOT NULL,
+  PRIMARY KEY (`match_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- kosa_db.match_participant definition
+
+CREATE TABLE `match_participant` (
+  `match_id` bigint(20) NOT NULL,
+  `club_id` int(11) DEFAULT NULL,
+  `user_no` int(11) NOT NULL,
+  `user_role` varchar(50) NOT NULL DEFAULT 'member',
+  `user_status` varchar(50) NOT NULL DEFAULT 'apply',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `modified_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`match_id`,`user_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
