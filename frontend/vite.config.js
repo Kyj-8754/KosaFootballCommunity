@@ -58,7 +58,7 @@ export default defineConfig({
       },
 
        "/security_api": {
-      target: "http://localhost:8081",
+      target: "http://localhost:8111",
       changeOrigin: true,
       rewrite: (path) => path.replace(/^\/security_api/, ""),
     },
