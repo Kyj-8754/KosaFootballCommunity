@@ -12,21 +12,25 @@
       </ul>
 
       <div class="mb-3">
-        <!-- ✅ 상태에 따라 버튼 분기: 미신청이면 신청, 이미 신청이면 취소 -->
+        <!-- [수정 1] 버튼 조건 분기: 작성자가 아닐 때만 버튼 노출 -->
         <button
-          v-if="!isApplied"
+          v-if="!isApplied && recruit.user_no !== userNo.value"
           class="btn btn-outline-primary btn-sm me-2"
           @click="handleApply"
         >
           가입 신청
         </button>
         <button
-          v-else
+          v-else-if="isApplied && recruit.user_no !== userNo.value"
           class="btn btn-outline-secondary btn-sm me-2"
           @click="handleCancel"
         >
           가입 취소
         </button>
+        <!-- [수정 2] 작성자(팀장)이면 안내 문구 노출 (선택) -->
+        <span v-else class="text-muted">
+          팀장은 본인 모집글에는 가입 신청할 수 없습니다.
+        </span>
       </div>
 
       <router-link to="/recruitBoard" class="btn btn-secondary btn-sm">목록으로</router-link>
@@ -35,6 +39,7 @@
     <div v-else class="alert alert-warning">해당 모집글이 존재하지 않습니다.</div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, inject, computed, onMounted } from 'vue'
@@ -67,7 +72,7 @@ const fetchRecruit = async () => {
   }
 }
 
-// ✅ [중요 추가] 내 가입 신청 상태를 불러오는 함수
+// ✅ 내 가입 신청 상태를 불러오는 함수
 const fetchApplyStatus = async () => {
   if (!userNo.value) return
   try {
@@ -159,9 +164,19 @@ const formatDate = (dateTime) => {
   return dateTime.split(' ')[0].split('T')[0]
 }
 
-// ✅ 컴포넌트 마운트시 모집글/가입 상태를 모두 불러옴
-onMounted(() => {
-  fetchRecruit()
-  fetchApplyStatus()
+// // ✅ 컴포넌트 마운트시 모집글/가입 상태를 모두 불러옴
+// onMounted(() => {
+//   fetchRecruit()
+//   fetchApplyStatus()
+// })
+
+
+onMounted(async () => {
+  await fetchRecruit()   // 모집글 정보 먼저 가져오기
+  console.log('recruit.value:', recruit.value)
+  console.log('작성자 user_no:', recruit.value?.user_no, typeof recruit.value?.user_no)
+  console.log('내 userNo:', userNo.value, typeof userNo.value)
+  await fetchApplyStatus()
 })
+
 </script>

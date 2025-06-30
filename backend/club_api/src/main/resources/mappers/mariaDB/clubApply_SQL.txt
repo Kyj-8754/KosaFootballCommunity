@@ -1,0 +1,17 @@
+-- kosa_db.tbl_club_apply definition
+
+CREATE TABLE `tbl_club_apply` (
+  `apply_id` int(11) NOT NULL AUTO_INCREMENT,
+  `bno` int(11) NOT NULL,
+  `appli_user_no` int(11) DEFAULT NULL,
+  `apply_date` datetime DEFAULT current_timestamp(),
+  `status` enum('pending','approved','rejected','canceled') DEFAULT NULL,
+  `club_id` int(11) NOT NULL,
+  PRIMARY KEY (`apply_id`),
+  UNIQUE KEY `uniq_bno_applicant` (`bno`,`appli_user_no`),
+  KEY `idx_user_no` (`appli_user_no`),
+  KEY `fk_club_apply_club` (`club_id`),
+  CONSTRAINT `fk_club_apply_bno` FOREIGN KEY (`bno`) REFERENCES `tbl_recruit_board` (`bno`) ON DELETE CASCADE,
+  CONSTRAINT `fk_club_apply_club` FOREIGN KEY (`club_id`) REFERENCES `tbl_club` (`club_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_club_apply_user` FOREIGN KEY (`appli_user_no`) REFERENCES `user` (`user_no`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;

@@ -19,16 +19,21 @@ public class ClubApplyService {
 
     @Value("${alarm.api.url}")
     private String alarmApiUrl;
-
-    /**
-     * 클럽 모집글 가입 신청 처리
-     * (🔴 [중요] 중복신청/24시간 제한 체크 추가)
-     */
-    public AlarmMessageDTO applyToRecruit(ClubApply clubApply, int user_no) {
-
-        // (1) 🔴 [중요 추가] 신청 중복/취소 24시간 제한 로직
+    
+    
+    public AlarmMessageDTO applyToRecruit(ClubApply clubApply, int appli_user_no) {
         int bno = clubApply.getBno();
-        int appli_user_no = clubApply.getAppli_user_no();
+
+        // 1. 팀장 user_no 조회 (모집글에서)
+        int user_no = clubApplyDAO.findUserNoByBno(bno);
+        if (user_no == 0) {
+            throw new IllegalStateException("팀장 정보를 찾을 수 없습니다.");
+        }
+
+        // 2. 팀장이 본인 클럽에 가입 신청할 수 없도록 체크
+        if (appli_user_no == user_no) {
+            throw new IllegalStateException("팀장은 본인 클럽에 가입 신청할 수 없습니다.");
+        }
 
         // 1-1. 기존 신청 이력 확인 (중복 insert 막기)
         ClubApply exist = clubApplyDAO.findLastApplyByBnoAndApplicant(bno, appli_user_no);
