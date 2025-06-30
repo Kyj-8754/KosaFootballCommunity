@@ -1,4 +1,4 @@
-package com.msa.do_login.user.filter;
+package com.msa.do_security.security.filter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -12,8 +12,8 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.msa.do_login.user.exception.RefreshTokenException;
-import com.msa.do_login.user.util.JWTUtil;
+import com.msa.do_security.security.exception.RefreshTokenException;
+import com.msa.do_security.security.util.JWTUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;

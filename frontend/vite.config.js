@@ -57,6 +57,12 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/login_api/, ""),
       },
 
+       "/security_api": {
+      target: "http://localhost:8081",
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/security_api/, ""),
+    },
+
       // // 작업중
       // club_api
       '/club_api': {

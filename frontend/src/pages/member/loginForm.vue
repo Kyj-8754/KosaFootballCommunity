@@ -1,5 +1,5 @@
 <template>
-    <div class="logincontainer">
+  <div class="logincontainer">
     <form class="login-form" @submit.prevent="login">
       <h2 class="text-center mb-4 fw-bold">로그인</h2>
 
@@ -8,7 +8,6 @@
         <input
           v-model="userId"
           type="text"
-          name="userid"
           id="userid"
           class="form-control"
           placeholder="아이디를 입력해주세요"
@@ -20,22 +19,30 @@
         <input
           v-model="userPwd"
           type="password"
-          name="passwd"
           id="passwd"
           class="form-control"
           placeholder="비밀번호를 입력해주세요"
         />
       </div>
 
-      <button type="submit" class="btn btn-primary">로그인</button>
+      <button type="submit" class="btn btn-primary w-100">로그인</button>
     </form>
+
+    <hr class="my-4" />
+
+    <!-- 소셜 로그인 -->
+    <div class="social-login">
+      <button class="btn btn-danger w-100" @click="loginWith('google')">Google 로그인</button>
+      <button class="btn btn-success w-100" @click="loginWith('naver')">Naver 로그인</button>
+      <button class="btn btn-warning w-100" @click="loginWith('kakao')">Kakao 로그인</button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
 
 // ✅ [추가] Pinia userStore import
 import { useUserStore } from '@/stores/userStore'
@@ -43,43 +50,92 @@ const userStore = useUserStore()
 
 const userId = ref('')
 const userPwd = ref('')
-const token = inject('token')
 const router = useRouter()
+const route = useRoute()
+const token = inject('token')
 
 const login = async () => {
   try {
-    const response = await axios.post('/login_api/generateToken', {
-      userId: userId.value,
-      userPwd: userPwd.value
-    }, {
-      withCredentials: true
-    })
-    console.log('✅ 로그인 응답:', response.data)
-    const data = response.data
-
-    // ✅ 큰을 로컬스토리지에 저장
-    localStorage.setItem('accessToken', data.accessToken)
-    localStorage.setItem('refreshToken', data.refreshToken)
-    token.value = data.accessToken
-
-    // ✅ 로그인 성공 시 userStore에도 정보 저장!
-    // 반드시 서버 응답에서 user_no, user_name, accessToken(토큰)이 넘어와야 한다.
-    userStore.setUser({
-      user_no: data.user_no,         // 서버에서 내려준 유저 PK (DB 컬럼명)
-      user_name: data.user_name,     // 서버에서 내려준 이름 (DB 컬럼명)
-      jwt: data.accessToken          // 서버에서 내려준 accessToken (토큰)
-    })
-
-    // ✅ 홈 화면으로 이동
+    const res = await axios.post(
+      '/security_api/generateToken',
+      {
+        userId: userId.value,
+        userPwd: userPwd.value,
+      },
+      { withCredentials: true }
+    )
+		console.log("✅ 응답 성공:", res.status, res.data);
+    localStorage.setItem('accessToken', res.data.accessToken)
+    localStorage.setItem('refreshToken', res.data.refreshToken)
+		token.value = res.data.accessToken
     router.push('/')
-  } catch (error) {
-    if (error.response && error.response.status === 401) {
-      alert("로그인 실패: " + error.response.data.res_msg)
-    } else {
-      alert("로그인 요청 중 오류가 발생했습니다.")
-    }
+  } catch (err) {
+    alert('로그인 실패: ' + (err.response?.data?.res_msg || '오류 발생'))
     userId.value = ''
     userPwd.value = ''
+		console.error("❌ 실패 상태코드:", err.response?.status);
+  	console.error("❌ 실패 응답:", err.response?.data);
+  }
+}
+
+onMounted(() => {
+  const accessToken = route.query.accessToken
+  const refreshToken = route.query.refreshToken
+
+  // 쿼리 파라미터가 있을 때만 소셜 로그인 처리
+  if (accessToken !== undefined || refreshToken !== undefined) {
+    if (accessToken && refreshToken) {
+      localStorage.setItem('accessToken', accessToken)
+      localStorage.setItem('refreshToken', refreshToken)
+      if (token) token.value = accessToken
+      router.push('/')
+    } else {
+      alert('소셜 로그인 실패')
+      router.push('/login')
+    }
+  }
+})
+
+// ✅ 소셜 로그인 URL 백엔드에서 받아 리디렉트
+const loginWith = async (provider) => {
+  try {
+    const res = await axios.get(`/login_api/oauth/authorize/${provider}`)
+    const url = res.data.authorizationUrl
+    window.location.href = url
+  } catch (err) {
+    const response = err.response?.data
+    
+    if (response?.res_code === 'need_register') {
+      // 🔍 디버깅 로그 추가
+      console.log('🟡 소셜 회원가입 필요 응답:', response)
+
+      const { provider, providerId, nickname, profileImage } = response
+
+      console.log('🟢 이동할 쿼리 파라미터 확인:')
+      console.log('provider:', provider)
+      console.log('providerId:', providerId)
+      console.log('nickname:', nickname)
+      console.log('profileImage:', profileImage)
+
+      router.push({
+        name: 'Member_SocialRegister', // ← 문자열 끝에 공백 있었던 거 제거
+        query: {
+          provider,
+          providerId,
+          nickname,
+          profileImage
+        }
+      })
+    } // ✅ 로그인 성공 시 토큰 저장 및 페이지 이동
+    else if (response?.res_code === '200' && response.accessToken) {
+      localStorage.setItem('accessToken', response.accessToken)
+      localStorage.setItem('refreshToken', response.refreshToken)
+      token.value = response.accessToken
+      router.push('/')
+    }else {
+      alert(`소셜 로그인 실패: ${provider}`)
+      console.error(err)
+    }
   }
 }
 </script>
