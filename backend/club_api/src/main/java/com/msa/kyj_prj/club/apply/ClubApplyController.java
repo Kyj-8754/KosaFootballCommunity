@@ -2,9 +2,17 @@ package com.msa.kyj_prj.club.apply;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
 import com.msa.kyj_prj.alarm.AlarmMessageDTO;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -19,6 +27,7 @@ public class ClubApplyController {
     @Value("${alarm.api.url}")
     private String alarmApiUrl;  // ✅ 알람 서버 URL (properties에서 주입)
 
+    
     /**
      * (2) 클럽(모집) 가입 신청 엔드포인트 (POST)
      */
