@@ -13,12 +13,13 @@
 	        FROM weather
 	        WHERE weather_region = #{weather_region}
 	          AND weather_fcst_date = #{weather_fcst_date}
+	          AND weather_fcst_time > DATE_FORMAT(NOW(), '%H%i')
 	        ORDER BY weather_fcst_time ASC
 	        LIMIT 5
 	    ) T ON W.weather_fcst_time = T.weather_fcst_time
 	       AND W.weather_region = #{weather_region}
 	       AND W.weather_fcst_date = #{weather_fcst_date}
-	    ORDER BY W.weather_fcst_time
+	    ORDER BY W.weather_fcst_time, W.weather_code
 	</select>
 
 </mapper>

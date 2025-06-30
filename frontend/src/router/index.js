@@ -34,6 +34,11 @@ import Recruit_DetailView from '@/pages/recruitBoard/detailView.vue'
 import Recruit_RegistForm from '@/pages/recruitBoard/registForm.vue'
 import Recruit_UpdateForm from '@/pages/recruitBoard/updateForm.vue'
 
+//매치관련
+import matchList from '@/pages/board/match/matchList.vue';
+import matchDetail from '@/pages/board/match/matchDetail.vue';
+import matchLog from '@/pages/board/match/matchLog.vue';
+
 const routes = [
   { path: '/', name: 'Home', component: Home },
 
@@ -66,6 +71,11 @@ const routes = [
   { path: '/recruitBoard/new', name: 'Recruit_RegistForm', component: Recruit_RegistForm },
   { path: '/recruitBoard/:bno', name: 'Recruit_DetailView', component: Recruit_DetailView },
   { path: '/recruitBoard/:bno/updateForm', name: 'Recruit_UpdateForm', component: Recruit_UpdateForm },
+
+  //매치 관련
+    { path:'/match/matchlist', name: 'matchList', component: matchList },
+    { path:'/match/matchdetail/:id', name: 'matchDetail', component: matchDetail },
+    { path:'/match/matchlog/:id', name: 'matchLog', component: matchLog },
 
   // 404 Not Found
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }

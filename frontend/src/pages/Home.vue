@@ -17,9 +17,9 @@
 
         <button @click="test">구장 리스트 불러오기</button>
         <button @click="update">구장 업데이트</button>
-
-        <div>
-          <p>현재 시간: {{ serverTime }}</p>
+        <weatherWidget/>
+				<div>
+            <p>현재 시간: {{ serverTime }}</p>
         </div>
 
         <div class="table-responsive">
@@ -72,6 +72,8 @@ import { useRouter } from 'vue-router'
 
 const token = inject('token')
 const router = useRouter()
+
+import weatherWidget from '@/components/widget/weatherWidget.vue'
 
 const serverTime = ref('')
 
