@@ -34,4 +34,84 @@
 		FROM social_account
 		WHERE user_no = #{userNo}
 	</select>
+	
+	<update id="update">
+	UPDATE user
+	SET user_name = #{userName},
+		user_birth = #{userBirth},
+		user_phone = #{userPhone},
+		user_post_code = #{userPostCode},
+		user_addr = #{userAddr},
+		user_detail_addr = #{userDetailAddr},
+		user_gender = #{userGender}
+	WHERE user_no = #{userNo}
+	</update>
+
+	 <insert id="history">
+		INSERT INTO user_mod_history (
+			user_no, mod_user_name, mod_user_birth, mod_user_phone, mod_user_post_code,
+			mod_user_addr, mod_user_detail_addr, mod_ori_pic_name, mod_new_pic_name, mod_date,
+			mod_user_exit_status, mod_user_exit_date, mod_user_fail_status, mod_user_fail_cnt,
+			mod_auth_code, mod_user_code, mod_user_gender, mod_user_comment, mod_stat_code, mod_style_code
+		) 
+		VALUES (
+			#{userNo}, #{userName}, #{userBirth}, #{userPhone}, #{userPostCode},
+			#{userAddr}, #{userDetailAddr}, #{oriPicName}, #{newPicName}, NOW(),
+			#{userExitStatus}, #{userExitDate}, #{userFailStatus}, #{userFailCnt},
+			#{authCode}, #{userCode}, #{userGender}, #{userComment}, #{styleCode}, #{statCode}
+		)
+	</insert>
+	
+	<select id="searchFriendByKeyword" parameterType="String" resultType="com.msa.do_login.user.vo.UserVO">
+		SELECT * 
+		FROM user
+		WHERE user_code = #{keyword}
+	</select>
+	
+	<insert id="insertFriendRequest">
+	    INSERT INTO user_relation (
+	        from_user_no,
+	        to_user_no
+	    )
+	    VALUES (
+	        #{requesterNo},
+	        #{requestedNo}
+	    )
+	</insert>
+	
+	<select id="getPendingRequests" parameterType="int" resultType="com.msa.do_login.user.vo.UserVO">
+		SELECT u.* 
+		FROM user_relation r
+		JOIN user u ON r.from_user_no = u.user_no
+		WHERE to_user_no = #{userNo}
+		AND r.relation_status = 'WAIT'
+	</select>
+	
+	<update id="updateRelationStatusToAccept">
+		UPDATE user_relation
+		SET relation_status = 'ACCEPTED'
+		WHERE from_user_no = #{requesterNo}
+		AND to_user_no = #{requestedNo}
+		AND relation_status = 'WAIT'
+	</update>
+	
+	<update id="deleteRelationRequest">
+		UPDATE user_relation
+		SET relation_status = 'DECLINED'
+		WHERE from_user_no = #{requesterNo}
+		AND to_user_no = #{requestedNo}
+		AND relation_status = 'WAIT'
+	</update>
+	
+	<select id="getFriendList" parameterType="int" resultType="com.msa.do_login.user.vo.UserVO">
+	    SELECT u.*
+	    FROM user_relation r
+	    JOIN user u
+	      ON (
+	        (r.from_user_no = #{userNo} AND u.user_no = r.to_user_no)
+	        OR
+	        (r.to_user_no = #{userNo} AND u.user_no = r.from_user_no)
+	      )
+	    WHERE r.relation_status = 'ACCEPTED'
+	</select>
 </mapper>
