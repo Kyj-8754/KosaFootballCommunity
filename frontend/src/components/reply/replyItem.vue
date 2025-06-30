@@ -10,7 +10,12 @@
     <!-- 내용 or 수정창 -->
     <div class="content">
       <template v-if="isEditing">
-        <textarea v-model="editedContent" rows="3"></textarea>
+          <textarea
+            v-model="editedContent"
+            rows="3"
+            maxlength="1000"
+            style="height: 80px; resize: none; overflow: auto;"
+          ></textarea>
         <div class="edit-actions">
           <button @click="confirmEdit">확인</button>
           <button @click="cancelEdit">취소</button>
@@ -21,19 +26,35 @@
       </template>
     </div>
 
+
     <!-- 수정 / 삭제 / 대댓글 -->
     <div class="actions" v-if="!isEditing">
-      <button @click="isEditing = true">수정</button>
-      <button @click="$emit('delete', comment.reply_id)">삭제</button>
-      <button v-if="!comment.parent_reply_id" @click="toggleReplying">{{ isReplying ? '취소' : '답글' }}</button>
-    </div>
+      <!-- 수정: 작성자만 -->
+      <button v-if="userNo === comment.user_no" @click="isEditing = true">수정</button>
 
+      <!-- 삭제: 작성자 또는 관리자 -->
+      <button
+        v-if="userNo === comment.user_no || authCode === 'ROLE_A1'"
+        @click="$emit('delete', comment.reply_id)"
+      >
+        삭제
+      </button>
+
+      <!-- 답글: 부모 댓글일 때만 -->
+      <button
+        v-if="!comment.parent_reply_id"
+        @click="toggleReplying"
+      >
+        {{ isReplying ? '취소' : '답글' }}
+      </button>
+    </div>
+        
     <!-- 대댓글 입력창 -->
     <CommentForm
       v-if="isReplying"
       :boardId="comment.board_id"
-      :userNo="1"
-      :userName="'댓글 테스트 사용자'"
+      :userNo="userNo"
+      :userName="userName"
       :parentReplyId="comment.reply_id"
       @submit="handleReplySubmit"
     />
@@ -42,8 +63,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import CommentForm from '@/components/reply/replyRegisterForm.vue'
+
+const userNo = inject('userNo')
+const userName = inject('userName')
+const authCode = inject('authCode')
 
 const isReplying = ref(false)
 

@@ -1,17 +1,17 @@
 <template>
   <table class="board-table">
     <colgroup>
-      <col style="width: 8%" />
-      <col style="width: 12%" />
-      <col style="width: 12%" />
-      <col style="width: 28%" />
+      <!--<col style="width: 8%" />-->
+      <col style="width: 15%" />
+      <col style="width: 15%" />
+      <col style="width: 35%" />
       <col style="width: 15%" />
       <col style="width: 10%" />
       <col style="width: 10%" />
     </colgroup>
     <thead v-if="showHeader">
       <tr>
-        <th>글 번호</th>
+        <!--<th>글 번호</th>-->
         <th>카테고리</th>
         <th>작성자</th>
         <th>제목</th>
@@ -20,19 +20,27 @@
         <th>추천수</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody v-if="posts.length > 0">
       <tr v-for="post in posts" :key="post.board_id">
-        <td>{{ post.board_id }}</td>
         <td>{{ post.board_category }}</td>
         <td>{{ post.user_name }}</td>
         <td @click="viewPost(post.board_id)" style="cursor: pointer; color: blue;">
           {{ post.board_title }}
         </td>
         <td>
-          <span>{{ post.board_modified_at ? formatDate(post.board_modified_at) : formatDate(post.board_created_at) }}</span>
+          <span>{{ formatDate(post.board_created_at) }}</span>
         </td>
         <td>{{ post.board_viewcount }}</td>
         <td>{{ post.board_likecount }}</td>
+      </tr>
+    </tbody>
+
+    <!-- 🔻 검색 결과 없음 표시 -->
+    <tbody v-else>
+      <tr>
+        <td colspan="6" style="padding: 20px; text-align: center; color: #777;">
+          검색 결과가 없습니다.
+        </td>
       </tr>
     </tbody>
   </table>
@@ -62,13 +70,18 @@ function formatDate(dateStr) {
 .board-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; /* ✅ 반드시 추가 */
 }
 
 .board-table th,
 .board-table td {
   padding: 10px;
   text-align: center;
+  font-size: 0.95rem;
   border-bottom: 1px solid #ccc; /* 회색 가로줄 */
+  white-space: nowrap;        /* 줄바꿈 방지 */
+  overflow: hidden;           /* 넘친 내용 숨김 */
+  text-overflow: ellipsis;    /* ...으로 생략 */
 }
 
 .board-table tbody tr:hover {
@@ -79,4 +92,13 @@ function formatDate(dateStr) {
   background-color: #f1f1f1; /* 헤더 배경 (선택사항) */
   border-top: 2px solid #888;
 }
+
+.board-table td span {
+  display: inline-block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 </style>

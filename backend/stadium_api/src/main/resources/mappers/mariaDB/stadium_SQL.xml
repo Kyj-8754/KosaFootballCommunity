@@ -6,8 +6,9 @@
 
 <mapper namespace="com.msa.kyj_prj.stadium.StadiumDAO">
 	<sql id="search">
+		where state != 'DELETE'   <!-- ① 무조건 적용 -->
         <if test="searchValue != null and searchValue != ''">
-         WHERE
+         AND
 		    <choose>
 		     <when test="searchType == ''">
 		        (
@@ -155,5 +156,9 @@
 	<select id="callSyncStadiumProcedure" statementType="CALLABLE">
         CALL sync_stadium_state()
     </select>
+    
+<!--     <select id="callSyncStadiumProcedure" statementType="CALLABLE">
+        select
+    </select> -->
 	
 </mapper>

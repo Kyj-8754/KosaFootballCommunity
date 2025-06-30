@@ -36,31 +36,37 @@ export default defineConfig({
 
       // 게시판 프록시
       "/board_api": {
-        target: "http://localhost:8082",
+        target: "http://localhost:8131",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/board_api/, ""),
       },
       // 위젯 프록시
       "/widget_api": {
-        target: "http://localhost:8083",
+        target: "http://localhost:8130",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/widget_api/, ""),
       },
       "/stadium_api": {
-        target: "http://localhost:8080",
+        target: "http://localhost:8100",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/stadium_api/, ""),
       },
       "/login_api": {
-        target: "http://localhost:8081",
+        target: "http://localhost:8111",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/login_api/, ""),
       },
 
+       "/security_api": {
+      target: "http://localhost:8110",
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/security_api/, ""),
+    },
+
       // // 작업중
       // club_api
       '/club_api': {
-        target: 'http://localhost:8084',
+        target: 'http://localhost:8121',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/club_api/, "/club"),
       },
@@ -68,21 +74,21 @@ export default defineConfig({
 
       // 🟡 recruit_api (포트 8085)
       '/recruits_api': {
-        target: 'http://localhost:8085',
+        target: 'http://localhost:8122',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/recruits_api/, "/recruits"),
       },
 
       // 🟢 alarm_api (포트 8086)
       '/alarm_api': {
-        target: 'http://localhost:8086',
+        target: 'http://localhost:8120',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/alarm_api/, "/alarm"),
       },
 
       // 선택: WebSocket 서버용 경로 프록시
       '/ws': {
-        target: 'http://localhost:8086',
+        target: 'http://localhost:8120',
         ws: true,
         changeOrigin: true
       }

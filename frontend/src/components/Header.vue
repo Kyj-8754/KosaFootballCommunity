@@ -8,6 +8,11 @@
     <router-link :to="{ name: 'Member_RegistForm' }">회원 가입</router-link>
   </template>
 
+    <!-- ✅ 임시 버튼 추가 -->
+  <div class="my-2 px-2">
+    <button class="btn btn-warning btn-sm" @click="runWeatherCollector">⛅ 날씨 수집 테스트</button>
+  </div>
+
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
       <span class="navbar-brand ps-2">TodoList App</span>
       <button class="navbar-toggler" type="button" @click="isNavShow = !isNavShow">
@@ -46,6 +51,7 @@
 <script setup>
 import { inject, computed, ref } from 'vue'
 import logoImage from '@/assets/image/bannerlogo.jpg'
+import axios from 'axios'
 
 // token과 logout 함수 inject
 const token = inject('token')
@@ -57,4 +63,14 @@ const userName = inject('userName')
 const isAuthenticated = computed(() => !!token?.value)
 
 const isNavShow = ref(false)
+
+const runWeatherCollector = async () => {
+  try {
+    const res = await axios.get('/widget_api/weather-collect/run')
+    alert('✅ 날씨 수집 완료: ' + res.data.result)
+  } catch (err) {
+    console.error(err)
+    alert('❌ 날씨 수집 실패')
+  }
+}
 </script>
