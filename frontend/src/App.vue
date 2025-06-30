@@ -1,7 +1,8 @@
 <template>
   <div class="container">
-      <Header />
-      <div class="row">
+    <Header />
+
+    <div class="row">
       <div class="col-md-2">
         <NavArea />
       </div>
@@ -9,16 +10,25 @@
         <router-view />
       </div>
     </div>
-     <Footer />
+
+    <AlarmToast /> <!-- 🔔 알림 토스트 전역 표시 -->
+
+    <Footer />
   </div>
+  <scrollUp />
 </template>
 
 <script setup>
-import Header from '@/components/Header.vue'
-import NavArea from './components/NavArea.vue'
-import Footer from './components/Footer.vue'
+import { provide, ref, computed, onMounted, watch } from 'vue';
+import Header from '@/components/Header.vue';
+import NavArea from '@/components/NavArea.vue';
+import Footer from '@/components/Footer.vue';
+import AlarmToast from '@/components/common/AlarmToast.vue';
+import { connectWebSocket } from '@/utils/stomp';
+import { useAlarmStore } from '@/stores/alarmStore';
+import scrollUp from '@/components/scrollUp.vue'
 
-import { provide, ref, computed, onMounted } from 'vue'
+const alarmStore = useAlarmStore();
 
 // 1. 토큰 상태
 const token = ref('')
@@ -66,7 +76,7 @@ const payload = computed(() => token.value ? decodeJwtPayload(token.value) : {})
 const userId = computed(() => payload.value.userId || null)
 const userNo = computed(() => payload.value.userNo || null)
 const userName = computed(() => payload.value.userName || null)
-const authCode = computed(() => payload.value.authCode || null)
+const authCode = computed(() => payload.value.auth || null)
 
 // 로그아웃 함수
 const logout = () => {
@@ -84,4 +94,26 @@ provide('userId', userId)
 provide('userNo', userNo)
 provide('userName', userName)
 provide('authCode', authCode)
+
+
+onMounted(() => {
+
+  // ✅ JWT에서 추출한 userNo를 사용해 웹소켓 연결
+  if (userNo.value) {
+    connectWebSocket(userNo.value, (msg) => {
+      alarmStore.pushAlarm(msg);
+    });
+  }
+  // ✅ userNo 값이 바뀔 때(로그인/로그아웃) 웹소켓 연결 재설정
+  watch(userNo, (newNo, oldNo) => {
+    if (newNo) {
+      connectWebSocket(newNo, (msg) => {
+        alarmStore.pushAlarm(msg);
+      });
+    }
+    // (참고: 필요하면 이전 소켓 연결 해제 로직 추가 가능)
+  });
+  // ⚠️ 추후 로그인 연동 시 userNo 값을 JWT에서 동적으로 할당하도록 수정
+});
+
 </script>

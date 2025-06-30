@@ -33,18 +33,11 @@ import axios from 'axios'
 const route = useRoute()
 const member = ref(null)
 
-const fetchMemberDetail = async () => {
-  try {
-    const userNo = route.query.userno
-		console.log(userNo);
-    const res = await axios.get(`/login_api/mypage/detailView/${userNo}`)
-		console.log('응답 결과:', res)
-    member.value = res.data.member
-  } catch (e) {
-    console.error('회원 정보 로딩 실패:', e)
-    member.value = null
-  }
-}
-
-onMounted(fetchMemberDetail)
+	// 페이지 구동시 자동 마운트
+	onMounted(() => {
+		axios.get('/login_api/member/detailView', { params: { userid }})
+			.then(res => {
+				memberDB.value = res.data.memberDB
+			})
+	})
 </script>

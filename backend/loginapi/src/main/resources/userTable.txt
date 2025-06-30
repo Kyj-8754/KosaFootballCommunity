@@ -121,14 +121,3 @@ CREATE TABLE IF NOT EXISTS social_account (
     UNIQUE KEY uk_provider_user (provider, provider_id),
     CONSTRAINT fk_social_user FOREIGN KEY (user_no) REFERENCES user(user_no)
 );
-
-
-CREATE TABLE IF NOT EXISTS `user_relation` (
-	`relation_no`	INT(11)	NOT NULL AUTO_INCREMENT,
-	`from_user_no`	INT(11)	NOT NULL,
-	`to_user_no`	INT(11)	NOT NULL,
-	`relation_status`	VARCHAR(255) NOT NULL DEFAULT 'WAIT',
-	`relation_req_date`	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '친구 신청 일자',
-	`relation_prc_date`	TIMESTAMP NULL
-);
-

@@ -25,20 +25,22 @@ public class PageResponseVO_board {
 	// 현재 페이지 번호
 	private int pageNo = 0;
 	//한 페이지 출력되는 자료의 건수
-	private int size = 10; 
+	private int size = 9; 
 	// 서칭
 	private String searchValue;
 	
-	public PageResponseVO_board(List<Stadium> list, int totalPage, int pageNo, int size, String searchValue) {
+	private String searchType;
+	
+	
+	public PageResponseVO_board(List<Stadium> list, int totalPage, int pageNo, String searchType, String searchValue) {
 		this.list = list;
 		this.totalCount = totalPage;
 		this.totalPage = (int)Math.ceil((double)totalPage / size);
 		this.pageNo = pageNo;
-		this.size = size;
 		this.searchValue = searchValue;
-		
-		startPage = ((pageNo-1)/10)*10 + 1;
-		endPage = ((pageNo-1)/10)*10 + 10;
+		this.searchType = searchType;
+		startPage = ((pageNo-1)/9)*9 + 1;
+		endPage = ((pageNo-1)/9)*9 + 9;
 		if (endPage > this.totalPage) endPage = this.totalPage;
 		
 	}
