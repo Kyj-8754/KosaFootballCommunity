@@ -1,35 +1,32 @@
 <template>
   <select v-model="selectedTeam">
     <option disabled value="">팀 선택</option>
-    <option v-for="team in teams" :key="team" :value="team">{{ team }}</option>
+    <option v-for="team in teams" :key="team.club_id" :value="team.club_id">
+      {{ team.club_name }}
+    </option>
   </select>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
 
-const props = defineProps({
-  modelValue: String
-})
+const props = defineProps({ modelValue: [String, Number] })
 const emit = defineEmits(['update:modelValue'])
 
 const selectedTeam = ref(props.modelValue || '')
-const teams = ['팀1', '팀2', '팀3']
+
+// 실제로는 이렇게 서버에서 받은 데이터라고 가정
+const teams = [
+  { club_id: 1, club_name: '팀1' },
+  { club_id: 2, club_name: '팀2' },
+  { club_id: 3, club_name: '팀3' }
+]
 
 watch(selectedTeam, (val) => {
   emit('update:modelValue', val)
 })
 
-watch(() => props.modelValue, (newVal) => {
-  selectedTeam.value = newVal
+watch(() => props.modelValue, (val) => {
+  selectedTeam.value = val
 })
 </script>
-
-<style scoped>
-select {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-}
-</style>
