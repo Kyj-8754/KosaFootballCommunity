@@ -10,21 +10,33 @@
     <div class="venue">
       <div class="placenm">{{ match.svcnm }} - {{ match.placenm }} [{{ match.subplacenm }}]</div>
       <div class="price">가격 미정</div>
-      <!-- 신청하기 버튼 (아직 신청 안 한 경우만 보임) -->
+
+      <!-- ✅ 신청취소 버튼 (이미 신청한 경우) -->
       <button 
-        v-if="!isApplied" 
+        v-if="isApplied"
         class="apply-button"
-        @click="applyToMatch">
+        @click="cancelParticipation"
+      >
+        신청취소
+      </button>
+
+      <!-- ✅ 신청하기 버튼 -->
+      <button
+        v-else
+        class="apply-button"
+        :disabled="props.match.match_code === 'league' && !clubId"
+        @click="applyToMatch"
+      >
         신청하기
       </button>
 
-      <!-- 신청취소 버튼 (신청한 경우만 보임) -->
-      <button 
-        v-else
-        class="apply-button"
-        @click="cancelParticipation">
-        신청취소
-      </button>
+      <!-- ✅ 클럽 리더가 아닌 경우 안내 -->
+      <div 
+        v-if="!isApplied && props.match.match_code === 'league' && !clubId" 
+        class="warn-text"
+      >
+        ⚠ 클럽 리더만 신청할 수 있습니다.
+      </div>
     </div>
 
     <!-- 주소 및 전화번호 -->
@@ -56,6 +68,7 @@ import { defineProps, ref, onMounted, nextTick, inject } from 'vue'
 import axios from 'axios'
 
 const userNo = inject('userNo')
+const clubId = ref(null)
 const isApplied = ref(false)
 const showMap = ref(false)
 const currentCount = ref(0)
@@ -66,6 +79,25 @@ const props = defineProps({
     required: true
   }
 })
+
+const checkClubLeader = async () => {
+  if (props.match.match_code !== 'league' || !userNo?.value) return
+
+  try {
+    const res = await axios.get('/board_api/match/club', {
+      params: { userNo: userNo.value }
+    })
+
+    if (res.data.club_id) {
+      clubId.value = res.data.club_id
+    } else {
+      clubId.value = null
+    }
+  } catch (e) {
+    console.error('클럽 리더 여부 확인 실패:', e)
+    clubId.value = null
+  }
+}
 
 const imageUrl = `${props.match.img_PATH}`
 
@@ -148,16 +180,23 @@ const checkIsApplied = async () => {
     isApplied.value = false
   }
 }
+
 const applyToMatch = async () => {
   if (!userNo || userNo.value == null) {
     alert('로그인 후 이용해주세요.')
     return
   }
 
+  if (props.match.match_code === 'league' && !clubId.value) {
+    alert('⚠ 클럽 리더만 신청할 수 있습니다.')
+    return
+  }
+
   try {
     const payload = {
       match_id: props.match.match_id,
-      user_no: userNo.value
+      user_no: userNo.value,
+      ...(props.match.match_code === 'league' ? { club_id: clubId.value } : {})
     }
 
     await axios.post('/board_api/match/apply', payload)
@@ -210,6 +249,7 @@ const fetchParticipantCount = async () => {
 onMounted(() => {
   checkIsApplied()
   fetchParticipantCount()
+  checkClubLeader() // ✅ 클럽 리더 여부 확인
 })
 </script>
 
