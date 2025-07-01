@@ -55,4 +55,9 @@ public class MatchService {
     public int getMatchParticipantCount(Long matchId) {
         return matchDAO.countMatchParticipants(matchId);
     }
+    
+    // 유저 번호로 클럽 정보 조회
+    public Map<String, Object> getClubByUserNo(Long userNo) {
+        return matchDAO.selectClubByUserNo(userNo);
+    }
 }

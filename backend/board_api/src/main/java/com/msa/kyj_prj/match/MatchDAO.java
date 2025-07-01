@@ -26,4 +26,7 @@ public interface MatchDAO {
     
     // 매치 인원 조회
     int countMatchParticipants(Long matchId);
+    
+    // 유저 번호로 클럽 정보 조회
+    Map<String, Object> selectClubByUserNo(@Param("user_no") Long user_no);
 }
