@@ -3,6 +3,10 @@
     <BoardHeaderForm :form="form" @submit="submitPost" />
     <QuillEditor v-model="form.content" />
     <FileUpload ref="fileUploader" />
+    <div v-if="form.category === '모집게시판'" class="recruit-guide">
+      여기서 예약이 가능하게끔? 할 생각 중<br>
+      컴포넌트 아무거나 하나 넣어서 하는 방식으로.
+    </div>
   </div>
 </template>
 
@@ -26,14 +30,6 @@ const form = ref({
 
 const fileUploader = ref(null)
 const router = useRouter() // ✅ Router 인스턴스 생성
-
-const MAX_TITLE_LENGTH = 100
-const MAX_CONTENT_BYTES = 16_777_215 // MySQL MEDIUMTEXT 최대 바이트 수
-
-// 문자열 바이트 길이 계산 함수 (UTF-8 기준)
-function getByteLength(str) {
-  return new Blob([str]).size
-}
 
 const submitPost = async () => {
   const title = form.value.title.trim()

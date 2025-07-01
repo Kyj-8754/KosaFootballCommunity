@@ -3,6 +3,10 @@
     <BoardHeaderForm :form="form" @submit="submitEdit" mode="edit" />
     <QuillEditor v-model="form.content" />
     <FileUpload ref="fileRef" :initial-files="initialFiles" />
+    <div v-if="form.category === '모집게시판'" class="recruit-guide">
+       여기서 예약이 가능하게끔? 할 생각 중<br>
+      컴포넌트 아무거나 하나 넣어서 하는 방식으로.
+    </div>
   </div>
 </template>
 
