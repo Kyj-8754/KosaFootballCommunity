@@ -60,4 +60,19 @@ public class MatchService {
     public Map<String, Object> getClubByUserNo(Long userNo) {
         return matchDAO.selectClubByUserNo(userNo);
     }
+    
+    // 지역명 리스트 조회
+    public List<String> getAllAreanms() {
+        return matchDAO.selectDistinctAreanms();
+    }
+    
+    // 특정 매치의 참가자 + 사용자 이름 조회
+    public List<Map<String, Object>> getMatchParticipantsWithNames(Long matchId) {
+        return matchDAO.selectParticipantsByMatchId(matchId);
+    }
+    
+    // 매치 참가자 상태 업데이트
+    public int updateMatchParticipantStatus(Map<String, Object> param) {
+        return matchDAO.updateMatchParticipantStatus(param);
+    }
 }
