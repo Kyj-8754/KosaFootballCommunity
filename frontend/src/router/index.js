@@ -12,8 +12,10 @@ import Member_DetailView from '@/pages/member/detailView.vue';
 import Member_UpdateForm from '@/pages/member/updateForm.vue';
 import Member_List from '@/pages/member/list.vue';
 import Member_SocialRegister from '@/pages/member/socialRegister.vue';
-import Member_MyPage from '@/pages/member/myPage.vue'
-import Member_Friend from '@/pages/member/friend.vue'
+import Member_MyPage from '@/pages/member/myPage.vue';
+import Member_Friend from '@/pages/member/friend.vue';
+import Member_Profile from '@/pages/member/profile.vue';
+import Member_Profile_Update from '@/pages/member/profileUpdate.vue';
 
 // 게시판 관련
 import boardList from "@/pages/board/boardList.vue";
@@ -56,6 +58,8 @@ const routes = [
   { path: '/member/socialRegister', name: 'Member_SocialRegister', component: Member_SocialRegister },
   { path: '/member/myPage', name: 'Member_MyPage', component: Member_MyPage },
   { path: '/member/friend', name: 'Member_Friend', component: Member_Friend },
+  { path: '/member/profile', name: 'Member_Profile', component: Member_Profile },
+  { path: '/member/profileUpdate', name: 'Member_Profile_Update', component: Member_Profile_Update },
 
   // 게시판 관련
   { path:'/board/boardlist', name: 'boardList', component: boardList },

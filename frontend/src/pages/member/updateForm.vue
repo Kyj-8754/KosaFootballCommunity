@@ -49,7 +49,7 @@
 
       <div class="link-area">
         <input type="submit" value="변경" class="btn btn-primary" />
-        <router-link :to="`/detailView/${form.userNo}`" class="btn btn-outline-secondary">취소</router-link>
+        <router-link :to="{ name: 'Member_MyPage', query: { userNo: userNo } }" class="btn btn-outline-secondary">취소</router-link>
       </div>
     </form>
   </div>
