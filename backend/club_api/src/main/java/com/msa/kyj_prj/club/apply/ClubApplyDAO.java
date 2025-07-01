@@ -48,8 +48,9 @@ public interface ClubApplyDAO {
         @Param("user_no") int user_no
     );
 
+    // ★ 추가: club_id로 전체 신청자 목록 조회
+    List<ClubApply> findByClubId(@Param("club_id") int club_id);
+    
+    // 단건 조회
     ClubApply findByApplyId(@Param("apply_id") int apply_id);
-
-
-
 }

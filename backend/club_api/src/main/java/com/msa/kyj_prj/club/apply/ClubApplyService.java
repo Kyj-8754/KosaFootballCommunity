@@ -1,13 +1,15 @@
 package com.msa.kyj_prj.club.apply;
 
-import com.msa.kyj_prj.alarm.AlarmMessageDTO;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import java.util.List;
+import com.msa.kyj_prj.alarm.AlarmMessageDTO;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -107,6 +109,14 @@ public class ClubApplyService {
 
         return alarm;
     }
+    
+    
+    // ★ 전체 신청자 목록 조회 (컨트롤러에서 호출)
+    public List<ClubApply> findByClubId(int club_id) {
+        return clubApplyDAO.findByClubId(club_id);
+    }
+
+    
 
     // 가입 취소 (status를 canceled로 변경)
     public boolean cancelApply(int bno, int appli_user_no) {
@@ -125,22 +135,23 @@ public class ClubApplyService {
         return clubApplyDAO.findLastApplyByBnoAndApplicant(bno, appli_user_no);
     }
 
-    // 멤버의 클럽 가입 신청을 승인하는 메소드 (멤버 insert 포함)
+ // 멤버의 클럽 가입 신청을 승인(상태변경 + 멤버테이블 insert)하는 메소드
     public boolean approveApply(int apply_id) {
         int updated = clubApplyDAO.updateStatus(apply_id, "approved");
         if (updated > 0) {
-            // 승인된 신청의 club_id, user_no 값을 조회
-            ClubApply apply = clubApplyDAO.findByApplyId(apply_id); // (DAO+XML 쿼리 필요!)
+            // 승인된 신청 정보(apply_id 기준) 단건 조회
+            ClubApply apply = clubApplyDAO.findByApplyId(apply_id); // 반드시 단건 조회 쿼리 필요
             if (apply != null) {
                 int club_id = apply.getClub_id();
                 int user_no = apply.getAppli_user_no();
-                // 승인과 동시에 멤버로 insert!
-                this.insertClubMember(club_id, user_no);
+                // 승인과 동시에 멤버 insert (이미 insertClubMember 메서드가 존재해야 함)
+                insertClubMember(club_id, user_no);
             }
             return true;
         }
         return false;
     }
+
 
     // 멤버의 클럽 가입 신청을 거절하는 메소드
     public boolean rejectApply(int apply_id) {
