@@ -27,6 +27,7 @@ import Stadium_Reservation from '@/pages/reservation/reservationForm.vue';
 
 // 예약/결제 관련
 import Reservation_Form from '@/pages/reservation/reservationForm.vue';
+import Reservation_Confirm from '@/pages/reservation/reservation_confirm.vue';
 
 // 클럽 관련
 import Club_List from '@/pages/club/list.vue'
@@ -65,7 +66,8 @@ const routes = [
   { path: '/board/boardeditform/:id', name: 'boardEditForm', component: boardEditForm },
 
   // 예약 결제 관련
-  { path:'/reservation/reservationForm', name: 'reservaion_Form', component: Reservation_Form} ,
+  { path:'/reservation/reservationForm', name: 'reservation_Form', component: Reservation_Form} ,
+  { path:'/reservation/reservation_confirm/:reservationId', name: 'reservation_Confirm', component: Reservation_Confirm, props: true} ,
 
   // 경기장 관련
   { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: Stadium_DetailView },

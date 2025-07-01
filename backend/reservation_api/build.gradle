@@ -34,8 +34,6 @@ implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	// implementation 'org.springframework.boot:spring-boot-starter-security' 
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
-	// 서버간의 호출
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 	
 	// 마리아 DB 설정

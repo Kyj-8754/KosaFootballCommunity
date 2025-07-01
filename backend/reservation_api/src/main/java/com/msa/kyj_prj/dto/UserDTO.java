@@ -1,12 +1,15 @@
 package com.msa.kyj_prj.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class UserDTO {
-	private int user_no;				// 유저 pk
-	private String user_name;			// 유저 이름
-	private String user_phone;			// 유저 전화 번호
-	private String user_exit_status;	// 유저 탈퇴 정보
-	private String auth_code;			// 유저 권한
+	private int userNo;				// 유저 pk
+	private String userName;		// 유저 이름
+	private String userPhone;		// 유저 전화 번호
+	private String userExitStatus;	// 유저 탈퇴 정보
+	private String authCode;		// 유저 권한
 }
