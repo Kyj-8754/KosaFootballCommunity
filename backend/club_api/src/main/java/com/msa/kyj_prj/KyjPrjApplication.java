@@ -4,10 +4,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
-
+import org.mybatis.spring.annotation.MapperScan; // 추가!!
 @SpringBootApplication(scanBasePackages = {
 	    "com.msa.kyj_prj.club",
 	    "com.msa.kyj_prj.alarm" // 🔥 이거 꼭 추가
+	})
+@MapperScan(basePackages = {
+	    "com.msa.kyj_prj.club.apply", 
+	    "com.msa.kyj_prj.club"    // ★★★ 여기를 꼭 추가해줘야 ClubDAO도 자동 등록!
 	})
 public class KyjPrjApplication {
 

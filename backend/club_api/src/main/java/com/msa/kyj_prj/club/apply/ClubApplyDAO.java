@@ -36,4 +36,20 @@ public interface ClubApplyDAO {
 	// 🔴 신규 추가: 24시간 뒤 재신청 시 status를 pending으로 복원
 	int updateStatusToPending(@Param("bno") int bno, @Param("appli_user_no") int appli_user_no);
 
+	// 신청 상태를 변경하는 메소드
+	int updateStatus(
+	    @Param("apply_id") int apply_id,
+	    @Param("status") String status
+	);
+
+    // 클럽 멤버 등록 (승인 시)
+    int insertClubMember(
+        @Param("club_id") int club_id,
+        @Param("user_no") int user_no
+    );
+
+    ClubApply findByApplyId(@Param("apply_id") int apply_id);
+
+
+
 }

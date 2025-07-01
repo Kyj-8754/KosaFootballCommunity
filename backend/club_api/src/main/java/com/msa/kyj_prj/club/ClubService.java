@@ -64,10 +64,6 @@ public class ClubService {
         return clubDAO.findClubByUserNo(userNo);
     }
 
-    
-    
-    
-
 	// 클럽 이름으로 단건 조회
 	public Club findByName(String name) {
 		return clubDAO.getClubByName(name);
@@ -82,4 +78,14 @@ public class ClubService {
 	public int getTotalCount(Map<String, Object> params) {
 		return clubDAO.getTotalCount(params);
 	}
+	
+    // ✅ 클럽 정보 수정 - club_id 기준으로 정보 업데이트
+    public int updateClub(Club club) {
+        // clubDAO의 update 메소드 호출 (업데이트 성공 시 1 반환)
+        return clubDAO.update(club);
+    }
+
+	
+	
+	
 }

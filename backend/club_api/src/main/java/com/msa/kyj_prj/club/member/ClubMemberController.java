@@ -1,13 +1,61 @@
 package com.msa.kyj_prj.club.member;
 
-import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/club/member")
 public class ClubMemberController {
 
-    @GetMapping("/test")
-    public String test() {
-        return "클럽 멤버 컨트롤러 작동 중";
+    @Autowired
+    private ClubMemberService clubMemberService;
+
+    // 클럽 멤버 등록
+    @PostMapping("")
+    public ResponseEntity<String> insert(@RequestBody ClubMember club_member) {
+        int result = clubMemberService.insert(club_member);
+        if (result > 0) {
+            return ResponseEntity.ok("클럽 멤버로 정상 등록되었습니다.");
+        } else {
+            // 이미 가입된 경우 등 추가 체크 가능
+            return ResponseEntity.badRequest().body("멤버 등록 실패 또는 이미 등록된 유저입니다.");
+        }
+    }
+    // 클럽별 전체 멤버 리스트 조회
+    @GetMapping("/list/{club_id}")
+    public List<ClubMember> findByClubId(@PathVariable int club_id) {
+        return clubMemberService.findByClubId(club_id);
+    }
+
+    // 특정 클럽의 특정 유저 멤버 정보 조회
+    @GetMapping("/{club_id}/{user_no}")
+    public ClubMember findByClubIdAndUserNo(@PathVariable int club_id, @PathVariable int user_no) {
+        return clubMemberService.findByClubIdAndUserNo(club_id, user_no);
+    }
+
+    // 클럽 멤버 탈퇴(삭제)
+    @DeleteMapping("/{club_id}/{user_no}")
+    public int deleteByClubIdAndUserNo(@PathVariable int club_id, @PathVariable int user_no) {
+        return clubMemberService.deleteByClubIdAndUserNo(club_id, user_no);
+    }
+
+    // 클럽 멤버 역할 변경
+    @PutMapping("/role")
+    public int updateRoleByClubIdAndUserNo(@RequestBody ClubMember club_member) {
+        return clubMemberService.updateRoleByClubIdAndUserNo(
+                club_member.getClub_id(),
+                club_member.getUser_no(),
+                club_member.getRole()
+        );
     }
 }
