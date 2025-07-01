@@ -41,7 +41,7 @@
 
     <!-- 주소 및 전화번호 -->
     <div class="address">
-      <div>주소: {{ match.areanm }} {{ match.adres }}</div>
+      <div>주소: {{ match.adres }}</div>
       <div>대표전화: {{ match.telno || '정보없음' }}</div>
       <div>운영전화: {{ match.svcendtelno || '정보없음' }}</div>
       <!-- 템플릿 내 버튼 부분 -->
@@ -129,7 +129,7 @@ const codeLabel = (code) => {
 }
 
 const copyAddress = async () => {
-  const fullAddr = `${props.match.areanm || ''} ${props.match.adres || ''}`
+  const fullAddr = `${props.match.adres || ''}`
   await navigator.clipboard.writeText(fullAddr)
   alert('주소가 복사되었습니다.')
 }
