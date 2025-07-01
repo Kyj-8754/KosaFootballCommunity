@@ -37,7 +37,7 @@ public class MatchLogController {
         return matchLogService.deleteMatchLog(log_id);
     }
     
-    // ✅ 승인된 참가자 목록 (user_no + user_name)
+    // 승인된 참가자 목록 (user_no + user_name)
     @GetMapping("/approved-users/{match_id}")
     public List<Map<String, Object>> getApprovedUsers(@PathVariable("match_id") Long match_id) {
         return matchLogService.getApprovedUsers(match_id);
