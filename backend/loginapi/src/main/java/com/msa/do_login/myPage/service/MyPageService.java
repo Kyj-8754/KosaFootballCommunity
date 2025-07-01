@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.msa.do_login.myPage.dao.MyPageDAO;
+import com.msa.do_login.user.vo.UserStat;
+import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
 
 import lombok.RequiredArgsConstructor;
@@ -94,6 +96,14 @@ public class MyPageService {
 	
 	public List<UserVO> getFriendList(int userNo) {
 	    return myPageDAO.getFriendList(userNo);
+	}
+	
+	public UserStyle getStyleName(int styleCode) {
+		return myPageDAO.getStyleName(styleCode);
+	}
+	
+	public UserStat getStatName(int statCode) {
+		return myPageDAO.getStatName(statCode);
 	}
 	
 }

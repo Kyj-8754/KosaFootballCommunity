@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.msa.do_login.myPage.service.MyPageService;
+import com.msa.do_login.user.vo.UserStat;
+import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
 
 import lombok.RequiredArgsConstructor;
@@ -30,14 +32,33 @@ public class MyPageController {
 	// 회원 상세정보 조회
 	@GetMapping("/detailView")
 	public ResponseEntity<Map<String, Object>> getMemberDetail(@RequestParam int userNo) {
-		UserVO userInfo = myPageService.getUserVO(userNo);
-		log.info("회원 정보 ="+userInfo);
-		if (userInfo == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(Map.of("res_code", "404", "res_msg", "해당 사용자를 찾을 수 없습니다."));
-		}
-		return ResponseEntity.ok(Map.of("res_code", "200", "res_msg", "회원 정보 조회 성공", "member", userInfo));
+	    UserVO userInfo = myPageService.getUserVO(userNo);
+	    log.info("회원 정보 = {}", userInfo);
+
+	    if (userInfo == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                .body(Map.of("res_code", "404", "res_msg", "해당 사용자를 찾을 수 없습니다."));
+	    }
+
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("res_code", "200");
+	    response.put("res_msg", "회원 정보 조회 성공");
+	    response.put("member", userInfo);
+
+	    // 스타일 이름과 능력 이름은 null이 아닐 경우에만 추가
+	    if (userInfo.getStyleCode() != null) {
+	        UserStyle userStyle = myPageService.getStyleName(userInfo.getStyleCode());
+	        response.put("userStyle", userStyle);
+	    }
+
+	    if (userInfo.getStatCode() != null) {
+	        UserStat userStat = myPageService.getStatName(userInfo.getStatCode());
+	        response.put("userStat", userStat);
+	    }
+
+	    return ResponseEntity.ok(response);
 	}
+
 	
 	@PostMapping("/update")
 	public ResponseEntity<Map<String, Object>> update(

@@ -123,4 +123,17 @@
 	      )
 	    WHERE r.relation_status = 'ACCEPTED'
 	</select>
+	
+	<select id="getStyleName" parameterType="int" resultType="com.msa.do_login.user.vo.UserStyle">
+	    SELECT *
+	    FROM user_style
+	    WHERE style_code = #{styleCode}
+	</select>
+	
+	<select id="getStatName" parameterType="int" resultType="com.msa.do_login.user.vo.UserStat">
+	    SELECT *
+	    FROM user_stat
+	    WHERE stat_code = #{statCode}
+	</select>
+	
 </mapper>

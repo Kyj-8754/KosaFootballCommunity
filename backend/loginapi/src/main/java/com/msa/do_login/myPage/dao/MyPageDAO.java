@@ -41,4 +41,8 @@ public interface MyPageDAO {
 	public int deleteRelationRequest(@Param("requesterNo") int requesterNo, @Param("requestedNo") int requestedNo);
 
 	public List<UserVO> getFriendList(int userNo);
+	
+	public UserStyle getStyleName(int styleCode);
+	
+	public UserStat getStatName(int statCode);
 }
