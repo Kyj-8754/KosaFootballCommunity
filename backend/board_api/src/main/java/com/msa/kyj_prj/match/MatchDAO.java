@@ -29,4 +29,13 @@ public interface MatchDAO {
     
     // 유저 번호로 클럽 정보 조회
     Map<String, Object> selectClubByUserNo(@Param("user_no") Long user_no);
+    
+    // 지역 목록 (중복 제거된 AREANM 리스트) 조회
+    List<String> selectDistinctAreanms();
+    
+    // 특정 매치의 참가자 + 사용자 이름 조회
+    List<Map<String, Object>> selectParticipantsByMatchId(@Param("matchId") Long matchId);
+    
+    // ✅ 매치 참가자의 상태(user_status) 업데이트
+    int updateMatchParticipantStatus(Map<String, Object> param);
 }

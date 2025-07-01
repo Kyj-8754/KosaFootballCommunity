@@ -62,4 +62,24 @@ public class MatchController {
     public Map<String, Object> getClubByUserNo(@RequestParam Long userNo) {
         return matchService.getClubByUserNo(userNo);
     }
+    
+    // 지역명 리스트 조회
+    @GetMapping("/areas")
+    public List<String> getAllAreanms() {
+        return matchService.getAllAreanms();
+    }
+    
+    // 특정 매치의 참가자 + 사용자 이름 조회
+    @GetMapping("/participants")
+    public List<Map<String, Object>> getMatchParticipants(@RequestParam Long matchId) {
+        return matchService.getMatchParticipantsWithNames(matchId);
+    }
+
+    // 매치 참가자 상태 업데이트
+    @PostMapping("/status")
+    public void updateStatus(@RequestBody Map<String, Object> param) {
+        matchService.updateMatchParticipantStatus(param);
+    }
+
+
 }

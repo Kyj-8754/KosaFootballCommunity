@@ -60,6 +60,9 @@
 	        <if test="match_title != null and match_title != ''">
 	            AND m.match_title COLLATE utf8mb4_general_ci LIKE CONCAT('%', #{match_title}, '%')
 	        </if>
+	        <if test="areanm != null and areanm != ''">
+			    AND s.AREANM COLLATE utf8mb4_general_ci = #{areanm}
+			</if>
 	    </trim>
 	    ORDER BY m.match_date ASC
 	</select>
@@ -142,5 +145,45 @@
 	    FROM tbl_club
 	    WHERE user_no = #{user_no}
 	</select>
+	
+	<!-- AREANM 리스트 (중복 제거) -->
+	<select id="selectDistinctAreanms" resultType="string">
+	    SELECT DISTINCT AREANM
+	    FROM stadium
+	    ORDER BY AREANM
+	</select>
+	
+	<!-- 특정 매치의 참가자 목록 + 사용자 상세 정보 조회 -->
+	<select id="selectParticipantsByMatchId" resultType="map" parameterType="long">
+	    SELECT 
+	        mp.match_id,
+	        mp.user_no,
+	        mp.club_id,
+	        mp.user_role,
+	        mp.user_status,
+	        mp.created_at,
+	        mp.modified_at,
+	        u.user_name,
+	        u.user_phone,
+	        u.user_gender,
+	        u.user_code,
+	        u.ori_pic_name,
+	        u.new_pic_name
+	    FROM 
+	        match_participant mp
+	    JOIN 
+	        user u ON mp.user_no = u.user_no
+	    WHERE 
+	        mp.match_id = #{matchId}
+	</select>
+	
+	<!-- 매치 참가자의 상태(user_status) 업데이트 -->
+	<update id="updateMatchParticipantStatus" parameterType="map">
+	    UPDATE match_participant
+	    SET user_status = #{user_status},
+	        modified_at = CURRENT_TIMESTAMP()
+	    WHERE match_id = #{match_id}
+	      AND user_no = #{user_no}
+	</update>
 
 </mapper>
