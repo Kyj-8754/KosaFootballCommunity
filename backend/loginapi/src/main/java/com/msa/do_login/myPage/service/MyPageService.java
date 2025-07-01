@@ -43,6 +43,25 @@ public class MyPageService {
 		}
 	}
 	
+	public int updateProfile(UserVO member) {
+		int result = 0;
+		UserVO memberDB = myPageDAO.getUserVO(member.getUserNo());
+		if (memberDB == null) {
+			return result;
+		}
+		memberDB.setUserName(member.getUserName());
+	    memberDB.setUserComment(member.getUserComment());
+	    memberDB.setStyleCode(member.getStyleCode());
+	    memberDB.setStatCode(member.getStatCode());
+		result = myPageDAO.updateProfile(memberDB);
+		if (result == 0) {
+			return result;
+		} else {
+			result = 1;
+			return result;
+		}
+	}
+	
 	public UserVO searchFriendByKeyword (String keyword) {
 		UserVO result = myPageDAO.searchFriendByKeyword(keyword);
 		return result;

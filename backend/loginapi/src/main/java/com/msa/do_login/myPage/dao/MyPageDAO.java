@@ -24,6 +24,8 @@ public interface MyPageDAO {
 	public SocialAccountVO getSocialAccount(int userNo);
 
 	public int update(UserVO user);
+	
+	public int updateProfile(UserVO user);
 
 	public void history(UserVO user);
 

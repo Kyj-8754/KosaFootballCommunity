@@ -46,6 +46,15 @@
 		user_gender = #{userGender}
 	WHERE user_no = #{userNo}
 	</update>
+	
+	<update id="updateProfile">
+	UPDATE user
+	SET user_name = #{userName},
+		user_comment = #{userComment},
+		style_code = #{styleCode},
+		stat_code = #{statCode}
+	WHERE user_no = #{userNo}
+	</update>
 
 	 <insert id="history">
 		INSERT INTO user_mod_history (
