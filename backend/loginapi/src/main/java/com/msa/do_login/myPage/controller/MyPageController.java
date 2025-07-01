@@ -49,7 +49,6 @@ public class MyPageController {
 		log.info("수정 요청된 회원 번호: {}", userNo);
 		log.info("수정 요청된 정보: {}", member);
 
-		// VO에 userNo 반영 (안 들어왔을 경우 대비)
 		member.setUserNo(userNo);
 
 		int result = myPageService.update(member);
@@ -193,6 +192,39 @@ public class MyPageController {
 	        res.put("res_msg", "요청 거절에 실패했습니다.");
 	    }
 	    return ResponseEntity.ok(res);
+	}
+	
+	@PostMapping("/profileUpdate")
+	public ResponseEntity<Map<String, Object>> profileUpdate(
+			@RequestParam("userNo") int userNo,
+	        @RequestBody UserVO member
+	) {
+		Map<String, Object> map = new HashMap<>();
+		
+		log.info("수정 요청된 회원 번호: {}", userNo);
+		log.info("수정 요청된 정보: {}", member);
+		if (member.getStyleCode() != null && member.getStyleCode() == 0) {
+		    member.setStyleCode(null);
+		}
+		if (member.getStatCode() != null && member.getStatCode() == 0) {
+		    member.setStatCode(null);
+		}
+		if (member.getUserComment() != null && member.getUserComment().trim().isEmpty()) {
+		    member.setUserComment(null);
+		}
+		member.setUserNo(userNo);
+
+		int result = myPageService.updateProfile(member);
+
+		if (result == 0) {
+			map.put("res_code", "400");
+			map.put("res_msg", "회원 정보 수정 중 오류가 발생하였습니다.");
+			return ResponseEntity.badRequest().body(map);
+		} else {
+			map.put("res_code", "200");
+			map.put("res_msg", "회원 정보 수정에 성공하였습니다.");
+			return ResponseEntity.ok(map);
+		}
 	}
 
 }
