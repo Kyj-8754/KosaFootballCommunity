@@ -135,5 +135,12 @@
 	    WHERE match_id = #{matchId}
 	    	AND user_status = 'approve'
 	</select>
+	
+	<!-- 사용자 번호로 클럽 정보 조회 -->
+	<select id="selectClubByUserNo" parameterType="long" resultType="map">
+	    SELECT user_no, club_id
+	    FROM tbl_club
+	    WHERE user_no = #{user_no}
+	</select>
 
 </mapper>

@@ -56,4 +56,10 @@ public class MatchController {
     public int getMatchParticipantCount(@RequestParam Long matchId) {
         return matchService.getMatchParticipantCount(matchId);
     }
+    
+    // 유저 번호로 클럽 정보 조회
+    @GetMapping("/club")
+    public Map<String, Object> getClubByUserNo(@RequestParam Long userNo) {
+        return matchService.getClubByUserNo(userNo);
+    }
 }
