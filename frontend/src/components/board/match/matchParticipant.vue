@@ -18,7 +18,13 @@
     <div v-else>
       <ul v-if="filteredParticipants.length > 0">
         <li v-for="p in filteredParticipants" :key="p.user_no" class="participant-item">
-          <strong>{{ p.user_name }}</strong> - 신청일: {{ formatDate(p.created_at) }}
+          <strong>{{ p.user_name }}</strong>
+          - 신청일: {{ formatDate(p.created_at) }}
+          <select v-model="p.user_status" @change="updateStatus(p)">
+            <option value="apply">신청자</option>
+            <option value="approve">승인됨</option>
+            <option value="reject">거절됨</option>
+          </select>
         </li>
       </ul>
       <div v-else>해당 상태의 참가자가 없습니다.</div>
@@ -42,7 +48,7 @@ const participants = ref([])
 const loading = ref(false)
 
 const tabOptions = ['apply', 'approve', 'reject']
-const activeTab = ref('apply') // 기본값은 신청자
+const activeTab = ref('apply')
 
 const tabLabelMap = {
   apply: '신청자',
@@ -67,6 +73,20 @@ const fetchParticipants = async () => {
     participants.value = []
   } finally {
     loading.value = false
+  }
+}
+
+const updateStatus = async (participant) => {
+  try {
+    await axios.post('/board_api/match/status', {
+      match_id: props.matchId,
+      user_no: participant.user_no,
+      user_status: participant.user_status
+    })
+    console.log('✅ 상태 변경 완료:', participant)
+  } catch (err) {
+    console.error('❌ 상태 변경 실패:', err)
+    alert('상태 변경에 실패했습니다.')
   }
 }
 
@@ -108,5 +128,10 @@ watch(() => props.matchId, fetchParticipants, { immediate: true })
 
 .participant-item {
   margin-bottom: 8px;
+}
+
+select {
+  margin-left: 8px;
+  padding: 4px;
 }
 </style>

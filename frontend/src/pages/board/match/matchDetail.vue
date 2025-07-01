@@ -9,10 +9,9 @@
 
     <!-- 상세 설명 -->
     <MatchDescription
-    :description="match.match_description"
+      :description="match.match_description"
+      :matchId="match.match_id"
     />
-
-    <MatchParticipant :matchId="match.match_id" />
 
     <MatchLogButton :match-id="match.match_id" />
   </div>
@@ -28,7 +27,6 @@ import MatchTitleBar from '@/components/board/match/matchTitleBar.vue'
 import MatchInfoCard from '@/components/board/match/matchInfoCard.vue'
 import MatchDescription from '@/components/board/match/matchDescription.vue'
 import MatchLogButton from '@/components/board/match/matchLogPageButton.vue'
-import MatchParticipant from '@/components/board/match/matchParticipant.vue'
 
 const route = useRoute()
 const match = ref(null)
