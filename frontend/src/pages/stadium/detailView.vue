@@ -208,8 +208,12 @@
 	import {ref, onMounted, reactive, computed, inject} from 'vue'
 	import { useRoute, useRouter } from 'vue-router'
 	import axios from 'axios'
-	import { Calendar  } from 'v-calendar'
 	import 'v-calendar/style.css'
+	import { StadiumDataStore } from '@/stores/stadiumStore'
+
+
+// pinia를 이용한 저장
+	const stadiumStore = StadiumDataStore();
 
 	//아이디 관련
 	const userId = inject('userId')
@@ -227,12 +231,6 @@
   return `${y}-${m}-${d}`
 }
 
-// const isDateDisabled = (date) => {
-//   const dateStr = formatDate(date)
-//   return !availableDates.includes(dateStr)
-// }
-
-
 
 const onDayClick = (day) => {
   const dateStr = formatDate(day.date)
@@ -242,7 +240,7 @@ const onDayClick = (day) => {
   }
 
   alert(`예약 창으로 이동: ${dateStr}`)
-  router.push({name: 'reservaion_Form', query: {date: dateStr, SVCID: SVCID}})
+  router.push({name: 'reservation_Form', query: {date: dateStr, SVCID: SVCID}})
 }
 
 
@@ -314,6 +312,9 @@ const onDayClick = (day) => {
 		const res = await axios.get('/stadium_api/stadium/detailView', { params: { SVCID } });
 		stadiumDB.value = res.data.stadiumDB.stadium;
 		availableDates.value = res.data.stadiumDB.slot.map(item => item.slot_DATE);
+
+		//store저장
+		stadiumStore.setStadium(stadiumDB.value);
 	};	
 
 	//게시물의 댓글 불러오기
@@ -458,6 +459,10 @@ const initKakaoMap = () => {
     map.setCenter(centerPos)
   })
 }
+
+
+	
+	
 
 </script>
 

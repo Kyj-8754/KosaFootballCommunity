@@ -1,7 +1,12 @@
 package com.msa.kyj_prj.dto;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class StadiumDTO {
 	private String SVCID;		// 서비스 ID
