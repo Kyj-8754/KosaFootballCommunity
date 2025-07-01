@@ -94,4 +94,50 @@ public class ClubApplyController {
             return ResponseEntity.internalServerError().body("가입 신청 상태 조회 중 오류가 발생했습니다.");
         }
     }
+    
+    // 클럽 가입 승인 거절 코드
+    @PostMapping("/approve")
+    public ResponseEntity<String> approveApply(@RequestBody java.util.Map<String, Object> body) {
+        int apply_id = (int) body.get("apply_id");
+
+        boolean result = clubApplyService.approveApply(apply_id);
+
+        if (result) {
+            return ResponseEntity.ok("승인 완료");
+        } else {
+            return ResponseEntity.badRequest().body("승인 처리 실패");
+        }
+    }
+
+    @PostMapping("/reject")
+    public ResponseEntity<String> rejectApply(@RequestBody java.util.Map<String, Object> body) {
+        int apply_id = (int) body.get("apply_id");
+
+        boolean result = clubApplyService.rejectApply(apply_id);
+
+        if (result) {
+            return ResponseEntity.ok("거절 완료");
+        } else {
+            return ResponseEntity.badRequest().body("거절 처리 실패");
+        }
+    }
+    
+    
+    @PostMapping("/member")
+    public ResponseEntity<String> addMember(@RequestBody java.util.Map<String, Object> body) {
+        int club_id = (int) body.get("club_id");
+        int user_no = (int) body.get("user_no");
+
+        int result = clubApplyService.insertClubMember(club_id, user_no);
+
+        if (result > 0) {
+            return ResponseEntity.ok("클럽 멤버로 추가되었습니다.");
+        } else {
+            return ResponseEntity.badRequest().body("이미 가입된 멤버이거나 추가 실패");
+        }
+    }
+    
+    
+    
+    
 }

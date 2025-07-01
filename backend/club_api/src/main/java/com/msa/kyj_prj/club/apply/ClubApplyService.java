@@ -19,8 +19,7 @@ public class ClubApplyService {
 
     @Value("${alarm.api.url}")
     private String alarmApiUrl;
-    
-    
+
     public AlarmMessageDTO applyToRecruit(ClubApply clubApply, int appli_user_no) {
         int bno = clubApply.getBno();
 
@@ -120,13 +119,37 @@ public class ClubApplyService {
         ClubApply canceled = clubApplyDAO.findRecentCanceledApply(bno, appli_user_no);
         return (canceled == null); // null이면 24시간 제한 없음 → 재신청 가능
     }
-    
-    
- // ClubApplyService.java
+
+    // 가장 마지막에 신청한 취소 이력 조회
     public ClubApply findLastApplyByBnoAndApplicant(int bno, int appli_user_no) {
         return clubApplyDAO.findLastApplyByBnoAndApplicant(bno, appli_user_no);
     }
 
-    
-    
+    // 멤버의 클럽 가입 신청을 승인하는 메소드 (멤버 insert 포함)
+    public boolean approveApply(int apply_id) {
+        int updated = clubApplyDAO.updateStatus(apply_id, "approved");
+        if (updated > 0) {
+            // 승인된 신청의 club_id, user_no 값을 조회
+            ClubApply apply = clubApplyDAO.findByApplyId(apply_id); // (DAO+XML 쿼리 필요!)
+            if (apply != null) {
+                int club_id = apply.getClub_id();
+                int user_no = apply.getAppli_user_no();
+                // 승인과 동시에 멤버로 insert!
+                this.insertClubMember(club_id, user_no);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    // 멤버의 클럽 가입 신청을 거절하는 메소드
+    public boolean rejectApply(int apply_id) {
+        int updated = clubApplyDAO.updateStatus(apply_id, "rejected");
+        return updated > 0;
+    }
+
+    // 클럽 멤버 테이블에 insert (승인 시 직접 호출)
+    public int insertClubMember(int club_id, int user_no) {
+        return clubApplyDAO.insertClubMember(club_id, user_no);
+    }
 }

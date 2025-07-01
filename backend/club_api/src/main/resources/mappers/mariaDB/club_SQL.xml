@@ -50,11 +50,6 @@
             club_name = #{club_name},
             user_no = #{user_no},
             logo_path = #{logo_path},
-            rating = #{rating},
-            ranking = #{ranking},
-            win_count = #{win_count},
-            draw_count = #{draw_count},
-            loss_count = #{loss_count},
             description = #{description}
         WHERE club_id = #{club_id}
     </update>

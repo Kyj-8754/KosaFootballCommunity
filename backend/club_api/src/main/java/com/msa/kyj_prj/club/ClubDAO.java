@@ -25,10 +25,14 @@ public interface ClubDAO {
 	// 클럽 전체 개수
 	int getTotalCount(Map<String, Object> params);
 	
+	// 1개의 클럽 조회
 	Club findClubByUserNo(int userNo);
 	
+	// 여러개의 클럽 조회
 	List<Club> findClubsByUserNo(int userNo);
 
+	// 클럽 정보 수정
+	int update(Club club);
 	
 	
 

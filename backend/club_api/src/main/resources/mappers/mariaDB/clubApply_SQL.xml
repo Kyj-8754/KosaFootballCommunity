@@ -29,14 +29,6 @@
         FROM tbl_club_apply
         WHERE bno = #{bno}
     </select>
-
-    <!-- 모집글 승인/거부 업데이트 -->
-    <update id="updateStatus" parameterType="map">
-        UPDATE tbl_club_apply
-        SET status = #{status}
-        WHERE apply_id = #{apply_id}
-    </update>
-
 	
 	<!-- bno로 club_id 조회 -->
 	<select id="findClubIdByBno" parameterType="int" resultType="int">
@@ -88,6 +80,35 @@
     ORDER BY apply_date DESC
     LIMIT 1
 	</select>
+	
+	  <!-- 신청 상태를 approved/rejected 등으로 변경 (apply_id 기준) -->
+    <update id="updateStatus" parameterType="map">
+        UPDATE tbl_club_apply
+        SET status = #{status}
+        WHERE apply_id = #{apply_id}
+    </update>
+    
+    <!-- 클럽 멤버 등록 -->
+	<insert id="insertClubMember" parameterType="map">
+    INSERT INTO tbl_club_member (
+        club_id,
+        user_no,
+        role,
+        joined_at
+    ) VALUES (
+        #{club_id},
+        #{user_no},
+        'MEMBER',
+        NOW()
+    )
+	</insert>
+	
+	<!-- 신청번호로 ClubApply 한 건 조회 -->
+	<select id="findByApplyId" parameterType="int" resultType="com.msa.kyj_prj.club.apply.ClubApply">
+    SELECT * FROM tbl_club_apply
+    WHERE apply_id = #{apply_id}
+	</select>
+
 	
 
     

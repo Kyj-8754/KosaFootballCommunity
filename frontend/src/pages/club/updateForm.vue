@@ -1,6 +1,6 @@
 <template>
   <div class="container py-5">
-    <h2 class="fw-bold mb-4 text-center">클럽 정보 수정</h2>
+    <h2 class="fw-bold mb-4 text-center">클럽 정보 등록 및 수정</h2>
 
     <div v-if="club">
       <div class="row g-4">
@@ -35,7 +35,7 @@
               <div class="border rounded p-3 h-100">
                 <strong>주요 멤버 리스트</strong>
                 <ul class="list-unstyled mt-2 text-muted">
-                  <li>비편집 영역입니다</li>
+                  <li>여기엔 멤버 리스트가 들어감 (클릭시 멤버 전체 리스트 이동)</li>
                 </ul>
               </div>
             </div>
@@ -43,7 +43,7 @@
             <!-- 간단한 팀 정보 -->
             <div class="col">
               <div class="border rounded p-3 h-100">
-                <strong>간단한 팀 정보</strong>
+                <strong>간단한 팀 정보(주 경기 시간, 나이대, 성별, 팀 레벨)</strong>
                 <textarea
                   v-model="club.simple_info"
                   class="form-control"
@@ -56,7 +56,7 @@
             <!-- 팀 소개 -->
             <div class="col">
               <div class="border rounded p-3 h-100">
-                <strong>팀 소개</strong>
+                <strong>간단한 팀 소개</strong>
                 <textarea
                   v-model="club.description"
                   class="form-control"
@@ -68,60 +68,95 @@
           </div>
         </div>
       </div>
+<!-- 
+      저장/취소 버튼: 팀장(user_no)만 --> 
+  <div v-if="club && userNo && club.user_no === userNo">
+  <button @click="submitUpdate">저장하기</button>
+  <button @click="cancelUpdate">취소하기</button>
+</div> 
 
-      <!-- 저장/취소 버튼 -->
-      <div class="text-end mt-4" v-if="isLeader">
-        <button @click="submitUpdate" class="btn btn-success me-2">저장하기</button>
-        <button @click="cancelUpdate" class="btn btn-outline-secondary">취소하기</button>
-      </div>
+<div v-else>
+  <span class="text-muted">팀장만 클럽 정보를 수정할 수 있습니다.</span>
+</div>
+
     </div>
-
     <p v-else class="text-muted mt-5 text-center">클럽 정보를 불러오는 중입니다...</p>
   </div>
 </template>
 
-<script>
-import axios from 'axios';
 
-export default {
-  name: 'ClubUpdateForm',
-  data() {
-    return {
-      club: null,
-      isLeader: false,
-    };
-  },
-  async created() {
-    const teamCode = this.$route.params.teamCode;
-    try {
-      // 🔧 수정 전: /api/clubs/code/...
-      // ✅ 수정 후:
-      const response = await axios.get(`/club_api/code/${teamCode}`);
-      this.club = response.data;
+<script setup>
+import { ref, inject, computed, onMounted, watchEffect } from 'vue' // watchEffect 추가
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
 
-      const loginUserid = sessionStorage.getItem('loginUserid');
-      this.isLeader = loginUserid === this.club.leader_user_id;
-    } catch (error) {
-      console.error('클럽 정보 불러오기 실패:', error);
-      alert('클럽 정보를 불러오는 데 실패했습니다.');
-    }
-  },
-  methods: {
-    async submitUpdate() {
-      try {
-        // 🔧 수정 전: /api/clubs/{club_id}
-        // ✅ 수정 후:
-        await axios.put(`/club_api/${this.club.club_id}`, this.club);
-        alert('수정이 완료되었습니다.');
-        this.$router.push(`/club/${this.club.team_code}`);
-      } catch (error) {
-        console.error('수정 실패:', error);
-        alert('수정 중 오류가 발생했습니다.');
-      }
-    },
-    cancelUpdate() {
-      this.$router.push(`/club/${this.club.team_code}`);
-    }
+const token = inject('token')
+const userNo = inject('userNo') // 반드시 userNo (ref 타입이어야 함)
+
+const router = useRouter()
+const route = useRoute()
+
+const club = ref(null)
+
+// 팀장 여부: club.user_no와 userNo.value를 모두 Number로 변환해서 비교 (타입 불일치 방지)
+const isClubOwner = computed(() =>
+  club.value && userNo && Number(club.value.user_no) === Number(userNo.value) // ← 수정!
+)
+
+// onMounted(async () => {
+//   const teamCode = route.params.teamCode
+//   try {
+//     const response = await axios.get(`/club_api/code/${teamCode}`, {
+//       headers: { Authorization: `Bearer ${token.value}` }
+//     })
+//     club.value = response.data
+//   } catch (e) {
+//     alert('클럽 정보를 불러오는 데 실패했습니다.')
+//   }
+// })
+
+onMounted(async () => {
+  const teamCode = route.params.teamCode
+  try {
+    const response = await axios.get(`/club_api/code/${teamCode}`, {
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    club.value = response.data
+    console.log('클럽 전체 객체:', club.value) // ← 이거 추가!
+  } catch (e) {
+    alert('클럽 정보를 불러오는 데 실패했습니다.')
   }
-};
+})
+
+
+const submitUpdate = async () => {
+  if (!isClubOwner.value) {
+    alert('팀장만 수정할 수 있습니다.')
+    return
+  }
+  try {
+    await axios.put(`/club_api/${club.value.club_id}`, club.value, {
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    alert('수정이 완료되었습니다.')
+    router.push(`/club/${club.value.team_code}`)
+  } catch (e) {
+    alert('수정 중 오류가 발생했습니다.')
+  }
+}
+
+const cancelUpdate = () => {
+  if (club.value) {
+    router.push(`/club/${club.value.team_code}`)
+  } else {
+    router.back()
+  }
+}
+
+// 실제 값과 타입을 콘솔에서 확인 (Number 변환해서 출력)
+watchEffect(() => {
+  console.log('userNo:', userNo && userNo.value, 'type:', typeof (userNo && userNo.value)); // ← 타입도 확인
+  console.log('club.user_no:', club.value && club.value.user_no, 'type:', typeof (club.value && club.value.user_no)); // ← 타입도 확인
+  console.log('같은가?:', club.value && userNo && Number(club.value.user_no) === Number(userNo.value)); // ← Number로 변환 후 비교
+});
 </script>

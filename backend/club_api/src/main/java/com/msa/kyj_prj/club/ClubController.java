@@ -1,6 +1,7 @@
 package com.msa.kyj_prj.club;
 
 import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequestMapping("/club") // ✅ club_api 프록시와 매핑되도록 루트 수정
@@ -118,4 +120,30 @@ public class ClubController {
 
         return result;
     }
+    
+    // ✅ 클럽 정보 수정 - club_id 기준으로 클럽 정보 전체(또는 일부) 수정
+    @PutMapping("/{club_id}")
+    public ResponseEntity<String> updateClub(@PathVariable int club_id,
+                                             @RequestBody Club club) {
+        club.setClub_id(club_id); // PathVariable에서 받은 club_id를 club 객체에 세팅
+
+        int result = clubService.updateClub(club); // 서비스 레이어 호출
+
+        if (result > 0) {
+            // 성공 시 메시지 반환
+            return ResponseEntity.ok("클럽 정보가 성공적으로 수정되었습니다.");
+        } else {
+            // 실패 시 메시지 반환
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body("클럽 정보 수정에 실패했습니다.");
+        }
+    }
+
+    
+    
+    
+    
+    
+    
+    
 }

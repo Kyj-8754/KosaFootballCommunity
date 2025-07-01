@@ -63,7 +63,7 @@
       </div>
 
       <!-- 팀장만 수정 버튼 -->
-      <div v-if="isLeader" class="text-end mt-3">
+       <div v-if="club && userNo && club.user_no === userNo">
         <button @click="goToEdit" class="btn btn-primary">수정하기</button>
       </div>
     </div>
@@ -73,43 +73,51 @@
 </template>
 
 
-<script>
-import axios from 'axios';
+<script setup>
+// ⚡️ Vue3 Composition API + jwt 기반 권한 체크
 
-export default {
-  name: 'ClubDetailView',
-  data() {
-    return {
-      club: null,
-      isLeader: false,
-    };
-  },
-  async created() {
-    const teamCode = this.$route.params.teamCode;
-    try {
-      // 🔧 수정 전: /api/clubs/code/${teamCode}
-      // ✅ 수정 후: /club_api/code/${teamCode}
-      const response = await axios.get(`/club_api/code/${teamCode}`);
-      this.club = response.data;
+import { ref, inject, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
 
-      const loginUserid = sessionStorage.getItem('loginUserid');
-      this.isLeader = loginUserid === this.club.leader_user_id;
-    } catch (error) {
-      console.error('클럽 정보 불러오기 실패:', error);
-      alert('클럽 정보를 불러오는 데 실패했습니다.');
-    }
-  },
-  methods: {
-    getTotalGames(club) {
-      return (club.win_count || 0) + (club.draw_count || 0) + (club.loss_count || 0);
-    },
-    calcWinRate(club) {
-      const total = this.getTotalGames(club);
-      return total === 0 ? 0 : Math.round((club.win_count / total) * 100);
-    },
-    goToEdit() {
-      this.$router.push(`/club/${this.club.team_code}/edit`);
-    },
-  },
-};
+// ✅ jwt 기반 전역 변수 inject (provide에서 내려옴)
+const token = inject('token')
+const userNo = inject('userNo') // 반드시 ref 타입!
+
+const router = useRouter()
+const route = useRoute()
+
+// ✅ 클럽 정보 (API 응답 저장용)
+const club = ref(null)
+
+// ✅ 컴포넌트 마운트 시 클럽 정보 조회 (teamCode 기준)
+onMounted(async () => {
+  const teamCode = route.params.teamCode
+  try {
+    // jwt 토큰을 Authorization 헤더로 보냄
+    const response = await axios.get(`/club_api/code/${teamCode}`, {
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    club.value = response.data
+  } catch (error) {
+    alert('클럽 정보를 불러오는 데 실패했습니다.')
+  }
+})
+
+// ✅ 총 경기 수 계산 함수
+const getTotalGames = (clubObj) =>
+  (clubObj.win_count || 0) + (clubObj.draw_count || 0) + (clubObj.loss_count || 0)
+
+// ✅ 승률 계산 함수
+const calcWinRate = (clubObj) => {
+  const total = getTotalGames(clubObj)
+  return total === 0 ? 0 : Math.round((clubObj.win_count / total) * 100)
+}
+
+// ✅ 수정 페이지 이동 (팀장만 접근하도록 라우터 이동)
+const goToEdit = () => {
+  if (club.value) {
+    router.push(`/club/${club.value.team_code}/updateForm`)
+  }
+}
 </script>

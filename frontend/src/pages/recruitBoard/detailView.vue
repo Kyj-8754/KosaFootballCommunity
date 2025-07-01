@@ -11,28 +11,33 @@
         <li><strong>등록일:</strong> {{ formatDate(recruit.reg_date) }}</li>
       </ul>
 
-      <div class="mb-3">
-        <!-- [수정 1] 버튼 조건 분기: 작성자가 아닐 때만 버튼 노출 -->
-        <button
-          v-if="!isApplied && recruit.user_no !== userNo.value"
-          class="btn btn-outline-primary btn-sm me-2"
-          @click="handleApply"
-        >
-          가입 신청
-        </button>
-        <button
-          v-else-if="isApplied && recruit.user_no !== userNo.value"
-          class="btn btn-outline-secondary btn-sm me-2"
-          @click="handleCancel"
-        >
-          가입 취소
-        </button>
-        <!-- [수정 2] 작성자(팀장)이면 안내 문구 노출 (선택) -->
-        <span v-else class="text-muted">
-          팀장은 본인 모집글에는 가입 신청할 수 없습니다.
-        </span>
-      </div>
+   <div class="mb-3">
+     <!-- 팀장이면 "수정하기" 버튼, 팀장이 아니면 가입/취소 버튼 -->
+  <button
+    v-if="recruit.user_no === userNo"
+    class="btn btn-outline-success btn-sm me-2"
+    @click="goEdit"
+  >
+    수정하기
+  </button>
+  <!--  버튼 조건 분기: 작성자가 아닐 때만 버튼 노출 -->
+<button
+  v-if="!isApplied && isLoggedIn && userNo !== undefined && recruit.user_no !== userNo"
+  class="btn btn-outline-primary btn-sm me-2"
+  @click="handleApply"
+>
+  가입 신청
+</button>
 
+
+  <button
+    v-else-if="isApplied && recruit.user_no !== userNo.value"
+    class="btn btn-outline-secondary btn-sm me-2"
+    @click="handleCancel"
+  >
+    가입 취소
+  </button>
+</div>
       <router-link to="/recruitBoard" class="btn btn-secondary btn-sm">목록으로</router-link>
     </div>
 
@@ -71,6 +76,12 @@ const fetchRecruit = async () => {
     console.error('모집글 조회 실패', e)
   }
 }
+const goEdit = () => {
+  if (!recruit.value || !recruit.value.bno) return
+  router.push(`/recruitBoard/${recruit.value.bno}/updateForm`)
+}
+
+
 
 // ✅ 내 가입 신청 상태를 불러오는 함수
 const fetchApplyStatus = async () => {
@@ -169,7 +180,6 @@ const formatDate = (dateTime) => {
 //   fetchRecruit()
 //   fetchApplyStatus()
 // })
-
 
 onMounted(async () => {
   await fetchRecruit()   // 모집글 정보 먼저 가져오기
