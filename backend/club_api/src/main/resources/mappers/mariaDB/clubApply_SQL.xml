@@ -103,13 +103,18 @@
     )
 	</insert>
 	
-	<!-- 신청번호로 ClubApply 한 건 조회 -->
 	<select id="findByApplyId" parameterType="int" resultType="com.msa.kyj_prj.club.apply.ClubApply">
-    SELECT * FROM tbl_club_apply
-    WHERE apply_id = #{apply_id}
+  	SELECT * FROM tbl_club_apply WHERE apply_id = #{apply_id}
 	</select>
 
 	
+	<!-- 클럽 id 기준으로 전체 신청목록 조회 -->
+	<select id="findByClubId" parameterType="int" resultType="com.msa.kyj_prj.club.apply.ClubApply">
+  SELECT * FROM tbl_club_apply
+  WHERE club_id = #{club_id}
+  ORDER BY apply_date DESC
+	</select>
+
 
     
 </mapper>

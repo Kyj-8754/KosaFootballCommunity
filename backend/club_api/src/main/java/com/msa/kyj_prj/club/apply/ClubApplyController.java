@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
+import java.util.List;
 import com.msa.kyj_prj.alarm.AlarmMessageDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -137,7 +137,12 @@ public class ClubApplyController {
         }
     }
     
-    
+    @GetMapping("/list")
+    public List<ClubApply> getApplyListByClubId(@RequestParam("club_id") int club_id) {
+        System.out.println("club_id 파라미터 도착: " + club_id);  // ★ 여기!
+        return clubApplyService.findByClubId(club_id);
+    }
+
     
     
 }

@@ -28,8 +28,8 @@ import Stadium_Reservation from '@/pages/stadium/reservation.vue';
 import Club_List from '@/pages/club/list.vue'
 import Club_DetailView from '@/pages/club/detailView.vue'
 import Club_RegistForm from '@/pages/club/registForm.vue'
-import Club_UpdateForm from '@/pages/club/updateForm.vue' // ✅ 추가: 클럽 수정 컴포넌트
-
+import Club_UpdateForm from '@/pages/club/updateForm.vue'
+import Club_ApplyList from '@/pages/club/applyList.vue'
 // 모집글 관련
 import Recruit_List from '@/pages/recruitBoard/list.vue'
 import Recruit_DetailView from '@/pages/recruitBoard/detailView.vue'
@@ -69,6 +69,8 @@ const routes = [
   { path: '/club/registForm', name: 'Club_RegistForm', component: Club_RegistForm },
   { path: '/club/:teamCode', name: 'Club_DetailView', component: Club_DetailView },
   { path: '/club/:teamCode/updateForm', name: 'Club_UpdateForm', component: Club_UpdateForm },
+  { path: '/club/:teamCode/applyList', name: 'Club_ApplyList', component: Club_ApplyList },
+
 
   // 모집글 관련
   { path: '/recruitBoard', name: 'Recruit_List', component: Recruit_List },
