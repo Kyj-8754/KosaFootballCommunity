@@ -15,21 +15,27 @@
     <!-- 탭별 내용 출력 -->
     <div class="tab-content">
       <div v-if="activeTab === 'description'" v-html="descriptionHtml" />
+      <div v-else-if="activeTab === 'participants'">
+        <MatchParticipant :matchId="matchId" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, defineProps } from 'vue'
+import MatchParticipant from '@/components/board/match/matchParticipant.vue'
 
 const props = defineProps({
-  description: { type: String, default: '' }
+  description: { type: String, default: '' },
+  matchId: { type: Number, required: true } // ✅ 추가
 })
 
 const activeTab = ref('description')
 
 const tabs = [
-  { key: 'description', label: '매치 설명' }
+  { key: 'description', label: '매치 설명' },
+  { key: 'participants', label: '참가자 목록' } // ✅ 추가
 ]
 
 // HTML 렌더링용 computed
