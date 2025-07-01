@@ -18,14 +18,17 @@
       <!-- 친구 목록 -->
       <template v-if="activeTab === 'friends'">
         <div v-if="friends.length > 0">
-          <div
-            class="friend-info"
+          <router-link
             v-for="friend in friends"
             :key="friend.userNo"
+            :to="{ name: 'Member_Profile', query: { userNo: friend.userNo } }"
+            class="friend-info-link"
           >
-            <strong>{{ friend.userName }}</strong>
-            ({{ friend.userAddr }})
-          </div>
+            <div class="friend-info">
+              <strong>{{ friend.userName }}</strong>
+              ({{ friend.userAddr }})
+            </div>
+          </router-link>
         </div>
         <div v-else class="no-data">😢 아직 친구가 없어요</div>
       </template>

@@ -156,4 +156,11 @@ const onSubmit = async () => {
   gap: 10px;
   margin-top: 20px;
 }
+.profile-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
 </style>
