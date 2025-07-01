@@ -3,13 +3,26 @@
     <!-- 왼쪽 영역 -->
     <div class="left-panel">
       <h2 class="user-name">{{ member?.userName || '불러오는 중...' }}</h2>
-      <p class="user-info">{{ member?.userAddr || '불러오는 중...' }}</p>
-      <router-link v-if="member" :to="{ name: 'Member_Friend', query: { userNo: member?.userNo } }" class="friend-count router-link">
-        {{ friends.length }}명의 친구
-      </router-link>
+      <p class="user-info">
+        {{ member?.userAddr || '불러오는 중...' }}
+        <span v-if="member?.styleCode">
+          · {{ style.styleName }}
+        </span>
+        <span v-if="member?.statCode">
+          · {{ stat.statName }}
+        </span>
+      </p>
+      <router-link v-if="member" :to="friendLink" class="friend-count router-link">{{ friends.length }}명의 친구</router-link>
 
       <router-link v-if="member" :to="{name: 'Member_Profile_Update', query: { userNo: member.userNo }}" class="btn btn-primary">프로필 설정</router-link>
 
+      <div class="info-box">
+        <h3>소개글</h3>
+        <p class="user-comment">{{ member?.userComment || '소개글이 없습니다...' }}</p>
+      </div>
+      <div class="info-box">
+        <p></p>
+      </div>
       <div class="info-box">
         <p class="label">매너</p>
         <p class="value">😊 좋아요</p>
@@ -49,14 +62,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, inject, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 
 const token = inject('token')
+const loginUserNo = inject('userNo')
 const route = useRoute()
 const member = ref(null)
+const style = ref(null)
+const stat = ref(null)
 const friends = ref([])
+
+const friendLink = computed(() => {
+  if (!member.value || !loginUserNo?.value) return {}
+
+  const isMe = member.value.userNo === loginUserNo.value
+
+  return {
+    name: isMe ? 'Member_Friend' : 'Member_Other_Friend',
+    query: { userNo: member.value.userNo }
+  }
+})
+
 const loadFriendList = async () => {
   const userNo = route.query.userNo
   if (!userNo) return
@@ -85,6 +113,8 @@ onMounted(async () => {
   }
 })
     member.value = res.data.member
+    style.value = res.data.userStyle
+    stat.value = res.data.userStat
   } catch (err) {
     console.error('회원 정보 조회 실패:', err)
   }
