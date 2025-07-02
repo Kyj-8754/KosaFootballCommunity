@@ -1,5 +1,8 @@
 package com.msa.kyj_prj.club.apply;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import com.msa.kyj_prj.alarm.AlarmMessageDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -142,7 +146,12 @@ public class ClubApplyController {
         System.out.println("club_id 파라미터 도착: " + club_id);  // ★ 여기!
         return clubApplyService.findByClubId(club_id);
     }
+ // ClubApplyController.java
+    @GetMapping("/listWithName")
+    public List<Map<String, Object>> getApplyListByClubIdWithUserName(@RequestParam("club_id") int club_id) {
+        return clubApplyService.findByClubIdWithUserName(club_id);
+    }
 
-    
+
     
 }

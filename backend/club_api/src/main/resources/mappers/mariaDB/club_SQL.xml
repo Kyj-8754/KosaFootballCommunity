@@ -115,7 +115,13 @@
   	SELECT * FROM tbl_club WHERE user_no = #{userNo}
 	</select>
 	
-	
+	<!-- team_code로 club_id만 반환 (최소 응답, 프론트가 club_id만 필요할 때) -->
+	<select id="getClubIdByTeamCode" parameterType="string" resultType="int">
+    SELECT club_id
+    FROM tbl_club
+    WHERE team_code = #{teamCode}
+	</select>
+
 
 
     

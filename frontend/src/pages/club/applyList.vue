@@ -36,55 +36,67 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 
 const route = useRoute()
-const teamCode = route.params.teamCode
+const teamCode = route.params.teamCode // 주소에서 추출
 const clubId = ref(null)
 const applyList = ref([])
 
-// 1. teamCode로 club_id 조회
-async function fetchClubIdAndApplyList() {
+onMounted(async () => {
+  if (!teamCode) {
+    alert('teamCode 파라미터가 필요합니다.')
+    return
+  }
+  await fetchClubId()
+})
+
+
+async function fetchClubId() {
   try {
-    // club_id 먼저 조회 (API는 반드시 team_code → club_id를 반환해야 함)
-    const res = await axios.get('/club/info', { params: { team_code: teamCode } })
+    const res = await axios.get('/club_api/idByTeamCode', { params: { teamCode } })
+    console.log('[fetchClubId] 응답:', res.data)
     clubId.value = res.data.club_id
-    // club_id로 신청자 리스트 조회
+    if (!clubId.value) {
+      alert('club_id를 찾을 수 없습니다.')
+      return
+    }
     fetchApplyList()
   } catch (e) {
-    alert('클럽 정보 조회 실패')
+    alert('club_id 조회 실패')
+    console.error(e)
   }
 }
 
-// 2. club_id로 신청자 리스트 조회
 async function fetchApplyList() {
-  if (!clubId.value) return
   try {
-    const res = await axios.get('/club/apply/list', { params: { club_id: clubId } })
+    console.log('[fetchApplyList] club_id:', clubId.value)
+   const res = await axios.get('/club_api/apply/listWithName', { params: { club_id: clubId.value } })
+    console.log('[fetchApplyList] 신청자 응답:', res.data)
     applyList.value = res.data
   } catch (e) {
     alert('가입 신청자 목록을 불러오지 못했습니다')
+    console.error(e)
   }
 }
 
-// 승인 처리
+
 async function approve(apply_id) {
   try {
-    await axios.post('/club/apply/approve', { apply_id })
+    await axios.post('/club_api/apply/approve', { apply_id })
     alert('승인 처리 완료')
     fetchApplyList()
   } catch (e) {
     alert('승인 실패')
+    console.error(e)
   }
 }
 
-// 거절 처리
 async function reject(apply_id) {
   try {
-    await axios.post('/club/apply/reject', { apply_id })
+    await axios.post('/club_api/apply/reject', { apply_id })
     alert('거절 처리 완료')
     fetchApplyList()
   } catch (e) {
     alert('거절 실패')
+    console.error(e)
   }
 }
-
-onMounted(fetchClubIdAndApplyList)
 </script>

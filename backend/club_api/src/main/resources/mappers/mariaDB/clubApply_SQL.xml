@@ -114,7 +114,19 @@
   WHERE club_id = #{club_id}
   ORDER BY apply_date DESC
 	</select>
+	
+	<!-- club_id로 신청자+신청자 이름 조회 -->
+	<select id="findByClubIdWithUserName" parameterType="int" resultType="map">
+  SELECT 
+    a.*,
+    u.user_name
+  FROM tbl_club_apply a
+  JOIN `user` u ON a.appli_user_no = u.user_no
+  WHERE a.club_id = #{club_id}
+  ORDER BY a.apply_date DESC
+	</select>
+
+	
 
 
-    
 </mapper>

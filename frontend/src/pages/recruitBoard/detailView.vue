@@ -52,8 +52,8 @@ import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 
 // ✅ 전역 주입값
-const token = inject('token')
-const userId = inject('userId')
+const token = inject('token') 
+//const userId = inject('userId')
 const userNo = inject('userNo')
 const router = useRouter()
 const route = useRoute()

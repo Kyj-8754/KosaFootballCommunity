@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import com.msa.kyj_prj.alarm.AlarmMessageDTO;
-
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -114,6 +114,11 @@ public class ClubApplyService {
     // ★ 전체 신청자 목록 조회 (컨트롤러에서 호출)
     public List<ClubApply> findByClubId(int club_id) {
         return clubApplyDAO.findByClubId(club_id);
+    }
+
+    // ClubApplyService.java
+    public List<Map<String, Object>> findByClubIdWithUserName(int club_id) {
+        return clubApplyDAO.findByClubIdWithUserName(club_id);
     }
 
     

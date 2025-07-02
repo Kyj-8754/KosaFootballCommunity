@@ -15,6 +15,9 @@ public interface ClubDAO {
 	Club getClubByTeamCode(String teamCode);
 	
 	Club getClubByName(String name);
+	
+	Integer getClubIdByTeamCode(String teamCode);
+
 
 	// 클럽 등록
 	int insert(Club club);
