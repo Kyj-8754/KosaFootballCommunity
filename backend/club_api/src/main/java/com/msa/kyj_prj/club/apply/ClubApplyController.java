@@ -93,7 +93,7 @@ public class ClubApplyController {
             ClubApply last = clubApplyService.findLastApplyByBnoAndApplicant(bno, user_no);
             boolean isApplied = last != null && "pending".equals(last.getStatus());
             // (4-2) 결과를 json 형식으로 반환
-            return ResponseEntity.ok(java.util.Map.of("is_applied", isApplied));
+            return ResponseEntity.ok(java.util.Map.of("status", last != null ? last.getStatus() : "none"));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("가입 신청 상태 조회 중 오류가 발생했습니다.");
         }

@@ -109,22 +109,30 @@ public class ClubApplyService {
 
         return alarm;
     }
-    
-    
+
     // ★ 전체 신청자 목록 조회 (컨트롤러에서 호출)
     public List<ClubApply> findByClubId(int club_id) {
         return clubApplyDAO.findByClubId(club_id);
     }
 
-    // ClubApplyService.java
     public List<Map<String, Object>> findByClubIdWithUserName(int club_id) {
         return clubApplyDAO.findByClubIdWithUserName(club_id);
     }
 
-    
-
-    // 가입 취소 (status를 canceled로 변경)
+    // [수정/추가] 승인(approved) 상태는 취소 불가! pending만 취소 허용
     public boolean cancelApply(int bno, int appli_user_no) {
+        ClubApply lastApply = clubApplyDAO.findLastApplyByBnoAndApplicant(bno, appli_user_no); // [추가] 최신 이력 조회
+
+        if (lastApply == null) return false; // [설명] 신청 자체가 없음
+
+        String status = lastApply.getStatus();
+        if ("approved".equals(status)) { // [설명] 이미 승인된 신청은 취소 불가
+            throw new IllegalStateException("이미 승인된 신청은 취소할 수 없습니다.");
+        }
+        if (!"pending".equals(status)) { // [설명] pending 이외는 취소 불가
+            return false;
+        }
+        // [설명] pending 상태일 때만 취소 처리
         int updated = clubApplyDAO.cancelByBnoAndApplicant(bno, appli_user_no);
         return updated > 0;
     }
@@ -132,24 +140,21 @@ public class ClubApplyService {
     // 최근 24시간 이내 취소 이력 조회
     public boolean canReApply(int bno, int appli_user_no) {
         ClubApply canceled = clubApplyDAO.findRecentCanceledApply(bno, appli_user_no);
-        return (canceled == null); // null이면 24시간 제한 없음 → 재신청 가능
+        return (canceled == null);
     }
 
-    // 가장 마지막에 신청한 취소 이력 조회
     public ClubApply findLastApplyByBnoAndApplicant(int bno, int appli_user_no) {
         return clubApplyDAO.findLastApplyByBnoAndApplicant(bno, appli_user_no);
     }
 
- // 멤버의 클럽 가입 신청을 승인(상태변경 + 멤버테이블 insert)하는 메소드
+    // 멤버의 클럽 가입 신청을 승인(상태변경 + 멤버테이블 insert)하는 메소드
     public boolean approveApply(int apply_id) {
         int updated = clubApplyDAO.updateStatus(apply_id, "approved");
         if (updated > 0) {
-            // 승인된 신청 정보(apply_id 기준) 단건 조회
-            ClubApply apply = clubApplyDAO.findByApplyId(apply_id); // 반드시 단건 조회 쿼리 필요
+            ClubApply apply = clubApplyDAO.findByApplyId(apply_id);
             if (apply != null) {
                 int club_id = apply.getClub_id();
                 int user_no = apply.getAppli_user_no();
-                // 승인과 동시에 멤버 insert (이미 insertClubMember 메서드가 존재해야 함)
                 insertClubMember(club_id, user_no);
             }
             return true;
@@ -157,14 +162,11 @@ public class ClubApplyService {
         return false;
     }
 
-
-    // 멤버의 클럽 가입 신청을 거절하는 메소드
     public boolean rejectApply(int apply_id) {
         int updated = clubApplyDAO.updateStatus(apply_id, "rejected");
         return updated > 0;
     }
 
-    // 클럽 멤버 테이블에 insert (승인 시 직접 호출)
     public int insertClubMember(int club_id, int user_no) {
         return clubApplyDAO.insertClubMember(club_id, user_no);
     }

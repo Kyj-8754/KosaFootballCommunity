@@ -50,6 +50,7 @@
     SET status = 'canceled', apply_date = NOW()
     WHERE bno = #{bno}
       AND appli_user_no = #{appli_user_no}
+      AND status = 'pending'  
 	</update>
 	
 	<select id="findRecentCanceledApply" parameterType="map" resultType="com.msa.kyj_prj.club.apply.ClubApply">
