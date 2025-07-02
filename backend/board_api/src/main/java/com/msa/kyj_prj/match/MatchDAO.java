@@ -36,6 +36,9 @@ public interface MatchDAO {
     // 특정 매치의 참가자 + 사용자 이름 조회
     List<Map<String, Object>> selectParticipantsByMatchId(@Param("matchId") Long matchId);
     
+    // 특정 매치의 참가자 + 사용자 이름 + 클럽 명 조회
+    List<Map<String, Object>> selectParticipantsWithClubByMatchId(@Param("matchId") Long matchId);
+    
     // ✅ 매치 참가자의 상태(user_status) 업데이트
     int updateMatchParticipantStatus(Map<String, Object> param);
 }

@@ -179,16 +179,33 @@
 	        mp.user_status,
 	        mp.created_at,
 	        mp.modified_at,
-	        u.user_name,
-	        u.user_phone,
-	        u.user_gender,
-	        u.user_code,
-	        u.ori_pic_name,
-	        u.new_pic_name
+	        u.user_name
 	    FROM 
 	        match_participant mp
 	    JOIN 
 	        user u ON mp.user_no = u.user_no
+	    WHERE 
+	        mp.match_id = #{matchId}
+	</select>
+	
+	<!-- 특정 매치 참가자 + 사용자 + 클럽 정보 조회 -->
+	<select id="selectParticipantsWithClubByMatchId" resultType="map" parameterType="long">
+	    SELECT 
+	        mp.match_id,
+	        mp.user_no,
+	        mp.club_id,
+	        mp.user_role,
+	        mp.user_status,
+	        mp.created_at,
+	        mp.modified_at,
+	        u.user_name,
+	        c.club_name
+	    FROM 
+	        match_participant mp
+	    JOIN 
+	        user u ON mp.user_no = u.user_no
+	    LEFT JOIN 
+	        tbl_club c ON mp.club_id = c.club_id
 	    WHERE 
 	        mp.match_id = #{matchId}
 	</select>

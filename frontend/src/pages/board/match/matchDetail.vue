@@ -11,8 +11,9 @@
     <MatchDescription
       :description="match.match_description"
       :matchId="match.match_id"
+      :matchCode="match.match_code"
     />
-
+    
     <MatchLogButton :match-id="match.match_id" />
   </div>
 </template>

@@ -71,6 +71,11 @@ public class MatchService {
         return matchDAO.selectParticipantsByMatchId(matchId);
     }
     
+    // 특정 매치의 참가자 + 사용자 이름 + 클럽 명 조회
+    public List<Map<String, Object>> selectParticipantsWithClubByMatchId(Long matchId) {
+        return matchDAO.selectParticipantsWithClubByMatchId(matchId);
+    }
+    
     // 매치 참가자 상태 업데이트
     public int updateMatchParticipantStatus(Map<String, Object> param) {
         return matchDAO.updateMatchParticipantStatus(param);
