@@ -63,9 +63,18 @@
       </div>
 
       <!-- 팀장만 수정 버튼 -->
-       <div v-if="club && userNo && club.user_no === userNo">
-        <button @click="goToEdit" class="btn btn-primary">수정하기</button>
-      </div>
+<div class="mb-2 text-end">
+  <button
+    v-if="club && userNo && club.user_no === userNo"
+    @click="goToEdit"
+    class="btn btn-primary me-2"
+  >수정하기</button>
+  <button
+    @click="goToList"
+    class="btn btn-outline-secondary"
+  >목록으로</button>
+</div>
+      
     </div>
 
     <p v-else class="text-muted mt-5 text-center">클럽 정보를 불러오는 중입니다...</p>
@@ -120,4 +129,11 @@ const goToEdit = () => {
     router.push(`/club/${club.value.team_code}/updateForm`)
   }
 }
+
+const goToList = () => {
+ router.push({ name: 'Club_List' })
+
+}
+
+
 </script>

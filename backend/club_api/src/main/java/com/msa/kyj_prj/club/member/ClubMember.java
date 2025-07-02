@@ -25,7 +25,7 @@ public class ClubMember {
 
     // user 테이블 컬럼 (리스트에 표시용, 추가정보)
     private String user_name;    // 사용자 이름
-    private String user_birth;   // 생년월일
-    private String user_phone;   // 연락처
-
+   // 유저의 경기 뛴 횟수
+    // 유저의 실력 레벨
+    // 경기에서 받은 mvp 횟수
 }

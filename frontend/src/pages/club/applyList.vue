@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>클럽 가입 신청자 리스트</h2>
-    <table>
+    <table class="apply-table"><!-- 추가: 클래스명 -->
       <thead>
         <tr>
           <th>신청자 번호</th>
@@ -15,7 +15,7 @@
         <tr v-for="apply in applyList" :key="apply.apply_id">
           <td>{{ apply.appli_user_no }}</td>
           <td>{{ apply.user_name || '-' }}</td>
-          <td>{{ apply.apply_date }}</td>
+          <td>{{ formatDate(apply.apply_date) }}</td>
           <td>{{ apply.status }}</td>
           <td>
             <button @click="approve(apply.apply_id)" :disabled="apply.status !== 'pending'">승인</button>
@@ -30,13 +30,60 @@
   </div>
 </template>
 
+<style scoped>
+.apply-table { /* 추가: 표 전체 스타일 */
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px; /* 추가: 위 간격 */
+  font-size: 16px;
+  background: #fff;
+  box-shadow: 0 1px 8px 0 rgba(0,0,0,0.04); /* 추가: 살짝 그림자 */
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.apply-table th, .apply-table td { /* 추가: 셀 스타일 */
+  border-bottom: 1px solid #ececec;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.apply-table th { /* 추가: 헤더 스타일 */
+  background: #f7f8fa;
+  font-weight: 600;
+}
+
+.apply-table tr:last-child td { /* 추가: 마지막 행 border 제거 */
+  border-bottom: none;
+}
+
+.apply-table button { /* 추가: 버튼 스타일 */
+  padding: 5px 14px;
+  border-radius: 5px;
+  border: 1px solid #aaa;
+  background: #f6f6f6;
+  color: #333;
+  margin: 0 2px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.apply-table button:disabled { /* 추가: 비활성 버튼 스타일 */
+  background: #e0e0e0;
+  color: #aaa;
+  border: 1px solid #ddd;
+  cursor: not-allowed;
+}
+</style>
+
+
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 
 const route = useRoute()
-const teamCode = route.params.teamCode // 주소에서 추출
+const teamCode = route.params.teamCode
 const clubId = ref(null)
 const applyList = ref([])
 
@@ -48,11 +95,9 @@ onMounted(async () => {
   await fetchClubId()
 })
 
-
 async function fetchClubId() {
   try {
     const res = await axios.get('/club_api/idByTeamCode', { params: { teamCode } })
-    console.log('[fetchClubId] 응답:', res.data)
     clubId.value = res.data.club_id
     if (!clubId.value) {
       alert('club_id를 찾을 수 없습니다.')
@@ -67,16 +112,13 @@ async function fetchClubId() {
 
 async function fetchApplyList() {
   try {
-    console.log('[fetchApplyList] club_id:', clubId.value)
-   const res = await axios.get('/club_api/apply/listWithName', { params: { club_id: clubId.value } })
-    console.log('[fetchApplyList] 신청자 응답:', res.data)
+    const res = await axios.get('/club_api/apply/listWithName', { params: { club_id: clubId.value } })
     applyList.value = res.data
   } catch (e) {
     alert('가입 신청자 목록을 불러오지 못했습니다')
     console.error(e)
   }
 }
-
 
 async function approve(apply_id) {
   try {
@@ -98,5 +140,23 @@ async function reject(apply_id) {
     alert('거절 실패')
     console.error(e)
   }
+}
+
+
+function formatDate(dateStr) {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  if (isNaN(date)) return dateStr;
+  const pad = n => n.toString().padStart(2, '0');
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate())
+  ].join('-') + ' ' +
+    [
+      pad(date.getHours()),
+      pad(date.getMinutes()),
+      pad(date.getSeconds())
+    ].join(':');
 }
 </script>
