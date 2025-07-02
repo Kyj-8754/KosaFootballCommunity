@@ -10,6 +10,7 @@
         <h5 class="card-title">{{ stadiumDB.svcnm }}</h5>
         <p class="card-text">주소: {{ stadiumDB.adres }}</p>
         <p class="card-text">운영시간: {{ stadiumDB.v_MIN }} ~ {{ stadiumDB.v_MAX }}</p>
+        <p class="card-text">가격: {{ stadiumDB.price }}</p>
       </div>
     </div>
 
@@ -107,7 +108,8 @@ watch(UserDB, (newVal) => {
 const reservation = ref({
   slot_id: '',               // 선택한 시간 슬롯 ID
   reservation_type: '',                 // 'social' or 'match'
-  user_no: UserDB.value.user_no   // 사용자 번호
+  user_no: UserDB.value.user_no,   // 사용자 번호
+  price: stadiumDB.price
 })
 
 const showModal = ref(false)
@@ -130,9 +132,14 @@ const confirmReservation = async () => {
       { headers: { 'Content-Type': 'application/json' } }
     );
 
+    if (res.data.res_code === '200') {
+    alert(res.res_msg);
+
+    // 🎯 stadium 정보 초기화
+    stadiumStore.clearStadium();
     const reservationId = res.data.reservation_id;
-    alert(res.data); // "예약이 완료되었습니다." 또는 실패 메시지
-    router.push({name: 'reservation_Confirm', params: {reservationId}})
+    router.push({name: 'reservation_Confirm', params: {reservationId}});
+  }
   } catch (error) {
     alert("서버 오류가 발생했습니다.");
     console.error(error);

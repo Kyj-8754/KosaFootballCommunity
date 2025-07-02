@@ -1,0 +1,48 @@
+CREATE DEFINER=`kosa`@`localhost` PROCEDURE `kosa_db`.`generate_reservation_slots`()
+BEGIN
+  DECLARE done INT DEFAULT FALSE;
+  DECLARE v_svcid VARCHAR(50);
+  DECLARE v_vmin TIME;
+  DECLARE v_vmax TIME;
+
+  DECLARE cur CURSOR FOR SELECT svcid, v_min, v_max FROM stadium;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  
+    -- 슬롯 중복 방지를 위해 오늘 이후 모든 슬롯 제거
+  DELETE FROM reservation_slot WHERE slot_date >= CURDATE();
+    
+
+  SET @base_date = CURDATE();  -- 오늘 날짜 기준
+  SET @days_ahead = 7;
+
+  OPEN cur;
+
+  read_loop: LOOP
+    FETCH cur INTO v_svcid, v_vmin, v_vmax;
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+
+    SET @i = 0;
+    day_loop: WHILE @i < @days_ahead DO
+      SET @target_date = DATE_ADD(@base_date, INTERVAL @i DAY);
+      SET @current_time = v_vmin;
+
+      WHILE ADDTIME(@current_time, '02:00:00') <= v_vmax DO
+        INSERT INTO reservation_slot (svcid, slot_date, start_time, end_time)
+        VALUES (
+          v_svcid,
+          @target_date,
+          @current_time,
+          ADDTIME(@current_time, '02:00:00')
+        );
+        SET @current_time = ADDTIME(@current_time, '02:00:00');
+      END WHILE;
+
+      SET @i = @i + 1;
+    END WHILE;
+
+  END LOOP;
+
+  CLOSE cur;
+END
