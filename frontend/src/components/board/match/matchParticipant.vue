@@ -17,6 +17,9 @@
       <ul v-if="filteredParticipants.length > 0">
         <li v-for="p in filteredParticipants" :key="p.user_no" class="participant-item">
           <strong>{{ p.user_name }}</strong>
+          <template v-if="props.matchCode === 'league' && p.club_name">
+            (<span class="club-name">{{ p.club_name }}</span>)
+          </template>
           - 신청일: {{ formatDate(p.created_at) }}
           <select v-model="p.user_status" @change="updateStatus(p)">
             <option value="apply">신청자</option>
@@ -36,10 +39,8 @@ import axios from 'axios'
 import { format } from 'date-fns'
 
 const props = defineProps({
-  matchId: {
-    type: Number,
-    required: true
-  }
+  matchId: { type: Number, required: true },
+  matchCode: { type: String, required: true } // ✅ 추가
 })
 
 const participants = ref([])
@@ -62,9 +63,14 @@ const fetchParticipants = async () => {
   if (!props.matchId) return
   loading.value = true
   try {
-    const res = await axios.get('/board_api/match/participants', {
+    const endpoint = props.matchCode === 'league'
+      ? '/board_api/match/participantswithclub'
+      : '/board_api/match/participants'
+
+    const res = await axios.get(endpoint, {
       params: { matchId: props.matchId }
     })
+
     participants.value = res.data
   } catch (err) {
     console.error('참가자 목록 조회 실패:', err)
