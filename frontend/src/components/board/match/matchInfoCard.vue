@@ -55,10 +55,14 @@
 
     <!-- 기타 정보 -->
     <div class="meta">
+      <span>담당 매니저: {{ match.manager_name }}</span>
       <span>성별 제한: {{ genderLabel(match.gender_condition) }}</span>
-      <span>현재 인원 수: {{ currentCount }} / 18</span>
-      <span>매치 상태: {{ statusLabel(match.match_status) }}</span>
-      <span>매치 종류: {{ codeLabel(match.match_code) }}</span>
+      <span v-if="match.match_code === 'social'">
+        현재 인원 수: {{ currentCount }} / 18
+      </span>
+      <span v-else-if="match.match_code === 'league'">
+        현재 팀 수: {{ currentCount }} / 3
+      </span>
     </div>
   </div>
 </template>
