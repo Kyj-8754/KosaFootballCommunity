@@ -49,5 +49,12 @@ public class MatchLogController {
         return matchLogService.getApprovedTeamsByMatchId(match_id);
     }
 
+    // 테스트용 api
+    @GetMapping("/sets/{match_id}")
+    public List<List<MatchLog>> getMatchLogSets(@PathVariable("match_id") Long match_id) {
+        List<MatchLog> allLogs = matchLogService.getLogsByMatchId(match_id);
+        return matchLogService.splitLogsByMatchSet(allLogs);
+    }
+
 
 }

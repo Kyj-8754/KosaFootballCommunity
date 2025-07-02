@@ -1,6 +1,7 @@
 <template>
   <select v-model="selectedMember">
     <option disabled value="">회원 선택</option>
+    <option :value="null">선택 안 함</option>
     <option v-for="member in members" :key="member.user_no" :value="member.user_no">
       {{ member.user_name }}
     </option>
