@@ -1,7 +1,5 @@
 <template>
   <div class="participant-list">
-    <h3>참가자 목록</h3>
-
     <!-- ✅ 탭 -->
     <div class="tabs">
       <button

@@ -75,6 +75,8 @@
 	        m.match_created_at,
 	        m.match_modified_at,
 	        m.user_no,
+	        m.manager_no,
+	        u.user_name AS manager_name,
 	        m.match_date,
 	        m.SVCID,
 	        m.match_closed,
@@ -98,6 +100,8 @@
 	        `match` m
 	    JOIN
 	        stadium s ON m.SVCID COLLATE utf8mb4_general_ci = s.SVCID COLLATE utf8mb4_general_ci
+	    JOIN
+	        user u ON m.manager_no = u.user_no
 	    WHERE
 	        m.match_id = #{match_id}
 	</select>
@@ -133,10 +137,22 @@
 	
 	<!-- 특정 매치의 참가자 수 조회 -->
 	<select id="countMatchParticipants" resultType="int" parameterType="long">
-	    SELECT COUNT(*)
-	    FROM match_participant
-	    WHERE match_id = #{matchId}
-	    	AND user_status = 'approve'
+	    SELECT
+	        CASE
+	            WHEN m.match_code = 'social' THEN (
+	                SELECT COUNT(*)
+	                FROM match_participant p
+	                WHERE p.match_id = m.match_id AND p.user_status = 'approve'
+	            )
+	            WHEN m.match_code = 'league' THEN (
+	                SELECT COUNT(DISTINCT p.club_id)
+	                FROM match_participant p
+	                WHERE p.match_id = m.match_id AND p.user_status = 'approve'
+	            )
+	            ELSE 0
+	        END AS participant_count
+	    FROM `match` m
+	    WHERE m.match_id = #{matchId}
 	</select>
 	
 	<!-- 사용자 번호로 클럽 정보 조회 -->
