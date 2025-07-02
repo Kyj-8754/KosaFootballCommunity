@@ -1,5 +1,7 @@
 package com.msa.kyj_prj.match.log;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,4 +42,68 @@ public class MatchLogService {
     public List<Map<String, Object>> getApprovedTeamsByMatchId(Long match_id) {
         return matchLogDAO.selectApprovedTeamsByMatchId(match_id);
     }
+    
+    // 결과 보이게끔
+    public List<List<MatchLog>> splitLogsByMatchSet(List<MatchLog> logs) {
+        logs.sort(Comparator.comparing(MatchLog::getLog_created_at));
+
+        List<List<MatchLog>> result = new ArrayList<>();
+        List<MatchLog> currentSet = null;
+        boolean inMatch = false;
+        boolean waitingForResult = false;
+
+        for (MatchLog log : logs) {
+            String type = log.getLog_type();
+
+            if ("경기 참가".equals(type)) {
+                if (!inMatch) {
+                    currentSet = new ArrayList<>();
+                    result.add(currentSet);
+                    inMatch = true;
+                }
+                currentSet.add(log);
+
+            } else if ("경기 시작".equals(type)) {
+                if (!inMatch || currentSet == null) {
+                    currentSet = new ArrayList<>();
+                    result.add(currentSet);
+                    inMatch = true;
+                }
+                currentSet.add(log);
+
+            } else if ("경기 종료".equals(type)) {
+                if (currentSet != null) {
+                    currentSet.add(log);
+                    waitingForResult = true; // 승패 로그 기다림
+                }
+
+            } else if ("승리".equals(type) || "패배".equals(type) || "무승부".equals(type)) {
+                if (waitingForResult && currentSet != null) {
+                    currentSet.add(log);
+                    // 2개까지만 넣고 세트 종료
+                    long count = currentSet.stream().filter(l ->
+                            "승리".equals(l.getLog_type()) ||
+                            "패배".equals(l.getLog_type()) ||
+                            "무승부".equals(l.getLog_type())
+                    ).count();
+
+                    if (count >= 2) {
+                        currentSet = null;
+                        inMatch = false;
+                        waitingForResult = false;
+                    }
+                }
+
+            } else {
+                if (currentSet != null) {
+                    currentSet.add(log);
+                }
+            }
+        }
+
+        return result;
+    }
+
+
+
 }
