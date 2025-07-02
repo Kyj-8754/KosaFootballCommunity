@@ -30,11 +30,20 @@ public class ReservationService{
 	    }
 	}
 	
-	// 예약
-	public int reservation(Reservation resrvtion) {
-		
-		return reservationDAO.reservation(resrvtion);
+	// 예약 하기
+	public int reservation(Reservation reservation) {
+		return reservationDAO.reservation(reservation);
 	}
+	
+	// 예약된거 가져오기
+	public List<Reservation> getreservation(Long reservation_id) {
+		return reservationDAO.getReservations(reservation_id);
+	}
+	
+//	// 예약 슬롯 가져오기
+//	public List<SlotDTO> getSlot(String slot_id){
+//		return reservationDAO.getSlot(slot_id);
+//	}
 	
 }
 

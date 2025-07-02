@@ -63,26 +63,92 @@ public class ResrvationController {
 	
 	// 예약DB 저장
 	@PostMapping("reservation_std")
-	public ResponseEntity<String> reservation_std(@RequestBody Reservation reservation) {
+	public ResponseEntity<Map<String, Object>> reservation_std(@RequestBody Reservation reservation) {
+		
 		if (reservation == null) {
-	        return ResponseEntity
-	            .badRequest()
-	            .body("잘못된 요청입니다. 예약 정보가 없습니다.");
+	        return ResponseEntity.badRequest().body(Map.of("error", "Missing parameters"));
 	    }
+		Map<String, Object> resultJson = new HashMap<>();
 		
 		try {
 	            int result = reservationService.reservation(reservation);
 	            
 	            if(result ==1 ) {
-	            	return ResponseEntity.ok("예약이 완료되었습니다.");
+	            	resultJson.put("res_code", "200");
+	            	resultJson.put("res_msg", "예약이 완료 되었습니다.");
+	            	resultJson.put("reservation_id", reservation.getReservation_id());
+	            	return ResponseEntity.ok(resultJson);
 	            } else {
-	                return ResponseEntity.ok("예약에 실패하였습니다.");
+	            	resultJson.put("res_code", "400");
+	            	resultJson.put("res_msg", "잘못된 요청: ");
+	                 return ResponseEntity.badRequest().body(resultJson);
 	            }
             } catch (Exception e) {
- 
-            return ResponseEntity
-            		.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            		.body("서버 오류:" + e.getMessage() + "관리자에게 문의해주세요");
+            	resultJson.put("res_code", "500");
+            	resultJson.put("res_msg", "서버 오류 발생 관리자 문의 필요: " + e.getMessage());
+                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(resultJson);
         }
 	}
+	
+	
+	// 예약창으로
+	@PostMapping("reservation_confirm")
+	public ResponseEntity<Map<String, Object>> getreservation(@RequestBody Map<String, Object> param) {
+		 long reservation_id = Long.parseLong(param.get("reservation_id").toString());
+//		if (reservatio long reservation_id = Long.parseLong(param.get("reservation_id").toString());n_id == null) {
+//	        return ResponseEntity.badRequest().body(Map.of("error", "Missing parameters"));
+//	    }
+		
+		System.out.println(reservation_id);
+		Map<String, Object> result = new HashMap<>();
+		
+		 try {
+			 List<Reservation> reservationDB = reservationService.getreservation(reservation_id);
+	            result.put("res_code", "200");
+	            result.put("res_msg", "예약 슬롯 조회 성공");
+	            result.put("reservationDB", reservationDB);
+	            return ResponseEntity.ok(result);
+
+	        } catch (IllegalArgumentException e) {
+	            result.put("res_code", "400");
+	            result.put("res_msg", "잘못된 요청: " + e.getMessage());
+	            return ResponseEntity.badRequest().body(result);
+
+	        } catch (Exception e) {
+	            result.put("res_code", "500");
+	            result.put("res_msg", "서버 오류 발생: " + e.getMessage());
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+	        }    
+	}
+	
+//	// 예약창에서 슬롯 꺼내기
+//		@PostMapping("getslot")
+//		public ResponseEntity<Map<String, Object>> getslot(String slot_id) {
+////			if (reservatio long reservation_id = Long.parseLong(param.get("reservation_id").toString());n_id == null) {
+////		        return ResponseEntity.badRequest().body(Map.of("error", "Missing parameters"));
+////		    }
+//			
+//			System.out.println(slot_id);
+//			Map<String, Object> result = new HashMap<>();
+//			
+//			 try {
+//				 List<Reservation> slotDB = reservationService.getSlot(slot_id);
+//		            result.put("res_code", "200");
+//		            result.put("res_msg", "예약 슬롯 조회 성공");
+//		            result.put("slotDB", slotDB);
+//		            return ResponseEntity.ok(result);
+//
+//		        } catch (IllegalArgumentException e) {
+//		            result.put("res_code", "400");
+//		            result.put("res_msg", "잘못된 요청: " + e.getMessage());
+//		            return ResponseEntity.badRequest().body(result);
+//
+//		        } catch (Exception e) {
+//		            result.put("res_code", "500");
+//		            result.put("res_msg", "서버 오류 발생: " + e.getMessage());
+//		            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+//		        }    
+//		}
+	            
+	
 }

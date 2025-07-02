@@ -4,26 +4,39 @@
 			<main class="main-area">
 				<h2>구장 상세페이지</h2>
 			<div class="container my-4">
-  				<div class="row">
+				<div class="row g-4 align-items-start">
 					<!-- 좌측: 이미지 -->
-					<div class="col-md-5">
-					<img :src="stadiumDB.img_PATH" class="img-fluid border rounded" />
+					<div class="col-md-5 d-flex justify-content-center">
+						<img :src="stadiumDB.img_PATH" class="img-fluid border rounded shadow-sm" 
+						style="max-width: 100%; max-height: 360px; aspect-ratio: 4/3; object-fit: cover;" />
 					</div>
-						<!-- 우측: 달력 -->
-						<div class="col-md-7">
-							 <v-calendar
-								is-expanded
-								:attributes="[
-								{
+
+					<!-- 우측: 달력 + 가격 -->
+					<div class="col-md-7">
+						<div class="mb-3 d-flex justify-content-between align-items-center">
+							<h5 class="mb-0 fw-bold">이용 요금</h5>
+							<span class="fs-4 fw-bold text-primary">{{ stadiumDB.price }}원</span>
+						</div>
+						<div class="p-2 border rounded bg-light" style="max-width: 320px;">
+							<v-calendar
+							is-expanded
+							:attributes="[{
 								key: 'available',
 								dates: availableDates,
 								highlight: true,
 								contentClass: 'available-date'
-								}
-								]"
-								@dayclick="onDayClick"
-								/>
-  					</div>
+							},
+							selectedDate?{
+								key: 'selected',
+								dates: selectedDate.value,
+								highlight: true,
+								contentClass: 'selected-date'
+							}
+							:null]"
+							@dayclick="onDayClick"
+							/>
+						</div>
+					</div>
 				</div>
 				<!-- 상단 버튼들 -->
 				<div class="d-flex justify-content-end gap-2 my-3">
@@ -136,7 +149,7 @@
 	</div>
 </template>
 
-<style>
+<style scoped>
 .rating-input-stars {
   display: flex;
   user-select: none;
@@ -201,6 +214,21 @@
   width: 0%; /* ← JS에서 동적으로 0%, 50%, 100% 설정 */
 
 }
+
+/* 예약 가능 날짜 (연한 파랑) */
+.available-date {
+  background-color: #e5f1ff !important;
+  color: #0d6efd;
+  border-radius: 50%;
+}
+
+.selected-date{
+	background-color: black !important;
+	color: white !important;
+	border-radius: 50%;
+	font-weight: bold;
+	box-shadow: 0 0 0 2px white, 0 0 0 4px #0d6efd; /* 시각적 강조 */
+}
 </style>
 
 <script setup>
@@ -222,7 +250,10 @@
 	const activeTab = ref('overview')
 	// 달력관련 시작
 
+	// 예약 가능한 날짜
 	const availableDates = ref([])
+	// 예약 선택 날짜
+	const selectedDate = ref(null)
 
 	const formatDate = (date) => {
   const y = date.getFullYear()
@@ -239,8 +270,8 @@ const onDayClick = (day) => {
     return // 예약 불가 날짜는 무시
   }
 
-  alert(`예약 창으로 이동: ${dateStr}`)
-  router.push({name: 'reservation_Form', query: {date: dateStr, SVCID: SVCID}})
+  selectedDate.value = dateStr;
+  
 }
 
 
@@ -326,6 +357,11 @@ const onDayClick = (day) => {
 	// 구장 목록으로 넘어가기
 	function goToList(){
 		router.push({name: 'Stadium_List'})
+	}
+
+	// 예약 창으로 넘어가기
+	function goToReservation(){
+		router.push({name: 'reservation_Form', query: {date: selectedDate.value, SVCID: SVCID}})
 	}
 
 	// 댓글 등록
