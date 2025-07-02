@@ -53,4 +53,9 @@ public interface ClubApplyDAO {
     
     // 단건 조회
     ClubApply findByApplyId(@Param("apply_id") int apply_id);
+    
+    // club id 로 신청자 이름 조회
+    List<Map<String, Object>> findByClubIdWithUserName(int club_id);
+
+
 }

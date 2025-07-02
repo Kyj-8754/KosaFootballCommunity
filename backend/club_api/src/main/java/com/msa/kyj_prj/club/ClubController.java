@@ -139,7 +139,19 @@ public class ClubController {
         }
     }
 
-    
+ // ✅ teamCode로 club_id만 반환하는 엔드포인트 (프론트 연동용)
+    @GetMapping("/idByTeamCode")
+    public ResponseEntity<Map<String, Integer>> getClubIdByTeamCode(@RequestParam("teamCode") String teamCode) {
+        Club club = clubService.findByTeamCode(teamCode);
+        Map<String, Integer> result = new HashMap<>();
+        if (club != null) {
+            result.put("club_id", club.getClub_id());
+            return ResponseEntity.ok(result); // { "club_id": 24 }
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     
     
     
