@@ -21,6 +21,9 @@
           :matchCode="matchCode"
         />
       </div>
+      <div v-else-if="activeTab === 'results'">
+        <MatchResult :matchId="matchId" />
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +31,7 @@
 <script setup>
 import { ref, computed, defineProps } from 'vue'
 import MatchParticipant from '@/components/board/match/matchParticipant.vue'
+import MatchResult from './matchResult.vue'
 
 const props = defineProps({
   description: { type: String, default: '' },
@@ -39,7 +43,8 @@ const activeTab = ref('description')
 
 const tabs = [
   { key: 'description', label: '매치 설명' },
-  { key: 'participants', label: '참가자 목록' } // ✅ 추가
+  { key: 'participants', label: '참가자 목록' },
+  { key: 'results', label: '경기 결과' } // ✅ 추가
 ]
 
 // HTML 렌더링용 computed
