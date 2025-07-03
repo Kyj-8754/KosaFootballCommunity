@@ -45,5 +45,20 @@
 		FROM local_account 
 		WHERE user_no = #{userNo}
 	</select>
+	
+	<!-- provider와 providerId로 소셜 계정 조회 -->
+	<select id="findSocialAccountSecurity" resultType="com.msa.do_security.security.vo.SocialAccountVO">
+		SELECT *
+		FROM social_account
+		WHERE provider = #{provider}
+		AND provider_id = #{providerId}
+	</select>
+	
+	<!-- user_no로 UserVO 조회 -->
+	<select id="findUserByUserNoSecurity" parameterType="int" resultType="com.msa.do_security.security.vo.UserVO">
+		SELECT *
+		FROM user
+		WHERE user_no = #{userNo}
+	</select>
 
 </mapper>

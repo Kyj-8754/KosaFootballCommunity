@@ -69,6 +69,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 		// Header에 전달된 Authorization의 값을 얻는다
 		String headerStr = request.getHeader("Authorization");
 		log.info("요청 Authorization 헤더: {}", headerStr);
+		log.info("요청 Method = {}, URI = {}, Authorization 헤더 = {}", request.getMethod(), request.getRequestURI(), request.getHeader("Authorization"));
 		// Authorization의 값이 존재하지 않으면 오류 발생한다
 		if (headerStr == null || headerStr.length() < 8) {
 			throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.UNACCEPT);
