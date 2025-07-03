@@ -40,6 +40,7 @@ public class Match {
     private String AREANM;
     private String ADRES;
     private String DTLCONT;
+    private Integer price;
     
     // 유저 테이블 조인
     private String manager_name;

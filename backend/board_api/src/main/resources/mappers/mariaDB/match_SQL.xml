@@ -95,7 +95,8 @@
 	        s.ORGNM,
 	        s.SVCENDTELNO,
 	        s.AREANM,
-	        s.ADRES
+	        s.ADRES,
+	        s.price
 	    FROM
 	        `match` m
 	    JOIN
