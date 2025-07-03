@@ -146,7 +146,10 @@ const loadFriendList = async () => {
   if (!userNo?.value) return
   try {
     const res = await axios.get('/login_api/mypage/friends', {
-      params: { userNo: userNo.value }
+      params: { userNo: userNo.value },
+      headers: {
+      Authorization: `Bearer ${token.value}`
+      }
     })
     if (res.data?.res_code === '200') {
       friends.value = res.data.data
@@ -160,7 +163,10 @@ const loadPendingRequests = async () => {
   if (!userNo?.value) return
   try {
     const res = await axios.get('/login_api/mypage/pending', {
-      params: { userNo: userNo.value }
+      params: { userNo: userNo.value },
+      headers: {
+      Authorization: `Bearer ${token.value}`
+      }
     })
     if (res.data?.res_code === '200') {
       pending.value = res.data.data
@@ -182,6 +188,9 @@ const searchFriends = async () => {
       params: {
         keyword,
         loginUserNo: userNo.value
+      },
+      headers: {
+      Authorization: `Bearer ${token.value}`
       }
     })
 
@@ -207,6 +216,10 @@ const requestFriend = async (targetUserNo) => {
     await axios.post('/login_api/mypage/request', {
       requesterNo: userNo.value,
       requestedNo: targetUserNo
+    },{
+      headers: {
+      Authorization: `Bearer ${token.value}`
+      }
     })
     alert('친구 요청을 보냈습니다.')
     await searchFriends() // 상태 갱신
@@ -221,6 +234,10 @@ const acceptFriendRequest = async (requesterNo) => {
     const res = await axios.post('/login_api/mypage/accept', {
       requesterNo,
       requestedNo: userNo.value
+    },{
+      headers: {
+      Authorization: `Bearer ${token.value}`
+      }
     })
     if (res.data?.res_code === '200') {
       alert('친구 요청을 수락했습니다.')
@@ -240,6 +257,10 @@ const rejectFriendRequest = async (requesterNo) => {
     const res = await axios.post('/login_api/mypage/reject', {
       requesterNo,
       requestedNo: userNo.value
+    },{
+      headers: {
+      Authorization: `Bearer ${token.value}`
+      }
     })
     if (res.data?.res_code === '200') {
       alert('친구 요청을 거절했습니다.')

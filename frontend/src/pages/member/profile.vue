@@ -92,7 +92,10 @@ const loadFriendList = async () => {
   if (!userNo) return
   try {
     const res = await axios.get('/login_api/mypage/friends', {
-      params: { userNo }
+      params: { userNo },
+      headers: {
+      Authorization: `Bearer ${token.value}`
+      }
     })
     if (res.data?.res_code === '200') {
       friends.value = res.data.data

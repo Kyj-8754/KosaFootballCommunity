@@ -164,7 +164,8 @@ const onSubmit = async () => {
     const res = await fetch(`/login_api/mypage/update?userNo=${form.value.userNo}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json;charset=utf-8'
+        'Content-Type': 'application/json;charset=utf-8',
+				Authorization: `Bearer ${token.value}`
       },
       body: JSON.stringify(form.value)
     })
