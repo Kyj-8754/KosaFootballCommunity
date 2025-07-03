@@ -36,9 +36,10 @@
       <!-- 신청대기 목록 -->
       <template v-else-if="activeTab === 'pending'">
         <div v-if="pending.length > 0">
-          <div
+          <router-link
             v-for="user in pending"
             :key="user.userNo"
+            :to="{ name: 'Member_Profile', query: { userNo: user.userNo } }"
             class="pending-item"
           >
             <div class="pending-info">
@@ -48,23 +49,24 @@
               </span>
               <div class="action-buttons">
                 <button
-                  @click="acceptFriendRequest(user.userNo)"
+                  @click.stop.prevent="acceptFriendRequest(user.userNo)"
                   class="btn btn-success btn-sm"
                 >
                   수락
                 </button>
                 <button
-                  @click="rejectFriendRequest(user.userNo)"
+                  @click.stop.prevent="rejectFriendRequest(user.userNo)"
                   class="btn btn-danger btn-sm"
                 >
                   거절
                 </button>
               </div>
             </div>
-          </div>
+          </router-link>
         </div>
         <div v-else class="no-data">⏳ 신청 대기 중인 친구가 없어요</div>
       </template>
+
 
       <!-- 친구 검색 -->
       <template v-else-if="activeTab === 'searchFriend'">
@@ -87,12 +89,23 @@
             >
               <strong>{{ friend.userName }}</strong>
               ({{ friend.userAddr }})
-              <button
-                @click="requestFriend(friend.userNo)"
-                class="request-btn"
-              >
-                친구 신청
-              </button>
+
+              <template v-if="userNo.value !== friend.userNo">
+                <button
+                  v-if="friend.relationStatus === 'WAIT'"
+                  disabled
+                  class="request-btn disabled"
+                >
+                  친구 요청됨
+                </button>
+                <button
+                  v-else-if="friend.relationStatus == null"
+                  @click="requestFriend(friend.userNo)"
+                  class="request-btn"
+                >
+                  친구 신청
+                </button>
+              </template>
             </div>
           </div>
 
@@ -129,7 +142,6 @@ const getCount = (type) => {
   return 0
 }
 
-// ✅ 친구 목록 불러오기
 const loadFriendList = async () => {
   if (!userNo?.value) return
   try {
@@ -144,18 +156,12 @@ const loadFriendList = async () => {
   }
 }
 
-// ✅ 신청 대기 목록 불러오기
 const loadPendingRequests = async () => {
-  if (!userNo?.value) {
-    console.warn('userNo가 null이므로 요청을 중단합니다')
-    return
-  }
-
+  if (!userNo?.value) return
   try {
     const res = await axios.get('/login_api/mypage/pending', {
       params: { userNo: userNo.value }
     })
-
     if (res.data?.res_code === '200') {
       pending.value = res.data.data
     }
@@ -164,7 +170,6 @@ const loadPendingRequests = async () => {
   }
 }
 
-// ✅ 친구 검색
 const searchFriends = async () => {
   const keyword = searchKeyword.value.trim()
   if (!keyword) {
@@ -173,12 +178,15 @@ const searchFriends = async () => {
   }
 
   try {
-    const response = await axios.get(`/login_api/mypage/search`, {
-      params: { keyword }
+    const res = await axios.get('/login_api/mypage/search', {
+      params: {
+        keyword,
+        loginUserNo: userNo.value
+      }
     })
 
-    if (response.data?.res_code === '200' && response.data.data) {
-      searchResults.value = [response.data.data]
+    if (res.data?.res_code === '200' && res.data.data) {
+      searchResults.value = [res.data.data]
     } else {
       searchResults.value = []
     }
@@ -188,16 +196,34 @@ const searchFriends = async () => {
     alert('검색 중 문제가 발생했습니다.')
   }
 }
+
+const requestFriend = async (targetUserNo) => {
+  if (!userNo?.value) {
+    alert('로그인이 필요합니다.')
+    return
+  }
+
+  try {
+    await axios.post('/login_api/mypage/request', {
+      requesterNo: userNo.value,
+      requestedNo: targetUserNo
+    })
+    alert('친구 요청을 보냈습니다.')
+    await searchFriends() // 상태 갱신
+  } catch (err) {
+    console.error('친구 요청 실패:', err)
+    alert('친구 요청에 실패했습니다.')
+  }
+}
+
 const acceptFriendRequest = async (requesterNo) => {
   try {
     const res = await axios.post('/login_api/mypage/accept', {
       requesterNo,
       requestedNo: userNo.value
     })
-
     if (res.data?.res_code === '200') {
       alert('친구 요청을 수락했습니다.')
-      // ✅ 수락한 유저를 pending 목록에서 제거
       pending.value = pending.value.filter(user => user.userNo !== requesterNo)
       await loadFriendList()
     } else {
@@ -215,10 +241,8 @@ const rejectFriendRequest = async (requesterNo) => {
       requesterNo,
       requestedNo: userNo.value
     })
-
     if (res.data?.res_code === '200') {
       alert('친구 요청을 거절했습니다.')
-      // ✅ 거절한 유저를 pending 목록에서 제거
       pending.value = pending.value.filter(user => user.userNo !== requesterNo)
     } else {
       alert('친구 거절에 실패했습니다.')
@@ -226,24 +250,6 @@ const rejectFriendRequest = async (requesterNo) => {
   } catch (err) {
     console.error('친구 거절 오류', err)
     alert('친구 거절 중 오류가 발생했습니다.')
-  }
-}
-// ✅ 친구 신청
-const requestFriend = async (targetUserNo) => {
-  if (!userNo?.value) {
-    alert('로그인이 필요합니다.')
-    return
-  }
-
-  try {
-    await axios.post('/login_api/mypage/request', {
-      requesterNo: userNo.value,
-      requestedNo: targetUserNo
-    })
-    alert('친구 요청을 보냈습니다.')
-  } catch (error) {
-    console.error('친구 요청 실패:', error)
-    alert('친구 요청에 실패했습니다.')
   }
 }
 
@@ -261,7 +267,6 @@ watch(userNo, (val) => {
   }
 })
 </script>
-
 
 <style scoped>
 .friend-container {
@@ -313,7 +318,6 @@ watch(userNo, (val) => {
   font-size: 14px;
 }
 
-/* 검색 UI */
 .search-wrapper {
   display: flex;
   flex-direction: column;
@@ -365,25 +369,31 @@ watch(userNo, (val) => {
 .request-btn:hover {
   background-color: #218838;
 }
+
+.request-btn.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .pending-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: nowrap;          /* ✅ 줄바꿈 방지 */
+  flex-wrap: nowrap;
   gap: 10px;
   width: 100%;
 }
 
 .pending-info span {
-  white-space: nowrap;        /* ✅ 이름과 주소 줄바꿈 방지 */
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex-grow: 1;               /* ✅ 남은 공간 차지 */
+  flex-grow: 1;
 }
 
 .action-buttons {
   display: flex;
-  flex-shrink: 0;             /* ✅ 버튼 너비 유지 */
+  flex-shrink: 0;
   gap: 6px;
 }
 </style>

@@ -1,10 +1,12 @@
 package com.msa.do_login.myPage.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.msa.do_login.myPage.dao.MyPageDAO;
+import com.msa.do_login.myPage.dto.FriendDTO;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
@@ -64,9 +66,15 @@ public class MyPageService {
 		}
 	}
 	
-	public UserVO searchFriendByKeyword (String keyword) {
+	public FriendDTO searchFriendByKeyword (String keyword, int loginUserNo) {
 		UserVO result = myPageDAO.searchFriendByKeyword(keyword);
-		return result;
+		String status = myPageDAO.getRelationStatus(result.getUserNo(), loginUserNo);
+		FriendDTO dto = new FriendDTO();
+		dto.setUserNo(result.getUserNo());
+		dto.setUserName(result.getUserName());
+		dto.setUserAddr(result.getUserAddr());
+		dto.setRelationStatus(status);
+		return dto;
 	}
 	
 	public boolean requestFriend(int requesterNo, int requestedNo) {
@@ -96,6 +104,21 @@ public class MyPageService {
 	
 	public List<UserVO> getFriendList(int userNo) {
 	    return myPageDAO.getFriendList(userNo);
+	}
+	
+	public List<FriendDTO> getOtherFriendList(int targetUserNo, int loginUserNo) {
+		List<UserVO> friendList = myPageDAO.getFriendList(targetUserNo);
+		List<FriendDTO> dtoList = new ArrayList<>();
+		for (UserVO friend : friendList) {
+			String status = myPageDAO.getRelationStatus(friend.getUserNo(), loginUserNo);
+			FriendDTO dto = new FriendDTO();
+			dto.setUserNo(friend.getUserNo());
+			dto.setUserName(friend.getUserName());
+			dto.setUserAddr(friend.getUserAddr());
+			dto.setRelationStatus(status);
+			dtoList.add(dto);
+		}
+		return dtoList;
 	}
 	
 	public UserStyle getStyleName(int styleCode) {

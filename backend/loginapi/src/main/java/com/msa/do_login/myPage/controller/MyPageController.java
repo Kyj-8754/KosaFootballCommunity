@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.msa.do_login.myPage.dto.FriendDTO;
 import com.msa.do_login.myPage.service.MyPageService;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
@@ -106,11 +107,33 @@ public class MyPageController {
 	    return ResponseEntity.ok(res);
 	}
 	
+	@GetMapping("/otherFriends")
+	public ResponseEntity<Map<String, Object>> getOtherFriendList(
+	        @RequestParam("targetUserNo") int targetUserNo,
+	        @RequestParam("loginUserNo") int loginUserNo) {
+
+	    log.info("다른 사용자의 친구 목록 조회 요청: targetUserNo = {}, loginUserNo = {}", targetUserNo, loginUserNo);
+
+	    List<FriendDTO> friendList = myPageService.getOtherFriendList(targetUserNo, loginUserNo);
+	    Map<String, Object> res = new HashMap<>();
+	    if (friendList == null || friendList.isEmpty()) {
+	        res.put("res_code", "204");
+	        res.put("res_msg", "친구가 없습니다.");
+	        res.put("data", Collections.emptyList());
+	    }else {	    	
+	    	res.put("res_code", "200");
+	    	res.put("res_msg", "다른 사용자의 친구 목록 조회 성공");
+	    	res.put("data", friendList);
+	    }
+	    return ResponseEntity.ok(res);
+	}
+	
 	@GetMapping("/search")
-	public ResponseEntity<Map<String, Object>> searchFriends(@RequestParam("keyword") String keyword) {
+	public ResponseEntity<Map<String, Object>> searchFriends(@RequestParam("keyword") String keyword,
+			@RequestParam("loginUserNo") int loginUserNo) {
 	    log.info("친구 검색 요청 도착. keyword = {}", keyword);
 
-	    UserVO result = myPageService.searchFriendByKeyword(keyword);
+	    FriendDTO result = myPageService.searchFriendByKeyword(keyword, loginUserNo);
 
 	    Map<String, Object> response = new HashMap<>();
 	    

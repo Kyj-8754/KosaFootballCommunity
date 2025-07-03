@@ -34,7 +34,7 @@
 		FROM social_account
 		WHERE user_no = #{userNo}
 	</select>
-	
+	<!-- 회원 정보 수정 로직 -->
 	<update id="update">
 	UPDATE user
 	SET user_name = #{userName},
@@ -47,6 +47,7 @@
 	WHERE user_no = #{userNo}
 	</update>
 	
+	<!-- 프로필 정보 수정 로직 -->
 	<update id="updateProfile">
 	UPDATE user
 	SET user_name = #{userName},
@@ -55,8 +56,9 @@
 		stat_code = #{statCode}
 	WHERE user_no = #{userNo}
 	</update>
-
-	 <insert id="history">
+	
+	<!-- 회원 정보 수정 이력 남기기 위한 로직 -->
+	<insert id="history">
 		INSERT INTO user_mod_history (
 			user_no, mod_user_name, mod_user_birth, mod_user_phone, mod_user_post_code,
 			mod_user_addr, mod_user_detail_addr, mod_ori_pic_name, mod_new_pic_name, mod_date,
@@ -71,12 +73,14 @@
 		)
 	</insert>
 	
+	<!-- 회원 코드로 회원 정보 검색하기 -->
 	<select id="searchFriendByKeyword" parameterType="String" resultType="com.msa.do_login.user.vo.UserVO">
 		SELECT * 
 		FROM user
 		WHERE user_code = #{keyword}
 	</select>
 	
+	<!-- 친구 신청 처리 로직 -->
 	<insert id="insertFriendRequest">
 	    INSERT INTO user_relation (
 	        from_user_no,
@@ -88,6 +92,7 @@
 	    )
 	</insert>
 	
+	<!-- 사용자의 친구 요청 대기중인 목록 추출 로직 -->
 	<select id="getPendingRequests" parameterType="int" resultType="com.msa.do_login.user.vo.UserVO">
 		SELECT u.* 
 		FROM user_relation r
@@ -96,6 +101,7 @@
 		AND r.relation_status = 'WAIT'
 	</select>
 	
+	<!-- 친구 수락 요청 처리 로직 -->
 	<update id="updateRelationStatusToAccept">
 		UPDATE user_relation
 		SET relation_status = 'ACCEPTED'
@@ -104,14 +110,15 @@
 		AND relation_status = 'WAIT'
 	</update>
 	
-	<update id="deleteRelationRequest">
-		UPDATE user_relation
-		SET relation_status = 'DECLINED'
-		WHERE from_user_no = #{requesterNo}
-		AND to_user_no = #{requestedNo}
-		AND relation_status = 'WAIT'
-	</update>
+	<!-- 친구 거절 요청 처리 로직 -->
+	<delete id="deleteRelationRequest">
+	    DELETE FROM user_relation
+	    WHERE from_user_no = #{requesterNo}
+	    AND to_user_no = #{requestedNo}
+	    AND relation_status = 'WAIT'
+	</delete>
 	
+	<!-- 친구 목록 가져오기 -->
 	<select id="getFriendList" parameterType="int" resultType="com.msa.do_login.user.vo.UserVO">
 	    SELECT u.*
 	    FROM user_relation r
@@ -124,16 +131,25 @@
 	    WHERE r.relation_status = 'ACCEPTED'
 	</select>
 	
+	<!-- 스타일 이름 가져오기 -->
 	<select id="getStyleName" parameterType="int" resultType="com.msa.do_login.user.vo.UserStyle">
 	    SELECT *
 	    FROM user_style
 	    WHERE style_code = #{styleCode}
 	</select>
 	
+	<!-- 스탯 이름 가져오기 -->
 	<select id="getStatName" parameterType="int" resultType="com.msa.do_login.user.vo.UserStat">
-	    SELECT *
+	    SELECT * 
 	    FROM user_stat
 	    WHERE stat_code = #{statCode}
 	</select>
 	
+	<!-- 현재 로그인된 사용자와 해당 사용자와의 친구 관계 확인 로직 -->
+	<select id="getRelationStatus" resultType="String">
+		SELECT relation_status
+		FROM user_relation
+		WHERE (from_user_no = #{targetUserNo} AND to_user_no = #{loginUserNo})
+        OR (from_user_no = #{loginUserNo} AND to_user_no = #{targetUserNo})
+	</select>
 </mapper>

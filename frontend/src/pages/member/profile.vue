@@ -16,7 +16,7 @@
 
       <router-link v-if="member" :to="{name: 'Member_Profile_Update', query: { userNo: member.userNo }}" class="btn btn-primary">프로필 설정</router-link>
 
-      <div class="info-box">
+      <div class="comment-box">
         <h3>소개글</h3>
         <p class="user-comment">{{ member?.userComment || '소개글이 없습니다...' }}</p>
       </div>
@@ -81,7 +81,9 @@ const friendLink = computed(() => {
 
   return {
     name: isMe ? 'Member_Friend' : 'Member_Other_Friend',
-    query: { userNo: member.value.userNo }
+    query: {
+      userNo: isMe ? loginUserNo.value : member.value.userNo
+    }
   }
 })
 
@@ -217,4 +219,7 @@ onMounted(async () => {
   color: #999;
 }
 
+.comment-box h3 {
+  font-size: 20px;
+}
 </style>
