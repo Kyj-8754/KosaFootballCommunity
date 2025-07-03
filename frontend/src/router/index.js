@@ -13,7 +13,6 @@ import Member_LoginForm from '@/pages/member/loginForm.vue';
 import Member_RegistForm from '@/pages/member/registForm.vue';
 import Member_DetailView from '@/pages/member/detailView.vue';
 import Member_UpdateForm from '@/pages/member/updateForm.vue';
-import Member_List from '@/pages/member/list.vue';
 import Member_SocialRegister from '@/pages/member/socialRegister.vue';
 import Member_MyPage from '@/pages/member/myPage.vue';
 import Member_Friend from '@/pages/member/friend.vue';
@@ -61,7 +60,6 @@ const routes = [
   { path: '/member/registForm', name: 'Member_RegistForm', component: Member_RegistForm },
   { path: '/member/detailView', name: 'Member_DetailView', component: Member_DetailView },
   { path: '/member/updateForm', name: 'Member_UpdateForm', component: Member_UpdateForm },
-  { path: '/member/list', name: 'Member_List', component: Member_List },
   { path: '/member/socialRegister', name: 'Member_SocialRegister', component: Member_SocialRegister },
   { path: '/member/myPage', name: 'Member_MyPage', component: Member_MyPage },
   { path: '/member/friend', name: 'Member_Friend', component: Member_Friend },

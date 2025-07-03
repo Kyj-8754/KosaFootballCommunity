@@ -37,7 +37,7 @@ const member = ref(null)
 	onMounted(() => {
 		axios.get('/login_api/member/detailView', { params: { userid }})
 			.then(res => {
-				memberDB.value = res.data.memberDB
+				member.value = res.data.member
 			})
 	})
 </script>

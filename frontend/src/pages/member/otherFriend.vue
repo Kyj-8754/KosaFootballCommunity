@@ -68,6 +68,9 @@ const loadFriendList = async () => {
       params: {
         targetUserNo,        // 조회 대상 사용자의 친구 목록
         loginUserNo: loginUserNo.value  // 로그인한 사용자 기준의 관계 판단
+      },
+      headers: {
+      Authorization: `Bearer ${token.value}`
       }
     })
 
@@ -84,6 +87,10 @@ const requestFriend = async (targetUserNo) => {
     await axios.post('/login_api/mypage/request', {
       requesterNo: loginUserNo.value,
       requestedNo: targetUserNo
+    },{
+      headers: {
+      Authorization: `Bearer ${token.value}`
+      }
     })
     alert('친구 요청을 보냈습니다.')
     await loadFriendList() // 다시 불러와서 relationStatus 반영
