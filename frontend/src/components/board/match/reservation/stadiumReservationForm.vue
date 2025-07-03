@@ -54,7 +54,6 @@
         </div>
         <div class="d-flex justify-content-between">
           <button class="btn btn-secondary" @click="$emit('back')">이전</button>
-          <button class="btn btn-primary" @click="confirmReservation">예약하기</button>
         </div>
       </div>
     </div>
@@ -95,29 +94,17 @@ const timeSlots = computed(() => {
   })
 })
 
-// ✅ 예약 확정
-const confirmReservation = async () => {
+const getReservationData = () => {
   if (!reservation.value.slot_id || !reservation.value.reservation_type) {
-    alert('예약 시간과 유형을 선택해주세요.')
-    return
+    return null
   }
-
-  try {
-    const res = await axios.post('/reservation_api/reservation/reservation_std', {
-      ...reservation.value
-    })
-
-    if (res.data.res_code === '200') {
-      alert(res.data.res_msg)
-      emit('complete', res.data.reservation_id)
-    } else {
-      alert(res.data.res_msg || '예약 실패')
-    }
-  } catch (err) {
-    console.error('예약 요청 실패:', err)
-    alert('서버 오류가 발생했습니다.')
-  }
+  return { ...reservation.value }
 }
+
+defineExpose({
+  getReservationData
+})
+
 
 onMounted(async () => {
   // 유저 정보

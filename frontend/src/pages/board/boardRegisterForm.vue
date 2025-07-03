@@ -26,7 +26,7 @@
         <FileUpload ref="fileUploader" />
       </div>
       <div v-show="activeTab === 'reservation'">
-        <Reservation />
+        <Reservation ref="reservationRef" />
       </div>
     </div>
 
@@ -61,6 +61,8 @@ const activeTab = ref('content')
 const fileUploader = ref(null)
 const router = useRouter()
 
+const reservationRef = ref(null)
+
 const submitPost = async () => {
   const title = form.value.title.trim()
   const content = form.value.content.trim()
@@ -82,6 +84,16 @@ const submitPost = async () => {
   }
 
   try {
+    // ✅ 모집게시판이라면 예약 먼저 수행
+    if (form.value.category === '모집게시판') {
+      const result = await reservationRef.value?.requestReservation()
+      if (!result || result.res_code !== '200') {
+        alert(result?.res_msg || '예약에 실패했습니다.')
+        return
+      }
+    }
+
+    // ✅ 글 등록
     const response = await axios.post('/board_api/board', {
       board_category: form.value.category,
       board_title: title,
@@ -99,8 +111,8 @@ const submitPost = async () => {
     alert('게시글이 등록되었습니다.')
     router.push('/board/boardlist')
   } catch (error) {
-    console.error('게시글 등록 실패:', error)
-    alert('게시글 등록에 실패했습니다.')
+    console.error('등록 실패:', error)
+    alert('등록에 실패했습니다.')
   }
 }
 
