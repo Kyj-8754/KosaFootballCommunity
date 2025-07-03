@@ -9,7 +9,7 @@
     <!-- 구장 정보 -->
     <div class="venue">
       <div class="placenm">{{ match.svcnm }} - {{ match.placenm }} [{{ match.subplacenm }}]</div>
-      <div class="price">가격 미정</div>
+      <div class="price">가격 : {{ match.price }}원</div>
 
       <!-- ✅ 신청취소 버튼 (이미 신청한 경우) -->
       <button 
