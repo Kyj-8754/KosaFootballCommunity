@@ -18,7 +18,6 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mb-3">
       <div v-for="item in stadiums" :key="item.svcid" class="col">
         <div class="card h-100 shadow-sm" @click="select(item.svcid)" style="cursor: pointer;">
-          <img :src="item.img_PATH || '/default.jpg'" class="card-img-top" alt="stadium image" />
           <div class="card-body">
             <h5 class="card-title">{{ item.svcnm }}</h5>
             <p><strong>지역명:</strong> {{ item.areanm }}</p>
