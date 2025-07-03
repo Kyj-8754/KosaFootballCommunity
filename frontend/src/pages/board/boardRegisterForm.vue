@@ -1,23 +1,52 @@
 <template>
   <div class="board-register-form">
+    <!-- 제목/카테고리 -->
     <BoardHeaderForm :form="form" @submit="submitPost" />
-    <QuillEditor v-model="form.content" />
-    <FileUpload ref="fileUploader" />
-    <div v-if="form.category === '모집게시판'" class="recruit-guide">
-      <reservation />
+
+    <!-- 모집게시판인 경우만 탭 표시 -->
+    <div v-if="form.category === '모집게시판'" class="mb-3">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <button class="nav-link" :class="{ active: activeTab === 'content' }" @click="activeTab = 'content'">
+            ✍️ 내용 작성
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" :class="{ active: activeTab === 'reservation' }" @click="activeTab = 'reservation'">
+            🏟️ 예약 정보
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 탭 전환 콘텐츠 -->
+    <div v-if="form.category === '모집게시판'">
+      <div v-show="activeTab === 'content'">
+        <QuillEditor v-model="form.content" />
+        <FileUpload ref="fileUploader" />
+      </div>
+      <div v-show="activeTab === 'reservation'">
+        <Reservation />
+      </div>
+    </div>
+
+    <!-- 모집게시판이 아닌 경우 기본적으로 에디터만 표시 -->
+    <div v-else>
+      <QuillEditor v-model="form.content" />
+      <FileUpload ref="fileUploader" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, inject, onMounted } from 'vue'
-import { useRouter } from 'vue-router' // ✅ 추가
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 import BoardHeaderForm from '@/components/board/boardRegisterHeader.vue'
 import QuillEditor from '@/components/board/boardEditer.vue'
 import FileUpload from '@/components/file/FileUpload.vue'
-import reservation from '@/components/board/match/reservation/reservation.vue'
+import Reservation from '@/components/board/match/reservation/reservation.vue'
 
 const userNo = inject('userNo')
 const userName = inject('userName')
@@ -28,26 +57,24 @@ const form = ref({
   content: ''
 })
 
+const activeTab = ref('content')
 const fileUploader = ref(null)
-const router = useRouter() // ✅ Router 인스턴스 생성
+const router = useRouter()
 
 const submitPost = async () => {
   const title = form.value.title.trim()
   const content = form.value.content.trim()
 
-  // 제목/내용/카테고리 미입력 검사
   if (!form.value.category || !title || !content) {
     alert('모든 항목을 입력해주세요.')
     return
   }
 
-  // 제목 글자 수 제한 (문자 수 기준)
   if (title.length > 100) {
     alert('제목은 100자 이하로 입력해주세요.')
     return
   }
 
-  // 내용 바이트 수 제한 (UTF-8 기준)
   const contentByteLength = new Blob([content]).size
   if (contentByteLength > 16_777_215) {
     alert('내용이 너무 깁니다. 최대 16MB까지 입력할 수 있습니다.')
@@ -64,7 +91,6 @@ const submitPost = async () => {
     })
 
     const boardId = response.data.board_id
-    console.log('등록 결과:', response.data)
 
     if (fileUploader.value) {
       await fileUploader.value.uploadAllFiles(boardId)
@@ -81,7 +107,7 @@ const submitPost = async () => {
 onMounted(() => {
   if (!userNo?.value || !userName?.value) {
     alert('로그인이 필요한 페이지입니다.')
-    router.push('/board/boardlist')  // ✅ 로그인 페이지 경로에 맞게 수정
+    router.push('/board/boardlist')
   }
 })
 </script>
