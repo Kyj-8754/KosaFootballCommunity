@@ -2,6 +2,9 @@
 	<template v-if="isAuthenticated">
     <router-link :to="{ name: 'Member_MyPage', query: { userNo: userNo } }">{{userName}} 내 정보</router-link> /
     <a href="#" @click.prevent="logout">로그아웃</a>
+    <template v-if="isAdmin">
+      / <router-link :to="{ name: 'Admin_UserList' }">회원 목록</router-link>
+    </template>
   </template>
   <template v-else>
     <router-link :to="{ name: 'Member_LoginForm' }">로그인</router-link> /
@@ -30,7 +33,7 @@
                 BoardList
             </router-link>
           </li>
-           <li class="nav-item">
+          <li class="nav-item">
             <router-link class="nav-link" :to="{ name: 'Stadium_List' }">
                 구장
             </router-link>
@@ -49,7 +52,7 @@
 </template>
 
 <script setup>
-import { inject, computed, ref } from 'vue'
+import { inject, computed, ref, watch } from 'vue'
 import logoImage from '@/assets/image/bannerlogo.jpg'
 import axios from 'axios'
 
@@ -58,10 +61,15 @@ const token = inject('token')
 const userNo = inject('userNo')
 const logout = inject('logout')
 const userName = inject('userName')
+const authCode = inject('authCode')
 
+
+watch(authCode, (newVal) => {
+  console.log('🔐 authCode 변경됨:', newVal)
+})
 // 로그인 여부 계산
 const isAuthenticated = computed(() => !!token?.value)
-
+const isAdmin = computed(() => authCode?.value === 'ROLE_A1')
 const isNavShow = ref(false)
 
 const runWeatherCollector = async () => {
