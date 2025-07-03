@@ -10,12 +10,12 @@
         </option>
       </select>
       <input v-model="searchValue" type="text" class="form-control w-auto" placeholder="검색어" />
-      <button @click="fetchData" class="btn btn-outline-primary btn-sm">검색</button>
+      <button @click="handleSearch" class="btn btn-outline-primary btn-sm">검색</button>
       <button @click="resetSearch" class="btn btn-secondary btn-sm">초기화</button>
     </div>
 
     <!-- 구장 카드 목록 -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 mb-3">
       <div v-for="item in stadiums" :key="item.svcid" class="col">
         <div class="card h-100 shadow-sm" @click="select(item.svcid)" style="cursor: pointer;">
           <img :src="item.img_PATH || '/default.jpg'" class="card-img-top" alt="stadium image" />
@@ -30,14 +30,22 @@
         </div>
       </div>
     </div>
+
+    <!-- 페이지네이션 -->
+    <Pagination
+      :currentPage="currentPage"
+      :totalPages="totalPages"
+      @changePage="changePage"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import Pagination from '@/components/pagination.vue' 
 
-const emit = defineEmits(['select']) // 상위로 svcid 전달
+const emit = defineEmits(['select'])
 
 const searchTypes = [
   { label: '전체', value: '' },
@@ -49,16 +57,21 @@ const searchType = ref('')
 const searchValue = ref('')
 const stadiums = ref([])
 
+const currentPage = ref(1)
+const totalPages = ref(1)
+
 const fetchData = async () => {
   try {
     const res = await axios.get('/stadium_api/stadium/list', {
       params: {
-        pageNo: 1,
+        pageNo: currentPage.value,
         searchType: searchType.value,
         searchValue: searchValue.value
       }
     })
+
     stadiums.value = res.data.pageResponse.list || []
+    totalPages.value = res.data.pageResponse.totalPage || 1
   } catch (err) {
     console.error('구장 목록 불러오기 실패:', err)
   }
@@ -67,6 +80,17 @@ const fetchData = async () => {
 const resetSearch = () => {
   searchType.value = ''
   searchValue.value = ''
+  currentPage.value = 1
+  fetchData()
+}
+
+const handleSearch = () => {
+  currentPage.value = 1
+  fetchData()
+}
+
+const changePage = (page) => {
+  currentPage.value = page
   fetchData()
 }
 
