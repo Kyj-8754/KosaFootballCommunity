@@ -24,6 +24,7 @@
       <p><strong>시간:</strong> {{ reservation.start_time }} ~ {{ reservation.end_time }}</p>
       <p><strong>유형:</strong> {{ reservation.reservation_type }}</p>
       <p><strong>가격:</strong> {{ reservation.price }}</p>
+      <p><strong>예약 현황:</strong> {{ reservation.status }}</p>
     </div>
 
     <div class="text-center">
@@ -31,12 +32,14 @@
               class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
         💳 결제하기
       </button>
-      <button @click="requestPayment"
+      <button @click="canclePayment"
               class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
         💳 결제취소
       </button>
     </div>
   </div>
+
+ 
 </template>
 
 <script setup>
@@ -44,10 +47,12 @@ import axios from 'axios';
 import {onMounted, ref} from 'vue';
 import { useRoute, useRouter } from 'vue-router'
 
+
 const route = useRoute();
 const reservation = ref({});
 const user = ref({});
 const stadium = ref({});
+
 
 onMounted(async () =>{
   const reservation_id = route.params.reservationId;
@@ -70,8 +75,38 @@ onMounted(async () =>{
   
 })
 
-const requestPayment = () => {
-  // 결제 요청 로직 작성 예정
-  alert('결제 로직 연결 예정');
+// 결제 요청
+const requestPayment = async () => {
+  const res = await axios.post('/kakao_api/kakaopay/ready', {
+    item_name: stadium.value.svcnm,
+    total_amount: reservation.value.price,
+    partner_order_id: reservation.value.reservation_id,
+    partner_user_id: reservation.value.user_no
+  });
+
+ const redirectUrl = res.data.next_redirect_pc_url
+ openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700)
 };
+
+const openCenteredPopup = (url, title, w, h) => {
+  // 현재 브라우저 창 기준 위치
+  const dualScreenLeft = window.screenX ?? window.screenLeft
+  const dualScreenTop = window.screenY ?? window.screenTop
+
+  const width = window.outerWidth ?? document.documentElement.clientWidth
+  const height = window.outerHeight ?? document.documentElement.clientHeight
+
+  const systemZoom = width / window.screen.availWidth
+
+  const left = dualScreenLeft + (width - w) / 2 / systemZoom
+  const top = dualScreenTop + (height - h) / 2 / systemZoom
+
+  const popup = window.open(
+    url,
+    title,
+    `scrollbars=yes, width=${w}, height=${h}, top=${top}, left=${left}`
+  )
+
+  if (popup?.focus) popup.focus()
+}
 </script>

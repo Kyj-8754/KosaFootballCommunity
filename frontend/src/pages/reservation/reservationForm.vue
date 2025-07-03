@@ -136,8 +136,9 @@ const confirmReservation = async () => {
     alert(res.res_msg);
 
     // 🎯 stadium 정보 초기화
-    stadiumStore.clearStadium();
+    // stadiumStore.clearStadium();
     const reservationId = res.data.reservation_id;
+    console.log(reservationId); // ❌ lazy loading 시에는 종종 비어있음
     router.push({name: 'reservation_Confirm', params: {reservationId}});
   }
   } catch (error) {
