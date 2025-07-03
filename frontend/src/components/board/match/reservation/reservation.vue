@@ -20,14 +20,6 @@
       @complete="goToResult"
       @back="goToDetail"
     />
-
-    <!--
-    <reservationResult
-      v-else-if="currentView === 'result'"
-      :reservationId="reservationId"
-      @back="goToList"
-    />
-    -->
   </div>
 </template>
 
