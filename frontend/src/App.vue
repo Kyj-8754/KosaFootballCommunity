@@ -49,6 +49,11 @@ onMounted(() => {
   if (savedToken) {
     token.value = savedToken
     console.log("🔍 JWT Payload:", payload);
+    console.log("✅ JWT payload.value 전체:", payload.value)
+    console.log("✅ userId:", userId.value)
+    console.log("✅ userNo:", userNo.value)
+    console.log("✅ userName:", userName.value)
+    console.log("✅ authCode:", authCode.value) 
 
   }
 })
@@ -78,7 +83,7 @@ const payload = computed(() => token.value ? decodeJwtPayload(token.value) : {})
 const userId = computed(() => payload.value.userId || null)
 const userNo = computed(() => payload.value.userNo || null)
 const userName = computed(() => payload.value.userName || null)
-const authCode = computed(() => payload.value.auth || null)
+const authCode = computed(() => payload.value.authCode || null)
 
 // 로그아웃 함수
 const logout = () => {

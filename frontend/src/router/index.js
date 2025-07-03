@@ -4,6 +4,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/pages/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
 
+// 관리자 관련
+import Admin_UserList from '@/pages/admin/userList.vue';
+
 // 멤버 관련
 import OAuth_Success from '@/pages/oauth/Success.vue';
 import Member_LoginForm from '@/pages/member/loginForm.vue';
@@ -48,6 +51,9 @@ import matchLog from '@/pages/board/match/matchLog.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
+
+  // 관리자 관련
+  { path: '/admin/userList', name: 'Admin_UserList', component: Admin_UserList },
 
   // 멤버 관련
   { path: '/oauth/success', name: 'OAuth_Success', component: OAuth_Success },
