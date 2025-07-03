@@ -1,35 +1,65 @@
 <template>
   <div class="board-detail">
     <PostHeader v-if="post" :post="post" />
-    <PostContent
-      v-if="post"
-      :post="post"
-      :liked="liked"
-      :likeCount="likeCount"
-      @toggle-like="toggleLike"
-    />
-   <LikeButton
-      v-if="post"
-      :liked="liked"
-      :likeCount="likeCount"
-      @toggle-like="toggleLike"
-    />
-    <FileDownload v-if="post" :board-id="post.board_id" />
-    <PostActionButtons
-      v-if="post"
-      :userNo="userNo"
-      :postUserNo="post.user_no"
-      :authCode="authCode"
-      @edit="handleEdit"
-      @delete="handleDelete"
-    />
-    <CommentForm
-      v-if="post"
-      :boardId="post.board_id"
-      :userNo="userNo"
-      :userName="userName"
-      @submit="addComment"
-    />
+
+    <!-- 게시글 로드 전에는 아무것도 렌더링하지 않음 -->
+    <template v-if="post">
+      <!-- 모집게시판일 경우: 탭 -->
+      <div v-if="post.board_category === '모집게시판'">
+        <!-- 탭 메뉴 -->
+        <div class="tab-buttons mb-3">
+          <button
+            class="btn"
+            :class="activeTab === 'content' ? 'btn-primary' : 'btn-outline-primary'"
+            @click="activeTab = 'content'"
+          >
+            📄 게시글 내용
+          </button>
+          <button
+            class="btn ms-2"
+            :class="activeTab === 'reservation' ? 'btn-primary' : 'btn-outline-primary'"
+            @click="activeTab = 'reservation'"
+          >
+            📅 예약 정보
+          </button>
+        </div>
+
+        <!-- 탭 콘텐츠 -->
+        <div v-if="activeTab === 'content'">
+          <PostContent :post="post" :liked="liked" :likeCount="likeCount" @toggle-like="toggleLike" />
+          <LikeButton :liked="liked" :likeCount="likeCount" @toggle-like="toggleLike" />
+          <FileDownload :board-id="post.board_id" />
+        </div>
+
+        <div v-else-if="activeTab === 'reservation'">
+          <ReservationConfirm reservationId="25" class="mt-3" />
+        </div>
+      </div>
+
+      <!-- 일반 게시글 -->
+      <div v-else>
+        <PostContent :post="post" :liked="liked" :likeCount="likeCount" @toggle-like="toggleLike" />
+        <LikeButton :liked="liked" :likeCount="likeCount" @toggle-like="toggleLike" />
+        <FileDownload :board-id="post.board_id" />
+      </div>
+
+      <!-- 공통 영역 -->
+      <PostActionButtons
+        :userNo="userNo"
+        :postUserNo="post.user_no"
+        :authCode="authCode"
+        @edit="handleEdit"
+        @delete="handleDelete"
+      />
+      <CommentForm
+        :boardId="post.board_id"
+        :userNo="userNo"
+        :userName="userName"
+        @submit="addComment"
+      />
+    </template>
+
+    <!-- 댓글은 post 없어도 보여줄 수 있도록 별도 조건 -->
     <CommentList
       :comments="comments"
       :userNo="userNo"
@@ -52,6 +82,7 @@ import CommentList from '@/components/reply/replyList.vue'
 import CommentForm from '@/components/reply/replyRegisterForm.vue'
 import LikeButton from '@/components/board/boardLikeButton.vue'
 import FileDownload from '@/components/file/FileDownload.vue'
+import ReservationConfirm from '@/components/board/match/reservation/stadiumReservationResult.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -64,6 +95,8 @@ const likeCount = ref(0)
 const userNo = inject('userNo')
 const userName = inject('userName')
 const authCode = inject('authCode')
+
+const activeTab = ref('content')  // 'content' | 'reservation'
 
 const fetchPost = async () => {
   try {

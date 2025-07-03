@@ -35,7 +35,6 @@
     <!-- 결제 버튼 -->
     <div class="text-center">
       <button class="btn btn-success me-2" @click="requestPayment">💳 결제하기</button>
-      <button class="btn btn-outline-secondary" @click="$emit('back')">뒤로가기</button>
     </div>
   </div>
 </template>
