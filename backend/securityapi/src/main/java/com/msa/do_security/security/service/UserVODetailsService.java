@@ -24,11 +24,12 @@ public class UserVODetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		log.info("username = {}", username);
-		Optional<UserVO> optional = userDAO.findByUserId(username);
-		UserVO userVO = optional.orElseThrow(() -> new UsernameNotFoundException("멤버 아이디를 찾을 수 없습니다"));
+		UserVO userVO = Optional.ofNullable(userDAO.findByUserIdSecurity(username))
+                .orElseThrow(() -> new UsernameNotFoundException("멤버 아이디를 찾을 수 없습니다"));
+
 		log.info("userVO = {}", userVO);
 
-		LocalAccount account = userDAO.findAccountByUserNo(userVO.getUserNo());
+		LocalAccount account = userDAO.findAccountByUserNoSecurity(userVO.getUserNo());
 		if (account == null)
 			throw new UsernameNotFoundException("계정을 찾을 수 없습니다.");
 

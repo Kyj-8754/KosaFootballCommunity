@@ -2,6 +2,7 @@ package com.msa.do_security.security.service;
 
 import java.util.Map;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -40,10 +41,10 @@ public class OAuth2UserVOService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("소셜 로그인 정보 추출 실패");
         }
 
-        SocialAccountVO account = userDAO.findSocialAccount(provider, providerId);
+        SocialAccountVO account = userDAO.findSocialAccountSecurity(provider, providerId);
 
         if (account != null) {
-            UserVO userVO = userDAO.findUserByUserNo(account.getUserNo());
+            UserVO userVO = userDAO.findUserByUserNoSecurity(account.getUserNo());
             return new OAuth2UserVO(userVO, account, attributes);
         }
 
@@ -58,7 +59,17 @@ public class OAuth2UserVOService extends DefaultOAuth2UserService {
 
         throw new OAuth2AuthenticationException("추가 회원가입 필요");
     }
+    
+    public OAuth2UserVO loadUserByUsername(String providerId, String provider) {
+        SocialAccountVO account = userDAO.findSocialAccountSecurity(provider, providerId);
+        if (account == null) {
+            throw new UsernameNotFoundException("소셜 계정을 찾을 수 없습니다.");
+        }
 
+        UserVO userVO = userDAO.findUserByUserNoSecurity(account.getUserNo());
+        return new OAuth2UserVO(userVO, account, Map.of()); // attributes는 없어도 무방
+    }
+    
     private String extractEmail(String provider, Map<String, Object> attributes) {
         return switch (provider) {
             case "google" -> (String) attributes.get("email");
