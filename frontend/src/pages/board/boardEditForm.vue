@@ -4,8 +4,7 @@
     <QuillEditor v-model="form.content" />
     <FileUpload ref="fileRef" :initial-files="initialFiles" />
     <div v-if="form.category === '모집게시판'" class="recruit-guide">
-       여기서 예약이 가능하게끔? 할 생각 중<br>
-      컴포넌트 아무거나 하나 넣어서 하는 방식으로.
+      <reservation />
     </div>
   </div>
 </template>
@@ -18,6 +17,7 @@ import axios from 'axios'
 import BoardHeaderForm from '@/components/board/boardRegisterHeader.vue'
 import QuillEditor from '@/components/board/boardEditer.vue'
 import FileUpload from '@/components/file/FileUpload.vue'
+import reservation from '@/components/board/match/reservation/reservation.vue'
 
 const route = useRoute()
 const router = useRouter()
