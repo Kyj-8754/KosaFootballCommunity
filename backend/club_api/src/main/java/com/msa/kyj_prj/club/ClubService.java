@@ -32,37 +32,38 @@ public class ClubService {
 		return getClubByTeamCode(teamCode);
 	}
 
-	
 	// ✅ 클럽 등록 + 팀장 자동 등록
 	public int insert(Club club) {
-	    int result = clubDAO.insert(club); // 1. 클럽 생성
+		int result = clubDAO.insert(club); // 1. 클럽 생성
 
-	    Integer clubId = club.getClub_id();   // 2. 생성된 club_id (useGeneratedKeys로 주입됨)
-	    Integer userNo = club.getUser_no();   // ✅ 클럽 생성자 user_no 가져오기
+		Integer clubId = club.getClub_id(); // 2. 생성된 club_id (useGeneratedKeys로 주입됨)
+		Integer userNo = club.getUser_no(); // ✅ 클럽 생성자 user_no 가져오기
 
-	    // 3. 팀장을 club_member 테이블에 자동 등록
-	    ClubMember leader = new ClubMember();
-	    leader.setClub_id(clubId);
-	    leader.setUser_no(userNo);           // ✅ 기존 user_id → user_no로 수정
-	    leader.setRole("LEADER");            // 팀장 역할 지정
+		// 3. 팀장을 club_member 테이블에 자동 등록
+		ClubMember leader = new ClubMember();
+		leader.setClub_id(clubId);
+		leader.setUser_no(userNo); // ✅ 기존 user_id → user_no로 수정
+		leader.setRole("LEADER"); // 팀장 역할 지정
 
-	    clubMemberDAO.insert(leader);        // 4. 클럽 멤버 등록
+		clubMemberDAO.insert(leader); // 4. 클럽 멤버 등록
 
-	    return result;
+		return result;
 	}
 
-	 // ✅ userNo 기준으로 클럽이 존재하는지 여부 확인
-    public boolean hasClubByUserNo(int userNo) {
-        return clubDAO.findClubByUserNo(userNo) != null;
-    }
-    // userNo 기준으로 여러 클럽을 조회
-    public List<Club> findClubsByUserNo(int userNo) {
-        return clubDAO.findClubsByUserNo(userNo);
-    }
- // ✅ club_id 1건 조회를 위한 서비스 메서드
-    public Club findClubByUserNo(int userNo) {
-        return clubDAO.findClubByUserNo(userNo);
-    }
+	// ✅ userNo 기준으로 클럽이 존재하는지 여부 확인
+	public boolean hasClubByUserNo(int userNo) {
+		return clubDAO.findClubByUserNo(userNo) != null;
+	}
+
+	// userNo 기준으로 여러 클럽을 조회
+	public List<Club> findClubsByUserNo(int userNo) {
+		return clubDAO.findClubsByUserNo(userNo);
+	}
+
+	// ✅ club_id 1건 조회를 위한 서비스 메서드
+	public Club findClubByUserNo(int userNo) {
+		return clubDAO.findClubByUserNo(userNo);
+	}
 
 	// 클럽 이름으로 단건 조회
 	public Club findByName(String name) {
@@ -78,14 +79,41 @@ public class ClubService {
 	public int getTotalCount(Map<String, Object> params) {
 		return clubDAO.getTotalCount(params);
 	}
-	
-    // ✅ 클럽 정보 수정 - club_id 기준으로 정보 업데이트
-    public int updateClub(Club club) {
-        // clubDAO의 update 메소드 호출 (업데이트 성공 시 1 반환)
-        return clubDAO.update(club);
-    }
 
-	
-	
-	
+	// ✅ 클럽 정보 수정 - club_id 기준으로 정보 업데이트
+	public int updateClub(Club club) {
+		// clubDAO의 update 메소드 호출 (업데이트 성공 시 1 반환)
+		return clubDAO.update(club);
+	}
+
+	public String calculateClubLevel(int win, int draw, int loss) {
+		int total = win + draw + loss;
+		if (total == 0)
+			return "브론즈";
+		double rate = (double) win / total * 100;
+
+		if (rate >= 90)
+			return "다이아";
+		if (rate >= 70)
+			return "플래티넘";
+		if (rate >= 50)
+			return "골드";
+		if (rate >= 30)
+			return "실버";
+		return "브론즈";
+	}
+
+	// 경기 결과 입력/수정 시 호출 (예)
+	public void updateClubLevel(int clubId) {
+		Club club = clubDAO.getClub(clubId);
+		String clubLevel = calculateClubLevel(club.getWin_count(), club.getDraw_count(), club.getLoss_count());
+		club.setClub_level(clubLevel);
+		clubDAO.updateClubLevel(clubId, clubLevel); // update 쿼리 필요
+	}
+
+	// ✅ 클럽 로고 경로(logo_path) 업데이트 메소드
+	public void updateLogoPath(int clubId, String logoPath) {
+		clubDAO.updateLogoPath(clubId, logoPath);
+	}
+
 }

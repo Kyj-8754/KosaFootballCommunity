@@ -30,6 +30,7 @@ import Club_DetailView from '@/pages/club/detailView.vue'
 import Club_RegistForm from '@/pages/club/registForm.vue'
 import Club_UpdateForm from '@/pages/club/updateForm.vue'
 import Club_ApplyList from '@/pages/club/applyList.vue'
+import Club_MemberList from '@/pages/club/memberList.vue'
 // 모집글 관련
 import Recruit_List from '@/pages/recruitBoard/list.vue'
 import Recruit_DetailView from '@/pages/recruitBoard/detailView.vue'
@@ -70,7 +71,7 @@ const routes = [
   { path: '/club/:teamCode', name: 'Club_DetailView', component: Club_DetailView },
   { path: '/club/:teamCode/updateForm', name: 'Club_UpdateForm', component: Club_UpdateForm },
   { path: '/club/:teamCode/applyList', name: 'Club_ApplyList', component: Club_ApplyList },
-
+  { path: '/club/:teamCode/memberList', name: 'Club_MemberList', component: Club_MemberList },
 
   // 모집글 관련
   { path: '/recruitBoard', name: 'Recruit_List', component: Recruit_List },

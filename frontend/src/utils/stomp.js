@@ -11,7 +11,7 @@ let stompClient = null;
  * @param {int} userNo - 로그인된 사용자 ID
  * @param {function} onMessage - 수신 시 실행할 콜백 함수
  */
-export function conncetWebSocket(userNo, onMessage) {
+export function connectWebSocket(userNo, onMessage) {
   if (!userNo) {
     console.warn('❗ userNo가 없습니다. WebSocket 연결이 생략됩니다.');
     return;

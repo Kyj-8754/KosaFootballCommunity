@@ -70,12 +70,10 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/club_api/, "/club"),
       },
-      //   // ⭐️ 실무에서 표준으로 추천하는 /club 프록시
-      // '/club': {
-      //   target: 'http://localhost:8121',
-      //   changeOrigin: true,
-      //   // 별도의 rewrite 필요 없음 (경로가 그대로 /club로 시작)
-      // },
+      '/club_info': {
+        target: 'http://localhost:8121',
+        changeOrigin: true,
+      },
 
       '/recruits_api': {
         target: 'http://localhost:8122',
