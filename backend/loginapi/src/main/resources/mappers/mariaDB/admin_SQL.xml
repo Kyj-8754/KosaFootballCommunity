@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msa.do_login.admin.dao.AdminDAO">
+	<select id="getUserList" resultType="com.msa.do_login.user.vo.UserVO">
+		SELECT * 
+		FROM user
+		WHERE user_exit_status = 'N'
+	</select>
+</mapper>
