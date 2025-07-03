@@ -36,12 +36,12 @@ import BoardNoticeList from '@/components/board/boardNoticeList.vue'
 import BoardTable from '@/components/board/boardTable.vue'
 import Pagination from '@/components/pagination.vue'
 import SortButtons from '@/components/board/boardSortButton.vue'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
-
+const token = inject('token')
 const posts = ref([])
 const currentPage = ref(1)
 const postsPerPage = 10
@@ -72,11 +72,15 @@ const handleCategorySelect = (category) => {
 
 const fetchPosts = async () => {
   try {
+    console.log('전송할 토큰:', token.value)
     const response = await axios.get('/board_api/board/list', {
       params: {
         ...searchFilters.value,
         sortColumn: sortOptions.value.column,
         sortDirection: sortOptions.value.direction
+      },
+      headers: {
+      Authorization: `Bearer ${token.value}`
       }
     })
     posts.value = response.data
