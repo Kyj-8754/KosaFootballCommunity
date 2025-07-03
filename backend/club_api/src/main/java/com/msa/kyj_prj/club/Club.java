@@ -20,7 +20,7 @@ public class Club {
     private int user_no;   		 // 팀장의 user_no
     private String logo_path;        // 클럽 로고 이미지 경로
 
-    private int rating;              // 팀 평점
+    private String club_level;              // 팀 평점
     private int ranking;             // 팀 순위
     private int win_count;           // 승
     private int draw_count;          // 무
