@@ -17,5 +17,5 @@ public interface StadiumDAO {
 	public List<Stadium> list(Map<String, Object> map);
 	public int getTotalCount(Map<String, Object> map);
 	public void insertApiDetailLog(Map<String, Object> log);
-	public void getreservationForm(String SVCID, String date);
+	public List<Slot> getAvailableDate(String SVCID);
 }
