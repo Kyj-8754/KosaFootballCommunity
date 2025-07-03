@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.msa.do_login.myPage.dto.FriendDTO;
 import com.msa.do_login.user.vo.LocalAccount;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
@@ -41,6 +42,9 @@ public interface MyPageDAO {
 	public int deleteRelationRequest(@Param("requesterNo") int requesterNo, @Param("requestedNo") int requestedNo);
 
 	public List<UserVO> getFriendList(int userNo);
+	
+	public String getRelationStatus(@Param("targetUserNo") int targetUserNo,
+			@Param("loginUserNo") int loginUserNo);
 	
 	public UserStyle getStyleName(int styleCode);
 	
