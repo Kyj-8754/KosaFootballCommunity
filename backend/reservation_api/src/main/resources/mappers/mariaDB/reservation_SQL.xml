@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.msa.kyj_prj.reservation.ReservationDAO">		
+	<select id="getReservationForm" resultType="com.msa.kyj_prj.dto.SlotDTO">
+		SELECT 
+		rs.slot_id AS slotid, 
+		rs.svcid AS svcid,
+		rs.slot_date AS slotDate,
+		rs.start_time AS startTime,
+		rs.end_time AS endTime,
+		CASE WHEN r.slot_id IS NOT NULL THEN 'reserved' ELSE 'available' END AS reservationStatus
+	FROM reservation_slot rs
+	LEFT JOIN reservation r 
+		ON rs.slot_id = r.slot_id 
+		AND r.status = 'reserved'
+	WHERE rs.svcid = #{svcid}
+	  AND rs.slot_date = #{date}
+	ORDER BY rs.start_time
+	</select>
+	
+	<insert id="reservation" useGeneratedKeys="true" keyProperty="reservation_id">
+		insert into reservation (user_no, reservation_type, slot_id, price)
+		values(#{user_no}, #{reservation_type}, #{slot_id}, #{price})
+	</insert>
+	
+	<select id="getReservations" resultType="com.msa.kyj_prj.dto.ReservationDTO">
+		SELECT r.*, rs.slot_date, rs.start_time, rs.end_time, rs.svcid
+		FROM reservation r
+		JOIN reservation_slot rs on r.slot_id = rs.slot_id
+		where reservation_id = #{reservation_id}
+	</select>
+</mapper>

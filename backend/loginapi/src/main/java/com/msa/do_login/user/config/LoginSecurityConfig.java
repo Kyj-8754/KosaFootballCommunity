@@ -31,6 +31,7 @@ public class LoginSecurityConfig extends BaseSecurityConfig {
 	protected void customizeAuthorization(AuthorizationManagerRequestMatcherRegistry authorize) throws Exception {
 		((AuthorizedUrl) authorize.requestMatchers("/user/na/**")).permitAll();
 		((AuthorizedUrl) authorize.requestMatchers("/oauth/**")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/mypage/**")).authenticated();
 	}
 	
 	@Bean
