@@ -28,45 +28,59 @@ public class KakaoService {
 	
 	// 카카오 서버에 결제 준비 보내기
 	public Map<String, Object> paymentReady(KakaoPayRequestDTO param) {
+		PaymentDTO payment = new PaymentDTO();
+
+	    payment.setReservation_id(param.getPartnerOrderId());
+		String status = kakaoDAO.findReservationId(payment);
 		
-		
-	    Long id = savePaymentInfo(param);
-	    String approvalUrl = "http://localhost:8102/kakaopay/success?id=" + id;
-	    
-		HttpHeaders headers = new HttpHeaders();
-	    headers.set("Authorization", "KakaoAK " + ADMIN_KEY);
-	    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		if (status == null) {
+		    // 결제 이력이 없음 → 정상 진행 가능
 
-	    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-	    body.add("cid", "TC0ONETIME");
-	    body.add("partner_order_id", param.getPartnerOrderId());
-	    body.add("partner_user_id", param.getPartnerUserId());
-	    body.add("item_name", param.getItemName());
-	    body.add("quantity", 1);
-	    body.add("total_amount", String.valueOf(param.getTotalAmount()));
-	    body.add("vat_amount", 0);
-	    body.add("tax_free_amount", 0);
-	    body.add("approval_url", approvalUrl);
-	    body.add("cancel_url", "http://localhost:5173/payment/cancel");
-	    body.add("fail_url", "http://localhost:5173/payment/fail");
+		    Long id = savePaymentInfo(param);
+		    String approvalUrl = "http://localhost:8102/kakaopay/success?id=" + id;
+		    
+			HttpHeaders headers = new HttpHeaders();
+		    headers.set("Authorization", "KakaoAK " + ADMIN_KEY);
+		    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-	    HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
-	    
-	    ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-	            "https://kapi.kakao.com/v1/payment/ready",
-	            HttpMethod.POST,
-	            request,
-	            new ParameterizedTypeReference<Map<String, Object>>() {}
-	        );
+		    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		    body.add("cid", "TC0ONETIME");
+		    body.add("partner_order_id", param.getPartnerOrderId());
+		    body.add("partner_user_id", param.getPartnerUserId());
+		    body.add("item_name", param.getItemName());
+		    body.add("quantity", 1);
+		    body.add("total_amount", String.valueOf(param.getTotalAmount()));
+		    body.add("vat_amount", 0);
+		    body.add("tax_free_amount", 0);
+		    body.add("approval_url", approvalUrl);
+		    body.add("cancel_url", "http://localhost:5173/payment/cancel");
+		    body.add("fail_url", "http://localhost:5173/payment/fail");
 
-	    Map<String, Object> result = response.getBody();
-	    
-	    String tid = (String) response.getBody().get("tid");
+		    HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
+		    
+		    ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+		            "https://kapi.kakao.com/v1/payment/ready",
+		            HttpMethod.POST,
+		            request,
+		            new ParameterizedTypeReference<Map<String, Object>>() {}
+		        );
 
-	    kakaoDAO.updateTid(id, tid);
-	 
-	    
-	    return result;
+		    Map<String, Object> result = response.getBody();
+		    
+		    String tid = (String) response.getBody().get("tid");
+
+		    kakaoDAO.updateTid(id, tid);
+		 
+		    
+		    return result;
+		} else if ("paid".equals(status)) {
+		    throw new IllegalStateException("이미 결제 완료된 예약입니다.");
+		} else if ("canceled".equals(status)) {
+		    throw new IllegalStateException("이미 결제가 취소된 예약입니다.");
+		}else {
+	        // 예상 못한 상태
+	        throw new IllegalStateException("처리할 수 없는 결제 상태입니다: " + status);
+	    }
 	}
 
 	
@@ -107,7 +121,7 @@ public class KakaoService {
 	    updated.setStatus("paid");
 	    updated.setPaid_at((String) result.get("approved_at"));
 	    
-	    return kakaoDAO.updatePaymentApprove(updated) > 0;
+	    return kakaoDAO.updatePayment(updated) > 0;
 	}
 	
 	

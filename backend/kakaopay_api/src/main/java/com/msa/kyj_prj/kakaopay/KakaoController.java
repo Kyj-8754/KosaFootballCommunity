@@ -28,8 +28,20 @@ public class KakaoController {
 	@PostMapping("/ready")
 	public ResponseEntity<Map<String, Object>> payment(@RequestBody KakaoPayRequestDTO param){
 		log.info("결제 시작");
-		Map<String, Object> result = kakaoService.paymentReady(param);
-	    return ResponseEntity.ok(result); // 성공 응답 (tid, redirect_url 포함)
+		 try {
+		        Map<String, Object> result = kakaoService.paymentReady(param);
+		        return ResponseEntity.ok(result);
+		    } catch (IllegalStateException e) {
+		        return ResponseEntity.badRequest().body(Map.of(
+		            "error", true,
+		            "message", e.getMessage()
+		        ));
+		    } catch (Exception e) {
+		        return ResponseEntity.internalServerError().body(Map.of(
+		                "error", true,
+		                "message", "서버 오류가 발생했습니다: " + e.getMessage()
+		            ));
+		        }
 	}
 	
 	// 결제 승인 처리

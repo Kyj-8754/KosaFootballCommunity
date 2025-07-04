@@ -14,6 +14,6 @@ import com.msa.kyj_prj.dto.SlotDTO;
 public interface ReservationDAO {
 	public List<SlotDTO> getReservationForm(@Param("svcid") String svcid, @Param("date") String date);
 	public int reservation(Reservation reservation);
-	public List<Reservation> getReservations(Long reservation_id);
+	public ReservationDTO getReservations(Long reservation_id);
 	public List<ReservationDTO> getReservationList(String user_no);
 }
