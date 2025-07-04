@@ -27,16 +27,16 @@
       <p><strong>예약 현황:</strong> {{ reservation.status }}</p>
     </div>
 
-    <div class="text-center">
-      <button @click="requestPayment"
-              class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
-        💳 결제하기
+    <div class="text-cente" style="margin-top: 2rem;">
+      <button @click="requestPayment" class="button button-pay">
+        결제하기
       </button>
-      <button @click="cancleReservation"
-              class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
-        💳 예약취소
+
+      <button @click="cancleReservation" class="button button-cancel">
+        예약취소
       </button>
     </div>
+
   </div>
 
  
@@ -44,14 +44,15 @@
 
 <script setup>
 import axios from 'axios';
-import {onMounted, ref} from 'vue';
-import { useRoute, useRouter } from 'vue-router'
+import { inject, onMounted, ref} from 'vue';
+import { useRoute } from 'vue-router'
 
 
 const route = useRoute();
 const reservation = ref({});
 const user = ref({});
 const stadium = ref({});
+const userNo = inject('userNo') // 로그인한 유저 정보 가져옴
 
 
 onMounted(async () =>{
@@ -59,7 +60,7 @@ onMounted(async () =>{
   const res = await axios.post('/reservation_api/reservation/reservation_confirm', {
       reservation_id: reservation_id });
 
-  reservation.value = res.data.reservationDB[0];
+  reservation.value = res.data.reservationDB;
   const { user_no, svcid } = reservation.value;
 
   // 병렬로 사용자 정보와 구장 정보 가져오기
@@ -70,26 +71,42 @@ onMounted(async () =>{
 
   user.value = userRes.data.member;
   stadium.value = stadiumRes.data.stadiumDB.stadium;
-
-  reservation.value = res.data.reservationDB[0];
   
 })
 
-// 결제 요청
-const requestPayment = async () => {
-  const res = await axios.post('/kakao_api/kakaopay/ready', {
-    item_name: stadium.value.svcnm,
-    total_amount: reservation.value.price,
-    partner_order_id: reservation.value.reservation_id,
-    partner_user_id: reservation.value.user_no
-  });
-
-  const cancleReservation = async () => {
-    const res = await axios.post('',{})
+// 예약 취소
+ const cancleReservation = async () => {
+    const res = await axios.post('/reservation_api/reservation/cancle',{
+        reservation: reservation.value,
+        user_no: userNo
+    })
   }
 
- const redirectUrl = res.data.next_redirect_pc_url
- openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700)
+// 결제 요청
+const requestPayment = async () => {
+  try{
+    const res = await axios.post('/kakao_api/kakaopay/ready', {
+      item_name: stadium.value.svcnm,
+      total_amount: reservation.value.price,
+      partner_order_id: reservation.value.reservation_id,
+      partner_user_id: reservation.value.user_no
+    });
+  const redirectUrl = res.data.next_redirect_pc_url
+    if (redirectUrl) {
+        openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700);
+      } else {
+        alert("결제 URL을 받아오지 못했습니다.");
+      }
+
+  } catch (err) {
+    // 서버에서 온 에러 메시지 처리
+    if (err.response && err.response.data?.message) {
+      const message = err.response?.data?.message || "결제 요청 중 알 수 없는 오류가 발생했습니다.";
+      alert(message);
+    } else {
+      alert("결제 요청 중 오류가 발생했습니다.");
+    }
+  }
 };
 
 const openCenteredPopup = (url, title, w, h) => {
@@ -114,3 +131,29 @@ const openCenteredPopup = (url, title, w, h) => {
   if (popup?.focus) popup.focus()
 }
 </script>
+
+<style scoped>
+.button {
+  padding: 10px 16px;
+  font-weight: bold;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  margin: 0 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.button-pay {
+  background-color: #2563eb; /* blue-600 */
+  color: white;
+}
+
+.button-cancel {
+  background-color: #ef4444; /* red-500 */
+  color: white;
+}
+
+.button:hover {
+  opacity: 0.9;
+}
+</style>

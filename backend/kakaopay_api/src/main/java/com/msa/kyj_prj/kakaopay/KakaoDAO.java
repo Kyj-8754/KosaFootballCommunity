@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface KakaoDAO {
+	// 결제 준비 전 결제 판단 여부용
+	public String findReservationId(PaymentDTO param);
 	// 결제 준비 TID x
 	public void paymentReady(PaymentDTO payment);
 	// 결제 준비 TID o
@@ -14,6 +16,6 @@ public interface KakaoDAO {
 	public int paymentApprove(PaymentDTO payment);
 
 	// 결제 승인 업데이트
-	public int updatePaymentApprove(PaymentDTO updated);
+	public int updatePayment(PaymentDTO updated);
 
 }

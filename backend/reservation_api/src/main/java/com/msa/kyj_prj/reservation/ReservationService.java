@@ -37,7 +37,7 @@ public class ReservationService{
 	}
 	
 	// 예약된거 가져오기
-	public List<Reservation> getreservation(Long reservation_id) {
+	public ReservationDTO getreservation(Long reservation_id) {
 		return reservationDAO.getReservations(reservation_id);
 	}
 	

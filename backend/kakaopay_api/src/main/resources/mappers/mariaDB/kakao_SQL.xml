@@ -17,14 +17,21 @@
 		where ID = #{id}
 	</select>
 	
+	<select id="findReservationId" parameterType="com.msa.kyj_prj.kakaopay.PaymentDTO" resultType="String">
+		select status
+		from payment
+		where reservation_id = #{reservation_id}
+		ORDER BY create_at DESC
+		LIMIT 1;
+	</select>
+	
 	<update id="updateTid" parameterType="com.msa.kyj_prj.kakaopay.PaymentDTO">
 		update payment set 
 		TID = #{tid}
 		where ID = #{id}
 	</update>
 
-	
-	<update id="updatePaymentApprove">
+	<update id="updatePayment">
 		update payment set 
 		STATUS = #{status},
 		PAID_AT = #{paid_at}
