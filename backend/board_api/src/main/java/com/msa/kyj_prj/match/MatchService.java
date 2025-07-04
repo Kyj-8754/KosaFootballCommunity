@@ -1,8 +1,11 @@
 package com.msa.kyj_prj.match;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,5 +82,41 @@ public class MatchService {
     // 매치 참가자 상태 업데이트
     public int updateMatchParticipantStatus(Map<String, Object> param) {
         return matchDAO.updateMatchParticipantStatus(param);
+    }
+    
+    // 마감 처리
+    public void closeMatch(Long matchId) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("match_id", matchId);
+        param.put("match_closed", "closed");
+        matchDAO.updateMatchClosedStatus(param);
+    }
+    
+    @Scheduled(cron = "0 0 */2 * * *") // 매 2시간마다 실행
+    public void activatePastMatches() {
+        List<Match> allMatches = matchDAO.selectFilteredMatches(new HashMap<>());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate today = now.toLocalDate();
+
+        for (Match match : allMatches) {
+        	LocalDateTime matchDateTime = match.getMatch_date(); // OK
+            String status = match.getMatch_status();
+
+            // 1단계: 'waiting' + 오늘이거나 이전 날짜 → 'active'
+            if ("waiting".equalsIgnoreCase(status) && !matchDateTime.toLocalDate().isAfter(today)) {
+                Map<String, Object> param = new HashMap<>();
+                param.put("match_id", match.getMatch_id());
+                param.put("match_status", "active");
+                matchDAO.updateMatchStatus(param);
+            }
+
+            // 2단계: 'active' + 2시간 경과 → 'completed'
+            else if ("active".equalsIgnoreCase(status) && matchDateTime.plusHours(2).isBefore(now)) {
+                Map<String, Object> param = new HashMap<>();
+                param.put("match_id", match.getMatch_id());
+                param.put("match_status", "completed");
+                matchDAO.updateMatchStatus(param);
+            }
+        }
     }
 }

@@ -1,60 +1,77 @@
 <template>
   <div class="match-result-tab">
-    <div v-if="sets.length === 0">결과 데이터가 없습니다.</div>
+    <!-- 탭 전환 버튼 -->
+    <div class="tab-buttons">
+      <button
+        v-for="(_, index) in sets"
+        :key="'set-' + index"
+        @click="() => { activeTab = 'set'; activeSetIndex = index }"
+        :class="{ active: activeTab === 'set' && activeSetIndex === index }"
+      >
+        세트 {{ index + 1 }}
+      </button>
 
-    <div v-else>
-      <!-- 탭 버튼 -->
-      <div class="tab-buttons">
-        <button
-          v-for="(_, index) in sets"
-          :key="index"
-          @click="activeSetIndex = index"
-          :class="{ active: activeSetIndex === index }"
-        >
-          세트 {{ index + 1 }}
-        </button>
-      </div>
+      <button
+        @click="activeTab = 'pom'"
+        :class="{ active: activeTab === 'pom' }"
+      >
+        POM
+      </button>
+    </div>
 
-      <!-- 세트별 결과 카드 -->
-      <div class="result-set-card" v-if="currentSet">
-        <div class="score-row">
-          <!-- 왼쪽 팀 -->
-          <div class="team">
-            <div class="club-name">{{ teamA.name }}</div>
-            <div class="score">{{ teamA.score }}</div>
-          </div>
-
-          <!-- 중앙 -->
-          <div class="middle-info">
-            <div class="status">경기 종료</div>
-            <div class="date-place">세트 {{ activeSetIndex + 1 }}</div>
-          </div>
-
-          <!-- 오른쪽 팀 -->
-          <div class="team right">
-            <div class="club-name">{{ teamB.name }}</div>
-            <div class="score">{{ teamB.score }}</div>
-          </div>
+    <!-- 세트별 결과 카드 -->
+    <div class="result-set-card" v-if="activeTab === 'set' && currentSet.length > 0">
+      <div class="score-row">
+        <!-- 왼쪽 팀 -->
+        <div class="team">
+          <div class="club-name">{{ teamA.name }}</div>
+          <div class="score">{{ teamA.score }}</div>
         </div>
 
-        <!-- 양쪽으로 나눈 하이라이트 로그 -->
-        <div class="highlight-split">
-            <div class="highlight-side left">
-                <p
-                v-for="log in getTeamHighlights(currentSet, teamA.club_id)"
-                :key="log.log_id"
-                >
-                {{ formatHighlight(log, 'left') }}
-                </p>
-            </div>
-            <div class="highlight-side right">
-                <p
-                v-for="log in getTeamHighlights(currentSet, teamB.club_id)"
-                :key="log.log_id"
-                >
-                {{ formatHighlight(log, 'right') }}
-                </p>
-            </div>
+        <!-- 중앙 -->
+        <div class="middle-info">
+          <div class="status">경기 종료</div>
+          <div class="date-place">세트 {{ activeSetIndex + 1 }}</div>
+        </div>
+
+        <!-- 오른쪽 팀 -->
+        <div class="team right">
+          <div class="club-name">{{ teamB.name }}</div>
+          <div class="score">{{ teamB.score }}</div>
+        </div>
+      </div>
+
+      <!-- 양쪽으로 나눈 하이라이트 로그 -->
+      <div class="highlight-split">
+        <div class="highlight-side left">
+          <p
+            v-for="log in getTeamHighlights(currentSet, teamA.club_id)"
+            :key="log.log_id"
+          >
+            {{ formatHighlight(log, 'left') }}
+          </p>
+        </div>
+        <div class="highlight-side right">
+          <p
+            v-for="log in getTeamHighlights(currentSet, teamB.club_id)"
+            :key="log.log_id"
+          >
+            {{ formatHighlight(log, 'right') }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- POM 로그 카드 -->
+    <div v-if="activeTab === 'pom'" class="result-set-card">
+      <div v-if="poms.length === 0">POM 로그가 없습니다.</div>
+      <div v-else>
+        <div class="highlight-split single-column">
+          <div class="highlight-side">
+            <p v-for="log in poms" :key="log.log_id">
+              {{ log.log_memo || '내용 없음' }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -71,18 +88,23 @@ const props = defineProps({
 })
 
 const sets = ref([])
+const poms = ref([])
+const activeTab = ref('set') // 'set' or 'pom'
 const activeSetIndex = ref(0)
 
-const currentSet = computed(() => sets.value[activeSetIndex.value])
+const currentSet = computed(() => sets.value[activeSetIndex.value] || [])
 
 const teamA = computed(() => getTeams(currentSet.value)[0] || { name: '팀 A', score: 0 })
 const teamB = computed(() => getTeams(currentSet.value)[1] || { name: '팀 B', score: 0 })
 
 onMounted(async () => {
   try {
-    const res = await axios.get(`/board_api/match-log/sets/${props.matchId}`)
-    console.log('✅ API 응답:', res.data)
-    sets.value = res.data
+    const [setsRes, pomsRes] = await Promise.all([
+      axios.get(`/board_api/match-log/sets/${props.matchId}`),
+      axios.get(`/board_api/match-log/pom/${props.matchId}`)
+    ])
+    sets.value = setsRes.data
+    poms.value = pomsRes.data
   } catch (err) {
     console.error('경기 결과 조회 실패:', err)
   }
@@ -242,4 +264,15 @@ function formatHighlight(log, side = 'left') {
   left: 50%;
   transform: translateX(-50%);
 }
+/* 단일 컬럼 중앙 정렬용 */
+.highlight-split.single-column {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.highlight-split.single-column .highlight-side {
+  align-items: center;
+}
+
 </style>

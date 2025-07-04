@@ -55,6 +55,11 @@ public class MatchLogController {
         List<MatchLog> allLogs = matchLogService.getLogsByMatchId(match_id);
         return matchLogService.splitLogsByMatchSet(allLogs);
     }
-
+    
+    // log_type이 'POM'인 로그만 조회
+    @GetMapping("/pom/{match_id}")
+    public List<MatchLog> getPomLogsByMatchId(@PathVariable("match_id") Long match_id) {
+        return matchLogService.getPomLogsByMatchId(match_id);
+    }
 
 }

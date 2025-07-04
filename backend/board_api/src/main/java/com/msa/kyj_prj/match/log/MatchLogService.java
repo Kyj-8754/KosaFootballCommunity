@@ -104,6 +104,9 @@ public class MatchLogService {
         return result;
     }
 
-
+    // log_type이 'POM'인 로그만 조회
+    public List<MatchLog> getPomLogsByMatchId(Long match_id) {
+        return matchLogDAO.selectPomLogsByMatchId(match_id);
+    }
 
 }
