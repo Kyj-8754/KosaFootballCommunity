@@ -32,9 +32,9 @@
               class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
         💳 결제하기
       </button>
-      <button @click="canclePayment"
+      <button @click="cancleReservation"
               class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
-        💳 결제취소
+        💳 예약취소
       </button>
     </div>
   </div>
@@ -83,6 +83,10 @@ const requestPayment = async () => {
     partner_order_id: reservation.value.reservation_id,
     partner_user_id: reservation.value.user_no
   });
+
+  const cancleReservation = async () => {
+    const res = await axios.post('',{})
+  }
 
  const redirectUrl = res.data.next_redirect_pc_url
  openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700)

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.msa.kyj_prj.dto.ReservationDTO;
 import com.msa.kyj_prj.dto.SlotDTO;
 
 // DB연동 SQL
@@ -14,4 +15,5 @@ public interface ReservationDAO {
 	public List<SlotDTO> getReservationForm(@Param("svcid") String svcid, @Param("date") String date);
 	public int reservation(Reservation reservation);
 	public List<Reservation> getReservations(Long reservation_id);
+	public List<ReservationDTO> getReservationList(String user_no);
 }
