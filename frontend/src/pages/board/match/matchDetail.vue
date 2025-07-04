@@ -16,7 +16,9 @@
       :matchManagerNo="match.manager_no"
     />
     
-    <MatchLogButton :match-id="match.match_id" />
+    <MatchLogButton 
+      :match-id="match.match_id"
+      :manager-no="match.manager_no" />
   </div>
 </template>
 
