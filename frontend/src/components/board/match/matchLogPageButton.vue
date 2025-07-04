@@ -1,22 +1,31 @@
 <!-- components/board/match/MatchLogButton.vue -->
 <template>
-  <button class="log-button" @click="goToLogPage">
+  <button
+    v-if="userNo === managerNo"
+    class="log-button"
+    @click="goToLogPage"
+  >
     매치 로그 입력
   </button>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { defineProps } from 'vue'
+import { defineProps, inject } from 'vue'
 
 const props = defineProps({
   matchId: {
+    type: [String, Number],
+    required: true
+  },
+  managerNo: {
     type: [String, Number],
     required: true
   }
 })
 
 const router = useRouter()
+const userNo = inject('userNo')
 
 const goToLogPage = () => {
   router.push({ name: 'matchLog', params: { id: props.matchId } })
