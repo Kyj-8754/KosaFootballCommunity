@@ -1,6 +1,8 @@
 package com.msa.kyj_prj.match;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +37,21 @@ public class MatchController {
     
     // 매치 참가 신청
     @PostMapping("/apply")
-    public void applyToMatch(@RequestBody MatchParticipant participant) {
-        matchService.applyToMatch(participant);
+    public ResponseEntity<?> applyToMatch(@RequestBody MatchParticipant participant) {
+        try {
+            matchService.applyToMatch(participant);
+            return ResponseEntity.ok().build(); // 성공 시 200 OK
+        } catch (IllegalStateException e) {
+            // 소셜/리그 인원 초과 예외
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT) // 409 Conflict
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            // 기타 예상치 못한 예외
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "참가 신청 중 문제가 발생했습니다."));
+        }
     }
     
     // 매치 참가 신청 여부 확인
