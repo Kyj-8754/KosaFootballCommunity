@@ -219,5 +219,19 @@
 	    WHERE match_id = #{match_id}
 	      AND user_no = #{user_no}
 	</update>
+	
+	<!-- match_id로 match_closed 상태 변경 -->
+	<update id="updateMatchClosedStatus" parameterType="map">
+	    UPDATE `match`
+	    SET match_closed = #{match_closed}
+	    WHERE match_id = #{match_id}
+	</update>
+	
+	<!-- match_id로 match_closed 상태 변경 -->
+	<update id="updateMatchStatus" parameterType="map">
+	    UPDATE `match`
+	    SET match_status = #{match_status}
+	    WHERE match_id = #{match_id}
+	</update>
 
 </mapper>

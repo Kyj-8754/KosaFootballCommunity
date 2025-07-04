@@ -25,4 +25,7 @@ public interface MatchLogDAO {
     
     // 승인된 팀 리스트 조회
     List<Map<String, Object>> selectApprovedTeamsByMatchId(@Param("match_id") Long match_id);
+    
+    // log_type이 POM인 로그만 조회
+    List<MatchLog> selectPomLogsByMatchId(@Param("match_id") Long match_id);
 }

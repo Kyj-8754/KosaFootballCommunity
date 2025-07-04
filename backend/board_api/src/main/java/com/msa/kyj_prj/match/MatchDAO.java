@@ -41,4 +41,11 @@ public interface MatchDAO {
     
     // ✅ 매치 참가자의 상태(user_status) 업데이트
     int updateMatchParticipantStatus(Map<String, Object> param);
+    
+    // match_id 기준으로 match_closed 값 수정 (Map 기반)
+    int updateMatchClosedStatus(Map<String, Object> param);
+    
+    // match_id 기준으로 match_closed 값 수정 (Map 기반)
+    int updateMatchStatus(Map<String, Object> param);
+
 }
