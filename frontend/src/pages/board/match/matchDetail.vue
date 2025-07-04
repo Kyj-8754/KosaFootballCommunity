@@ -12,6 +12,8 @@
       :description="match.match_description"
       :matchId="match.match_id"
       :matchCode="match.match_code"
+      :matchUserNo="match.user_no"
+      :matchManagerNo="match.manager_no"
     />
     
     <MatchLogButton :match-id="match.match_id" />

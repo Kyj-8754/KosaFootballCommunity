@@ -21,7 +21,11 @@
             (<span class="club-name">{{ p.club_name }}</span>)
           </template>
           - 신청일: {{ formatDate(p.created_at) }}
-          <select v-model="p.user_status" @change="updateStatus(p)">
+          <select
+            v-if="userNo === props.matchUserNo || userNo === props.matchManagerNo"
+            v-model="p.user_status"
+            @change="updateStatus(p)"
+          >
             <option value="apply">신청자</option>
             <option value="approve">승인됨</option>
             <option value="reject">거절됨</option>
@@ -34,13 +38,15 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, inject } from 'vue'
 import axios from 'axios'
 import { format } from 'date-fns'
 
 const props = defineProps({
   matchId: { type: Number, required: true },
-  matchCode: { type: String, required: true } // ✅ 추가
+  matchCode: { type: String, required: true },
+  matchUserNo: { type: Number, required: true },
+  matchManagerNo: { type: Number, required: true }
 })
 
 const participants = ref([])
@@ -48,6 +54,8 @@ const loading = ref(false)
 
 const tabOptions = ['apply', 'approve', 'reject']
 const activeTab = ref('apply')
+
+const userNo = inject('userNo')
 
 const tabLabelMap = {
   apply: '신청자',
