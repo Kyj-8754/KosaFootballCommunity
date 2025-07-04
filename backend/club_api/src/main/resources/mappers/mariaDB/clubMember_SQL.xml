@@ -38,6 +38,7 @@
     FROM tbl_club_member m
     JOIN user u ON m.user_no = u.user_no
     WHERE m.club_id = #{club_id}
+     AND m.left_at IS NULL
     ORDER BY m.joined_at ASC
 	</select>
 
@@ -62,11 +63,12 @@
 
 
     <!-- // 클럽 멤버 탈퇴(삭제) -->
-    <delete id="deleteByClubIdAndUserNo" parameterType="map">
-        DELETE FROM tbl_club_member
+    <update id="deleteByClubIdAndUserNo" parameterType="map">
+         UPDATE tbl_club_member
+        SET left_at = NOW()
         WHERE club_id = #{club_id}
           AND user_no = #{user_no}
-    </delete>
+    </update>
 
     <!-- // 클럽 멤버 역할 변경 -->
     <update id="updateRoleByClubIdAndUserNo" parameterType="map">

@@ -152,30 +152,36 @@ public class ClubController {
 	// ✅ 클럽 로고 이미지 업로드 엔드포인트
 	@PostMapping("/{club_id}/uploadLogo")
 	public ResponseEntity<String> uploadLogo(@PathVariable int club_id, @RequestParam("file") MultipartFile file) {
-	    try {
-	        // 1. 파일 저장 (프로젝트 내 uploads/club_logos 폴더 경로로 지정)
-	        String uploadDir = "C:/workspace-sts4/MsaTeamProject/backend/club_api/uploads/club_logos/";
-	        // 혹시 상대경로 쓸거면: "./uploads/club_logos/"
-	        
-	        // 폴더 없으면 자동 생성 (안전)
-	        File dir = new File(uploadDir);
-	        if (!dir.exists()) dir.mkdirs();
+		try {
+			// 1. 파일 저장 (프로젝트 내 uploads/club_logos 폴더 경로로 지정)
+			String uploadDir = "C:/workspace-sts4/MsaTeamProject/backend/club_api/uploads/club_logos/";
+			// 혹시 상대경로 쓸거면: "./uploads/club_logos/"
 
-	        // 파일명 중복 방지 (club_id_타임스탬프_원본파일명)
-	        String filename = club_id + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
-	        File dest = new File(uploadDir + filename);
-	        file.transferTo(dest);
+			// 폴더 없으면 자동 생성 (안전)
+			File dir = new File(uploadDir);
+			if (!dir.exists())
+				dir.mkdirs();
 
-	        // 2. 프론트에서 접근 가능한 경로로 저장 (WebConfig 설정과 연동!)
-	        String logoPath = "/uploads/club_logos/" + filename;
-	        clubService.updateLogoPath(club_id, logoPath);
+			// 파일명 중복 방지 (club_id_타임스탬프_원본파일명)
+			String filename = club_id + "_" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+			File dest = new File(uploadDir + filename);
+			file.transferTo(dest);
 
-	        // 3. 성공시 경로 반환
-	        return ResponseEntity.ok(logoPath);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("업로드 실패: " + e.getMessage());
-	    }
+			// 2. 프론트에서 접근 가능한 경로로 저장 (WebConfig 설정과 연동!)
+			String logoPath = "/uploads/club_logos/" + filename;
+			clubService.updateLogoPath(club_id, logoPath);
+
+			// 3. 성공시 경로 반환
+			return ResponseEntity.ok(logoPath);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("업로드 실패: " + e.getMessage());
+		}
 	}
 
+	@GetMapping("/test-upload-path")
+	public ResponseEntity<String> testUploadPath() {
+		File dir = new File("C:/workspace-sts4/MsaTeamProject/backend/club_api/uploads/club_logos/");
+		return ResponseEntity.ok("폴더 exists: " + dir.exists() + ", path: " + dir.getAbsolutePath());
+	}
 
 }

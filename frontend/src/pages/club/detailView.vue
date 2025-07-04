@@ -67,8 +67,6 @@
 </div>
 
 
-
-
 <!-- 박스 3: 클럽 상세 정보 -->
 <div class="col">
   <div class="border rounded p-3 h-100">
@@ -122,8 +120,14 @@
         </div>
       </div>
 
-      <!-- 팀장만 수정 버튼 -->
+<!-- 팀장만 수정/신청목록 버튼 노출 -->
 <div class="mb-2 text-end">
+  <button
+    v-if="club && userNo && club.user_no === userNo"
+    @click="goToApplyList"
+    class="btn btn-warning me-2"
+  >신청목록</button>
+  
   <button
     v-if="club && userNo && club.user_no === userNo"
     @click="goToEdit"
@@ -134,6 +138,7 @@
     class="btn btn-outline-secondary"
   >목록으로</button>
 </div>
+
       
     </div>
 
@@ -223,6 +228,14 @@ const getTotalGames = (clubObj) =>
 const calcWinRate = (clubObj) => {
   const total = getTotalGames(clubObj)
   return total === 0 ? 0 : Math.round((clubObj.win_count / total) * 100)
+}
+
+
+// 신청자 목록 페이지로 이동 (팀장만 가능)
+const goToApplyList = () => {
+   if (club.value) {
+  router.push(`/club/${club.value.team_code}/applyList`)
+   }
 }
 
 // 수정 페이지로 이동 (팀장만 가능)

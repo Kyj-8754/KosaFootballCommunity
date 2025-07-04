@@ -14,10 +14,10 @@ public interface ClubMemberDAO {
     // 1. 클럽별 전체 멤버 리스트 조회
     List<ClubMember> findByClubId(@Param("club_id") int club_id);
 
-    // 2. (선택) 특정 유저가 가입한 클럽 멤버 정보 조회
+    // 2. 특정 유저가 가입한 클럽 멤버 정보 조회
     ClubMember findByClubIdAndUserNo(@Param("club_id") int club_id, @Param("user_no") int user_no);
 
-    // 3. (선택) 클럽 멤버 탈퇴(삭제)
+    // 3. 클럽 멤버 탈퇴(삭제)
     int deleteByClubIdAndUserNo(@Param("club_id") int club_id, @Param("user_no") int user_no);
 
     int updateRoleByClubIdAndUserNo(
