@@ -148,24 +148,30 @@ const fetchLiked = async () => {
 const toggleLike = async () => {
   if (!post.value) return
 
+  // 비로그인 상태 처리
+  if (!userNo?.value) {
+    alert('로그인이 필요한 서비스입니다.')
+    router.push({ name: 'Member_LoginForm' })
+    return
+  }
+
   try {
     if (!liked.value) {
       await axios.post('/board_api/board/like', null, {
         params: {
           board_id: post.value.board_id,
-          user_no: userNo?.value ?? null
+          user_no: userNo.value
         }
       })
     } else {
       await axios.delete('/board_api/board/like', {
         params: {
           board_id: post.value.board_id,
-          user_no: userNo?.value ?? null
+          user_no: userNo.value
         }
       })
     }
 
-    // 상태 새로고침
     await fetchLikeCount()
     await fetchLiked()
   } catch (err) {
@@ -173,6 +179,7 @@ const toggleLike = async () => {
     alert('좋아요 처리 중 오류가 발생했습니다.')
   }
 }
+
 
 const handleEdit = () => {
   if (post.value) {
@@ -198,6 +205,14 @@ const handleDelete = async () => {
 
 const addComment = async (replyData) => {
   const maxLength = 1000
+
+  // 비로그인 상태 처리
+  if (!userNo?.value) {
+    alert('로그인이 필요한 서비스입니다.')
+    router.push({ name: 'Member_LoginForm' })
+    return
+  }
+
   if (replyData.reply_content.length > maxLength) {
     alert(`댓글은 최대 ${maxLength}자까지 입력할 수 있습니다.`)
     return
@@ -211,6 +226,7 @@ const addComment = async (replyData) => {
     alert('댓글 등록에 실패했습니다.')
   }
 }
+
 
 const editComment = async (replyId, newContent) => {
   // ✅ 1000자 제한 검증
