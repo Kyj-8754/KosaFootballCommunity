@@ -131,11 +131,13 @@ const fetchLikeCount = async () => {
 }
 
 const fetchLiked = async () => {
-  if (!post.value) return
+  // 로그인 사용자만 좋아요 여부 확인
+  if (!post.value || !userNo?.value) return
+
   try {
     const response = await axios.post('/board_api/board/like/check', {
       board_id: post.value.board_id,
-      user_no: userNo?.value ?? null
+      user_no: userNo.value
     })
 
     liked.value = response.data.liked
@@ -143,7 +145,6 @@ const fetchLiked = async () => {
     console.error('좋아요 여부 조회 실패:', error)
   }
 }
-
 
 const toggleLike = async () => {
   if (!post.value) return
