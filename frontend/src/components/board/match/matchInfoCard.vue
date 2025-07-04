@@ -206,9 +206,16 @@ const applyToMatch = async () => {
     await axios.post('/board_api/match/apply', payload)
     alert('매치 참가 신청이 완료되었습니다!')
     await checkIsApplied()
+    await fetchParticipantCount()
   } catch (error) {
     console.error('신청 실패:', error)
-    alert('매치 참가 신청에 실패했습니다.')
+
+    if (error.response && error.response.status === 409) {
+      // ✅ 백엔드에서 온 메시지 출력
+      alert(error.response.data.error || '신청 조건을 만족하지 않습니다.')
+    } else {
+      alert('매치 참가 신청에 실패했습니다.')
+    }
   }
 }
 

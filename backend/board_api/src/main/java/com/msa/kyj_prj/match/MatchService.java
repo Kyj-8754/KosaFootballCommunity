@@ -35,6 +35,25 @@ public class MatchService {
     
     // 매치 참가 신청
     public void applyToMatch(MatchParticipant participant) {
+        Long matchId = participant.getMatch_id();
+
+        // 매치 정보 조회
+        Match match = matchDAO.selectMatchDetailById(matchId);
+        String matchCode = match.getMatch_code();
+
+        // 현재 참가 인원(소셜) 또는 클럽 수(리그)
+        int currentCount = matchDAO.countMatchParticipants(matchId);
+
+        // 조건 체크
+        if ("social".equalsIgnoreCase(matchCode) && currentCount >= 18) {
+            throw new IllegalStateException("소셜 매치는 최대 18명까지만 참가할 수 있습니다.");
+        }
+
+        if ("league".equalsIgnoreCase(matchCode) && currentCount >= 3) {
+            throw new IllegalStateException("리그 매치는 최대 3팀까지만 참가할 수 있습니다.");
+        }
+
+        // 조건 통과 시 참가 신청
         matchDAO.insertMatchParticipant(participant);
     }
 
