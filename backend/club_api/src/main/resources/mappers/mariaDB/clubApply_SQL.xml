@@ -127,6 +127,23 @@
   ORDER BY a.apply_date DESC
 	</select>
 
+	    <!-- 멤버 자진 탈퇴 시 상태를 withdrawn으로 변경 -->
+    <update id="updateWithdrawnStatus" parameterType="map">
+        UPDATE tbl_club_apply
+        SET status = 'withdrawn'
+        WHERE club_id = #{club_id}
+          AND appli_user_no = #{appli_user_no}
+          AND status = 'approved'
+    </update>
+
+    <!-- 멤버 강퇴 시 상태를 kicked로 변경 -->
+    <update id="updateKickedStatus" parameterType="map">
+        UPDATE tbl_club_apply
+        SET status = 'kicked'
+        WHERE club_id = #{club_id}
+          AND appli_user_no = #{appli_user_no}
+          AND status = 'approved'
+    </update>
 	
 
 
