@@ -1,7 +1,5 @@
 package com.msa.do_login.admin.controller;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.msa.do_login.admin.service.AdminService;
+import com.msa.do_login.page.Paging;
 import com.msa.do_login.user.vo.UserVO;
 
 import lombok.RequiredArgsConstructor;
@@ -26,22 +25,20 @@ public class AdminController {
 
 	// 유저 목록 조회
 	@GetMapping("/userList")
-	public ResponseEntity<Map<String, Object>> getFriendList() {
-		log.info("유저 목록 조회 요청 도착");
+	public ResponseEntity<Map<String, Object>> getUserList(@RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "size", defaultValue = "10") int size,
+			@RequestParam(value = "searchType", required = false, defaultValue = "userName") String searchType,
+			@RequestParam(value = "searchValue", required = false) String searchValue) {
+		log.info("회원 목록 조회 요청 - page: {}, size: {}, searchType: {}, searchValue: {}", page, size, searchType, searchValue);
+		Paging paging = new Paging();
+		paging.setNowPage(page);
+		paging.setNumPerPage(size);
+		paging.setTotalData(adminService.getTotalMemberCount(searchType, searchValue));
+		paging.calcPaging();
 
-		List<UserVO> userList = adminService.getUserList();
-		Map<String, Object> res = new HashMap<>();
-
-		if (userList == null || userList.isEmpty()) {
-			res.put("res_code", "204");
-			res.put("res_msg", "유저가 없습니다.");
-			res.put("data", Collections.emptyList());
-		} else {
-			res.put("res_code", "200");
-			res.put("res_msg", "유저 목록 조회 성공");
-			res.put("data", userList);
-		}
-
-		return ResponseEntity.ok(res);
+		List<UserVO> userList = adminService.getUserList(paging, searchType, searchValue);
+		return ResponseEntity
+				.ok(Map.of("res_code", "200", "res_msg", "회원 목록 조회 성공", "userList", userList, "paging", paging));
 	}
+	
 }
