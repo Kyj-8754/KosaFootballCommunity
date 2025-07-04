@@ -15,19 +15,29 @@
     <!-- 등록 버튼 -->
     <button @click="submitLog" class="submit-button">등록</button>
 
-    <!-- 로그 리스트 -->
-    <LogList :logs="logs" @delete="deleteLog" @update="updateLog" />
+    <!-- 로그 리스트 컴포넌트 -->
+    <LogList :logs="pagedLogs" @delete="deleteLog" @update="updateLog" />
+
+    <!-- 페이지네이션 (여기서 감싸기) -->
+    <div class="pagination-wrapper">
+      <Pagination
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        @changePage="changePage"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router' // 추가
 import axios from 'axios'
 import LogTeamDropdown from '@/components/board/match/matchLogTeamDropdown.vue'
 import LogMemberDropdown from '@/components/board/match/matchLogMemberDropdown.vue'
 import LogCodeDropdown from '@/components/board/match/matchLogActionDropdown.vue'
 import LogList from '@/components/board/match/matchLogList.vue'
+import Pagination from '@/components/pagination.vue'
 
 const route = useRoute() // 추가
 
@@ -37,6 +47,23 @@ const selectedLogCode = ref('')
 const memo = ref('')
 const logs = ref([])
 const matchId = Number(route.params.id)
+
+const currentPage = ref(1)
+const itemsPerPage = 10
+
+const pagedLogs = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return logs.value.slice(start, start + itemsPerPage)
+})
+
+const totalPages = computed(() =>
+  Math.ceil(logs.value.length / itemsPerPage)
+)
+
+const changePage = (page) => {
+  currentPage.value = page
+}
+
 
 const fetchLogs = async () => {
   try {
@@ -133,5 +160,11 @@ onMounted(() => {
 }
 .submit-button:hover {
   background-color: #0056b3;
+}
+.pagination-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
 }
 </style>
