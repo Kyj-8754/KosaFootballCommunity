@@ -147,10 +147,25 @@ public class ResrvationController {
 	}
 	
 	// 예약 취소
-	@PostMapping("cancle")
+	@PostMapping("cancel")
 	public ResponseEntity<Map<String, Object>> cancle(@RequestBody Map<String, Object> param) {
 		 log.info("예약 취소 로직입니다."); 
-		 
-		 return null;
+		 try {
+		        reservationService.cancelReservation(param);
+		        return ResponseEntity.ok(Map.of(
+		            "error", false,
+		            "message", "예약이 정상적으로 취소되었습니다."
+		        ));
+		    } catch (IllegalStateException e) {
+		        return ResponseEntity.badRequest().body(Map.of(
+		            "error", true,
+		            "message", e.getMessage()
+		        ));
+		    } catch (Exception e) {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+		            "error", true,
+		            "message", "서버 오류가 발생했습니다."
+		        ));
+		    }
 	}
 }
