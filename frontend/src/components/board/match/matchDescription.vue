@@ -16,10 +16,12 @@
     <div class="tab-content">
       <div v-if="activeTab === 'description'" v-html="descriptionHtml" />
       <div v-else-if="activeTab === 'participants'">
-        <MatchParticipant
-          :matchId="matchId"
-          :matchCode="matchCode"
-        />
+      <MatchParticipant
+        :matchId="matchId"
+        :matchCode="matchCode"
+        :matchUserNo="matchUserNo"        
+        :matchManagerNo="matchManagerNo"  
+      />
       </div>
       <div v-else-if="activeTab === 'results'">
         <MatchResult :matchId="matchId" />
@@ -36,7 +38,9 @@ import MatchResult from './matchResult.vue'
 const props = defineProps({
   description: { type: String, default: '' },
   matchId: { type: Number, required: true },
-  matchCode: { type: String, required: true } // ✅ 추가
+  matchCode: { type: String, required: true },
+  matchUserNo: { type: Number, required: true },
+  matchManagerNo: { type: Number, required: true }
 })
 
 const activeTab = ref('description')
