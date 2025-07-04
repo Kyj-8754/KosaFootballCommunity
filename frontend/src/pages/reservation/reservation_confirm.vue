@@ -45,9 +45,9 @@
 <script setup>
 import axios from 'axios';
 import { inject, onMounted, ref} from 'vue';
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
-
+const router = useRouter();
 const route = useRoute();
 const reservation = ref({});
 const user = ref({});
@@ -76,10 +76,19 @@ onMounted(async () =>{
 
 // 예약 취소
  const cancleReservation = async () => {
-    const res = await axios.post('/reservation_api/reservation/cancle',{
+   try {
+    const res = await axios.post('/reservation_api/reservation/cancel',{
         reservation: reservation.value,
-        user_no: userNo
-    })
+        user_no: userNo.value
+    });
+   // 성공 시 알림 띄우고, 페이지 이동
+    alert('예약이 성공적으로 취소되었습니다.');
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+    alert('예약 취소 실패: ' + (err.response?.data?.message || '서버 오류'));
+  }
+
   }
 
 // 결제 요청
