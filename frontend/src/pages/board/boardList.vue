@@ -36,11 +36,12 @@ import BoardNoticeList from '@/components/board/boardNoticeList.vue'
 import BoardTable from '@/components/board/boardTable.vue'
 import Pagination from '@/components/pagination.vue'
 import SortButtons from '@/components/board/boardSortButton.vue'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
+const authCode = inject('authCode')
 
 const posts = ref([])
 const currentPage = ref(1)
