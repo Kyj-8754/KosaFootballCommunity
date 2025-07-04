@@ -33,4 +33,12 @@
 		JOIN reservation_slot rs on r.slot_id = rs.slot_id
 		where reservation_id = #{reservation_id}
 	</select>
+	
+	<select id="getReservationList" resultType="com.msa.kyj_prj.dto.ReservationDTO">
+	
+		SELECT r.reservation_id, r.reservation_type,r.status, rs.slot_date, rs.svcid
+		FROM reservation r
+		JOIN reservation_slot rs on r.slot_id = rs.slot_id
+		where user_no = #{user_no};
+	</select>
 </mapper>

@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.msa.kyj_prj.dto.ReservationDTO;
 import com.msa.kyj_prj.dto.SlotDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -40,10 +41,10 @@ public class ReservationService{
 		return reservationDAO.getReservations(reservation_id);
 	}
 	
-//	// 예약 슬롯 가져오기
-//	public List<SlotDTO> getSlot(String slot_id){
-//		return reservationDAO.getSlot(slot_id);
-//	}
+	// 예약 리스트
+	public List<ReservationDTO> getReservationList(String user_no){
+		return reservationDAO.getReservationList(user_no);
+	}
 	
 }
 
