@@ -33,8 +33,6 @@
                 </div>
               </div>
             </div>
-
-           
          
 <!-- 박스 2: 주요 멤버 -->
 <div class="col">

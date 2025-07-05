@@ -41,4 +41,6 @@ public class ClubMemberService {
     public int updateRoleByClubIdAndUserNo(int club_id, int user_no, String role) {
         return clubMemberDAO.updateRoleByClubIdAndUserNo(club_id, user_no, role);
     }
+
+    
 }
