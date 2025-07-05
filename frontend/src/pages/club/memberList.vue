@@ -15,7 +15,12 @@
           </thead>
           <tbody>
             <tr v-for="member in clubMember" :key="member.user_no">
-              <td class="fw-semibold align-middle text-start ps-4">{{ member.user_name }}</td>
+              <td class="fw-semibold align-middle text-start ps-4">
+                {{ member.user_name }}
+                <span v-if="member.role === 'LEADER'" class="badge bg-success ms-2">
+                  리더
+                </span>
+              </td>
               <td class="text-center">
                 <span class="badge bg-primary bg-opacity-75 fs-7">
                   {{ member.match_count }}
@@ -30,14 +35,33 @@
                 <span class="text-muted">{{ member.joined_at?.substring(0,10) }}</span>
               </td>
               <td class="text-center">
-                <!-- 팀장일 때만 강퇴 버튼 노출, 본인(userNo)이 아니면 -->
-                <button
+                <!-- 팀장(본인)만, 본인이 아닌 멤버에게만 드롭다운 표시 -->
+                <div
                   v-if="club && userNo && club.user_no === userNo && member.user_no !== userNo"
-                  @click="kickMember(member.user_no)"
-                  class="btn btn-warning btn-sm"
+                  class="dropdown"
                 >
-                  강퇴
-                </button>
+                  <button
+                    class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    style="padding: 2px 8px;"
+                  >
+                    <i class="bi bi-three-dots"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item text-primary" href="#" @click.prevent="delegateLeader(member.user_no)">
+                        리더 위임
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item text-danger" href="#" @click.prevent="kickMember(member.user_no)">
+                        강퇴
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </td>
             </tr>
             <tr v-if="clubMember.length === 0">
@@ -47,7 +71,7 @@
         </table>
       </div>
     </div>
-        <div class="mt-4 text-end">
+    <div class="mt-4 text-end">
       <!-- 일반 멤버(팀장 제외, 본인만)에게만 노출되는 클럽 탈퇴 버튼 -->
       <button
         v-if="club && userNo && club.user_no !== userNo && clubMember.some(m => m.user_no === userNo)"
@@ -58,7 +82,6 @@
     </div>
   </div>
 </template>
-
 
 
 <script setup>
@@ -154,6 +177,52 @@ async function withdrawMember() {
     console.error(e);
   }
 }
+
+
+async function delegateLeader(newLeaderUserNo) {
+  if (!club.value || !club.value.club_id) {
+    alert('클럽 정보가 올바르지 않습니다.');
+    return;
+  }
+  if (!userNo.value) {
+    alert('로그인 정보가 올바르지 않습니다.');
+    return;
+  }
+  if (!confirm('정말 이 멤버에게 리더를 위임하시겠습니까?')) return;
+
+  try {
+    await axios.put(
+      '/club_api/member/delegate_leader',
+      {
+        club_id: club.value.club_id,
+        new_leader_user_no: newLeaderUserNo,
+        old_leader_user_no: userNo.value
+      },
+      {
+        headers: { Authorization: `Bearer ${token.value}` }
+      }
+    );
+    alert('리더가 성공적으로 위임되었습니다.');
+    // 멤버/클럽 정보 새로고침 (위임 시 본인은 더 이상 팀장이 아닐 수 있음)
+    const response = await axios.get(`/club_api/code/${route.params.teamCode}`, {
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    club.value = response.data
+
+    if (club.value && club.value.club_id) {
+      const memberRes = await axios.get(`/club_api/member/list/${club.value.club_id}`, {
+        headers: { Authorization: `Bearer ${token.value}` }
+      })
+      clubMember.value = memberRes.data
+    }
+  } catch (e) {
+    alert('리더 위임 실패: ' + (e.response?.data?.message || e.message || ''));
+    console.error(e);
+  }
+}
+
+
+
 
 </script>
 

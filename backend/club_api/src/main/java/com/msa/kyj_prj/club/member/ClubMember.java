@@ -19,5 +19,5 @@ public class ClubMember {
 	private String left_at; // 탈퇴일자 (문자열 처리, 탈퇴하지 않았으면 null)
 	private String user_name; // 사용자 이름
 	private String match_count; // 경기 참가수
-	private String POM; // 
+	private String pom; // 
 }
