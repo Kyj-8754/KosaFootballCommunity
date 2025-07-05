@@ -100,7 +100,7 @@
 
 <script setup>
 	import DOMPurify from 'dompurify'; // notice관련 문제 해결중
-	import {ref, onMounted, computed, inject} from 'vue'
+	import {ref, onMounted, computed, inject, watch, nextTick } from 'vue'
 	import { useRoute, useRouter } from 'vue-router'
 	import axios from 'axios'
 	import 'v-calendar/style.css'
@@ -108,7 +108,7 @@
 	import  StadiumComment  from '@/components/comment/comment.vue'
 
 
-// pinia를 이용한 저장
+	// pinia를 이용한 저장
 	const stadiumStore = StadiumDataStore();
 
 	//아이디 관련
@@ -116,8 +116,10 @@
 	const userName = inject('userName')
 	//탭관련
 	const activeTab = ref('overview')
+	let isMapInitialized = false
+	let isScriptLoaded = false
+	
 	// 달력관련 시작
-
 	// 예약 가능한 날짜
 	const availableDates = ref([])
 	// 예약 선택 날짜
@@ -157,9 +159,6 @@ const onDayClick = (day) => {
 	// 페이지 로딩 시 
 	onMounted(async() => {
 		await fetchStadiumData();	// 게시판
-		// fetchComments();	// 댓글
-		loadKakaoMapScript()     // ← Kakao 지도 로딩
-		// if (textRef.value) adjustHeight();	// 댓글창 조절
 	});
 
 	// 게시물 불러오기
@@ -182,10 +181,23 @@ const onDayClick = (day) => {
 		router.push({name: 'reservation_Form', query: {date: selectedDate.value, SVCID: SVCID}})
 	}
 
-
+watch(activeTab, async (newTab) => {
+  if (newTab === 'map' && !isMapInitialized) {
+    await nextTick()           // 👉 DOM이 그려진 다음
+    loadKakaoMapScript()       // 👉 스크립트 로드 + 지도 그리기
+  }
+})
 
 // 스크립트를 동적으로 삽입하고 지도 초기화, 키를 숨기기 위해서 관리
 const loadKakaoMapScript = () => {
+
+	if (isScriptLoaded) {
+    window.kakao.maps.load(() => {
+      initKakaoMap()
+    })
+    return
+  }
+
   const script = document.createElement('script')
   script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAOMAP_API_KEY}&autoload=false`
   script.async = true
@@ -228,6 +240,8 @@ const initKakaoMap = () => {
   kakao.maps.event.addListener(map, 'tilesloaded', () => {
     map.setCenter(centerPos)
   })
+
+  isMapInitialized = true
 }
 
 </script>
