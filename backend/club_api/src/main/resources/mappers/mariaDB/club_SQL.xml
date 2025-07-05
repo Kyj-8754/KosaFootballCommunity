@@ -134,7 +134,12 @@
     WHERE club_id = #{clubId}
 	</update>
 
-	
+	<update id="updateLeader" parameterType="map">
+    UPDATE tbl_club
+    SET user_no = #{user_no}
+    WHERE club_id = #{club_id}
+	</update>
+
     
 
 </mapper>
