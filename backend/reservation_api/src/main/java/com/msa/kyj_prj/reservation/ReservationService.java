@@ -43,16 +43,14 @@ public class ReservationService{
 	public void cancelReservation(Map<String, Object> param) {
 		// 받은 파라미터를 이용해서 검증확인
 		Map<String, Object> reservationMap = (Map<String, Object>) param.get("reservation");
-		String user_no = param.get("user_no").toString();
-		String re_user_no = reservationMap.get("user_no").toString();
+//		String user_no = param.get("user_no").toString();
+//		String re_user_no = reservationMap.get("user_no").toString();
 	    String status = (String) reservationMap.get("status");
 	    
 	    log.info("검증로직 시작");
 	    // 예약된 상태만 취소 가능
 	    if (!"reserved".equalsIgnoreCase(status)) {
 	        throw new IllegalStateException("예약된 상태에서만 취소할 수 있습니다.");
-	    } else if (re_user_no != user_no ) {
-	    	throw new IllegalStateException("예약을 한 사람만 취소 가능합니다.");
 	    }
 
 	    int reservation_id = (Integer)reservationMap.get("reservation_id");

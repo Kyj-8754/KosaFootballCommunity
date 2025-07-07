@@ -1,14 +1,10 @@
-<template>
-  <div>
-    <h2>결제가 실패했거나 취소되었습니다.</h2>
-  </div>
-</template>
-
 <script setup>
+import { onMounted } from 'vue';
+
 onMounted(() => {
-  alert("결제가 실패하거나 취소되었습니다.");
+  window.opener.postMessage("paymentFail", "*");
   setTimeout(() => {
-    window.close();
+    window.close();  // 1~2초 후 자동 종료
   }, 1500);
 });
 </script>

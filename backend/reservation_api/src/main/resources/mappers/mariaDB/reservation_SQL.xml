@@ -28,10 +28,16 @@
 	</insert>
 	
 	<select id="getReservations" resultType="com.msa.kyj_prj.dto.ReservationDTO">
-		SELECT r.*, rs.slot_date, rs.start_time, rs.end_time, rs.svcid
+		SELECT r.*, rs.slot_date, rs.start_time, rs.end_time, rs.svcid,
+		p.status AS payment_status,
+	    p.paid_at,
+	    p.method,
+	    p.amount,
+	    p.tid
 		FROM reservation r
 		JOIN reservation_slot rs on r.slot_id = rs.slot_id
-		where reservation_id = #{reservation_id}
+		LEFT JOIN payment p ON r.reservation_id = p.reservation_id
+		where r.reservation_id = #{reservation_id}
 	</select>
 	
 	<select id="getReservationList" resultType="com.msa.kyj_prj.dto.ReservationDTO">
