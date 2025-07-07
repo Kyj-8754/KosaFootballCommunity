@@ -3,6 +3,7 @@ package com.msa.do_login.myPage.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.msa.do_login.myPage.dao.MyPageDAO;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MyPageService {
 	private final MyPageDAO myPageDAO;
+	private final PasswordEncoder passwordEncoder;
 	
 	public UserVO getUserVO(int userNo) {
 		return myPageDAO.getUserVO(userNo);

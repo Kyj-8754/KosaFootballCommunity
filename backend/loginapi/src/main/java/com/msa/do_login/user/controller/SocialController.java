@@ -59,8 +59,8 @@ public class SocialController {
                     "http://localhost:5173/member/socialRegister?provider=%s&providerId=%s&nickname=%s&profileImage=%s",
                     provider,
                     userInfo.getProviderId(),
-                    URLEncoder.encode(userInfo.getNickname(), StandardCharsets.UTF_8),
-                    URLEncoder.encode(userInfo.getProfileImage(), StandardCharsets.UTF_8)
+                    URLEncoder.encode(userInfo.getNickname(), StandardCharsets.UTF_8).replace("+", "%20"),
+                    URLEncoder.encode(userInfo.getProfileImage(), StandardCharsets.UTF_8).replace("+", "%20")
                 );
                 return ResponseEntity.status(302)  // 302 Found 리다이렉트
                         .header("Location", redirectUrl)

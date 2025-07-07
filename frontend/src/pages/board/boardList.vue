@@ -78,9 +78,6 @@ const fetchPosts = async () => {
         ...searchFilters.value,
         sortColumn: sortOptions.value.column,
         sortDirection: sortOptions.value.direction
-      },
-      headers: {
-      Authorization: `Bearer ${token.value}`
       }
     })
     posts.value = response.data

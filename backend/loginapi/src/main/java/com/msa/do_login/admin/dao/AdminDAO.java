@@ -16,4 +16,10 @@ public interface AdminDAO {
 			  @Param("searchValue")String searchValue);
 
 	public int getTotalCount(@Param("searchType") String searchType, @Param("searchValue") String searchValue);
+	
+	public UserVO getUserByUserNo(int userNo);
+	
+	public int grantManager(int userNo);
+	
+	public int revokeManager(int userNo);
 }

@@ -31,4 +31,6 @@ public interface LoginDAO {
 	public Optional<UserVO> findByUserId(String username);
 	
 	public SocialAccount findSocialAccount(@Param("provider") String provider, @Param("providerId") String providerId);
+	
+	public boolean updatePassword(@Param("userNo") int userNo, @Param("encodedNewPwd")String encodedNewPwd);
 }
