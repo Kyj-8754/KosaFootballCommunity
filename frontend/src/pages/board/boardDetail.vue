@@ -31,7 +31,7 @@
         </div>
 
         <div v-else-if="activeTab === 'reservation'">
-          <ReservationConfirm reservationId="25" class="mt-3" />
+          <ReservationConfirm reservationId="1" class="mt-3" />
         </div>
       </div>
 

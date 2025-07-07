@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-4">
+  <div class="container mt-4" v-if="reservation && Object.keys(reservation).length">
     <h3 class="text-center mb-4">예약 확인</h3>
 
     <!-- 🏟 구장 정보 -->
@@ -53,24 +53,31 @@ const reservation = ref({})
 
 onMounted(async () => {
   try {
-    // 예약 정보
     const res = await axios.post('/reservation_api/reservation/reservation_confirm', {
       reservation_id: props.reservationId
     })
-    reservation.value = res.data.reservationDB[0]
-    const { user_no, svcid } = reservation.value
 
-    // 사용자 정보
+    console.log('예약 응답:', res.data)
+
+    const reservationData = res.data.reservationDB
+    if (!reservationData) {
+      throw new Error('예약 데이터가 없습니다.')
+    }
+
+    reservation.value = reservationData
+
+    const { user_no, svcid } = reservationData
+
     const userRes = await axios.get('/login_api/mypage/detailView', {
       params: { userNo: user_no }
     })
     user.value = userRes.data.member
 
-    // 구장 정보
     const stadiumRes = await axios.get('/stadium_api/stadium/detailView', {
       params: { SVCID: svcid }
     })
     stadium.value = stadiumRes.data.stadiumDB.stadium
+
   } catch (err) {
     console.error('예약 확인 실패:', err)
     alert('예약 정보를 불러오는 중 오류가 발생했습니다.')
