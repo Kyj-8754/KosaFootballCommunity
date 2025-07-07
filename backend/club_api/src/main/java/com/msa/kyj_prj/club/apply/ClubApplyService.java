@@ -91,16 +91,18 @@ public class ClubApplyService {
 			log.error("❌ 클럽 신청 정보 저장 실패!");
 			return null;
 		}
-
+		
+		String senderName = clubApplyDAO.findUserNameByUserNo(clubApply.getAppli_user_no());
+		
 		// 알림 메시지 전송 (실패해도 무방)
 		Integer clubIdForAlarm = clubApplyDAO.findClubIdByBno(clubApply.getBno());
 		Integer userNoForAlarm = clubApplyDAO.findUserNoByBno(clubApply.getBno());
 		AlarmMessageDTO alarm = new AlarmMessageDTO();
 		alarm.setType("CLUB_APPLY");
-		alarm.setSenderId(String.valueOf(clubApply.getAppli_user_no()));
+		alarm.setSenderId(senderName);
 		alarm.setReceiverId(String.valueOf(userNoForAlarm));
 		alarm.setClubId(clubIdForAlarm);
-		alarm.setMessage(clubApply.getAppli_user_no() + " 님이 클럽가입을 신청했습니다.");
+		alarm.setMessage(senderName + " 님이 클럽가입을 신청했습니다.");
 
 		try {
 			String url = alarmApiUrl + "/api/alarm/send";
