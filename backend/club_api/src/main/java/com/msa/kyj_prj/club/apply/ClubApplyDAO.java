@@ -20,7 +20,10 @@ public interface ClubApplyDAO {
 	// 클럽 리더 user_no 조회
 	Integer findLeaderUserNoByClubId(@Param("club_id") int club_id);
 
+	// user_no로 user_name 조회 (단일 사용자)
+	String findUserNameByUserNo(@Param("user_no") int user_no);
 
+	
 	// 모집글별 신청 목록 조회
 	List<ClubApply> findByBno(int bno);
 
