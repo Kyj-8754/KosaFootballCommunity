@@ -1,6 +1,8 @@
 package com.msa.kyj_prj.match;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +37,21 @@ public class MatchController {
     
     // 매치 참가 신청
     @PostMapping("/apply")
-    public void applyToMatch(@RequestBody MatchParticipant participant) {
-        matchService.applyToMatch(participant);
+    public ResponseEntity<?> applyToMatch(@RequestBody MatchParticipant participant) {
+        try {
+            matchService.applyToMatch(participant);
+            return ResponseEntity.ok().build(); // 성공 시 200 OK
+        } catch (IllegalStateException e) {
+            // 소셜/리그 인원 초과 예외
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT) // 409 Conflict
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            // 기타 예상치 못한 예외
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "참가 신청 중 문제가 발생했습니다."));
+        }
     }
     
     // 매치 참가 신청 여부 확인
@@ -55,5 +70,35 @@ public class MatchController {
     @GetMapping("/participants/count")
     public int getMatchParticipantCount(@RequestParam Long matchId) {
         return matchService.getMatchParticipantCount(matchId);
+    }
+    
+    // 유저 번호로 클럽 정보 조회
+    @GetMapping("/club")
+    public Map<String, Object> getClubByUserNo(@RequestParam Long userNo) {
+        return matchService.getClubByUserNo(userNo);
+    }
+    
+    // 지역명 리스트 조회
+    @GetMapping("/areas")
+    public List<String> getAllAreanms() {
+        return matchService.getAllAreanms();
+    }
+    
+    // 특정 매치의 참가자 + 사용자 이름 조회
+    @GetMapping("/participants")
+    public List<Map<String, Object>> getMatchParticipants(@RequestParam Long matchId) {
+        return matchService.getMatchParticipantsWithNames(matchId);
+    }
+    
+    // 특정 매치의 참가자 + 사용자 + 클럽 명 이름 조회
+    @GetMapping("/participantswithclub")
+    public List<Map<String, Object>> selectParticipantsWithClubByMatchId(@RequestParam Long matchId) {
+        return matchService.selectParticipantsWithClubByMatchId(matchId);
+    }
+
+    // 매치 참가자 상태 업데이트
+    @PostMapping("/status")
+    public void updateStatus(@RequestBody Map<String, Object> param) {
+        matchService.updateMatchParticipantStatus(param);
     }
 }

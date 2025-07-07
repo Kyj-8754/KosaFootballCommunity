@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.msa.kyj_prj.util.StadiumDetailResponse;
 import com.msa.kyj_prj.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +52,7 @@ public class StadiumController {
 	@GetMapping("detailView")
 	public Map<String, Object> detailView(@RequestParam String SVCID) {
 		Map<String, Object> result = new HashMap<>();
-		Stadium stadiumDB = stadiumService.getStadium(SVCID);
+		StadiumDetailResponse stadiumDB = stadiumService.getStadium(SVCID);
 		if (stadiumDB == null) {
 			return result;
 		}
@@ -62,12 +64,6 @@ public class StadiumController {
 	@PostMapping("update")
 	public void syncAll() throws Exception{
 		stadiumService.syncAll();
-	}
-	
-	// 구장 업데이트
-	@PostMapping("reservationForm")
-	public void reservationForm(@RequestParam String SVCID, @RequestParam String date) throws Exception{
-		stadiumService.getreservationForm(SVCID, date);
 	}
 	
 }

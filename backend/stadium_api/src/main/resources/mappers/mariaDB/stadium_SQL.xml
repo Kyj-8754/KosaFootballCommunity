@@ -47,6 +47,16 @@
 		select * from stadium where SVCID = #{SVCID}
 	</select>
 	
+	<select id="getAvailableDate" resultType="com.msa.kyj_prj.stadium.Slot">
+		select distinct slot_date
+		from reservation_slot
+		where svcid = #{svcid}
+		AND slot_date BETWEEN DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+                    AND DATE_ADD(CURDATE(), INTERVAL (6 - WEEKDAY(CURDATE())) DAY)
+		order by slot_date
+	</select>
+
+	
 	<update id="update">
 		update stadium set 
 			  SVCNM = #{SVCNM},
@@ -63,12 +73,6 @@
 	<select id="findAllSvcIds" resultType="string">
 	  SELECT SVCID FROM stadium
 	</select>
-		
-	<!-- <update id="invViewCount">
-		update t_board set 
-		    view_count = view_count + 1  
-		where bno= #{bno}	
-	</update>	 -->
 	
 	<insert id="regist">
 		insert into STADIUM (

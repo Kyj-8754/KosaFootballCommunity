@@ -82,7 +82,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 
 		try {
 			Map<String, Object> values = jwtUtil.validateToken(tokenStr);
-
+			log.info("토큰 payload 값: {}", values);
 			return values;
 		} catch (MalformedJwtException malformedJwtException) {
 			log.error("MalformedJwtException----------------------");

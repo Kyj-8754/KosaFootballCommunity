@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.msa.kyj_prj.page.PageResponseVO_board;
+import com.msa.kyj_prj.util.StadiumDetailResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,8 +58,11 @@ public class StadiumService{
 	}
 	
 	// 구장 상세정보
-	public Stadium getStadium(String SVCID) {
-		return stadiumDAO.getStadium(SVCID);
+	public StadiumDetailResponse getStadium(String SVCID) {
+		Stadium stadium = stadiumDAO.getStadium(SVCID);
+		List<Slot> slot = stadiumDAO.getAvailableDate(SVCID);
+		
+		return new StadiumDetailResponse(stadium, slot);
 	}
 	
 		
@@ -289,10 +293,6 @@ public class StadiumService{
 	        System.out.println("업데이트 걸린 시간: " + duration.getSeconds());
 		}
 		
-		//
-		public void getreservationForm(String SVCID, String date) {
-			stadiumDAO.getreservationForm(SVCID, date);
-		}
 }
 
 

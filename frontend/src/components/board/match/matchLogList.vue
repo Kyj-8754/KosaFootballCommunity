@@ -11,8 +11,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(log, index) in logs" :key="log.log_id">
-        <!-- 수정 모드일 경우 -->
+      <!-- 데이터가 없을 경우 안내 메시지 -->
+      <tr v-if="logs.length === 0">
+        <td colspan="6">등록된 로그가 없습니다.</td>
+      </tr>
+
+      <!-- 데이터가 있는 경우 -->
+      <tr v-else v-for="(log, index) in logs" :key="log.log_id">
         <template v-if="editingIndex === index">
           <td>{{ log.log_created_at }}</td>
           <td>
@@ -33,7 +38,6 @@
           </td>
         </template>
 
-        <!-- 일반 보기 모드 -->
         <template v-else>
           <td>{{ log.log_created_at }}</td>
           <td>{{ log.club_id }}</td>

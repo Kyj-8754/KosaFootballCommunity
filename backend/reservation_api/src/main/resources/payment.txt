@@ -1,0 +1,17 @@
+-- kosa_db.reservation definition
+
+CREATE TABLE `reservation` (
+  `reservation_id` bigint NOT NULL AUTO_INCREMENT,
+  `slot_id` bigint NOT NULL,
+  `reservation_type` enum('social','match') NOT NULL,
+  `reserved_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `user_no` int NOT NULL,
+  `status` enum('reserved','cancelled','expired') DEFAULT 'reserved',
+  `cancelled_at` datetime DEFAULT NULL,
+  `price` int NOT NULL,
+  PRIMARY KEY (`reservation_id`),
+  KEY `fk_reservation_user` (`user_no`),
+  KEY `fk_slot` (`slot_id`),
+  CONSTRAINT `fk_reservation_user` FOREIGN KEY (`user_no`) REFERENCES `user` (`user_no`) ON DELETE CASCADE,
+  CONSTRAINT `fk_slot` FOREIGN KEY (`slot_id`) REFERENCES `reservation_slot` (`slot_id`) ON DELETE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -24,4 +24,5 @@ public class Stadium {
 	private String V_MAX;		// 서비스이용종료기간
 	private String NOTICE;		// 주의사항
 	private String DTLCONT;		// 상세내용
+	private String PRICE;
 }
