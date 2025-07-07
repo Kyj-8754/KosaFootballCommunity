@@ -12,9 +12,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "JOIN_APPROVED"),
     @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "JOIN_REJECTED"),
     @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "CLUB_APPLY"),
-    @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "CLUB_WITHDRAW"),   // 🔔 탈퇴 알림
-    @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "CLUB_KICKED")      // 🔔 강퇴 알림
-    // 예: 친구알람, 예약알람 등 필요한 타입 계속 추가
+    @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "CLUB_WITHDRAW"),  
+    @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "CLUB_KICKED"), 
+    @JsonSubTypes.Type(value = MatchAlarmMessageDTO.class, name = "MATCH_APPLY")
+    // 이 밑으로 계속 기능 추가 
+   
 })
 
 public interface AlarmMessage {

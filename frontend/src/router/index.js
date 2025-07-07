@@ -35,12 +35,12 @@ const routes = [
   { path: '/stadium/reservation',  name: 'Stadium_Reservation', component: () => import ('@/pages/reservation/reservationForm.vue') },
 
   // 클럽 관련
-  { path: '/club', name: 'Club_List', component: () => import (Club_List) },
-  { path: '/club/registForm', name: 'Club_RegistForm', component: () => import  (Club_RegistForm)},
-  { path: '/club/:teamCode', name: 'Club_DetailView', component: () => import  (Club_DetailView) },
-  { path: '/club/:teamCode/updateForm', name: 'Club_UpdateForm', component: () => import  (Club_UpdateForm) },
-  { path: '/club/:teamCode/applyList', name: 'Club_ApplyList', component: () => import  (Club_ApplyList) },
-  { path: '/club/:teamCode/memberList', name: 'Club_MemberList', component: () => import  (Club_MemberList) },
+  { path: '/club', name: 'Club_List', component: () => import ('@/pages/club/list.vue') },
+  { path: '/club/registForm', name: 'Club_RegistForm', component: () => import  ('@/pages/club/registForm.vue') },
+  { path: '/club/:teamCode', name: 'Club_DetailView', component: () => import  ('@/pages/club/detailView.vue') },
+  { path: '/club/:teamCode/updateForm', name: 'Club_UpdateForm', component: () => import  ('@/pages/club/updateForm.vue') },
+  { path: '/club/:teamCode/applyList', name: 'Club_ApplyList', component: () => import  ('@/pages/club/applyList.vue') },
+  { path: '/club/:teamCode/memberList', name: 'Club_MemberList', component: () => import  ('@/pages/club/memberList.vue') },
 
   // 모집글 관련
   { path: '/recruitBoard', name: 'Recruit_List', component: () => import ('@/pages/recruitBoard/list.vue')},
