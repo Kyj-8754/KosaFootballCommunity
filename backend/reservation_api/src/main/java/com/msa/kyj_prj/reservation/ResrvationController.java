@@ -143,6 +143,30 @@ public class ResrvationController {
 	        }    
 	}
 	
+	// 결제 리스트 노출
+	@PostMapping("paymet_list")
+	public ResponseEntity<Map<String, Object>> getpaymentList(@RequestBody Map<String, Object> param){
+		
+		Map<String, Object> result = new HashMap<>();
+		
+		 try {
+			 	result.put("reservationList",reservationService.getPaymentList(param.get("user_no").toString()));
+	            result.put("res_code", "200");
+	            result.put("res_msg", "예약 리스트 조회 성공");
+	            return ResponseEntity.ok(result);
+
+	        } catch (IllegalArgumentException e) {
+	            result.put("res_code", "400");
+	            result.put("res_msg", "잘못된 요청: " + e.getMessage());
+	            return ResponseEntity.badRequest().body(result);
+
+	        } catch (Exception e) {
+	            result.put("res_code", "500");
+	            result.put("res_msg", "서버 오류 발생: " + e.getMessage());
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+	        }    
+	}
+	
 	// 예약 취소
 	@PostMapping("cancel")
 	public ResponseEntity<Map<String, Object>> cancle(@RequestBody Map<String, Object> param) {
