@@ -1,8 +1,11 @@
 package com.msa.kyj_prj.reservation;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.msa.kyj_prj.dto.ReservationDTO;
 import com.msa.kyj_prj.dto.SlotDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -35,15 +38,37 @@ public class ReservationService{
 		return reservationDAO.reservation(reservation);
 	}
 	
+	
+	// 예약 취소
+	public void cancelReservation(Map<String, Object> param) {
+		// 받은 파라미터를 이용해서 검증확인
+		Map<String, Object> reservationMap = (Map<String, Object>) param.get("reservation");
+//		String user_no = param.get("user_no").toString();
+//		String re_user_no = reservationMap.get("user_no").toString();
+	    String status = (String) reservationMap.get("status");
+	    
+	    log.info("검증로직 시작");
+	    // 예약된 상태만 취소 가능
+	    if (!"reserved".equalsIgnoreCase(status)) {
+	        throw new IllegalStateException("예약된 상태에서만 취소할 수 있습니다.");
+	    }
+
+	    int reservation_id = (Integer)reservationMap.get("reservation_id");
+	    
+	    System.out.println("DAO 가기전임" + reservation_id);
+	    reservationDAO.updateStatusToCancelled(reservation_id);
+	}
+	
+	// 예약 리스트
+	public List<ReservationDTO> getReservationList(String user_no){
+		return reservationDAO.getReservationList(user_no);
+	}
+	
 	// 예약된거 가져오기
-	public List<Reservation> getreservation(Long reservation_id) {
+	public ReservationDTO getreservation(Long reservation_id) {
 		return reservationDAO.getReservations(reservation_id);
 	}
 	
-//	// 예약 슬롯 가져오기
-//	public List<SlotDTO> getSlot(String slot_id){
-//		return reservationDAO.getSlot(slot_id);
-//	}
 	
 }
 
