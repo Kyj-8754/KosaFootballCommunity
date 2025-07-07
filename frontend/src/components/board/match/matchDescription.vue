@@ -40,16 +40,22 @@ const props = defineProps({
   matchId: { type: Number, required: true },
   matchCode: { type: String, required: true },
   matchUserNo: { type: Number, required: true },
-  matchManagerNo: { type: Number, required: true }
+  matchManagerNo: { type: Number, required: true },
+  matchStatus: { type: String, required: true } // ✅ 추가
 })
 
 const activeTab = ref('description')
 
-const tabs = [
-  { key: 'description', label: '매치 설명' },
-  { key: 'participants', label: '참가자 목록' },
-  { key: 'results', label: '경기 결과' } // ✅ 추가
-]
+const tabs = computed(() => {
+  const base = [
+    { key: 'description', label: '매치 설명' },
+    { key: 'participants', label: '참가자 목록' }
+  ]
+  if (props.matchStatus === 'completed') {
+    base.push({ key: 'results', label: '경기 결과' })
+  }
+  return base
+})
 
 // HTML 렌더링용 computed
 const descriptionHtml = computed(() => props.description || '<p>매치 설명이 없습니다.</p>')

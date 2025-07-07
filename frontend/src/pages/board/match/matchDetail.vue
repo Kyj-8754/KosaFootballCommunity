@@ -14,6 +14,7 @@
       :matchCode="match.match_code"
       :matchUserNo="match.user_no"
       :matchManagerNo="match.manager_no"
+      :matchStatus="match.match_status"
     />
     
     <MatchLogButton 
