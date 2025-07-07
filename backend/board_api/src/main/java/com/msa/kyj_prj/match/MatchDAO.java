@@ -48,4 +48,6 @@ public interface MatchDAO {
     // match_id 기준으로 match_closed 값 수정 (Map 기반)
     int updateMatchStatus(Map<String, Object> param);
 
+	// 매치 목록 검색
+    List<Match> selectAllMatches(Map<String, Object> params);
 }

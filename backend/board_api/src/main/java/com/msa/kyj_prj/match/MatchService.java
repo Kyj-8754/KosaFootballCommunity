@@ -114,7 +114,7 @@ public class MatchService {
     @Scheduled(cron = "0 0 */2 * * *") // 매 2시간마다 실행
     public void activatePastMatches() {
     	System.out.println("예약 실행");
-        List<Match> allMatches = matchDAO.selectFilteredMatches(new HashMap<>());
+        List<Match> allMatches = matchDAO.selectAllMatches(new HashMap<>());
         LocalDateTime now = LocalDateTime.now();
         LocalDate today = now.toLocalDate();
 
