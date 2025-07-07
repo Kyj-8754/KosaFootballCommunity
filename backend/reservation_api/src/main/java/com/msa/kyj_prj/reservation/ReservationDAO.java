@@ -17,5 +17,6 @@ public interface ReservationDAO {
 	public int reservation(Reservation reservation);
 	public ReservationDTO getReservations(Long reservation_id);
 	public List<ReservationDTO> getReservationList(String user_no);
+	public List<ReservationDTO> getPaymentList(String user_no);
 	public void updateStatusToCancelled(int reservation_id);
 }

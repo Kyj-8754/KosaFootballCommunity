@@ -40,6 +40,11 @@
                 예약 리스트
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'Payment_List' }">
+                결제 리스트
+            </router-link>
+          </li>
         </ul>
       </div>
     </nav>
