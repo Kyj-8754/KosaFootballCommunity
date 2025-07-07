@@ -29,5 +29,8 @@ public class ReservationDTO {
     private String method;
     private int amount;
     private String tid;
+    
+    
+    private String svcnm;
 
 }

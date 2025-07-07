@@ -24,9 +24,10 @@ const routes = [
   { path:'/reservation/reservationForm', name: 'reservation_Form', component: () => import ('@/pages/reservation/reservationForm.vue')} ,
   { path:'/reservation/reservation_confirm/:reservationId', name: 'reservation_Confirm', component: () => import ('@/pages/reservation/reservation_confirm.vue'), props: true} ,
   { path:'/reservation/reservation_list', name: 'Reservation_List', component: () => import('@/pages/reservation/reservation_list.vue')},
-  { path:'/payment/success', name: 'PaymentSuccess', component: () => import('@/pages/payment/Success.vue')},
-  { path:'/payment/fail', name: 'PaymentFail', component: () => import('@/pages/payment/Fail.vue')},
-  { path:'/payment/cancel', name: 'PaymentCancel', component: () => import('@/pages/payment/Cancel.vue')},
+  { path:'/payment/payment_list', name: 'Payment_List', component: () => import('@/pages/payment/payment_list.vue')},
+  { path:'/payment/success', name: 'PaymentSuccess', component: () => import('@/pages/payment/success.vue')},
+  { path:'/payment/fail', name: 'PaymentFail', component: () => import('@/pages/payment/fail.vue')},
+  { path:'/payment/cancel', name: 'PaymentCancel', component: () => import('@/pages/payment/cancel.vue')},
 
   // 경기장 관련
   { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: () => import ('@/pages/stadium/detailView.vue')},

@@ -19,9 +19,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class KakaoService {
 
 	private final RestTemplate restTemplate;
@@ -39,13 +41,14 @@ public class KakaoService {
 	    // 결제 상태 가져옴 (해당 정보가 결제완료, 혹은 실패인지 확인하기위한 로직)
 		String status = kakaoDAO.findReservationId(payment);
 		
+		
 		// 결제 검증 후 시작 로직
-		if (status == null) {
+		if ("pending".equals(status)) {
 		    // 결제 이력이 없음 → 정상 진행 가능
-
+			log.info("결제 검증 완료, 시작");
 			// 결제 정보의 고유 ID 가져옴
 		    Long id = savePaymentInfo(param);
-		    
+		    log.info("id 가져옴" + id);
 		    // 성공, 실패, 취소 url
 		    String approvalUrl = "http://localhost:8102/kakaopay/success?id=" + id;
 		    String cancelUrl = "http://localhost:8102/kakaopay/cancel?id=" + id;
