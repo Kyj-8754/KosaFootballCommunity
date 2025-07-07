@@ -108,6 +108,10 @@ const loadReservationDetails = async () =>{
 
 // 예약 취소
  const cancleReservation = async () => {
+
+  const confirmPayment = confirm("정말 예약을 취소하시겠습니까?");
+  if (!confirmPayment) return;
+
    try {
     const res = await axios.post('/reservation_api/reservation/cancel',{
         reservation: reservation.value,
@@ -125,6 +129,10 @@ const loadReservationDetails = async () =>{
 
 // 결제 요청
 const requestPayment = async () => {
+
+  const confirmPayment = confirm("결제 하시겠습니까?");
+  if (!confirmPayment) return;
+  
   try{
     const res = await axios.post('/kakao_api/kakaopay/ready', {
       item_name: stadium.value.svcnm,
@@ -154,6 +162,10 @@ const requestPayment = async () => {
 
 // 환불 요청
 const refundPayment = async () => {
+
+  const confirmCancel = confirm("정말 결제를 취소하시겠습니까?");
+  if (!confirmCancel) return;  // 취소 시 함수 종료
+
   try{
     const res = await axios.post('/kakao_api/kakaopay/refund', {
       reservation: reservation.value
