@@ -69,6 +69,11 @@ public class ReservationService{
 		return reservationDAO.getReservations(reservation_id);
 	}
 	
+	// 결제 리스트
+	public List<ReservationDTO> getPaymentList(String user_no){
+		return reservationDAO.getPaymentList(user_no);
+	}
+	
 	
 }
 

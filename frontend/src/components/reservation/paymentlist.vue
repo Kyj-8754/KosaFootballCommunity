@@ -6,21 +6,23 @@
         <span class="num-col">번호</span>
         <span class="name-col">구장명</span>
          <span class="date-col" @click="toggleSort('slot_date')" style="cursor: pointer">
-    예약일
+    결제일
     <span v-if="sortKey === 'slot_date'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
   </span>
+   <span class="amount-col">결제 금액</span>
   <span class="status-col" @click="toggleSort('status')" style="cursor: pointer">
-    상태
+    결제 상태
     <span v-if="sortKey === 'status'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
   </span>
       </li>
       <li v-for="(item, index) in pagedReservations" :key="item.reservation_id" class="reservation-item" @click="goToDetail(item.reservation_id)"> 
               <span class="num-col">{{ startIndex + index + 1 }}</span>
               <span class="name-col">{{ item.svcnm }}</span>
-              <span class="date-col">{{ item.slot_date }}</span>
+              <span class="date-col">{{ item.paid_at }}</span>
+              <span class="amount-col">{{ item.amount }}</span>
               <span 
                 class="status-col" 
-                :class="item.status === 'reserved' ? 'reserved' : 'cancelled'"
+                :class="item.status === 'paid' ? 'paid' : 'canceled'"
               >
             {{ convertStatus(item.status) }}
           </span>
@@ -32,6 +34,10 @@
       <span>페이지 {{ currentPage }}</span>
       <button @click="nextPage" :disabled="endIndex >= reservations.length">다음</button>
     </div>
+
+    <div class="total-amount">
+  총 결제 금액: {{ totalPaidAmount.toLocaleString() }} 원
+</div>
     </div>
 </template>
 
@@ -88,6 +94,12 @@ const toggleSort = (key) => {
   }
 };
 
+// 결제 금액
+const totalPaidAmount = computed(() => {
+  return reservations.value
+    .filter(item => item.status === 'paid')
+    .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+});
 
 
 //페이지 버튼, 버튼 이벤트
@@ -109,7 +121,7 @@ const prevPage = () => {
 const reservations = ref([])
 
 const fetchReservations = async () => {
-  const res = await axios.post('/reservation_api/reservation/list', {
+  const res = await axios.post('/reservation_api/reservation/paymet_list', {
       user_no: props.user_no   // 필요 시 props로 받아 처리 가능
   })
   reservations.value = res.data.reservationList
@@ -117,10 +129,12 @@ const fetchReservations = async () => {
 
 const convertStatus = (status) => {
   switch (status) {
-    case 'reserved':
-      return '예약';
-    case 'cancelled':
-      return '예약 취소';
+    case 'paid':
+      return '결제 완료';
+    case 'canceled':
+      return '결제 취소';
+    case 'pending':
+      return '미 결제';
     default:
       return '알 수 없음';
   }
@@ -181,12 +195,12 @@ onMounted(fetchReservations)
   font-size: 13px;
 }
 
-.status-col.reserved {
+.status-col.paid {
   background-color: #eafaf1;
   color: #219653;
 }
 
-.status-col.cancelled {
+.status-col.canceled {
   background-color: #fdeaea;
   color: #d93025;
 }
@@ -218,5 +232,13 @@ onMounted(fetchReservations)
 .pagination button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.total-amount {
+  text-align: right;
+  font-weight: bold;
+  margin-top: 12px;
+  font-size: 16px;
+  color: #333;
 }
 </style>
