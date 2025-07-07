@@ -43,7 +43,7 @@ public class KakaoService {
 		
 		
 		// 결제 검증 후 시작 로직
-		if ("pending".equals(status)) {
+		if ("pending".equals(status) || status == null) {
 		    // 결제 이력이 없음 → 정상 진행 가능
 			log.info("결제 검증 완료, 시작");
 			// 결제 정보의 고유 ID 가져옴
