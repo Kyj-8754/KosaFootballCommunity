@@ -50,4 +50,7 @@ public interface MatchDAO {
 
 	// 매치 목록 검색
     List<Match> selectAllMatches(Map<String, Object> params);
+    
+    // 연동된 예약 id 찾기
+    Long getReservationIdByBoardId(@Param("board_id") Long boardId);
 }

@@ -31,7 +31,7 @@
         </div>
 
         <div v-else-if="activeTab === 'reservation'">
-          <ReservationConfirm reservationId="1" class="mt-3" />
+          <ReservationConfirm :reservationId="reservationId" class="mt-3" />
         </div>
       </div>
 
@@ -96,6 +96,34 @@ const userName = inject('userName')
 const authCode = inject('authCode')
 
 const activeTab = ref('content')  // 'content' | 'reservation'
+
+const reservationId = ref(null)
+
+const fetchReservationId = async () => {
+  if (!post.value || post.value.board_category !== '모집게시판') {
+    console.warn('⛔ 게시글이 없거나 모집게시판이 아님:', post.value)
+    return
+  }
+
+  console.log('🔍 board_id 요청 전:', post.value.board_id)
+
+  try {
+    const res = await axios.get('/board_api/match/reservation-id', {
+      params: { boardId: post.value.board_id }
+    })
+
+    console.log('📦 reservation-id 응답:', res.data)
+
+    if (res.data.res_code === '200') {
+      reservationId.value = res.data.reservation_id
+      console.log('✅ reservationId 저장됨:', reservationId.value)
+    } else {
+      console.warn('⚠️ 예약 ID 없음:', res.data.res_msg)
+    }
+  } catch (error) {
+    console.error('❌ 예약 ID 조회 실패:', error)
+  }
+}
 
 const fetchPost = async () => {
   try {
@@ -275,6 +303,7 @@ onMounted(async () => {
     await fetchComments()
     await fetchLikeCount()
     await fetchLiked()  // 좋아요 상태도 함께 초기화
+    await fetchReservationId()
 
   } catch (error) {
     console.error('초기 로딩 실패:', error)
