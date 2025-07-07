@@ -69,6 +69,7 @@ const userId = computed(() => payload.value.userId || null)
 const userNo = computed(() => payload.value.userNo || null)
 const userName = computed(() => payload.value.userName || null)
 const authCode = computed(() => payload.value.authCode || null)
+const loginType = computed(() => payload.value.loginType || null)
 
 // 로그아웃 함수
 const logout = () => {
@@ -86,6 +87,7 @@ provide('userId', userId)
 provide('userNo', userNo)
 provide('userName', userName)
 provide('authCode', authCode)
+provide('loginType', loginType)
 
 
 onMounted(() => {

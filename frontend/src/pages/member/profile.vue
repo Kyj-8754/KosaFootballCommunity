@@ -12,6 +12,12 @@
           · {{ stat.statName }}
         </span>
       </p>
+      <div class="button-group">
+        <button v-if="canGrantManager" class="btn btn-success"@click="grantManager">매니저 권한 부여</button>
+        <button v-if="canRevokeManager" class="btn btn-danger"@click="revokeManager">매니저 권한 해제</button>
+      </div>
+      
+      
       <router-link v-if="member" :to="friendLink" class="friend-count router-link">{{ friends.length }}명의 친구</router-link>
 
       <router-link v-if="member" :to="{name: 'Member_Profile_Update', query: { userNo: member.userNo }}" class="btn btn-primary">프로필 설정</router-link>
@@ -68,17 +74,40 @@ import axios from 'axios'
 
 const token = inject('token')
 const loginUserNo = inject('userNo')
+const authCode = inject('authCode')
 const route = useRoute()
+
 const member = ref(null)
 const style = ref(null)
 const stat = ref(null)
 const friends = ref([])
 
+const isManager = computed(() => {
+  return authCode?.value === 'ROLE_A1'
+})
+
+// 매니저 권한 부여 버튼 표시 조건
+const canGrantManager = computed(() => {
+  return (
+    authCode.value === 'ROLE_A1' &&
+    member.value?.authCode === 'A3' &&
+    loginUserNo.value !== member.value?.userNo
+  )
+})
+
+// 매니저 권한 해제 버튼 표시 조건
+const canRevokeManager = computed(() => {
+  return (
+    authCode.value === 'ROLE_A1' &&
+    member.value?.authCode === 'A2' &&
+    loginUserNo.value !== member.value?.userNo
+  )
+})
+
 const friendLink = computed(() => {
   if (!member.value || !loginUserNo?.value) return {}
 
   const isMe = member.value.userNo === loginUserNo.value
-
   return {
     name: isMe ? 'Member_Friend' : 'Member_Other_Friend',
     query: {
@@ -87,6 +116,29 @@ const friendLink = computed(() => {
   }
 })
 
+// 회원 정보 조회 함수
+const fetchMemberDetail = async () => {
+  const userNo = route.query.userNo
+  if (!userNo) {
+    console.warn('userNo 쿼리 파라미터가 없습니다.')
+    return
+  }
+
+  try {
+    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo}`, {
+      headers: {
+        Authorization: `Bearer ${token.value}`
+      }
+    })
+    member.value = res.data.member
+    style.value = res.data.userStyle
+    stat.value = res.data.userStat
+  } catch (err) {
+    console.error('회원 정보 조회 실패:', err)
+  }
+}
+
+// 친구 목록 조회 함수
 const loadFriendList = async () => {
   const userNo = route.query.userNo
   if (!userNo) return
@@ -94,7 +146,7 @@ const loadFriendList = async () => {
     const res = await axios.get('/login_api/mypage/friends', {
       params: { userNo },
       headers: {
-      Authorization: `Bearer ${token.value}`
+        Authorization: `Bearer ${token.value}`
       }
     })
     if (res.data?.res_code === '200') {
@@ -104,28 +156,57 @@ const loadFriendList = async () => {
     console.error('친구 목록 불러오기 실패', err)
   }
 }
-onMounted(async () => {
-  const userNo = route.query.userNo // 쿼리 파라미터에서 userNo 받기
-  if (!userNo) {
-    console.warn('userNo 쿼리 파라미터가 없습니다.')
-    return
-  }
+
+// 관리자 권한 부여
+const grantManager = async () => {
+  const userNo = route.query.userNo
+  if (!confirm('관리자 권한을 부여하시겠습니까?')) return
 
   try {
-    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo}`, {
-  headers: {
-    Authorization: `Bearer ${token.value}`
-  }
-})
-    member.value = res.data.member
-    style.value = res.data.userStyle
-    stat.value = res.data.userStat
+    const res = await axios.post('/login_api/admin/grantManager', { userNo }, {
+      headers: {
+        Authorization: `Bearer ${token.value}`
+      }
+    })
+    alert(res.data.res_msg)
+    if (res.data.res_code === '200') {
+      await fetchMemberDetail()
+    }
   } catch (err) {
-    console.error('회원 정보 조회 실패:', err)
+    alert('권한 부여 중 오류 발생')
+    console.error(err)
   }
+}
+
+// 관리자 권한 해제
+const revokeManager = async () => {
+  const userNo = route.query.userNo
+  if (!confirm('관리자 권한을 해제하시겠습니까?')) return
+
+  try {
+    const res = await axios.post('/login_api/admin/revokeManager', { userNo }, {
+      headers: {
+        Authorization: `Bearer ${token.value}`
+      }
+    })
+    alert(res.data.res_msg)
+    if (res.data.res_code === '200') {
+      await fetchMemberDetail()
+    }
+  } catch (err) {
+    alert('권한 해제 중 오류 발생')
+    console.error(err)
+  }
+}
+
+onMounted(async () => {
+  await fetchMemberDetail()
+  console.log('🔐 authCode:', authCode?.value)
+  console.log('👤 member:', member.value?.authCode)
   await loadFriendList()
 })
 </script>
+
 
 <style scoped>
 .profile-wrapper {
@@ -224,5 +305,18 @@ onMounted(async () => {
 
 .comment-box h3 {
   font-size: 20px;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 20px;
+}
+
+.button-group button,
+.button-group a {
+  min-width: 120px;
+  text-align: center;
 }
 </style>

@@ -24,7 +24,7 @@
 			</div>
       <div class="mb-3">
         <label for="phone" class="form-label">전화번호</label>
-        <input type="text" id="phone" v-model="form.userPhone" maxlength="16" class="form-control" />
+        <input type="text" id="phone" v-model="form.userPhone" maxlength="11" class="form-control" />
       </div>
 
       <div class="mb-3 d-flex gap-2">

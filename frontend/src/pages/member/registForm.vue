@@ -8,7 +8,7 @@
             <form @submit.prevent="onSubmit">
               <div class="mb-3 d-flex align-items-center gap-2">
                 <div class="flex-grow-1">
-                  <label for="userid" class="form-label">이메일</label>
+                  <label for="userid" class="form-label">아이디</label>
                   <input type="text" v-model="form.userId" id="userid" class="form-control" placeholder="아이디를 입력해주세요" required>
                   <span v-if="useridMsg" class="text-danger">{{ useridMsg }}</span>
                 </div>
@@ -46,7 +46,19 @@
 
               <div class="mb-3">
                 <label for="phone" class="form-label">전화번호</label>
-                <input type="text" v-model="form.userPhone" id="phone" class="form-control" placeholder="전화번호를 입력해주세요" maxlength="16">
+                <div class="d-flex gap-2">
+                  <input type="text" v-model="form.userPhone" id="phone" class="form-control" placeholder="전화번호를 입력해주세요" maxlength="11">
+                  <input type="button" value="인증 요청" class="btn btn-outline-primary" @click="sendSmsCode">
+                </div>
+              </div>
+
+              <div class="mb-3" v-if="isCodeSent">
+                <label for="smsCode" class="form-label">인증 코드</label>
+                <div class="d-flex gap-2">
+                  <input type="text" v-model="smsCode" id="smsCode" class="form-control" placeholder="인증 코드를 입력해주세요">
+                  <input type="button" value="확인" class="btn btn-outline-success" @click="verifySmsCode">
+                </div>
+                <span v-if="smsCodeMsg" :class="smsCodeValid ? 'text-success' : 'text-danger'">{{ smsCodeMsg }}</span>
               </div>
 
               <div class="mb-3 d-flex gap-2">
@@ -106,6 +118,11 @@ const useridMsg = ref('')
 const passwdMsg = ref('')
 const validClicked = ref(false)
 
+const smsCode = ref('')
+const smsCodeMsg = ref('')
+const smsCodeValid = ref(false)
+const isCodeSent = ref(false)
+
 // 아이디 중복 확인
 const checkDuplicateId = async () => {
   if (!form.userId || form.userId.length < 8) {
@@ -138,10 +155,64 @@ const checkDuplicateId = async () => {
   }
 }
 
+// 문자 전송
+const sendSmsCode = async () => {
+  if (!form.userPhone) {
+    alert('전화번호를 입력해주세요')
+    return
+  }
+
+  try {
+    const res = await fetch('/login_api/user/na/smsCode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ userPhone: form.userPhone })
+    })
+
+    const json = await res.json()
+    if (json.res_code === '200') {
+      alert('인증 코드가 전송되었습니다')
+      isCodeSent.value = true
+    } else {
+      alert(json.res_msg || '전송 실패')
+    }
+  } catch (err) {
+    console.error('SMS 전송 오류:', err)
+    alert('서버 오류로 전송 실패')
+  }
+}
+
+// 인증번호 검증
+const verifySmsCode = async () => {
+  try {
+    const res = await fetch('/login_api/user/na/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        userPhone: form.userPhone,
+        smsCode: smsCode.value
+      })
+    })
+
+    const json = await res.json()
+    if (json.res_code === '200') {
+      smsCodeMsg.value = '인증에 성공했습니다.'
+      smsCodeValid.value = true
+    } else {
+      smsCodeMsg.value = json.res_msg || '인증 실패'
+      smsCodeValid.value = false
+    }
+  } catch (err) {
+    console.error('인증 오류:', err)
+    smsCodeMsg.value = '서버 오류로 인증 실패'
+    smsCodeValid.value = false
+  }
+}
+
 // 회원가입 제출
 const onSubmit = async () => {
   if (!validClicked.value) {
-    alert('이메일 중복 확인을 해주세요')
+    alert('아이디 중복 확인을 해주세요')
     return
   }
 
@@ -163,6 +234,11 @@ const onSubmit = async () => {
   passwdMsg.value = ''
   const payload = { ...form }
   delete payload.userPwd2
+
+  if (!smsCodeValid.value) {
+  alert('전화번호 인증을 완료해주세요')
+  return
+  }
 
   try {
     const response = await fetch('/login_api/user/na/register', {
@@ -213,5 +289,14 @@ onMounted(() => {
 
 watch(() => form.userId, () => {
   validClicked.value = false
+})
+
+watch(() => form.userPhone, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    isCodeSent.value = false
+    smsCodeValid.value = false
+    smsCode.value = ''
+    smsCodeMsg.value = ''
+  }
 })
 </script>
