@@ -74,6 +74,15 @@ public class ReservationService{
 		return reservationDAO.getPaymentList(user_no);
 	}
 	
+	// 예약에 board_id 연결
+	public void updateBoardId(Long reservationId, Long boardId) {
+	    if (reservationId == null || boardId == null) {
+	        throw new IllegalArgumentException("reservationId 또는 boardId가 null입니다.");
+	    }
+
+	    log.info("예약 [{}]에 게시글 [{}] 연결 중", reservationId, boardId);
+	    reservationDAO.updateBoardId(reservationId, boardId);
+	}
 	
 }
 

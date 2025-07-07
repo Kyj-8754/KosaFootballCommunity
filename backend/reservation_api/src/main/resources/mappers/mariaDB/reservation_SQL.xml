@@ -73,4 +73,10 @@ WHERE r.reservation_id = #{reservation_id}
 	      cancelled_at = now()
 	  WHERE reservation_id = #{reservation_id}
 	</update>
+	
+	<update id="updateBoardId" parameterType="map">
+	  UPDATE reservation
+	  SET board_id = #{board_id}
+	  WHERE reservation_id = #{reservation_id}
+	</update>
 </mapper>
