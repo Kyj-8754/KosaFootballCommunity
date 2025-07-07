@@ -100,7 +100,46 @@ public class MatchService {
     
     // 매치 참가자 상태 업데이트
     public int updateMatchParticipantStatus(Map<String, Object> param) {
-        return matchDAO.updateMatchParticipantStatus(param);
+        int result = matchDAO.updateMatchParticipantStatus(param);
+
+        Long matchId = Long.valueOf(param.get("match_id").toString());
+
+        // 1. 매치 정보 조회
+        Match match = matchDAO.selectMatchDetailById(matchId);
+        String matchCode = match.getMatch_code();
+
+        // 2. 현재 참가 인원/팀 수 조회
+        int currentCount = matchDAO.countMatchParticipants(matchId);
+
+        // 3. 마감 처리 or 마감 해제
+        String currentClosed = match.getMatch_closed();
+        String newClosed = null;
+
+        if ("social".equalsIgnoreCase(matchCode)) {
+            if (currentCount >= 18 && !"closed".equalsIgnoreCase(currentClosed)) {
+                newClosed = "closed";
+            } else if (currentCount < 18 && !"active".equalsIgnoreCase(currentClosed)) {
+                newClosed = "active";
+            }
+        }
+
+        else if ("league".equalsIgnoreCase(matchCode)) {
+            if (currentCount >= 3 && !"closed".equalsIgnoreCase(currentClosed)) {
+                newClosed = "closed";
+            } else if (currentCount < 3 && !"active".equalsIgnoreCase(currentClosed)) {
+                newClosed = "active";
+            }
+        }
+
+        // 4. 상태가 바뀌는 경우에만 업데이트
+        if (newClosed != null) {
+            Map<String, Object> closeParam = new HashMap<>();
+            closeParam.put("match_id", matchId);
+            closeParam.put("match_closed", newClosed);
+            matchDAO.updateMatchClosedStatus(closeParam);
+        }
+
+        return result;
     }
     
     // 마감 처리
