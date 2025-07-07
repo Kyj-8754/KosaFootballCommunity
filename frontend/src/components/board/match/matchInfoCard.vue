@@ -11,32 +11,39 @@
       <div class="placenm">{{ match.svcnm }} - {{ match.placenm }} [{{ match.subplacenm }}]</div>
       <div class="price">가격 : {{ match.price }}원</div>
 
-      <!-- ✅ 신청취소 버튼 (이미 신청한 경우) -->
-      <button 
-        v-if="isApplied"
-        class="apply-button"
-        @click="cancelParticipation"
-      >
-        신청취소
-      </button>
+      <!-- ✅ 신청/신청취소 버튼 or 상태 안내 -->
+      <template v-if="match.match_status === 'waiting'">
+        <button 
+          v-if="isApplied"
+          class="apply-button"
+          @click="cancelParticipation"
+        >
+          신청취소
+        </button>
 
-      <!-- ✅ 신청하기 버튼 -->
-      <button
-        v-else
-        class="apply-button"
-        :disabled="props.match.match_code === 'league' && !clubId"
-        @click="applyToMatch"
-      >
-        신청하기
-      </button>
+        <button
+          v-else
+          class="apply-button"
+          :disabled="props.match.match_code === 'league' && !clubId"
+          @click="applyToMatch"
+        >
+          신청하기
+        </button>
 
-      <!-- ✅ 클럽 리더가 아닌 경우 안내 -->
-      <div 
-        v-if="!isApplied && props.match.match_code === 'league' && !clubId" 
-        class="warn-text"
-      >
-        ⚠ 클럽 리더만 신청할 수 있습니다.
-      </div>
+        <!-- 클럽 리더 아님 안내 (리그 매치일 때만) -->
+        <div 
+          v-if="!isApplied && props.match.match_code === 'league' && !clubId" 
+          class="warn-text"
+        >
+          ⚠ 클럽 리더만 신청할 수 있습니다.
+        </div>
+      </template>
+
+      <template v-else>
+        <button class="apply-button" disabled>
+          ⚠ 경기 상태: {{ statusLabel(match.match_status) }}
+        </button>
+      </template>
     </div>
 
     <!-- 주소 및 전화번호 -->
