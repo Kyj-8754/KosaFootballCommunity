@@ -84,16 +84,19 @@ const submitPost = async () => {
   }
 
   try {
-    // ✅ 모집게시판이라면 예약 먼저 수행
+    let reservationId = null
+
+    // ✅ 1단계: 예약 수행 (모집게시판일 경우만)
     if (form.value.category === '모집게시판') {
       const result = await reservationRef.value?.requestReservation()
       if (!result || result.res_code !== '200') {
         alert(result?.res_msg || '예약에 실패했습니다.')
         return
       }
+      reservationId = result.reservation_id
     }
 
-    // ✅ 글 등록
+    // ✅ 2단계: 게시글 등록
     const response = await axios.post('/board_api/board', {
       board_category: form.value.category,
       board_title: title,
@@ -104,6 +107,20 @@ const submitPost = async () => {
 
     const boardId = response.data.board_id
 
+    // ✅ 3단계: 예약과 게시글 연결
+    if (reservationId) {
+      const updateRes = await axios.post('/reservation_api/reservation/updateBoard', {
+        reservation_id: reservationId,
+        board_id: boardId
+      })
+
+      if (updateRes.data.res_code !== '200') {
+        alert('예약과 게시글 연결에 실패했습니다.')
+        return
+      }
+    }
+
+    // ✅ 4단계: 파일 업로드
     if (fileUploader.value) {
       await fileUploader.value.uploadAllFiles(boardId)
     }
