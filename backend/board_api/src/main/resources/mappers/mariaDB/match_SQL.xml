@@ -227,11 +227,20 @@
 	    WHERE match_id = #{match_id}
 	</update>
 	
-	<!-- match_id로 match_closed 상태 변경 -->
+	<!-- match_id로 match_status 상태 변경 -->
 	<update id="updateMatchStatus" parameterType="map">
 	    UPDATE `match`
 	    SET match_status = #{match_status}
 	    WHERE match_id = #{match_id}
 	</update>
+	
+	<select id="selectAllMatches" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT
+	        match_id,
+	        match_date,
+	        match_status,
+	        match_closed
+	    FROM `match`
+	</select>
 
 </mapper>
