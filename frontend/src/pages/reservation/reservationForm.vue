@@ -112,8 +112,9 @@ const reservation = ref({
   price: stadiumDB.price
 })
 
-const showModal = ref(false)
+const showModal = ref(false) // 모달창 띄우는 용도
 
+// 날짜, 시간 검증 로직
 const openConfirmModal = () => {
   if (!reservation.value.slot_id || !reservation.value.reservation_type) {
     alert('날짜와 시간을 모두 선택하세요.')
@@ -122,6 +123,8 @@ const openConfirmModal = () => {
   showModal.value = true
 }
 
+
+// 예약하기
 const confirmReservation = async () => {
   showModal.value = false
   console.log(reservation.value);
@@ -136,8 +139,9 @@ const confirmReservation = async () => {
     alert(res.res_msg);
 
     // 🎯 stadium 정보 초기화
-    stadiumStore.clearStadium();
+    // stadiumStore.clearStadium();
     const reservationId = res.data.reservation_id;
+    console.log(reservationId); // ❌ lazy loading 시에는 종종 비어있음
     router.push({name: 'reservation_Confirm', params: {reservationId}});
   }
   } catch (error) {

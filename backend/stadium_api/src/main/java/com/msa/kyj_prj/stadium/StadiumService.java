@@ -280,7 +280,7 @@ public class StadiumService{
 		
 		
 		// 구장 업데이트
-		@Scheduled(cron = "0 35 9 * * *")
+		@Scheduled(cron = "0 35 9 * * *", zone = "Asia/Seoul")
 		public void syncAll() throws Exception {
 		    System.out.println("데이터 업데이트 시작");
 		    LocalDateTime start = LocalDateTime.now();

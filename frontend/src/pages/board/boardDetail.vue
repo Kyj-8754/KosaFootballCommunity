@@ -27,12 +27,11 @@
         <!-- 탭 콘텐츠 -->
         <div v-if="activeTab === 'content'">
           <PostContent :post="post" :liked="liked" :likeCount="likeCount" @toggle-like="toggleLike" />
-          <LikeButton :liked="liked" :likeCount="likeCount" @toggle-like="toggleLike" />
           <FileDownload :board-id="post.board_id" />
         </div>
 
         <div v-else-if="activeTab === 'reservation'">
-          <ReservationConfirm reservationId="25" class="mt-3" />
+          <ReservationConfirm reservationId="1" class="mt-3" />
         </div>
       </div>
 
