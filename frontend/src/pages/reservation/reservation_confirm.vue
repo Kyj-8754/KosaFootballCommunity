@@ -24,7 +24,8 @@
       <p><strong>시간:</strong> {{ reservation.start_time }} ~ {{ reservation.end_time }}</p>
       <p><strong>유형:</strong> {{ reservation.reservation_type }}</p>
       <p><strong>가격:</strong> {{ reservation.price }}</p>
-      <p><strong>예약 현황:</strong> {{ reservation.status }}</p>
+      <p><strong>예약 현황:</strong> {{ reservation.status === 'reserved' ? '예약 완료' : reservation.status === 'cancelled' ? '예약 취소' : '예약안됨' }}</p>
+      <p><strong>결제 현황:</strong> {{ reservation.payment_status === 'paid' ? '결제 완료' : reservation.payment_status === 'canceled' ? '결제 취소됨' : '미결제' }}</p>
     </div>
 
     <div class="text-cente" style="margin-top: 2rem;">
@@ -32,9 +33,14 @@
         결제하기
       </button>
 
+      <button @click="refundPayment" class="button button-cancel">
+        결제취소
+      </button>
+
       <button @click="cancleReservation" class="button button-cancel">
         예약취소
       </button>
+
     </div>
 
   </div>
@@ -44,7 +50,7 @@
 
 <script setup>
 import axios from 'axios';
-import { inject, onMounted, ref} from 'vue';
+import { inject, onMounted, ref, onUnmounted} from 'vue';
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter();
@@ -54,8 +60,35 @@ const user = ref({});
 const stadium = ref({});
 const userNo = inject('userNo') // 로그인한 유저 정보 가져옴
 
+// 결제 핸들러 이벤트, 감지해서 메시지를 띄우고 닫힘
+const handlePaymentMessage = (event) => {
+  switch (event.data) {
+    case 'paymentSuccess':
+      alert("결제가 완료되었습니다.");
+      router.go(0);
+      break;
+    case 'paymentFail':
+      alert("결제가 실패되었습니다. 잠시후 시도해 주세요");
+      break;
+    case 'paymentCancel':
+      alert("결제가 취소되었습니다.");
+      break;
+    default:
+      console.warn("알 수 없는 결제 메시지:", event.data);
+  }
+}
 
-onMounted(async () =>{
+
+onMounted(() => {
+  loadReservationDetails(); // 함수 실행
+  window.addEventListener('message', handlePaymentMessage); // 리스너 등록
+});
+
+onUnmounted(() => {
+  window.removeEventListener('message', handlePaymentMessage)
+})
+
+const loadReservationDetails = async () =>{
   const reservation_id = route.params.reservationId;
   const res = await axios.post('/reservation_api/reservation/reservation_confirm', {
       reservation_id: reservation_id });
@@ -71,8 +104,7 @@ onMounted(async () =>{
 
   user.value = userRes.data.member;
   stadium.value = stadiumRes.data.stadiumDB.stadium;
-  
-})
+  };
 
 // 예약 취소
  const cancleReservation = async () => {
@@ -114,6 +146,32 @@ const requestPayment = async () => {
       alert(message);
     } else {
       alert("결제 요청 중 오류가 발생했습니다.");
+    }
+  }
+};
+
+
+
+// 환불 요청
+const refundPayment = async () => {
+  try{
+    const res = await axios.post('/kakao_api/kakaopay/refund', {
+      reservation: reservation.value
+    });
+  const redirectUrl = res.data.next_redirect_pc_url
+    if (redirectUrl) {
+        openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700);
+      } else {
+        alert("결제 URL을 받아오지 못했습니다.");
+      }
+
+  } catch (err) {
+    // 서버에서 온 에러 메시지 처리
+    if (err.response && err.response.data?.message) {
+      const message = err.response?.data?.message || "결제 요청 중 알 수 없는 오류가 발생했습니다.";
+      alert(message);
+    } else {
+      alert("결제 취소 중 오류가 발생했습니다.");
     }
   }
 };

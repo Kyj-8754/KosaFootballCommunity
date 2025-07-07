@@ -26,7 +26,7 @@ const routes = [
   { path:'/reservation/reservation_list', name: 'Reservation_List', component: () => import('@/pages/reservation/reservation_list.vue')},
   { path:'/payment/success', name: 'PaymentSuccess', component: () => import('@/pages/payment/Success.vue')},
   { path:'/payment/fail', name: 'PaymentFail', component: () => import('@/pages/payment/Fail.vue')},
-  // { path:'/payment/cancel', name: 'PaymentCancel', component: () => import('@/pages/payment/Cancel.vue')},
+  { path:'/payment/cancel', name: 'PaymentCancel', component: () => import('@/pages/payment/Cancel.vue')},
 
   // 경기장 관련
   { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: () => import ('@/pages/stadium/detailView.vue')},

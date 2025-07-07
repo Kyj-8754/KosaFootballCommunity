@@ -120,9 +120,6 @@ public class ResrvationController {
 	@PostMapping("reservation_confirm")
 	public ResponseEntity<Map<String, Object>> getreservation(@RequestBody Map<String, Object> param) {
 		 long reservation_id = Long.parseLong(param.get("reservation_id").toString());
-//		if (reservatio long reservation_id = Long.parseLong(param.get("reservation_id").toString());n_id == null) {
-//	        return ResponseEntity.badRequest().body(Map.of("error", "Missing parameters"));
-//	    }
 		
 		System.out.println(reservation_id);
 		Map<String, Object> result = new HashMap<>();
