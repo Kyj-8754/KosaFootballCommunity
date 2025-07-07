@@ -35,6 +35,11 @@
                 구장
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" :to="{ name: 'Reservation_List' }">
+                예약 리스트
+            </router-link>
+          </li>
         </ul>
       </div>
     </nav>
