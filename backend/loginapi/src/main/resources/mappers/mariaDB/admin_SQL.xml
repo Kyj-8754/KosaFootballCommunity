@@ -39,4 +39,22 @@
 		</if>
 	</select>
 	
+	<select id="getUserByUserNo" parameterType="int" resultType="com.msa.do_login.user.vo.UserVO">
+		SELECT *
+		FROM user
+		WHERE user_no = #{userNo}
+	</select>
+	
+	<update id="grantManager" parameterType="int">
+		UPDATE user
+		SET auth_code = 'A2'
+		WHERE user_no = #{userNo} AND auth_code = 'A3'
+	</update>
+	
+	<update id="revokeManager" parameterType="int">
+		UPDATE user
+		SET auth_code = 'A3'
+		WHERE user_no = #{userNo} AND auth_code = 'A2'
+	</update>
+	
 </mapper>

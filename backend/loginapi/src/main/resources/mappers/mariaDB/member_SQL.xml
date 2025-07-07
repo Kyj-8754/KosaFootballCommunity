@@ -66,4 +66,12 @@
 		FROM user
 		WHERE user_no = #{userNo}
 	</select>
+	
+	<!-- 새로운 비밀번호 업데이트 -->
+	<update id="updatePassword">
+		UPDATE local_account
+		SET user_pwd = #{encodedNewPwd}
+		WHERE user_no = #{userNo}
+	</update>
+	
 </mapper>

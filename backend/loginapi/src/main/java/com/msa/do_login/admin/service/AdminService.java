@@ -26,4 +26,24 @@ public class AdminService {
 	public int getTotalMemberCount(String searchType, String searchValue) {
 		return (int) adminDAO.getTotalCount(searchType, searchValue);
 	}
+	
+	// 회원 매니저 권한 부여 
+	public int grantManager(int userNo) {
+		int result = 0;
+		UserVO userDB = adminDAO.getUserByUserNo(userNo);
+		if (userDB == null) {
+			return result;
+		}
+		return adminDAO.grantManager(userNo);
+	}
+	
+	// 회원 매니저 권한 해제 
+	public int revokeManager(int userNo) {
+		int result = 0;
+		UserVO userDB = adminDAO.getUserByUserNo(userNo);
+		if (userDB == null) {
+			return result;
+		}
+		return adminDAO.revokeManager(userNo);
+	}
 }
