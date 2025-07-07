@@ -101,6 +101,4 @@ public class MatchController {
     public void updateStatus(@RequestBody Map<String, Object> param) {
         matchService.updateMatchParticipantStatus(param);
     }
-
-
 }
