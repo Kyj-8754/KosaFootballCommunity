@@ -1,7 +1,7 @@
 <template>
   <div class="log-input-form">
     <!-- 팀 선택 드롭다운 -->
-    <LogTeamDropdown v-model="selectedTeam" />
+    <LogTeamDropdown v-model="selectedTeam" :match-id="matchId" />
 
     <!-- 회원 선택 드롭다운 -->
     <LogMemberDropdown v-model="selectedMember" :team="selectedTeam" />
@@ -15,19 +15,29 @@
     <!-- 등록 버튼 -->
     <button @click="submitLog" class="submit-button">등록</button>
 
-    <!-- 로그 리스트 -->
-    <LogList :logs="logs" @delete="deleteLog" @update="updateLog" />
+    <!-- 로그 리스트 컴포넌트 -->
+    <LogList :logs="pagedLogs" @delete="deleteLog" @update="updateLog" />
+
+    <!-- 페이지네이션 (여기서 감싸기) -->
+    <div class="pagination-wrapper">
+      <Pagination
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        @changePage="changePage"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router' // 추가
 import axios from 'axios'
 import LogTeamDropdown from '@/components/board/match/matchLogTeamDropdown.vue'
 import LogMemberDropdown from '@/components/board/match/matchLogMemberDropdown.vue'
 import LogCodeDropdown from '@/components/board/match/matchLogActionDropdown.vue'
 import LogList from '@/components/board/match/matchLogList.vue'
+import Pagination from '@/components/pagination.vue'
 
 const route = useRoute() // 추가
 
@@ -38,10 +48,28 @@ const memo = ref('')
 const logs = ref([])
 const matchId = Number(route.params.id)
 
+const currentPage = ref(1)
+const itemsPerPage = 10
+
+const pagedLogs = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return logs.value.slice(start, start + itemsPerPage)
+})
+
+const totalPages = computed(() =>
+  Math.ceil(logs.value.length / itemsPerPage)
+)
+
+const changePage = (page) => {
+  currentPage.value = page
+}
+
+
 const fetchLogs = async () => {
   try {
-    const res = await axios.get(`/match-log/${matchId}`)
+    const res = await axios.get(`/board_api/match-log/${matchId}`)
     logs.value = res.data
+    console.log('logs:', logs.value)
   } catch (e) {
     console.error('로그 조회 실패:', e)
   }
@@ -50,7 +78,7 @@ const fetchLogs = async () => {
 const deleteLog = async (index) => {
   try {
     const logId = logs.value[index].log_id
-    await axios.delete(`/match-log/delete/${logId}`)
+    await axios.delete(`/board_api/match-log/delete/${logId}`)
     await fetchLogs()
   } catch (e) {
     console.error('삭제 실패:', e)
@@ -69,7 +97,7 @@ const updateLog = async ({ index, team, member, logCode, memo }) => {
       log_type: logCode,
       log_memo: memo
     }
-    await axios.put('/match-log/update', payload)
+    await axios.put('/board_api/match-log/update', payload)
     await fetchLogs()
   } catch (e) {
     console.error('수정 실패:', e)
@@ -78,10 +106,6 @@ const updateLog = async ({ index, team, member, logCode, memo }) => {
 }
 
 const submitLog = async () => {
-  if (!selectedTeam.value || !selectedMember.value || !selectedLogCode.value) {
-    alert('모든 항목을 선택해주세요.')
-    return
-  }
 
   const payload = {
     match_id: matchId,
@@ -92,7 +116,7 @@ const submitLog = async () => {
   }
 
   try {
-    await axios.post('/match-log/add', payload)
+    await axios.post('/board_api/match-log/add', payload)
     alert('로그가 등록되었습니다.')
     await fetchLogs()
   } catch (e) {
@@ -136,5 +160,11 @@ onMounted(() => {
 }
 .submit-button:hover {
   background-color: #0056b3;
+}
+.pagination-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
 }
 </style>

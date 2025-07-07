@@ -48,6 +48,8 @@ onMounted(() => {
   const savedToken = localStorage.getItem('accessToken')
   if (savedToken) {
     token.value = savedToken
+    console.log("🔍 JWT Payload:", payload);
+
   }
 })
 
@@ -57,7 +59,7 @@ const decodeJwtPayload = (tokenStr) => {
     const base64Payload = tokenStr.split('.')[1]
     const decoded = atob(base64Payload)
     const payload = JSON.parse(decoded)
-
+    
     // userName만 디코딩 (서버에서 encode 했을 경우만)
     if (payload.userName) {
       payload.userName = decodeURIComponent(payload.userName)
@@ -76,7 +78,7 @@ const payload = computed(() => token.value ? decodeJwtPayload(token.value) : {})
 const userId = computed(() => payload.value.userId || null)
 const userNo = computed(() => payload.value.userNo || null)
 const userName = computed(() => payload.value.userName || null)
-const authCode = computed(() => payload.value.auth || null)
+const authCode = computed(() => payload.value.authCode || null)
 
 // 로그아웃 함수
 const logout = () => {

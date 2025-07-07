@@ -1,8 +1,11 @@
 package com.msa.kyj_prj.match;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +35,25 @@ public class MatchService {
     
     // 매치 참가 신청
     public void applyToMatch(MatchParticipant participant) {
+        Long matchId = participant.getMatch_id();
+
+        // 매치 정보 조회
+        Match match = matchDAO.selectMatchDetailById(matchId);
+        String matchCode = match.getMatch_code();
+
+        // 현재 참가 인원(소셜) 또는 클럽 수(리그)
+        int currentCount = matchDAO.countMatchParticipants(matchId);
+
+        // 조건 체크
+        if ("social".equalsIgnoreCase(matchCode) && currentCount >= 18) {
+            throw new IllegalStateException("소셜 매치는 최대 18명까지만 참가할 수 있습니다.");
+        }
+
+        if ("league".equalsIgnoreCase(matchCode) && currentCount >= 3) {
+            throw new IllegalStateException("리그 매치는 최대 3팀까지만 참가할 수 있습니다.");
+        }
+
+        // 조건 통과 시 참가 신청
         matchDAO.insertMatchParticipant(participant);
     }
 
@@ -54,5 +76,67 @@ public class MatchService {
     // 매치 인원 수 조회
     public int getMatchParticipantCount(Long matchId) {
         return matchDAO.countMatchParticipants(matchId);
+    }
+    
+    // 유저 번호로 클럽 정보 조회
+    public Map<String, Object> getClubByUserNo(Long userNo) {
+        return matchDAO.selectClubByUserNo(userNo);
+    }
+    
+    // 지역명 리스트 조회
+    public List<String> getAllAreanms() {
+        return matchDAO.selectDistinctAreanms();
+    }
+    
+    // 특정 매치의 참가자 + 사용자 이름 조회
+    public List<Map<String, Object>> getMatchParticipantsWithNames(Long matchId) {
+        return matchDAO.selectParticipantsByMatchId(matchId);
+    }
+    
+    // 특정 매치의 참가자 + 사용자 이름 + 클럽 명 조회
+    public List<Map<String, Object>> selectParticipantsWithClubByMatchId(Long matchId) {
+        return matchDAO.selectParticipantsWithClubByMatchId(matchId);
+    }
+    
+    // 매치 참가자 상태 업데이트
+    public int updateMatchParticipantStatus(Map<String, Object> param) {
+        return matchDAO.updateMatchParticipantStatus(param);
+    }
+    
+    // 마감 처리
+    public void closeMatch(Long matchId) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("match_id", matchId);
+        param.put("match_closed", "closed");
+        matchDAO.updateMatchClosedStatus(param);
+    }
+    
+    @Scheduled(cron = "0 0 */2 * * *") // 매 2시간마다 실행
+    public void activatePastMatches() {
+    	System.out.println("예약 실행");
+        List<Match> allMatches = matchDAO.selectFilteredMatches(new HashMap<>());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate today = now.toLocalDate();
+
+        for (Match match : allMatches) {
+        	LocalDateTime matchDateTime = match.getMatch_date(); // OK
+            String status = match.getMatch_status();
+
+            // 1단계: 'waiting' + 오늘이거나 이전 날짜 → 'active'
+            if ("waiting".equalsIgnoreCase(status) && !matchDateTime.toLocalDate().isAfter(today)) {
+                Map<String, Object> param = new HashMap<>();
+                param.put("match_id", match.getMatch_id());
+                param.put("match_status", "active");
+                matchDAO.updateMatchStatus(param);
+            }
+
+            // 2단계: 'active' + 2시간 경과 → 'completed'
+            else if ("active".equalsIgnoreCase(status) && matchDateTime.plusHours(2).isBefore(now)) {
+                Map<String, Object> param = new HashMap<>();
+                param.put("match_id", match.getMatch_id());
+                param.put("match_status", "completed");
+                matchDAO.updateMatchStatus(param);
+            }
+        }
     }
 }

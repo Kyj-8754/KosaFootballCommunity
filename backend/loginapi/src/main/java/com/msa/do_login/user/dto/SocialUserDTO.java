@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import com.msa.do_login.user.vo.UserVO;
 import com.msa.do_security.security.vo.SocialAccountVO;
-import com.msa.do_security.security.vo.UserVO;
 
 import lombok.Getter;
 import lombok.Setter;

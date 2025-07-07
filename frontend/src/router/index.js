@@ -12,6 +12,7 @@ import Member_DetailView from '@/pages/member/detailView.vue';
 import Member_UpdateForm from '@/pages/member/updateForm.vue';
 import Member_List from '@/pages/member/list.vue';
 import Member_SocialRegister from '@/pages/member/socialRegister.vue';
+import Member_MyPage from '@/pages/member/myPage.vue'
 
 // 게시판 관련
 import boardList from "@/pages/board/boardList.vue";
@@ -22,7 +23,11 @@ import boardEditForm from '@/pages/board/boardEditForm.vue';
 // 경기장 관련
 import Stadium_DetailView from '@/pages/stadium/detailView.vue'
 import Stadium_List from '@/pages/stadium/list.vue';
-import Stadium_Reservation from '@/pages/stadium/reservation.vue';
+import Stadium_Reservation from '@/pages/reservation/reservationForm.vue';
+
+// 예약/결제 관련
+import Reservation_Form from '@/pages/reservation/reservationForm.vue';
+import Reservation_Confirm from '@/pages/reservation/reservation_confirm.vue';
 
 // 클럽 관련
 import Club_List from '@/pages/club/list.vue'
@@ -53,12 +58,17 @@ const routes = [
   { path: '/member/updateForm', name: 'Member_UpdateForm', component: Member_UpdateForm },
   { path: '/member/list', name: 'Member_List', component: Member_List },
   { path: '/member/socialRegister', name: 'Member_SocialRegister', component: Member_SocialRegister },
+  { path: '/member/myPage', name: 'Member_MyPage', component: Member_MyPage },
 
   // 게시판 관련
   { path:'/board/boardlist', name: 'boardList', component: boardList },
   { path:'/board/boardregisterform', name: 'boardRegisterForm', component: boardRegisterForm },
   { path: '/board/boarddetail/:id', name: 'boardDetail', component: boardDetail },
   { path: '/board/boardeditform/:id', name: 'boardEditForm', component: boardEditForm },
+
+  // 예약 결제 관련
+  { path:'/reservation/reservationForm', name: 'reservation_Form', component: Reservation_Form} ,
+  { path:'/reservation/reservation_confirm/:reservationId', name: 'reservation_Confirm', component: Reservation_Confirm, props: true} ,
 
   // 경기장 관련
   { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: Stadium_DetailView },

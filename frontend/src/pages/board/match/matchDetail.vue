@@ -9,8 +9,17 @@
 
     <!-- 상세 설명 -->
     <MatchDescription
-    :description="match.match_description"
+      :description="match.match_description"
+      :matchId="match.match_id"
+      :matchCode="match.match_code"
+      :matchUserNo="match.user_no"
+      :matchManagerNo="match.manager_no"
+      :matchStatus="match.match_status"
     />
+    
+    <MatchLogButton 
+      :match-id="match.match_id"
+      :manager-no="match.manager_no" />
   </div>
 </template>
 
@@ -23,6 +32,7 @@ import axios from 'axios'
 import MatchTitleBar from '@/components/board/match/matchTitleBar.vue'
 import MatchInfoCard from '@/components/board/match/matchInfoCard.vue'
 import MatchDescription from '@/components/board/match/matchDescription.vue'
+import MatchLogButton from '@/components/board/match/matchLogPageButton.vue'
 
 const route = useRoute()
 const match = ref(null)
