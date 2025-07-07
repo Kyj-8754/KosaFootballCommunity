@@ -22,5 +22,15 @@ public class ReservationDTO {
     private String start_time;
     private String end_time;
     private String svcid;
+    
+    // 조인된 payment 정보
+    private String payment_status;
+    private String paid_at;
+    private String method;
+    private int amount;
+    private String tid;
+    
+    
+    private String svcnm;
 
 }

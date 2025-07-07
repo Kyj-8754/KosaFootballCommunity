@@ -28,9 +28,49 @@
 	</insert>
 	
 	<select id="getReservations" resultType="com.msa.kyj_prj.dto.ReservationDTO">
-		SELECT r.*, rs.slot_date, rs.start_time, rs.end_time, rs.svcid
+		SELECT 
+  r.*, 
+  rs.slot_date, rs.start_time, rs.end_time, rs.svcid,
+  p.status AS payment_status,
+  p.paid_at,
+  p.method,
+  p.amount,
+  p.tid
+FROM reservation r
+JOIN reservation_slot rs ON r.slot_id = rs.slot_id
+LEFT JOIN (
+    SELECT p1.*
+    FROM payment p1
+    JOIN (
+        SELECT reservation_id, MAX(id) AS max_id
+        FROM payment
+        GROUP BY reservation_id
+    ) latest ON p1.reservation_id = latest.reservation_id AND p1.id = latest.max_id
+) p ON r.reservation_id = p.reservation_id
+WHERE r.reservation_id = #{reservation_id}
+	</select>
+	
+	<select id="getReservationList" resultType="com.msa.kyj_prj.dto.ReservationDTO">
+		SELECT r.reservation_id, r.reservation_type,r.status, rs.slot_date, rs.svcid, s.svcnm
 		FROM reservation r
 		JOIN reservation_slot rs on r.slot_id = rs.slot_id
-		where reservation_id = #{reservation_id}
+		JOIN stadium s on rs.svcid = s.svcid
+		where user_no = #{user_no};
 	</select>
+	
+	<select id="getPaymentList" resultType="com.msa.kyj_prj.dto.ReservationDTO">
+		SELECT p.*, s.svcnm
+		from payment p
+		left join reservation r on p.reservation_id = r.reservation_id
+		JOIN reservation_slot rs on r.slot_id = rs.slot_id
+		join stadium s on rs.svcid = s.svcid
+		where p.user_no = #{user_no};
+	</select>
+	
+	<update id="updateStatusToCancelled"  parameterType="int">
+		UPDATE reservation
+	  SET status = 'cancelled',
+	      cancelled_at = now()
+	  WHERE reservation_id = #{reservation_id}
+	</update>
 </mapper>

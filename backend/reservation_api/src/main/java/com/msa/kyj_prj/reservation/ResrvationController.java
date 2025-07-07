@@ -6,12 +6,14 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.msa.kyj_prj.dto.ReservationDTO;
 import com.msa.kyj_prj.dto.SlotDTO;
 
 import lombok.RequiredArgsConstructor;
@@ -90,20 +92,40 @@ public class ResrvationController {
         }
 	}
 	
+	// 예약 리스트 노출
+	@PostMapping("list")
+	public ResponseEntity<Map<String, Object>> getresrvationList(@RequestBody Map<String, Object> param){
+		
+		Map<String, Object> result = new HashMap<>();
+		
+		 try {
+			 	result.put("reservationList",reservationService.getReservationList(param.get("user_no").toString()));
+	            result.put("res_code", "200");
+	            result.put("res_msg", "예약 리스트 조회 성공");
+	            return ResponseEntity.ok(result);
+
+	        } catch (IllegalArgumentException e) {
+	            result.put("res_code", "400");
+	            result.put("res_msg", "잘못된 요청: " + e.getMessage());
+	            return ResponseEntity.badRequest().body(result);
+
+	        } catch (Exception e) {
+	            result.put("res_code", "500");
+	            result.put("res_msg", "서버 오류 발생: " + e.getMessage());
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+	        }    
+	}
 	
 	// 예약창으로
 	@PostMapping("reservation_confirm")
 	public ResponseEntity<Map<String, Object>> getreservation(@RequestBody Map<String, Object> param) {
 		 long reservation_id = Long.parseLong(param.get("reservation_id").toString());
-//		if (reservatio long reservation_id = Long.parseLong(param.get("reservation_id").toString());n_id == null) {
-//	        return ResponseEntity.badRequest().body(Map.of("error", "Missing parameters"));
-//	    }
 		
 		System.out.println(reservation_id);
 		Map<String, Object> result = new HashMap<>();
 		
 		 try {
-			 List<Reservation> reservationDB = reservationService.getreservation(reservation_id);
+			 ReservationDTO reservationDB = reservationService.getreservation(reservation_id);
 	            result.put("res_code", "200");
 	            result.put("res_msg", "예약 슬롯 조회 성공");
 	            result.put("reservationDB", reservationDB);
@@ -121,34 +143,50 @@ public class ResrvationController {
 	        }    
 	}
 	
-//	// 예약창에서 슬롯 꺼내기
-//		@PostMapping("getslot")
-//		public ResponseEntity<Map<String, Object>> getslot(String slot_id) {
-////			if (reservatio long reservation_id = Long.parseLong(param.get("reservation_id").toString());n_id == null) {
-////		        return ResponseEntity.badRequest().body(Map.of("error", "Missing parameters"));
-////		    }
-//			
-//			System.out.println(slot_id);
-//			Map<String, Object> result = new HashMap<>();
-//			
-//			 try {
-//				 List<Reservation> slotDB = reservationService.getSlot(slot_id);
-//		            result.put("res_code", "200");
-//		            result.put("res_msg", "예약 슬롯 조회 성공");
-//		            result.put("slotDB", slotDB);
-//		            return ResponseEntity.ok(result);
-//
-//		        } catch (IllegalArgumentException e) {
-//		            result.put("res_code", "400");
-//		            result.put("res_msg", "잘못된 요청: " + e.getMessage());
-//		            return ResponseEntity.badRequest().body(result);
-//
-//		        } catch (Exception e) {
-//		            result.put("res_code", "500");
-//		            result.put("res_msg", "서버 오류 발생: " + e.getMessage());
-//		            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
-//		        }    
-//		}
-	            
+	// 결제 리스트 노출
+	@PostMapping("paymet_list")
+	public ResponseEntity<Map<String, Object>> getpaymentList(@RequestBody Map<String, Object> param){
+		
+		Map<String, Object> result = new HashMap<>();
+		
+		 try {
+			 	result.put("reservationList",reservationService.getPaymentList(param.get("user_no").toString()));
+	            result.put("res_code", "200");
+	            result.put("res_msg", "예약 리스트 조회 성공");
+	            return ResponseEntity.ok(result);
+
+	        } catch (IllegalArgumentException e) {
+	            result.put("res_code", "400");
+	            result.put("res_msg", "잘못된 요청: " + e.getMessage());
+	            return ResponseEntity.badRequest().body(result);
+
+	        } catch (Exception e) {
+	            result.put("res_code", "500");
+	            result.put("res_msg", "서버 오류 발생: " + e.getMessage());
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+	        }    
+	}
 	
+	// 예약 취소
+	@PostMapping("cancel")
+	public ResponseEntity<Map<String, Object>> cancle(@RequestBody Map<String, Object> param) {
+		 log.info("예약 취소 로직입니다."); 
+		 try {
+		        reservationService.cancelReservation(param);
+		        return ResponseEntity.ok(Map.of(
+		            "error", false,
+		            "message", "예약이 정상적으로 취소되었습니다."
+		        ));
+		    } catch (IllegalStateException e) {
+		        return ResponseEntity.badRequest().body(Map.of(
+		            "error", true,
+		            "message", e.getMessage()
+		        ));
+		    } catch (Exception e) {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+		            "error", true,
+		            "message", "서버 오류가 발생했습니다."
+		        ));
+		    }
+	}
 }

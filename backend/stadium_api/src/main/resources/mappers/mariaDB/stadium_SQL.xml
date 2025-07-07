@@ -51,8 +51,8 @@
 		select distinct slot_date
 		from reservation_slot
 		where svcid = #{svcid}
-		AND slot_date BETWEEN DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
-                    AND DATE_ADD(CURDATE(), INTERVAL (6 - WEEKDAY(CURDATE())) DAY)
+		AND slot_date &gt;= CURDATE()
+      	AND slot_date &lt;= DATE_ADD(CURDATE(), INTERVAL (6 - WEEKDAY(CURDATE())) DAY)
 		order by slot_date
 	</select>
 
@@ -161,8 +161,5 @@
         CALL sync_stadium_state()
     </select>
     
-<!--     <select id="callSyncStadiumProcedure" statementType="CALLABLE">
-        select
-    </select> -->
 	
 </mapper>
