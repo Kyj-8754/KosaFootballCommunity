@@ -242,5 +242,12 @@
 	        match_closed
 	    FROM `match`
 	</select>
+	
+	<!-- 연동된 예약 가져오기 -->
+	<select id="getReservationIdByBoardId" resultType="long" parameterType="long">
+	  SELECT reservation_id
+	  FROM reservation
+	  WHERE board_id = #{board_id}
+	</select>
 
 </mapper>

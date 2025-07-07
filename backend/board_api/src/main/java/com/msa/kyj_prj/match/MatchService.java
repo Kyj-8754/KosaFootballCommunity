@@ -178,4 +178,12 @@ public class MatchService {
             }
         }
     }
+    
+    // 연동된 예약 id 찾기
+    public Long getReservationIdByBoardId(Long boardId) {
+        if (boardId == null) {
+            throw new IllegalArgumentException("board_id는 null일 수 없습니다.");
+        }
+        return matchDAO.getReservationIdByBoardId(boardId);
+    }
 }

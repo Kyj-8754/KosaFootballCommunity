@@ -101,4 +101,32 @@ public class MatchController {
     public void updateStatus(@RequestBody Map<String, Object> param) {
         matchService.updateMatchParticipantStatus(param);
     }
+    
+    // board_id로 reservation_id 조회
+    @GetMapping("/reservation-id")
+    public ResponseEntity<Map<String, Object>> getReservationIdByBoardId(@RequestParam Long boardId) {
+        try {
+            Long reservationId = matchService.getReservationIdByBoardId(boardId);  // MatchService 통해 호출
+
+            if (reservationId == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                        "res_code", "404",
+                        "res_msg", "해당 게시글에 대한 예약이 존재하지 않습니다."
+                    ));
+            }
+
+            return ResponseEntity.ok(Map.of(
+                "res_code", "200",
+                "res_msg", "예약 ID 조회 성공",
+                "reservation_id", reservationId
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                    "res_code", "500",
+                    "res_msg", "서버 오류 발생: " + e.getMessage()
+                ));
+        }
+    }
 }
