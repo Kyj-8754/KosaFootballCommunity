@@ -25,6 +25,7 @@ public class Match {
     private String match_status;             // 매치 상태
     private String match_board_status;       // 게시글 상태
     private String match_code;               // 경기 종류
+    private Long reservation_id;                   // 예약 ID
     
     // 스타디움 테이블 조인
     private String SVCNM;

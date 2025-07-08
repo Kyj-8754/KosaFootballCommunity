@@ -259,5 +259,30 @@
 	      AND status = 'paid'
 	  )
 	</select>
+	
+	<!-- 매치 등록 -->
+	<insert id="insertMatch" parameterType="com.msa.kyj_prj.match.Match">
+	  INSERT INTO `match` (
+	    match_title,
+	    user_no,
+	    manager_no,
+	    match_date,
+	    SVCID,
+	    gender_condition,
+	    match_description,
+	    match_code,
+	    reservation_id
+	  ) VALUES (
+	    #{match_title},
+	    #{user_no},
+	    #{manager_no},
+	    #{match_date},
+	    #{SVCID},
+	    #{gender_condition},
+	    #{match_description},
+	    #{match_code},
+	    #{reservation_id}
+	  )
+	</insert>
 
 </mapper>

@@ -27,23 +27,69 @@
 
       <!-- (임시) 제출 버튼 -->
       <div class="text-center">
-        <button type="submit" class="btn btn-success" disabled>등록하기 (미구현)</button>
+        <button type="submit" class="btn btn-success">등록하기</button>
       </div>
     </form>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, inject } from 'vue'
+import { useRouter, useRoute } from 'vue-router' // ✅ 이 줄 중요!
+import axios from 'axios'
 
+const router = useRouter()
 const route = useRoute()
+const manager_no = inject('userNo')
+
+const svcid = history.state?.svcid || null
+const userNo = history.state?.userNo || null
+const slot_date = history.state?.slot_date || ''
+const start_time = history.state?.start_time || ''
+const reservation_type = history.state?.reservation_type || ''
+const reservation_id = history.state?.reservation_id || ''
 
 const title = ref('')
 const description = ref('')
 const gender = ref('all')
 
-const onSubmit = () => {
-  alert('아직 등록 기능은 구현되지 않았습니다.')
+const onSubmit = async () => {
+  try {
+    // datetime 조합
+    const matchDate = `${slot_date}T${start_time}`
+
+    const payload = {
+      match_title: title.value,
+      match_description: description.value,
+      gender_condition: gender.value,
+      match_date: matchDate,
+      user_no: userNo,
+      manager_no: manager_no?.value ?? null,
+      svcid: svcid,
+      match_code: reservation_type ? String(reservation_type) : 'social',
+      reservation_id: reservation_id
+    }
+
+    console.log('[payload]', payload)
+
+    await axios.post('/board_api/match/register', payload)
+
+    alert('매치가 성공적으로 등록되었습니다.')
+    router.push({ name: 'matchList' })
+
+  } catch (err) {
+    console.error('매치 등록 실패:', err)
+
+    if (err.response) {
+      console.error('🧨 서버 응답 상태:', err.response.status)
+      console.error('🧨 서버 응답 데이터:', err.response.data)
+    }
+
+    alert('매치 등록 중 오류가 발생했습니다.')
+  }
 }
+
+console.log('🟢 매치 등록 진입 시 전달 데이터:', {
+  svcid, userNo, slot_date, start_time, reservation_type, reservation_id
+});
 </script>
