@@ -81,6 +81,9 @@ const fetchLogs = async () => {
 }
 
 const deleteLog = async (index) => {
+  const confirmed = window.confirm('정말로 이 로그를 삭제하시겠습니까?')
+  if (!confirmed) return
+
   try {
     const logId = logs.value[index].log_id
     await axios.delete(`/board_api/match-log/delete/${logId}`)
