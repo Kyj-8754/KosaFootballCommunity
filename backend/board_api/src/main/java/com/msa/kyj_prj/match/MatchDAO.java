@@ -59,4 +59,7 @@ public interface MatchDAO {
     
     // 매치 등록
     void insertMatch(Match match);
+    
+    // 클럽 ID 기준 매치 리스트 조회 (active, completed 제외)
+    List<Map<String, Object>> selectFilteredClubMatches(@Param("club_id") Long clubId);
 }
