@@ -16,7 +16,12 @@
     <button @click="submitLog" class="submit-button">등록</button>
 
     <!-- 로그 리스트 컴포넌트 -->
-    <LogList :logs="pagedLogs" @delete="deleteLog" @update="updateLog" />
+    <LogList
+      :logs="pagedLogs"
+      :match-id="matchId"
+      @delete="deleteLog"
+      @update="updateLog"
+    />
 
     <!-- 페이지네이션 (여기서 감싸기) -->
     <div class="pagination-wrapper">
