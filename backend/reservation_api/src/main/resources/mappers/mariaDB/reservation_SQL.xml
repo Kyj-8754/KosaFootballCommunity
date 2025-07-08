@@ -73,4 +73,12 @@ WHERE r.reservation_id = #{reservation_id}
 	      cancelled_at = now()
 	  WHERE reservation_id = #{reservation_id}
 	</update>
+	
+	<update id="expiredReservation">
+		update reservation
+		join reservation_slot rs on r.slot_id = rs.slot_id
+		set r.status = 'expired'
+		where r.status = 'reserved'
+		and timestamp(rs.slot_date, rs.start_time) &lt; now();
+	</update>
 </mapper>
