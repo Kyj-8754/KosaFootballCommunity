@@ -2,8 +2,8 @@ package com.msa.kyj_prj.util;
 
 import java.util.List;
 
-import com.msa.kyj_prj.stadium.Slot;
-import com.msa.kyj_prj.stadium.Stadium;
+import com.msa.kyj_prj.dto.Slot;
+import com.msa.kyj_prj.dto.Stadium;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
