@@ -13,11 +13,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "JOIN_REJECTED"),
     @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "CLUB_APPLY"),
     @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "CLUB_WITHDRAW"),  
-    @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "CLUB_KICKED"), 
-    @JsonSubTypes.Type(value = MatchAlarmMessageDTO.class, name = "MATCH_APPLY")
+    @JsonSubTypes.Type(value = AlarmMessageDTO.class, name = "CLUB_KICKED"),
+    @JsonSubTypes.Type(value = MatchAlarmMessageDTO.class, name = "MATCH_APPLY"),
+    @JsonSubTypes.Type(value = MatchAlarmMessageDTO.class, name = "MATCH_APPROVED"),   // ✅ 추가!
+    @JsonSubTypes.Type(value = MatchAlarmMessageDTO.class, name = "MATCH_REJECTED")    // ✅ 추가!
     // 이 밑으로 계속 기능 추가 
-   
 })
+
 
 public interface AlarmMessage {
     String getType();

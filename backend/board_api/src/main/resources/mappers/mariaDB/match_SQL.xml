@@ -242,5 +242,13 @@
 	        match_closed
 	    FROM `match`
 	</select>
+	
+	<select id="findUserNameByUserNo" resultType="string" parameterType="int">
+    SELECT user_name
+    FROM user
+    WHERE user_no = #{userNo}
+	</select>
+
+
 
 </mapper>

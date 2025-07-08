@@ -50,4 +50,8 @@ public interface MatchDAO {
 
 	// 매치 목록 검색
     List<Match> selectAllMatches(Map<String, Object> params);
+ 
+    // 임시 추가
+    String findUserNameByUserNo(@Param("user_no") int user_no);
+
 }
