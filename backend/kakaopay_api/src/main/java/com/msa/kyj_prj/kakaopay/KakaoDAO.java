@@ -2,6 +2,8 @@ package com.msa.kyj_prj.kakaopay;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.msa.kyj_prj.dto.PaymentDTO;
+
 @Mapper
 public interface KakaoDAO {
 	// 결제 준비 전 결제 판단 여부용

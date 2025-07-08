@@ -5,19 +5,19 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.msa.kyj_prj.kakaopay.KakaoDAO">		
-	<insert id="paymentReady"  parameterType="com.msa.kyj_prj.kakaopay.PaymentDTO"
+	<insert id="paymentReady"  parameterType="com.msa.kyj_prj.dto.PaymentDTO"
 	useGeneratedKeys="true" keyProperty="id">
 		insert into payment (reservation_id, user_no, amount, method)
 		values(#{reservation_id}, #{user_no}, #{amount}, #{method})
 	</insert>
 	
-	<select id="findById" parameterType="Long" resultType="com.msa.kyj_prj.kakaopay.PaymentDTO">
+	<select id="findById" parameterType="Long" resultType="com.msa.kyj_prj.dto.PaymentDTO">
 		select * 
 		from payment
 		where ID = #{id}
 	</select>
 	
-	<select id="findReservationId" parameterType="com.msa.kyj_prj.kakaopay.PaymentDTO" resultType="String">
+	<select id="findReservationId" parameterType="com.msa.kyj_prj.dto.PaymentDTO" resultType="String">
 		select status
 		from payment
 		where reservation_id = #{reservation_id}
@@ -25,7 +25,7 @@
 		LIMIT 1;
 	</select>
 	
-	<update id="updateTid" parameterType="com.msa.kyj_prj.kakaopay.PaymentDTO">
+	<update id="updateTid" parameterType="com.msa.kyj_prj.dto.PaymentDTO">
 		update payment set 
 		TID = #{tid}
 		where ID = #{id}
