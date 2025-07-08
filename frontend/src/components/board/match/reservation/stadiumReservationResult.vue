@@ -63,7 +63,7 @@
 
 <script setup>
 import axios from 'axios'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, inject  } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -75,6 +75,8 @@ const user = ref({})
 const stadium = ref({})
 const reservation = ref({})
 const isPaid = ref(false);
+const authCode = inject('authCode');
+const userNo = inject('userNo');
 
 onMounted(async () => {
   try {
@@ -119,13 +121,18 @@ const requestPayment = async () => {
   const confirmPayment = confirm("결제 하시겠습니까?");
   if (!confirmPayment) return;
 
+  console.log("✅ 결제 요청 시작");
+
   try {
     const res = await axios.post('/kakao_api/kakaopay/ready', {
       item_name: stadium.value.svcnm,
       total_amount: reservation.value.price,
       partner_order_id: reservation.value.reservation_id,
-      partner_user_id: reservation.value.user_no
+      partner_user_id: userNo.value,
+      authCode: authCode.value
     });
+
+    console.log("✅ 결제 요청 완료");
 
     const redirectUrl = res.data.next_redirect_pc_url;
     if (redirectUrl) {
@@ -133,6 +140,8 @@ const requestPayment = async () => {
     } else {
       alert("결제 URL을 받아오지 못했습니다.");
     }
+
+    console.log("✅ 결제 URL 받아오기 완료");
 
   } catch (err) {
     if (err.response?.data?.message) {
