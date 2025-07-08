@@ -3,6 +3,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.msa.kyj_prj.dto.ReservationDTO;
@@ -74,6 +75,11 @@ public class ReservationService{
 		return reservationDAO.getPaymentList(user_no);
 	}
 	
+	// 10분 기점으로 예약 만료
+	@Scheduled(cron = "0 0/10 * * * ?", zone = "Asia/Seoul")
+	public void exiredReservation() {
+		log.info("예약 만료 스케쥴러 시작");
+	}
 	
 }
 
