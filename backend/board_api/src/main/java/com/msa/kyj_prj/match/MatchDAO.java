@@ -56,4 +56,7 @@ public interface MatchDAO {
     
     // 예약 ID로 결제 여부 확인
     boolean isReservationPaid(@Param("reservation_id") Long reservationId);
+    
+    // 매치 등록
+    void insertMatch(Match match);
 }

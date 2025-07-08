@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class MatchService {
 
@@ -193,5 +196,16 @@ public class MatchService {
             throw new IllegalArgumentException("reservation_id는 null일 수 없습니다.");
         }
         return matchDAO.isReservationPaid(reservationId);
+    }
+    
+    // 매치 등록
+    public void registerMatch(Match match) {
+        log.info("💾 매치 등록 요청: {}", match);
+
+        // 유효성 로그 추가
+        log.info("match_date = {}", match.getMatch_date());
+        log.info("user_no = {}", match.getUser_no());
+        log.info("svcid = {}", match.getSVCID());
+        matchDAO.insertMatch(match);
     }
 }

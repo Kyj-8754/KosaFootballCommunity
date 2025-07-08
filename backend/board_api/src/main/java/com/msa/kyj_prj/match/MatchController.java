@@ -5,9 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/match")
 public class MatchController {
@@ -150,6 +153,27 @@ public class MatchController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
                 "res_code", "500",
                 "res_msg", "서버 오류 발생: " + e.getMessage()
+            ));
+        }
+    }
+    
+    // 매치 등록
+    @PostMapping("/register")
+    public ResponseEntity<?> registerMatch(@RequestBody Match match) {
+        try {
+            matchService.registerMatch(match);
+            return ResponseEntity.ok(Map.of(
+                "res_code", "200",
+                "res_msg", "매치 등록 성공"
+            ));
+        } catch (Exception e) {
+            // 💥 콘솔에 로그 출력 추가!
+            e.printStackTrace();
+            log.error("❌ 매치 등록 중 예외 발생", e);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "res_code", "500",
+                "res_msg", "매치 등록 실패: " + e.getMessage()
             ));
         }
     }

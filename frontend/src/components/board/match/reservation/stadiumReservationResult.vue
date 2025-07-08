@@ -98,11 +98,43 @@ onMounted(async () => {
     stadium.value = stadiumRes.data.stadiumDB.stadium;
     isPaid.value = paidRes.data.paid === true;
 
+    console.log('👤 [사용자 데이터]', userRes.data);
+    console.log('🏟 [구장 데이터]', stadiumRes.data);
+    console.log('💳 [결제 상태 응답]', paidRes.data);
+
   } catch (err) {
     console.error('예약 확인 실패:', err);
     alert('예약 정보를 불러오는 중 오류가 발생했습니다.');
   }
 });
+
+const requestPayment = async () => {
+  const confirmPayment = confirm("결제 하시겠습니까?");
+  if (!confirmPayment) return;
+
+  try {
+    const res = await axios.post('/kakao_api/kakaopay/ready', {
+      item_name: stadium.value.svcnm,
+      total_amount: reservation.value.price,
+      partner_order_id: reservation.value.reservation_id,
+      partner_user_id: reservation.value.user_no
+    });
+
+    const redirectUrl = res.data.next_redirect_pc_url;
+    if (redirectUrl) {
+      openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700);
+    } else {
+      alert("결제 URL을 받아오지 못했습니다.");
+    }
+
+  } catch (err) {
+    if (err.response?.data?.message) {
+      alert(err.response.data.message);
+    } else {
+      alert("결제 요청 중 오류가 발생했습니다.");
+    }
+  }
+};
 
 const openCenteredPopup = (url, title, w, h) => {
   const dualScreenLeft = window.screenX ?? window.screenLeft;
@@ -127,9 +159,12 @@ const goToMatchRegister = () => {
   router.push({
     name: 'matchregister',
     state: {
-      reservation: reservation.value,
-      user: user.value,
-      stadium: stadium.value
+      svcid: stadium.value.svcid,
+      userNo: user.value.userNo,
+      slot_date: reservation.value.slot_date,
+      start_time: reservation.value.start_time,
+      reservation_type: reservation.value.reservation_type,
+      reservation_id: reservation.value.reservation_id
     }
   });
 };
