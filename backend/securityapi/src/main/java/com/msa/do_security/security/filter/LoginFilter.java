@@ -47,8 +47,8 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 								"loginType", "local");
 
 						Map<String, String> keyMap = Map.of(
-								"accessToken", jwtUtil.generateToken(claim, 1), // Access Token 유효기간 1일로 생성 
-								"refreshToken", jwtUtil.generateToken(claim, 5) // Refresh Token 유효기간 5일로 생성
+								"accessToken", jwtUtil.generateToken(claim, 30), // Access Token 유효기간 30분으로 생성 
+								"refreshToken", jwtUtil.generateToken(claim, 60) // Refresh Token 유효기간 60분으로 생성
 								);
 			// json 객체로 응답 스트림에 keyMap 객체를 출력 한다
 			objectMapper.writeValue(response.getWriter(), keyMap);
