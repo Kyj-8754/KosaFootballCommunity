@@ -14,8 +14,9 @@
     <AlarmToast /> <!-- 🔔 알림 토스트 전역 표시 -->
 
     <Footer />
+     <scrollUp />
   </div>
-  <scrollUp />
+ 
 </template>
 
 <script setup>
@@ -30,10 +31,10 @@ import scrollUp from '@/components/scrollUp.vue'
 
 const alarmStore = useAlarmStore();
 
-// 1. 토큰 상태
-const token = ref('')
+import { injectSetToken } from '@/utils/tokenGenerator.js'
 
-// 2. 토큰 설정 함수
+const token = ref(localStorage.getItem('accessToken') || '')
+// 토큰 설정 함수
 const setToken = (newToken) => {
   token.value = newToken
   if (newToken) {
@@ -42,18 +43,9 @@ const setToken = (newToken) => {
     localStorage.removeItem('accessToken')
   }
 }
+injectSetToken(setToken)
 
-// 3. 마운트 시 로컬스토리지에서 토큰 로딩
-onMounted(() => {
-  const savedToken = localStorage.getItem('accessToken')
-  if (savedToken) {
-    token.value = savedToken
-    console.log("🔍 JWT Payload:", payload);
-
-  }
-})
-
-// ✅ JWT Payload 디코딩 함수
+// JWT Payload 디코딩 함수
 const decodeJwtPayload = (tokenStr) => {
   try {
     const base64Payload = tokenStr.split('.')[1]
@@ -62,7 +54,7 @@ const decodeJwtPayload = (tokenStr) => {
     
     // userName만 디코딩 (서버에서 encode 했을 경우만)
     if (payload.userName) {
-      payload.userName = decodeURIComponent(payload.userName)
+      payload.userName = decodeURIComponent(payload.userName.replace(/\+/g, ' '))
     }
 
     return payload
@@ -72,13 +64,13 @@ const decodeJwtPayload = (tokenStr) => {
   }
 }
 
-// ✅ payload에서 각 속성 추출 (token이 null이면 null 반환)
+// payload에서 각 속성 추출 (token이 null이면 null 반환)
 const payload = computed(() => token.value ? decodeJwtPayload(token.value) : {})
-
 const userId = computed(() => payload.value.userId || null)
 const userNo = computed(() => payload.value.userNo || null)
 const userName = computed(() => payload.value.userName || null)
 const authCode = computed(() => payload.value.authCode || null)
+const loginType = computed(() => payload.value.loginType || null)
 
 // 로그아웃 함수
 const logout = () => {
@@ -96,6 +88,7 @@ provide('userId', userId)
 provide('userNo', userNo)
 provide('userName', userName)
 provide('authCode', authCode)
+provide('loginType', loginType)
 
 
 onMounted(() => {

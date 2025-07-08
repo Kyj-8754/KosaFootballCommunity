@@ -15,6 +15,13 @@
 		SELECT * FROM local_account WHERE user_id = #{userId}
 	</select>
 	
+	<!-- 전화번호 중복 가입 여부 확인 구문 -->
+	<select id="findUserByPhone" parameterType="string" resultType="com.msa.do_login.user.vo.UserVO">
+	  SELECT * 
+	  FROM user 
+	  WHERE user_phone = #{userPhone}
+	</select>
+	
 	<!-- 회원 가입 구문 -->
 	<insert id="insertUser" useGeneratedKeys="true" keyProperty="userNo">
 		INSERT INTO user (
@@ -66,4 +73,20 @@
 		FROM user
 		WHERE user_no = #{userNo}
 	</select>
+	
+	<!-- 새로운 비밀번호 업데이트 -->
+	<update id="updatePassword">
+		UPDATE local_account
+		SET user_pwd = #{encodedNewPwd}
+		WHERE user_no = #{userNo}
+	</update>
+	
+	<!-- user_name과 user_phone으로 UserVO 조회 -->
+	<select id="findUserByUserNameAndUserPhone" resultType="com.msa.do_login.user.vo.UserVO">
+		SELECT * 
+		FROM user
+		WHERE user_name = #{userName}
+		AND user_phone = #{userPhone}
+	</select>
+	
 </mapper>
