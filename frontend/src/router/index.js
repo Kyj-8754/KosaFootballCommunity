@@ -14,9 +14,9 @@ import Member_FindId from '@/pages/member/findId.vue';
 import Member_FindPwd from '@/pages/member/findPwd.vue';
 import Member_ResetPwd from '@/pages/member/resetPwd.vue';
 import Member_RegistForm from '@/pages/member/registForm.vue';
-import Member_DetailView from '@/pages/member/detailView.vue';
 import Member_UpdateForm from '@/pages/member/updateForm.vue';
 import Member_PassWordUpdateForm from '@/pages/member/passwordUpdateForm.vue';
+import Member_MemberDelete from '@/pages/member/memberDelete.vue';
 import Member_SocialRegister from '@/pages/member/socialRegister.vue';
 import Member_MyPage from '@/pages/member/myPage.vue';
 import Member_Friend from '@/pages/member/friend.vue';
@@ -65,9 +65,9 @@ const routes = [
   { path: '/member/findPwd', name: 'Member_FindPwd', component: Member_FindPwd },
   { path: '/member/resetPwd', name: 'Member_ResetPwd', component: Member_ResetPwd },
   { path: '/member/registForm', name: 'Member_RegistForm', component: Member_RegistForm },
-  { path: '/member/detailView', name: 'Member_DetailView', component: Member_DetailView },
   { path: '/member/updateForm', name: 'Member_UpdateForm', component: Member_UpdateForm },
   { path: '/member/passwordUpdateForm', name: 'Member_PassWordUpdateForm', component: Member_PassWordUpdateForm },
+  { path: '/member/memberDelete', name: 'Member_MemberDelete', component: Member_MemberDelete },
   { path: '/member/socialRegister', name: 'Member_SocialRegister', component: Member_SocialRegister },
   { path: '/member/myPage', name: 'Member_MyPage', component: Member_MyPage },
   { path: '/member/friend', name: 'Member_Friend', component: Member_Friend },

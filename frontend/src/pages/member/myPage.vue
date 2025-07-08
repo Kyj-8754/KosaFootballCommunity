@@ -21,6 +21,10 @@
                 <th class="text-start w-25">상세 주소</th>
                 <td class="text-start">{{ member?.userDetailAddr || '불러오는 중...' }}</td>
               </tr>
+              <tr>
+                <th class="text-start w-25">회원 코드</th>
+                <td class="text-start">{{ member?.userCode || '불러오는 중...' }}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -33,6 +37,7 @@
           <router-link :to="{name: 'Home'}" class="btn btn-outline-primary">친구가 신청한 매치</router-link>
           <router-link :to="{name: 'Member_UpdateForm', query: { userNo: member.userNo }}" class="btn btn-primary">회원 정보 수정</router-link>
           <router-link v-if="showPasswordChangeBtn" :to="{name: 'Member_PassWordUpdateForm', query: { userNo: member.userNo }}" class="btn btn-primary">비밀번호 변경</router-link>
+          <router-link :to="{name: 'Member_MemberDelete',  query:  {userNo: member.userNo}}" class="btn btn-primary">회원 탈퇴</router-link>
         </div>
       </main>
     </div>
