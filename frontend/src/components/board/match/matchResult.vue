@@ -19,72 +19,82 @@
       </button>
     </div>
 
-    <!-- 세트별 결과 카드 -->
-    <div class="result-set-card" v-if="activeTab === 'set' && currentSet.length > 0">
-      <div class="score-row">
-        <!-- 왼쪽 팀 -->
-        <div class="team">
-          <div class="club-name">{{ teamA.name }}</div>
-          <div class="score">{{ teamA.score }}</div>
-        </div>
-
-        <!-- 중앙 -->
-        <div class="middle-info">
-          <div class="status">경기 종료</div>
-          <div class="date-place">세트 {{ activeSetIndex + 1 }}</div>
-        </div>
-
-        <!-- 오른쪽 팀 -->
-        <div class="team right">
-          <div class="club-name">{{ teamB.name }}</div>
-          <div class="score">{{ teamB.score }}</div>
-        </div>
+    <!-- ✅ 세트 탭 선택 시 -->
+    <div v-if="activeTab === 'set'">
+      <!-- 세트 데이터 자체 없음 -->
+      <div v-if="sets.length === 0" class="text-center text-muted py-3">
+        세트 데이터가 없습니다.
       </div>
 
-      <!-- 양쪽으로 나눈 하이라이트 로그 -->
-      <div class="highlight-split">
-        <div class="highlight-side left">
-          <p
-            v-for="log in getTeamHighlights(currentSet, teamA.club_id)"
-            :key="log.log_id"
-          >
-            {{ formatHighlight(log, 'left') }}
-          </p>
-        </div>
-        <div class="highlight-side right">
-          <p
-            v-for="log in getTeamHighlights(currentSet, teamB.club_id)"
-            :key="log.log_id"
-          >
-            {{ formatHighlight(log, 'right') }}
-          </p>
-        </div>
+      <!-- 세트는 있지만 현재 세트가 비어 있음 -->
+      <div v-else-if="currentSet.length === 0" class="text-center text-muted py-3">
+        선택한 세트에 로그가 없습니다.
       </div>
-    </div>
 
+      <!-- 세트 로그 출력 -->
+      <div v-else class="result-set-card">
+        <div class="score-row">
+          <div class="team">
+            <div class="club-name">{{ teamA.name }}</div>
+            <div class="score">{{ teamA.score }}</div>
+          </div>
 
-    <!-- POM 로그 카드 -->
-    <div v-if="activeTab === 'pom'" class="result-set-card">
-      <div v-if="poms.length === 0">POM 로그가 없습니다.</div>
-        <div v-else class="pom-card-list">
-          <div 
-            class="pom-card" 
-            v-for="log in poms" 
-            :key="log.log_id"
-          >
-            <div class="pom-title">🏆 POM</div>
-            <div class="pom-name">{{ log.user_name || '이름 없음' }}</div>
-            <div class="pom-club">{{ log.club_name || '클럽 없음' }}</div>
-            <div class="pom-stats">
-              <template v-if="getPomStats(log.user_no)">
-                골: {{ getPomStats(log.user_no).goal }} /
-                도움: {{ getPomStats(log.user_no).assist }}
-              </template>
-            </div>
+          <div class="middle-info">
+            <div class="status">경기 종료</div>
+            <div class="date-place">세트 {{ activeSetIndex + 1 }}</div>
+          </div>
+
+          <div class="team right">
+            <div class="club-name">{{ teamB.name }}</div>
+            <div class="score">{{ teamB.score }}</div>
           </div>
         </div>
+
+        <div class="highlight-split">
+          <div class="highlight-side left">
+            <p
+              v-for="log in getTeamHighlights(currentSet, teamA.club_id)"
+              :key="log.log_id"
+            >
+              {{ formatHighlight(log, 'left') }}
+            </p>
+          </div>
+          <div class="highlight-side right">
+            <p
+              v-for="log in getTeamHighlights(currentSet, teamB.club_id)"
+              :key="log.log_id"
+            >
+              {{ formatHighlight(log, 'right') }}
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- ✅ POM 탭 -->
+    <div v-if="activeTab === 'pom'" class="result-set-card">
+      <div v-if="poms.length === 0" class="text-center" style="color: white;">
+        POM 로그가 없습니다.
+      </div>
+
+      <div v-else class="pom-card-list">
+        <div 
+          class="pom-card" 
+          v-for="log in poms" 
+          :key="log.log_id"
+        >
+          <div class="pom-title">🏆 POM</div>
+          <div class="pom-name">{{ log.user_name || '이름 없음' }}</div>
+          <div class="pom-club">{{ log.club_name || '클럽 없음' }}</div>
+          <div class="pom-stats">
+            <template v-if="getPomStats(log.user_no)">
+              골: {{ getPomStats(log.user_no).goal }} / 
+              도움: {{ getPomStats(log.user_no).assist }}
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
