@@ -21,5 +21,8 @@ public class KakaoPayRequestDTO {
 
     @JsonProperty("total_amount")
     private int totalAmount;
+    
+    @JsonProperty("authCode")
+    private String authCode;
 
 }
