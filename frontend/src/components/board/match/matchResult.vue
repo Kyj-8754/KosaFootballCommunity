@@ -103,6 +103,8 @@ onMounted(async () => {
       axios.get(`/board_api/match-log/sets/${props.matchId}`),
       axios.get(`/board_api/match-log/pom/${props.matchId}`)
     ])
+    console.log('📦 sets 데이터:', setsRes.data)
+    console.log('📦 poms 데이터:', pomsRes.data)
     sets.value = setsRes.data
     poms.value = pomsRes.data
   } catch (err) {
@@ -118,7 +120,7 @@ function getTeams(setLogs) {
     if (log.log_type === '경기 참가') {
       teams[log.club_id] = {
         club_id: log.club_id,
-        name: `클럽 ${log.club_id}`,
+        name: log.club_name || `클럽 ${log.club_id}`,  // ✅ 실제 이름 사용
         score: 0,
         result: '대기 중'
       }
@@ -136,10 +138,8 @@ function getTeams(setLogs) {
     }
   }
 
-  // ✅ club_id 기준 정렬
   return Object.values(teams).sort((a, b) => a.club_id - b.club_id)
 }
-
 
 function getTeamHighlights(setLogs, clubId) {
   return setLogs.filter(log =>
@@ -149,9 +149,10 @@ function getTeamHighlights(setLogs, clubId) {
 }
 
 function formatHighlight(log, side = 'left') {
-  const user = log.user_no ? `선수 ${log.user_no}` : ''
+  const user = log.user_name || `선수 ${log.user_no}` || ''  // ✅ 이름 우선
   const type = log.log_type
-  const time = log.log_memo || '' // ex: 54' 같은 분 정보가 log_memo에 들어온다고 가정
+  const time = log.log_memo || '' // ex: 54' 같은 정보
+
   if (side === 'left') {
     return `${user} ${time} ${type}`
   } else {
