@@ -99,13 +99,13 @@ const toggleSort = (key) => {
 //페이지 버튼, 버튼 이벤트
 const currentPage = ref(1);
 const pageSize = 10;
+const totalPages = computed(() => {
+  return Math.ceil(reservations.value.length / pageSize);
+});
 
 const startIndex = computed(() => (currentPage.value - 1) * pageSize);
 const endIndex = computed(() => currentPage.value * pageSize);
 
-const totalPages = computed(() => {
-  return Math.ceil(reservations.value.length / pageSize);
-});
 
 const pagedReservations = computed(() => sortedReservations.value.slice(startIndex.value, endIndex.value));
 
