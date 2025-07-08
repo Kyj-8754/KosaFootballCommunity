@@ -20,4 +20,9 @@ public class MatchLog {
     private LocalDateTime log_created_at;
     private LocalDateTime log_modified_at;
     private String log_memo;
+    
+    // 조인해서 가져오는 값
+    
+    private String club_name;
+    private String user_name;
 }
