@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class BoardService {
 	@Autowired
@@ -55,4 +59,23 @@ public class BoardService {
 	public boolean hasUserLikedBoard(Long board_id, int user_no) {
 	    return boardDAO.hasUserLikedBoard(board_id, user_no) == 1;
 	}
+	
+    // ✅ 게시글 상태 삭제 처리 메서드
+    @Transactional
+    public void markBoardsAsDeleted() {
+        boardDAO.markBoardsAsDeletedFromReservations();
+    }
+
+    // ✅ 10분마다 실행되는 스케줄러
+    @Scheduled(cron = "0 */10 * * * *")
+    public void cleanUpBoardsWithCancelledOrExpiredReservations() {
+        log.info("⏰ 예약 취소/만료된 게시글 상태 삭제 스케줄러 실행");
+
+        try {
+            markBoardsAsDeleted();
+            log.info("✅ 게시글 상태 삭제 완료");
+        } catch (Exception e) {
+            log.error("❌ 게시글 상태 삭제 중 오류 발생: {}", e.getMessage());
+        }
+    }
 }
