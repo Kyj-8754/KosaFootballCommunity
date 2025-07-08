@@ -1,4 +1,4 @@
-package com.msa.kyj_prj.kakaopay;
+package com.msa.kyj_prj.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
