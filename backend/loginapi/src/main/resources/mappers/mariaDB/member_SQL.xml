@@ -20,6 +20,7 @@
 	  SELECT * 
 	  FROM user 
 	  WHERE user_phone = #{userPhone}
+	  AND user_exit_status='N'
 	</select>
 	
 	<!-- 회원 가입 구문 -->
@@ -89,4 +90,23 @@
 		AND user_phone = #{userPhone}
 	</select>
 	
+	<!-- user 정보 논리적 삭제 -->
+	<update id="deleteUser">
+		UPDATE user
+		SET user_exit_status = 'Y',
+			user_exit_date = NOW()
+		WHERE user_no = #{userNo}
+	</update>
+	
+	<!-- local 계정 물리적 삭제 -->
+	<delete id="deleteLocalAccount">
+		DELETE FROM local_account
+		WHERE user_no = #{userNo}
+	</delete>
+	
+	<!-- social 계정 물리적 삭제 -->
+	<delete id="deleteSocialAccount">
+		DELETE FROM local_account
+		WHERE user_no = #{userNo}
+	</delete>
 </mapper>

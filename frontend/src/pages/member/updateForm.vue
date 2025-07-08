@@ -96,7 +96,8 @@ const fetchMemberDetail = async () => {
     })
 
     const data = res.data.member
-    originalData.value = data // 전체 원본 저장
+    // 전체 원본 저장
+    originalData.value = data 
 
     form.value = {
       userNo: data.userNo,
