@@ -1,8 +1,10 @@
-package com.msa.kyj_prj.alarm;
+package com.msa.kyj_prj.alarm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
+
+import com.msa.kyj_prj.alarm.dto.AlarmMessageDTO;
 
 @Service
 @RequiredArgsConstructor

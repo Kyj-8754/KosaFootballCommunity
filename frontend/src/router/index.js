@@ -53,6 +53,9 @@ const routes = [
     { path:'/match/matchdetail/:id', name: 'matchDetail', component: () => import ('@/pages/board/match/matchDetail.vue')},
     { path:'/match/matchlog/:id', name: 'matchLog', component: () => import ('@/pages/board/match/matchLog.vue')},
 
+  // 웹소켓 관련 알림 리스트
+  
+
   // 404 Not Found
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import ('@/pages/NotFound.vue')}
 ]

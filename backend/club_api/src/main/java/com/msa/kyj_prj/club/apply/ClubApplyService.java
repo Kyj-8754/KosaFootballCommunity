@@ -34,7 +34,7 @@ public class ClubApplyService {
 	// ◆ 클럽 가입 신청 처리 (중복 방지, 알림 전송 포함)
 	public AlarmMessageDTO applyToRecruit(ClubApply clubApply, int appli_user_no) {
 		int bno = clubApply.getBno();
-
+		
 		// 팀장 user_no 조회
 		int user_no = clubApplyDAO.findUserNoByBno(bno);
 		if (user_no == 0)
@@ -99,11 +99,14 @@ public class ClubApplyService {
 		Integer userNoForAlarm = clubApplyDAO.findUserNoByBno(clubApply.getBno());
 		AlarmMessageDTO alarm = new AlarmMessageDTO();
 		alarm.setType("CLUB_APPLY");
-		alarm.setSenderId(senderName);
+		alarm.setSenderId(String.valueOf(clubApply.getAppli_user_no()));
 		alarm.setReceiverId(String.valueOf(userNoForAlarm));
 		alarm.setClubId(clubIdForAlarm);
 		alarm.setMessage(senderName + " 님이 클럽가입을 신청했습니다.");
 
+		log.info("나 이거 보내걸임" + alarm.toString());
+		
+		
 		try {
 			String url = alarmApiUrl + "/api/alarm/send";
 			ResponseEntity<Void> response = restTemplate.postForEntity(url, alarm, Void.class);

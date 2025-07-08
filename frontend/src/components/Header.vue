@@ -2,6 +2,8 @@
 	<template v-if="isAuthenticated">
     <router-link :to="{ name: 'Member_MyPage', query: { userNo: userNo } }">{{userName}} 내 정보</router-link> /
     <a href="#" @click.prevent="logout">로그아웃</a>
+    <!-- ✅ AlarmDropdown 추가: 로그인한 경우에만 알림 드롭다운 보이게 -->
+    <AlarmDropdown v-if="userNo" :userNo="userNo" style="display:inline-block; margin-left: 14px;" />
   </template>
   <template v-else>
     <router-link :to="{ name: 'Member_LoginForm' }">로그인</router-link> /
@@ -62,6 +64,9 @@
 import { inject, computed, ref } from 'vue'
 import logoImage from '@/assets/image/bannerlogo.jpg'
 import axios from 'axios'
+
+// ✅ AlarmDropdown 컴포넌트 import 추가
+import AlarmDropdown from '@/components/common/AlarmDropdown.vue'
 
 // token과 logout 함수 inject
 const token = inject('token')
