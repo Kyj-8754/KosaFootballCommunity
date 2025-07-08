@@ -189,4 +189,30 @@ public class ResrvationController {
 		        ));
 		    }
 	}
+	
+	// board_id 추가
+	@PostMapping("updateBoard")
+	public ResponseEntity<Map<String, Object>> updateBoardId(@RequestBody Map<String, Object> param) {
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        Long reservationId = Long.parseLong(param.get("reservation_id").toString());
+	        Long boardId = Long.parseLong(param.get("board_id").toString());
+
+	        reservationService.updateBoardId(reservationId, boardId);
+
+	        result.put("res_code", "200");
+	        result.put("res_msg", "예약과 게시글 연결 완료");
+	        return ResponseEntity.ok(result);
+
+	    } catch (IllegalArgumentException e) {
+	        result.put("res_code", "400");
+	        result.put("res_msg", "잘못된 요청: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(result);
+	    } catch (Exception e) {
+	        result.put("res_code", "500");
+	        result.put("res_msg", "서버 오류 발생: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+	    }
+	}
+
 }

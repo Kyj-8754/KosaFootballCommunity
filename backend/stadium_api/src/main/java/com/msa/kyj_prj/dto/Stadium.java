@@ -1,4 +1,4 @@
-package com.msa.kyj_prj.stadium;
+package com.msa.kyj_prj.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

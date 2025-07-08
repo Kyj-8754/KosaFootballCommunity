@@ -244,6 +244,64 @@
 	        match_closed
 	    FROM `match`
 	</select>
+	
+	<!-- 연동된 예약 가져오기 -->
+	<select id="getReservationIdByBoardId" resultType="long" parameterType="long">
+	  SELECT reservation_id
+	  FROM reservation
+	  WHERE board_id = #{board_id}
+	</select>
+	
+	<!-- 예약 ID로 결제 여부 확인 -->
+	<select id="isReservationPaid" resultType="boolean" parameterType="long">
+	  SELECT EXISTS (
+	    SELECT 1
+	    FROM payment
+	    WHERE reservation_id = #{reservation_id}
+	      AND status = 'paid'
+	  )
+	</select>
+	
+	<!-- 매치 등록 -->
+	<insert id="insertMatch" parameterType="com.msa.kyj_prj.match.Match">
+	  INSERT INTO `match` (
+	    match_title,
+	    user_no,
+	    manager_no,
+	    match_date,
+	    SVCID,
+	    gender_condition,
+	    match_description,
+	    match_code,
+	    reservation_id
+	  ) VALUES (
+	    #{match_title},
+	    #{user_no},
+	    #{manager_no},
+	    #{match_date},
+	    #{SVCID},
+	    #{gender_condition},
+	    #{match_description},
+	    #{match_code},
+	    #{reservation_id}
+	  )
+	</insert>
+	
+	<!-- 클럽 매치 리스트 -->
+	<select id="selectFilteredClubMatches" parameterType="long" resultType="map">
+	  SELECT 
+	    m.match_id,
+	    m.match_title,
+	    m.match_status,
+	    m.match_date
+	  FROM 
+	    match_participant mp
+	  JOIN 
+	    `match` m ON mp.match_id = m.match_id
+	  WHERE 
+	    mp.club_id = #{club_id}
+	    AND m.match_status = 'waiting'
+	</select>
 
 
 

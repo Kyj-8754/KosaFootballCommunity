@@ -11,10 +11,14 @@
 </template>
 
 <script setup>
-import { ref, watch, defineEmits } from 'vue'
+import { ref, watch, defineEmits, defineProps } from 'vue'
 
 const emits = defineEmits(['update:modelValue'])
-const selectedAction = ref('')
+const props = defineProps({
+  modelValue: String
+})
+
+const selectedAction = ref(props.modelValue || '')
 
 const actions = [
   '출석',
@@ -46,6 +50,10 @@ const actions = [
 
 watch(selectedAction, (newVal) => {
   emits('update:modelValue', newVal)
+})
+
+watch(() => props.modelValue, (val) => {
+  selectedAction.value = val
 })
 </script>
 

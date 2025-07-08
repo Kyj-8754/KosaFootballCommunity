@@ -18,6 +18,7 @@
         <button @click="test">구장 리스트 불러오기</button>
         <button @click="update">구장 업데이트</button>
         <weatherWidget/>
+        <clubMatchList :clubId="24" />
 				<div>
             <p>현재 시간: {{ serverTime }}</p>
         </div>
@@ -74,6 +75,7 @@ const token = inject('token')
 const router = useRouter()
 
 import weatherWidget from '@/components/widget/weatherWidget.vue'
+import clubMatchList from '@/components/board/club/clubMatchList.vue'
 
 const serverTime = ref('')
 

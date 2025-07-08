@@ -59,9 +59,6 @@ const routes = [
   { path:'/reservation/reservation_confirm/:reservationId', name: 'reservation_Confirm', component: () => import ('@/pages/reservation/reservation_confirm.vue'), props: true} ,
   { path:'/reservation/reservation_list', name: 'Reservation_List', component: () => import('@/pages/reservation/reservation_list.vue')},
   { path:'/payment/payment_list', name: 'Payment_List', component: () => import('@/pages/payment/payment_list.vue')},
-  { path:'/payment/success', name: 'PaymentSuccess', component: () => import('@/pages/payment/success.vue')},
-  { path:'/payment/fail', name: 'PaymentFail', component: () => import('@/pages/payment/fail.vue')},
-  { path:'/payment/cancel', name: 'PaymentCancel', component: () => import('@/pages/payment/cancel.vue')},
 
   // 경기장 관련
   { path: '/stadium/detailView',  name: 'Stadium_DetailView', component: () => import ('@/pages/stadium/detailView.vue')},
@@ -86,6 +83,7 @@ const routes = [
     { path:'/match/matchlist', name: 'matchList', component: () => import ('@/pages/board/match/matchList.vue')},
     { path:'/match/matchdetail/:id', name: 'matchDetail', component: () => import ('@/pages/board/match/matchDetail.vue')},
     { path:'/match/matchlog/:id', name: 'matchLog', component: () => import ('@/pages/board/match/matchLog.vue')},
+    { path:'/match/matchregisterform', name: 'matchregister', component: () => import ('@/pages/board/match/matchRegisterForm.vue')},
 
   // 웹소켓 관련 알림 리스트
 

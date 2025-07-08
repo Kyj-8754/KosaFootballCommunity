@@ -6,11 +6,16 @@
 
     <!-- 로그 전체 조회 -->
 	<select id="selectLogsByMatchId" parameterType="long" resultType="com.msa.kyj_prj.match.log.MatchLog">
-      SELECT *
-      FROM match_log
-      WHERE match_id = #{match_id}
-      ORDER BY log_created_at DESC
-    </select>
+	  SELECT 
+	    ml.*,
+	    c.club_name,
+	    u.user_name
+	  FROM match_log ml
+	  LEFT JOIN tbl_club c ON ml.club_id = c.club_id
+	  LEFT JOIN user u ON ml.user_no = u.user_no
+	  WHERE ml.match_id = #{match_id}
+	  ORDER BY ml.log_created_at DESC
+	</select>
 
     <!-- 로그 등록 -->
     <insert id="insertMatchLog" parameterType="com.msa.kyj_prj.match.log.MatchLog">
@@ -67,11 +72,16 @@
 	
 	<!-- log_type이 POM인 로그만 조회 -->
 	<select id="selectPomLogsByMatchId" parameterType="long" resultType="com.msa.kyj_prj.match.log.MatchLog">
-	  SELECT *
-	  FROM match_log
-	  WHERE match_id = #{match_id}
-	    AND log_type = 'POM'
-	  ORDER BY log_created_at DESC
+	  SELECT 
+	    ml.*, 
+	    c.club_name,
+	    u.user_name
+	  FROM match_log ml
+	  LEFT JOIN tbl_club c ON ml.club_id = c.club_id
+	  LEFT JOIN user u ON ml.user_no = u.user_no
+	  WHERE ml.match_id = #{match_id}
+	    AND ml.log_type = 'POM'
+	  ORDER BY ml.log_created_at DESC
 	</select>
 
 </mapper>

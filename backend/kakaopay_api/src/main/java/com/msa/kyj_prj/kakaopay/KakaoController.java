@@ -1,7 +1,6 @@
 package com.msa.kyj_prj.kakaopay;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -13,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.msa.kyj_prj.dto.KakaoPayRequestDTO;
+import com.msa.kyj_prj.dto.PaymentDTO;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -51,10 +51,10 @@ public class KakaoController {
 		try {
 			log.info("카카오페이 결제 승인 요청 시작");
 			kakaoService.approve(pg_token, id);
-			response.sendRedirect("http://localhost:5173/payment/success");
+			response.sendRedirect("http://localhost:5173/payment/success.html");
 		} catch (Exception e) {
 			log.error("결제 승인 실패", e);
-			response.sendRedirect("http://localhost:5173/payment/fail");
+			response.sendRedirect("http://localhost:5173/payment/fail.html");
 		}
 	}
 
@@ -66,7 +66,7 @@ public class KakaoController {
 		kakaoService.fail(id);
 
 		// 클라이언트로 redirect
-		response.sendRedirect("http://localhost:5173/payment/fail");
+		response.sendRedirect("http://localhost:5173/payment/fail.html");
 	}
 
 	// 결제 취소 처리
@@ -76,22 +76,25 @@ public class KakaoController {
 		// 2. 실패 처리
 		kakaoService.cancel(id);
 		// 클라이언트로 redirect
-		response.sendRedirect("http://localhost:5173/payment/cancel");
+		response.sendRedirect("http://localhost:5173/payment/cancel.html");
 	}
 
 	// 결제 환불
-	@SuppressWarnings("unchecked") // 서비스에서 검증할것
 	@PostMapping("/refund")
 	public ResponseEntity<Map<String, Object>> kakaoRefund(@RequestBody Map<String, Object> param) {
-		Map<String, Object> result = new HashMap<>();
-	    
+		Object userNoObj = param.get("user_no");
+		String user_no = String.valueOf(userNoObj);
+		ObjectMapper mapper = new ObjectMapper();
+		PaymentDTO dto = mapper.convertValue(param.get("reservation"), PaymentDTO.class);
+		
+		log.info("제대로 받음"+user_no);
 	    try {
-	        kakaoService.refund((Map<String, Object>) param.get("reservation"));
+	        kakaoService.refund(dto, user_no);
 	        return ResponseEntity.ok(Map.of("success", true));
 	    } catch (IllegalArgumentException e) {
 	        return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
 	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", e.getMessage()));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message",  "시스템 오류가 발생했습니다."));
 	    }
 	}
 }

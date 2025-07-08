@@ -201,9 +201,8 @@ public class MatchService {
         param.put("match_closed", "closed");
         matchDAO.updateMatchClosedStatus(param);
     }
-
-    // ⏰ 스케줄링: 2시간마다 매치 상태 자동 변경 (waiting → active, active → completed)
-    @Scheduled(cron = "0 0 */2 * * *")
+    
+    @Scheduled(cron = "0 0 */2 * * *", zone = "Asia/Seoul") // 매 2시간마다 실행
     public void activatePastMatches() {
         List<Match> allMatches = matchDAO.selectFilteredMatches(new HashMap<>());
         LocalDateTime now = LocalDateTime.now();
@@ -243,5 +242,52 @@ public class MatchService {
         param.put("match_id", matchId);
         param.put("user_no", userNo);
         matchDAO.cancelMatchParticipant(param);
+    }
+    
+    // 연동된 예약 id 찾기
+    public Long getReservationIdByBoardId(Long boardId) {
+        if (boardId == null) {
+            throw new IllegalArgumentException("board_id는 null일 수 없습니다.");
+        }
+        return matchDAO.getReservationIdByBoardId(boardId);
+    }
+    
+    // 예약 ID 기준 결제 완료 여부 확인
+    public boolean isReservationPaid(Long reservationId) {
+        if (reservationId == null) {
+            throw new IllegalArgumentException("reservation_id는 null일 수 없습니다.");
+        }
+        return matchDAO.isReservationPaid(reservationId);
+    }
+    
+    // 매치 등록
+    public void registerMatch(Match match) {
+        log.info("💾 매치 등록 요청: {}", match);
+
+        // 유효성 로그 추가
+        log.info("match_date = {}", match.getMatch_date());
+        log.info("user_no = {}", match.getUser_no());
+        log.info("svcid = {}", match.getSVCID());
+        matchDAO.insertMatch(match);
+    }
+    
+    // 클럽 ID 기준 필터링된 매치 목록 조회 (active, completed 제외)
+    public List<Map<String, Object>> getFilteredClubMatches(Long clubId) {
+        if (clubId == null) {
+            throw new IllegalArgumentException("club_id는 null일 수 없습니다.");
+        }
+        return matchDAO.selectFilteredClubMatches(clubId);
+    }
+    
+    public void applyAndApproveImmediately(MatchParticipant participant) {
+        // 1. 먼저 기본 신청
+        matchDAO.insertMatchParticipant(participant);
+
+        // 2. 바로 상태를 'approve'로 업데이트
+        Map<String, Object> param = new HashMap<>();
+        param.put("match_id", participant.getMatch_id());
+        param.put("user_no", participant.getUser_no());
+        param.put("user_status", "approve");
+        matchDAO.updateMatchParticipantStatus(param);
     }
 }

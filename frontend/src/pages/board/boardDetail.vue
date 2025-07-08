@@ -2,6 +2,17 @@
   <div class="board-detail">
     <PostHeader v-if="post" :post="post" />
 
+    <template v-if="!post">
+      <div class="text-red-500 text-center mt-4">
+        존재하지 않는 게시글입니다.
+      </div>
+      <div class="text-center mt-4">
+        <button class="btn btn-outline-primary" @click="router.push({ name: 'boardList' })">
+          📋 게시판 목록으로 이동
+        </button>
+      </div>
+    </template>
+
     <!-- 게시글 로드 전에는 아무것도 렌더링하지 않음 -->
     <template v-if="post">
       <!-- 모집게시판일 경우: 탭 -->
@@ -31,7 +42,7 @@
         </div>
 
         <div v-else-if="activeTab === 'reservation'">
-          <ReservationConfirm reservationId="1" class="mt-3" />
+          <ReservationConfirm :reservationId="reservationId" class="mt-3" />
         </div>
       </div>
 
@@ -56,16 +67,15 @@
         :userName="userName"
         @submit="addComment"
       />
-    </template>
 
-    <!-- 댓글은 post 없어도 보여줄 수 있도록 별도 조건 -->
-    <CommentList
-      :comments="comments"
-      :userNo="userNo"
-      @edit="editComment"
-      @delete="deleteComment"
-      @reply="addComment"
-    />
+      <CommentList
+        :comments="comments"
+        :userNo="userNo"
+        @edit="editComment"
+        @delete="deleteComment"
+        @reply="addComment"
+      />
+    </template>
   </div>
 </template>
 
@@ -96,6 +106,34 @@ const userName = inject('userName')
 const authCode = inject('authCode')
 
 const activeTab = ref('content')  // 'content' | 'reservation'
+
+const reservationId = ref(null)
+
+const fetchReservationId = async () => {
+  if (!post.value || post.value.board_category !== '모집게시판') {
+    console.warn('⛔ 게시글이 없거나 모집게시판이 아님:', post.value)
+    return
+  }
+
+  console.log('🔍 board_id 요청 전:', post.value.board_id)
+
+  try {
+    const res = await axios.get('/board_api/match/reservation-id', {
+      params: { boardId: post.value.board_id }
+    })
+
+    console.log('📦 reservation-id 응답:', res.data)
+
+    if (res.data.res_code === '200') {
+      reservationId.value = res.data.reservation_id
+      console.log('✅ reservationId 저장됨:', reservationId.value)
+    } else {
+      console.warn('⚠️ 예약 ID 없음:', res.data.res_msg)
+    }
+  } catch (error) {
+    console.error('❌ 예약 ID 조회 실패:', error)
+  }
+}
 
 const fetchPost = async () => {
   try {
@@ -275,6 +313,7 @@ onMounted(async () => {
     await fetchComments()
     await fetchLikeCount()
     await fetchLiked()  // 좋아요 상태도 함께 초기화
+    await fetchReservationId()
 
   } catch (error) {
     console.error('초기 로딩 실패:', error)

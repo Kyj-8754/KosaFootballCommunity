@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.msa.kyj_prj.dto.Slot;
+import com.msa.kyj_prj.dto.Stadium;
+
 // DB연동 SQL
 @Mapper
 public interface StadiumDAO {
