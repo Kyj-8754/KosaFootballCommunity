@@ -130,8 +130,22 @@ const submitLog = async () => {
   memo.value = ''
 }
 
-onMounted(() => {
-  fetchLogs()
+const validateMatch = async () => {
+  try {
+    const res = await axios.get(`/board_api/match/${matchId}`)
+    if (!res.data || Object.keys(res.data).length === 0) {
+      throw new Error('해당 매치 없음')
+    }
+  } catch (e) {
+    console.error('유효하지 않은 matchId:', e)
+    alert('존재하지 않는 매치입니다.')
+    window.location.href = '/match/matchlist' // 또는 router.replace(...)
+  }
+}
+
+onMounted(async () => {
+  await validateMatch()     // ← 먼저 유효성 체크
+  await fetchLogs()         // ← 그 후 로그 조회
 })
 </script>
 
