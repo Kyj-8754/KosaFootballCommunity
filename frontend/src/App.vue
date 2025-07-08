@@ -53,7 +53,7 @@ const decodeJwtPayload = (tokenStr) => {
     
     // userName만 디코딩 (서버에서 encode 했을 경우만)
     if (payload.userName) {
-      payload.userName = decodeURIComponent(payload.userName)
+      payload.userName = decodeURIComponent(payload.userName.replace(/\+/g, ' '))
     }
 
     return payload
