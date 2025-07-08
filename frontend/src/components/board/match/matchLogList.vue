@@ -19,7 +19,7 @@
       <!-- 데이터가 있는 경우 -->
       <tr v-else v-for="(log, index) in logs" :key="log.log_id">
         <template v-if="editingIndex === index">
-          <td>{{ log.log_created_at }}</td>
+          <td>{{ formatDateTime(log.log_created_at) }}</td>
           <td>
             <LogTeamDropdown v-model="editForm.team" />
           </td>
@@ -39,9 +39,9 @@
         </template>
 
         <template v-else>
-          <td>{{ log.log_created_at }}</td>
-          <td>{{ log.club_id }}</td>
-          <td>{{ log.user_no }}</td>
+          <td>{{ formatDateTime(log.log_created_at) }}</td>
+          <td>{{ log.club_name }}</td>
+          <td>{{ log.user_name }}</td>
           <td>{{ log.log_type }}</td>
           <td>{{ log.log_memo }}</td>
           <td>
@@ -101,6 +101,11 @@ const saveEdit = (index) => {
     memo: editForm.value.memo
   })
   editingIndex.value = null
+}
+
+const formatDateTime = (isoString) => {
+  if (!isoString) return ''
+  return isoString.replace('T', ' ')
 }
 </script>
 
