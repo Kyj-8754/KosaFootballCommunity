@@ -195,7 +195,7 @@ public class SocialService {
 				URLEncoder.encode(user.getUserName(), StandardCharsets.UTF_8), "authCode",
 				"ROLE_" + user.getAuthCode(),"loginType",account.getProvider());
 
-		return Map.of("accessToken", jwtUtil.generateToken(claim, 1), "refreshToken", jwtUtil.generateToken(claim, 5));
+		return Map.of("accessToken", jwtUtil.generateToken(claim, 30), "refreshToken", jwtUtil.generateToken(claim, 60));
 	}
 
 	@Transactional
