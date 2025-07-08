@@ -78,7 +78,7 @@ const payload = computed(() => token.value ? decodeJwtPayload(token.value) : {})
 const userId = computed(() => payload.value.userId || null)
 const userNo = computed(() => payload.value.userNo || null)
 const userName = computed(() => payload.value.userName || null)
-const authCode = computed(() => payload.value.auth || null)
+const authCode = computed(() => payload.value.authCode || null)
 
 // 로그아웃 함수
 const logout = () => {

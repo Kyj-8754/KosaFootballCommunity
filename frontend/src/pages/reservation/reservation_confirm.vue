@@ -59,19 +59,19 @@ const reservation = ref({});
 const user = ref({});
 const stadium = ref({});
 const userNo = inject('userNo') // 로그인한 유저 정보 가져옴
+const authCode = inject('authCode') // 로그인한 유저 권한
+
+console.log(authCode?.value, userNo.value);
 
 // 결제 핸들러 이벤트, 감지해서 메시지를 띄우고 닫힘
 const handlePaymentMessage = (event) => {
   switch (event.data) {
     case 'paymentSuccess':
-      alert("결제가 완료되었습니다.");
       router.go(0);
       break;
     case 'paymentFail':
-      alert("결제가 실패되었습니다. 잠시후 시도해 주세요");
       break;
     case 'paymentCancel':
-      alert("결제가 취소되었습니다.");
       break;
     default:
       console.warn("알 수 없는 결제 메시지:", event.data);
@@ -113,7 +113,7 @@ const loadReservationDetails = async () =>{
   if (!confirmPayment) return;
 
    try {
-    const res = await axios.post('/reservation_api/reservation/cancel',{
+        await axios.post('/reservation_api/reservation/cancel',{
         reservation: reservation.value,
         user_no: userNo.value
     });
@@ -138,7 +138,8 @@ const requestPayment = async () => {
       item_name: stadium.value.svcnm,
       total_amount: reservation.value.price,
       partner_order_id: reservation.value.reservation_id,
-      partner_user_id: reservation.value.user_no
+      partner_user_id: userNo.value,
+      authCode: authCode.value
     });
   const redirectUrl = res.data.next_redirect_pc_url
     if (redirectUrl) {
@@ -168,20 +169,20 @@ const refundPayment = async () => {
 
   try{
     const res = await axios.post('/kakao_api/kakaopay/refund', {
-      reservation: reservation.value
+      reservation: reservation.value,
+      user_no: userNo.value
     });
-  const redirectUrl = res.data.next_redirect_pc_url
-    if (redirectUrl) {
-        openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700);
-      } else {
-        alert("결제 URL을 받아오지 못했습니다.");
-      }
+ 
+    if (res.data.success) {
+      alert("결제가 환불되었습니다.");
+      router.go(0);  // 새로고침
+    } else {
+      alert("환불 처리 중 문제가 발생했습니다.");
+    }
 
   } catch (err) {
-    // 서버에서 온 에러 메시지 처리
-    if (err.response && err.response.data?.message) {
-      const message = err.response?.data?.message || "결제 요청 중 알 수 없는 오류가 발생했습니다.";
-      alert(message);
+    if (err.response?.data?.message) {
+      alert(err.response.data.message);
     } else {
       alert("결제 취소 중 오류가 발생했습니다.");
     }
