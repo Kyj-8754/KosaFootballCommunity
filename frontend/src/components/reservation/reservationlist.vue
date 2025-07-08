@@ -5,6 +5,7 @@
       <li class="list-header">
         <span class="num-col">번호</span>
         <span class="name-col">구장명</span>
+        <span class="match-col">리그/매치</span>
          <span class="date-col" @click="toggleSort('slot_date')" style="cursor: pointer">
     예약일
     <span v-if="sortKey === 'slot_date'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
@@ -17,10 +18,15 @@
       <li v-for="(item, index) in pagedReservations" :key="item.reservation_id" class="reservation-item" @click="goToDetail(item.reservation_id)"> 
               <span class="num-col">{{ startIndex + index + 1 }}</span>
               <span class="name-col">{{ item.svcnm }}</span>
+              <span class="match-col">{{ convertType(item.reservation_type) }}</span>
               <span class="date-col">{{ item.slot_date }}</span>
               <span 
                 class="status-col" 
-                :class="item.status === 'reserved' ? 'reserved' : 'cancelled'"
+                :class = "{
+                reserved: item.status === 'reserved',
+                expired: item.status === 'expired',
+                cancelled: item.status === 'cancelled'
+                }"
               >
             {{ convertStatus(item.status) }}
           </span>
@@ -29,7 +35,7 @@
     <!-- 페이지네이션 버튼 -->
     <div class="pagination">
       <button @click="prevPage" :disabled="currentPage === 1">이전</button>
-      <span>페이지 {{ currentPage }}</span>
+      <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
       <button @click="nextPage" :disabled="endIndex >= reservations.length">다음</button>
     </div>
     </div>
@@ -96,10 +102,15 @@ const pageSize = 10;
 
 const startIndex = computed(() => (currentPage.value - 1) * pageSize);
 const endIndex = computed(() => currentPage.value * pageSize);
+
+const totalPages = computed(() => {
+  return Math.ceil(reservations.value.length / pageSize);
+});
+
 const pagedReservations = computed(() => sortedReservations.value.slice(startIndex.value, endIndex.value));
 
 const nextPage = () => {
-  if (endIndex.value < props.reservations.length) currentPage.value++;
+  if (endIndex.value < reservations.value.length) currentPage.value++;
 };
 const prevPage = () => {
   if (currentPage.value > 1) currentPage.value--;
@@ -115,12 +126,27 @@ const fetchReservations = async () => {
   reservations.value = res.data.reservationList
 }
 
+// 예약상태명 바꾸기
 const convertStatus = (status) => {
   switch (status) {
     case 'reserved':
       return '예약';
     case 'cancelled':
       return '예약 취소';
+    case 'expired':
+      return '예약 기간 만료';
+    default:
+      return '알 수 없음';
+  }
+};
+
+// 리그 상태명 바꾸기
+const convertType = (reservation_type) => {
+  switch (reservation_type) {
+    case 'social':
+      return '소셜';
+    case 'match':
+      return '리그';
     default:
       return '알 수 없음';
   }
@@ -189,6 +215,11 @@ onMounted(fetchReservations)
 .status-col.cancelled {
   background-color: #fdeaea;
   color: #d93025;
+}
+
+.status-col.expired {
+  background-color: #f0f0f0;
+  color: #757575;
 }
 
 .reservation-item:hover {
