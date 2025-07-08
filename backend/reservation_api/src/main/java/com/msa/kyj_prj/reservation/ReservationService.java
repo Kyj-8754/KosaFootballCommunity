@@ -79,6 +79,12 @@ public class ReservationService{
 	@Scheduled(cron = "0 0/10 * * * ?", zone = "Asia/Seoul")
 	public void exiredReservation() {
 		log.info("예약 만료 스케쥴러 시작");
+		try {
+	        reservationDAO.expiredReservation();
+	        log.info("예약 만료 작업 완료");
+	    } catch (Exception e) {
+	        log.error("예약 만료 스케쥴러 오류 발생", e);
+	    }
 	}
 	
 }
