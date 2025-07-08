@@ -12,7 +12,7 @@ public interface KakaoDAO {
 	public void updateTid(@Param("id") Long id,@Param("tid") String tid);
 	// ID를 통한 데이터 파싱
 	public PaymentDTO findById(Long id);
-	// 결제 승인 업데이트
+	// 결제 결과 업데이트용
 	public int updatePayment(PaymentDTO updated);
 
 }

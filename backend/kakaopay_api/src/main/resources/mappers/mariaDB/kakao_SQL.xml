@@ -31,10 +31,8 @@
 		where ID = #{id}
 	</update>
 
-	<update id="updatePayment">
-		update payment set 
-		STATUS = #{status},
-		PAID_AT = #{paid_at}
-		where TID = #{tid}
-	</update>
+	<insert id="updatePayment">
+		insert into payment (tid, reservation_id, paid_at, user_no, amount, method, status)
+		values(#{tid}, #{reservation_id}, #{paid_at}, #{user_no}, #{amount}, #{method}, #{status})
+	</insert>
 </mapper>
