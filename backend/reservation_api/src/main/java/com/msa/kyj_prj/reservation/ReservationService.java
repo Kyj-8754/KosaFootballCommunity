@@ -1,8 +1,8 @@
 package com.msa.kyj_prj.reservation;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.msa.kyj_prj.dto.ReservationDTO;
@@ -82,6 +82,18 @@ public class ReservationService{
 
 	    log.info("예약 [{}]에 게시글 [{}] 연결 중", reservationId, boardId);
 	    reservationDAO.updateBoardId(reservationId, boardId);
+	}
+	
+	// 10분 기점으로 예약 만료
+	@Scheduled(cron = "0 0/10 * * * ?", zone = "Asia/Seoul")
+	public void expiredReservation() {
+		log.info("예약 만료 스케쥴러 시작");
+		try {
+	        reservationDAO.expiredReservation();
+	        log.info("예약 만료 작업 완료");
+	    } catch (Exception e) {
+	        log.error("예약 만료 스케쥴러 오류 발생", e);
+	    }
 	}
 	
 }

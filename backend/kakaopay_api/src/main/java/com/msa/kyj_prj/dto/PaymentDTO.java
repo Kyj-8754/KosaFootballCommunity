@@ -1,4 +1,6 @@
-package com.msa.kyj_prj.kakaopay;
+package com.msa.kyj_prj.dto;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentDTO {
 	private Long id;
 	private String tid;
