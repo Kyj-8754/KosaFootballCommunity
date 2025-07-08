@@ -88,11 +88,11 @@ public class UserService {
 		String encodedNewPwd = passwordEncoder.encode(newPassword);
 		return loginDAO.updatePassword(userNo, encodedNewPwd);
 	}
-
+	
+	// 문자 인증용 번호 생성 
 	public String createCode() {
 	    Random random = new Random();
 	    String code;
-
 	    do {
 	        int number = random.nextInt(1_000_000); // 0 ~ 999999
 	        code = String.format("%06d", number); // 6자리 문자열, 앞에 0 채움
@@ -100,5 +100,41 @@ public class UserService {
 
 	    return code;
 	}
+	
+	public String findUserId(String userName, String userPhone) {
+	    UserVO user = loginDAO.findUserByUserNameAndUserPhone(userName, userPhone);
+	    if (user == null) return null;
+	    LocalAccount account = loginDAO.findAccountByUserNo(user.getUserNo());
+	    if (account == null) return null;
+	    return account.getUserId();
+	}
+	
+	public boolean existsByPhone(String userPhone) {
+		return loginDAO.findUserByPhone(userPhone) != null;
+	}
+	
+	public UserVO getUserByUserIdNamePhone(String userId, String userName, String userPhone) {
+	    UserVO user = loginDAO.findUserByUserNameAndUserPhone(userName, userPhone);
+	    if (user == null) return null;
 
+	    LocalAccount account = loginDAO.findAccountByUserNo(user.getUserNo());
+	    if (account == null) return null;
+
+	    if (account.getUserId().equals(userId)) {
+	        return user;
+	    }
+	    return null;
+	}
+	
+	// 비밀번호 재설정
+	public boolean resetPassword(int userNo, String newPassword) {
+		UserVO user = loginDAO.findUserByUserNo(userNo);
+		LocalAccount account = loginDAO.findAccountByUserNo(userNo);
+		if (user == null || account == null)
+			return false;
+
+		// 새 비밀번호 암호화 후 저장
+		String encodedNewPwd = passwordEncoder.encode(newPassword);
+		return loginDAO.updatePassword(userNo, encodedNewPwd);
+	}
 }

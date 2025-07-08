@@ -23,8 +23,10 @@ public interface LoginDAO {
 	public void insertSocialAccount(SocialAccount socialAccount);
 
 	public LocalAccount getLocalAccount(String userId);
+	
+	public UserVO findUserByPhone(@Param("userPhone") String userPhone);
 
-	boolean existsByUserCode(String userCode);
+	public boolean existsByUserCode(String userCode);
 
 	public LocalAccount findAccountByUserNo(int userNo);
 
@@ -33,4 +35,6 @@ public interface LoginDAO {
 	public SocialAccount findSocialAccount(@Param("provider") String provider, @Param("providerId") String providerId);
 	
 	public boolean updatePassword(@Param("userNo") int userNo, @Param("encodedNewPwd")String encodedNewPwd);
+	
+	public UserVO findUserByUserNameAndUserPhone(@Param("userName") String userName, @Param("userPhone")String userPhone);
 }
