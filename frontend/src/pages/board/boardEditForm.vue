@@ -74,6 +74,14 @@ const fetchPost = async () => {
     const response = await axios.get(`/board_api/board/${postId}`)
     const data = response.data
 
+    // ✅ 게시글이 존재하지 않는 경우
+    if (!data || Object.keys(data).length === 0) {
+      alert('존재하지 않는 게시글입니다.')
+      router.replace('/board/boardlist')
+      return
+    }
+
+    // ✅ 작성자 확인
     if (userNo.value !== data.user_no) {
       alert('작성자만 접근할 수 있습니다.')
       router.replace('/board/boardlist')
@@ -88,6 +96,7 @@ const fetchPost = async () => {
 
     const fileRes = await axios.get(`/board_api/file/list/${postId}`)
     initialFiles.value = fileRes.data
+
   } catch (err) {
     console.error('게시글 불러오기 실패:', err)
     alert('게시글을 불러오지 못했습니다.')
