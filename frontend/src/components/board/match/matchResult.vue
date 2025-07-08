@@ -3,19 +3,19 @@
     <!-- 탭 전환 버튼 -->
     <div class="tab-buttons">
       <button
+        @click="activeTab = 'pom'"
+        :class="{ active: activeTab === 'pom' }"
+      >
+        POM
+      </button>
+
+      <button
         v-for="(_, index) in sets"
         :key="'set-' + index"
         @click="() => { activeTab = 'set'; activeSetIndex = index }"
         :class="{ active: activeTab === 'set' && activeSetIndex === index }"
       >
         세트 {{ index + 1 }}
-      </button>
-
-      <button
-        @click="activeTab = 'pom'"
-        :class="{ active: activeTab === 'pom' }"
-      >
-        POM
       </button>
     </div>
 
@@ -99,7 +99,7 @@ const props = defineProps({
 
 const sets = ref([])
 const poms = ref([])
-const activeTab = ref('set') // 'set' or 'pom'
+const activeTab = ref('pom') // 'set' or 'pom'
 const activeSetIndex = ref(0)
 
 const currentSet = computed(() => sets.value[activeSetIndex.value] || [])
