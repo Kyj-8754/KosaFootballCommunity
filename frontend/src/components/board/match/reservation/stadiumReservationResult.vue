@@ -1,54 +1,62 @@
 <template>
-  <div class="container mt-4" v-if="reservation && Object.keys(reservation).length">
-    <h3 class="text-center mb-4">예약 확인</h3>
+  <div class="container mt-4">
+    <!-- ✅ 예약 정보가 있을 때 -->
+    <div v-if="reservation && Object.keys(reservation).length">
+      <h3 class="text-center mb-4">예약 확인</h3>
 
-    <!-- 🏟 구장 정보 -->
-    <div class="card mb-3">
-      <div class="card-header">구장 정보</div>
-      <div class="card-body">
-        <p><strong>구장명:</strong> {{ stadium.svcnm }}</p>
-        <p><strong>주소:</strong> {{ stadium.adres }}</p>
-        <p><strong>연락처:</strong> {{ stadium.telno }}</p>
+      <!-- 🏟 구장 정보 -->
+      <div class="card mb-3">
+        <div class="card-header">구장 정보</div>
+        <div class="card-body">
+          <p><strong>구장명:</strong> {{ stadium.svcnm }}</p>
+          <p><strong>주소:</strong> {{ stadium.adres }}</p>
+          <p><strong>연락처:</strong> {{ stadium.telno }}</p>
+        </div>
+      </div>
+
+      <!-- 👤 사용자 정보 -->
+      <div class="card mb-3">
+        <div class="card-header">사용자 정보</div>
+        <div class="card-body">
+          <p><strong>이름:</strong> {{ user.userName }}</p>
+          <p><strong>전화번호:</strong> {{ user.userPhone }}</p>
+        </div>
+      </div>
+
+      <!-- 📅 예약 정보 -->
+      <div class="card mb-4">
+        <div class="card-header">예약 정보</div>
+        <div class="card-body">
+          <p><strong>날짜:</strong> {{ reservation.slot_date }}</p>
+          <p><strong>시간:</strong> {{ reservation.start_time }} ~ {{ reservation.end_time }}</p>
+          <p><strong>유형:</strong> {{ reservation.reservation_type }}</p>
+          <p><strong>가격:</strong> {{ reservation.price }} 원</p>
+        </div>
+      </div>
+
+      <!-- 결제 상태에 따라 버튼 표시 -->
+      <div class="text-center">
+        <button
+          v-if="!isPaid"
+          class="btn btn-success me-2"
+          @click="requestPayment"
+        >
+          💳 결제하기
+        </button>
+
+        <button
+          v-if="isPaid"
+          class="btn btn-outline-primary"
+          @click="goToMatchRegister"
+        >
+          ⚽ 매치 등록하러 가기
+        </button>
       </div>
     </div>
 
-    <!-- 👤 사용자 정보 -->
-    <div class="card mb-3">
-      <div class="card-header">사용자 정보</div>
-      <div class="card-body">
-        <p><strong>이름:</strong> {{ user.userName }}</p>
-        <p><strong>전화번호:</strong> {{ user.userPhone }}</p>
-      </div>
-    </div>
-
-    <!-- 📅 예약 정보 -->
-    <div class="card mb-4">
-      <div class="card-header">예약 정보</div>
-      <div class="card-body">
-        <p><strong>날짜:</strong> {{ reservation.slot_date }}</p>
-        <p><strong>시간:</strong> {{ reservation.start_time }} ~ {{ reservation.end_time }}</p>
-        <p><strong>유형:</strong> {{ reservation.reservation_type }}</p>
-        <p><strong>가격:</strong> {{ reservation.price }} 원</p>
-      </div>
-    </div>
-
-    <!-- 결제 상태에 따라 버튼 표시 -->
-    <div class="text-center">
-      <button
-        v-if="!isPaid"
-        class="btn btn-success me-2"
-        @click="requestPayment"
-      >
-        💳 결제하기
-      </button>
-
-      <button
-        v-if="isPaid"
-        class="btn btn-outline-primary"
-        @click="goToMatchRegister"
-      >
-        ⚽ 매치 등록하러 가기
-      </button>
+    <!-- ❌ 예약 정보가 없을 때 -->
+    <div v-else class="text-center text-danger mt-5">
+      <p>예약 정보가 존재하지 않습니다.</p>
     </div>
   </div>
 </template>
@@ -104,7 +112,6 @@ onMounted(async () => {
 
   } catch (err) {
     console.error('예약 확인 실패:', err);
-    alert('예약 정보를 불러오는 중 오류가 발생했습니다.');
   }
 });
 
