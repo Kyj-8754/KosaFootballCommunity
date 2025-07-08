@@ -183,4 +183,22 @@ public class MatchController {
     public List<Map<String, Object>> getFilteredClubMatches(@RequestParam Long clubId) {
         return matchService.getFilteredClubMatches(clubId);
     }
+    
+    // 클럽 매치 신청
+    @PostMapping("/apply/approve")
+    public ResponseEntity<?> applyAndApproveImmediately(@RequestBody MatchParticipant participant) {
+        try {
+            matchService.applyAndApproveImmediately(participant);
+            return ResponseEntity.ok(Map.of(
+                "res_code", "200",
+                "res_msg", "참가와 승인 완료"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "res_code", "500",
+                "res_msg", "참가 승인 중 오류: " + e.getMessage()
+            ));
+        }
+    }
+
 }
