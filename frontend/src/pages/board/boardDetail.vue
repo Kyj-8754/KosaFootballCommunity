@@ -68,7 +68,6 @@
         @submit="addComment"
       />
 
-      <!-- 댓글은 post 없어도 보여줄 수 있도록 별도 조건 -->
       <CommentList
         :comments="comments"
         :userNo="userNo"
