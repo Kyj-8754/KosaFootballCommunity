@@ -10,7 +10,14 @@
     <LogCodeDropdown v-model="selectedLogCode" />
 
     <!-- 메모 입력 -->
-    <input v-model="memo" type="text" class="memo-input" placeholder="내용을 입력해주세요" />
+    <input
+      :type="isScoreLog ? 'number' : 'text'"
+      v-model="memo"
+      class="memo-input"
+      :placeholder="isScoreLog ? '0~10 사이 숫자 입력' : '내용을 입력해주세요'"
+      :min="isScoreLog ? 0 : null"
+      :max="isScoreLog ? 10 : null"
+    />
 
     <!-- 등록 버튼 -->
     <button @click="submitLog" class="submit-button">등록</button>
@@ -96,6 +103,15 @@ const deleteLog = async (index) => {
 
 const updateLog = async ({ index, team, member, logCode, memo }) => {
   try {
+    // 점수 로그일 경우 숫자 및 범위 체크
+    if (logCode === '실력 점수' || logCode === '매너 점수') {
+      const score = Number(memo)
+      if (isNaN(score) || score < 0 || score > 10) {
+        alert('실력 점수 또는 매너 점수는 0~10 사이의 숫자여야 합니다.')
+        return
+      }
+    }
+
     const log = logs.value[index]
     const payload = {
       log_id: log.log_id,
@@ -105,6 +121,7 @@ const updateLog = async ({ index, team, member, logCode, memo }) => {
       log_type: logCode,
       log_memo: memo
     }
+
     await axios.put('/board_api/match-log/update', payload)
     await fetchLogs()
   } catch (e) {
@@ -114,6 +131,14 @@ const updateLog = async ({ index, team, member, logCode, memo }) => {
 }
 
 const submitLog = async () => {
+  // 숫자 제한 검사
+  if (isScoreLog.value) {
+    const score = Number(memo.value)
+    if (isNaN(score) || score < 0 || score > 10) {
+      alert('실력 점수 또는 매너 점수는 0~10 사이의 숫자여야 합니다.')
+      return
+    }
+  }
 
   const payload = {
     match_id: matchId,
@@ -150,6 +175,10 @@ const validateMatch = async () => {
     window.location.href = '/match/matchlist' // 또는 router.replace(...)
   }
 }
+
+const isScoreLog = computed(() =>
+  selectedLogCode.value === '실력 점수' || selectedLogCode.value === '매너 점수'
+)
 
 onMounted(async () => {
   await validateMatch()     // ← 먼저 유효성 체크

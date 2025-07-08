@@ -6,7 +6,7 @@
         <th>팀</th>
         <th>회원</th>
         <th>행동</th>
-        <th>메모</th>
+        <th>메모/점수</th>
         <th>관리</th>
       </tr>
     </thead>
@@ -30,7 +30,14 @@
             <LogCodeDropdown v-model="editForm.logCode" />
           </td>
           <td>
-            <input v-model="editForm.memo" type="text" class="memo-input" />
+            <input
+              v-model="editForm.memo"
+              :type="isScoreLog ? 'number' : 'text'"
+              class="memo-input"
+              :placeholder="isScoreLog ? '0~10 숫자 입력' : '내용 입력'"
+              :min="isScoreLog ? 0 : null"
+              :max="isScoreLog ? 10 : null"
+            />
           </td>
           <td>
             <button @click="saveEdit(index)">저장</button>
@@ -55,7 +62,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import LogTeamDropdown from '@/components/board/match/matchLogTeamDropdown.vue'
 import LogMemberDropdown from '@/components/board/match/matchLogMemberDropdown.vue'
 import LogCodeDropdown from '@/components/board/match/matchLogActionDropdown.vue'
@@ -91,6 +98,14 @@ const cancelEdit = () => {
 }
 
 const saveEdit = (index) => {
+  if (isScoreLog.value) {
+    const score = Number(editForm.value.memo)
+    if (isNaN(score) || score < 0 || score > 10) {
+      alert('점수는 0~10 사이 숫자여야 합니다.')
+      return
+    }
+  }
+
   emit('update', {
     index,
     team: editForm.value.team,
@@ -105,6 +120,11 @@ const formatDateTime = (isoString) => {
   if (!isoString) return ''
   return isoString.replace('T', ' ')
 }
+
+// logCode에 따라 숫자 점수 입력 제한
+const isScoreLog = computed(() =>
+  editForm.value.logCode === '실력 점수' || editForm.value.logCode === '매너 점수'
+)
 </script>
 
 <style scoped>
