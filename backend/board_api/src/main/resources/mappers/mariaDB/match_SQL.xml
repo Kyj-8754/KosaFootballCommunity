@@ -249,5 +249,15 @@
 	  FROM reservation
 	  WHERE board_id = #{board_id}
 	</select>
+	
+	<!-- 예약 ID로 결제 여부 확인 -->
+	<select id="isReservationPaid" resultType="boolean" parameterType="long">
+	  SELECT EXISTS (
+	    SELECT 1
+	    FROM payment
+	    WHERE reservation_id = #{reservation_id}
+	      AND status = 'paid'
+	  )
+	</select>
 
 </mapper>

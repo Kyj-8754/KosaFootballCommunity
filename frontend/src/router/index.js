@@ -50,6 +50,7 @@ const routes = [
     { path:'/match/matchlist', name: 'matchList', component: () => import ('@/pages/board/match/matchList.vue')},
     { path:'/match/matchdetail/:id', name: 'matchDetail', component: () => import ('@/pages/board/match/matchDetail.vue')},
     { path:'/match/matchlog/:id', name: 'matchLog', component: () => import ('@/pages/board/match/matchLog.vue')},
+    { path:'/match/matchregisterform', name: 'matchregister', component: () => import ('@/pages/board/match/matchRegisterForm.vue')},
 
   // 404 Not Found
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import ('@/pages/NotFound.vue')}

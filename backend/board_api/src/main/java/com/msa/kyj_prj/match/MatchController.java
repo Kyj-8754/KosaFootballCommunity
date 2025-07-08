@@ -129,4 +129,28 @@ public class MatchController {
                 ));
         }
     }
+    
+    // reservation_id로 결제 완료 여부 확인
+    @GetMapping("/reservation-paid")
+    public ResponseEntity<Map<String, Object>> isReservationPaid(@RequestParam Long reservationId) {
+        try {
+            boolean paid = matchService.isReservationPaid(reservationId);
+
+            return ResponseEntity.ok(Map.of(
+                "res_code", "200",
+                "res_msg", "결제 상태 조회 성공",
+                "paid", paid
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "res_code", "400",
+                "res_msg", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "res_code", "500",
+                "res_msg", "서버 오류 발생: " + e.getMessage()
+            ));
+        }
+    }
 }
