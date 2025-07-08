@@ -66,8 +66,8 @@ public class BoardService {
         boardDAO.markBoardsAsDeletedFromReservations();
     }
 
-    // ✅ 10분마다 실행되는 스케줄러
-    @Scheduled(cron = "0 */10 * * * *")
+    // ✅ 2시간마다 실행되는 스케줄러
+    @Scheduled(cron = "0 0 */2 * * *", zone = "Asia/Seoul")
     public void cleanUpBoardsWithCancelledOrExpiredReservations() {
         log.info("⏰ 예약 취소/만료된 게시글 상태 삭제 스케줄러 실행");
 

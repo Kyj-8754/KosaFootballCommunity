@@ -62,19 +62,29 @@
       </div>
     </div>
 
+
     <!-- POM 로그 카드 -->
     <div v-if="activeTab === 'pom'" class="result-set-card">
       <div v-if="poms.length === 0">POM 로그가 없습니다.</div>
-      <div v-else>
-        <div class="highlight-split single-column">
-          <div class="highlight-side">
-            <p v-for="log in poms" :key="log.log_id">
-              {{ log.log_memo || '내용 없음' }}
-            </p>
+        <div v-else class="pom-card-list">
+          <div 
+            class="pom-card" 
+            v-for="log in poms" 
+            :key="log.log_id"
+          >
+            <div class="pom-title">🏆 POM</div>
+            <div class="pom-name">{{ log.user_name || '이름 없음' }}</div>
+            <div class="pom-club">{{ log.club_name || '클럽 없음' }}</div>
+            <div class="pom-stats">
+              <template v-if="getPomStats(log.user_no)">
+                골: {{ getPomStats(log.user_no).goal }} /
+                도움: {{ getPomStats(log.user_no).assist }}
+              </template>
+            </div>
           </div>
         </div>
-      </div>
     </div>
+
   </div>
 </template>
 
@@ -158,6 +168,22 @@ function formatHighlight(log, side = 'left') {
   } else {
     return `${type} ${time} ${user}`
   }
+}
+
+function getPomStats(userNo) {
+  let goal = 0
+  let assist = 0
+
+  for (const set of sets.value) {
+    for (const log of set) {
+      if (log.user_no === userNo) {
+        if (log.log_type === '골') goal++
+        if (log.log_type === '도움') assist++
+      }
+    }
+  }
+
+  return { goal, assist }
 }
 </script>
 
@@ -276,4 +302,44 @@ function formatHighlight(log, side = 'left') {
   align-items: center;
 }
 
+.pom-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.pom-card {
+  background-color: #001f3f;
+  padding: 16px 24px;
+  border-radius: 8px;
+  color: white;
+  text-align: center;
+  min-width: 200px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pom-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #ffcc00;
+}
+
+.pom-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.pom-club {
+  font-size: 16px;
+  margin-bottom: 4px;
+  opacity: 0.85;
+}
+
+.pom-stats {
+  font-size: 14px;
+  opacity: 0.9;
+}
 </style>

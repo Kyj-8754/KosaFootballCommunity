@@ -153,7 +153,7 @@ public class MatchService {
         matchDAO.updateMatchClosedStatus(param);
     }
     
-    @Scheduled(cron = "0 0 */2 * * *") // 매 2시간마다 실행
+    @Scheduled(cron = "0 0 */2 * * *", zone = "Asia/Seoul") // 매 2시간마다 실행
     public void activatePastMatches() {
     	System.out.println("예약 실행");
         List<Match> allMatches = matchDAO.selectAllMatches(new HashMap<>());
