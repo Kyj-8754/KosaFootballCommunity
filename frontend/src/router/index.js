@@ -10,6 +10,9 @@ import Admin_UserList from '@/pages/admin/userList.vue';
 // 멤버 관련
 import OAuth_Success from '@/pages/oauth/Success.vue';
 import Member_LoginForm from '@/pages/member/loginForm.vue';
+import Member_FindId from '@/pages/member/findId.vue';
+import Member_FindPwd from '@/pages/member/findPwd.vue';
+import Member_ResetPwd from '@/pages/member/resetPwd.vue';
 import Member_RegistForm from '@/pages/member/registForm.vue';
 import Member_DetailView from '@/pages/member/detailView.vue';
 import Member_UpdateForm from '@/pages/member/updateForm.vue';
@@ -58,6 +61,9 @@ const routes = [
   // 멤버 관련
   { path: '/oauth/success', name: 'OAuth_Success', component: OAuth_Success },
   { path: '/member/loginForm', name: 'Member_LoginForm', component: Member_LoginForm },
+  { path: '/member/findId', name: 'Member_FindId', component: Member_FindId },
+  { path: '/member/findPwd', name: 'Member_FindPwd', component: Member_FindPwd },
+  { path: '/member/resetPwd', name: 'Member_ResetPwd', component: Member_ResetPwd },
   { path: '/member/registForm', name: 'Member_RegistForm', component: Member_RegistForm },
   { path: '/member/detailView', name: 'Member_DetailView', component: Member_DetailView },
   { path: '/member/updateForm', name: 'Member_UpdateForm', component: Member_UpdateForm },
