@@ -32,9 +32,23 @@
       </div>
     </div>
 
-    <!-- 결제 버튼 -->
+    <!-- 결제 상태에 따라 버튼 표시 -->
     <div class="text-center">
-      <button class="btn btn-success me-2" @click="requestPayment">💳 결제하기</button>
+      <button
+        v-if="!isPaid"
+        class="btn btn-success me-2"
+        @click="requestPayment"
+      >
+        💳 결제하기
+      </button>
+
+      <button
+        v-if="isPaid"
+        class="btn btn-outline-primary"
+        @click="goToMatchRegister"
+      >
+        ⚽ 매치 등록하러 가기
+      </button>
     </div>
   </div>
 </template>
@@ -42,6 +56,8 @@
 <script setup>
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const props = defineProps({
   reservationId: { type: String, required: true }
@@ -50,67 +66,43 @@ const props = defineProps({
 const user = ref({})
 const stadium = ref({})
 const reservation = ref({})
+const isPaid = ref(false);
 
 onMounted(async () => {
   try {
     const res = await axios.post('/reservation_api/reservation/reservation_confirm', {
       reservation_id: props.reservationId
-    })
-
-    console.log('예약 응답:', res.data)
-
-    const reservationData = res.data.reservationDB
-    if (!reservationData) {
-      throw new Error('예약 데이터가 없습니다.')
-    }
-
-    reservation.value = reservationData
-
-    const { user_no, svcid } = reservationData
-
-    const userRes = await axios.get('/login_api/mypage/detailView', {
-      params: { userNo: user_no }
-    })
-    user.value = userRes.data.member
-
-    const stadiumRes = await axios.get('/stadium_api/stadium/detailView', {
-      params: { SVCID: svcid }
-    })
-    stadium.value = stadiumRes.data.stadiumDB.stadium
-
-  } catch (err) {
-    console.error('예약 확인 실패:', err)
-    alert('예약 정보를 불러오는 중 오류가 발생했습니다.')
-  }
-})
-
-const requestPayment = async () => {
-  const confirmPayment = confirm("결제 하시겠습니까?");
-  if (!confirmPayment) return;
-
-  try {
-    const res = await axios.post('/kakao_api/kakaopay/ready', {
-      item_name: stadium.value.svcnm,
-      total_amount: reservation.value.price,
-      partner_order_id: reservation.value.reservation_id,
-      partner_user_id: reservation.value.user_no
     });
 
-    const redirectUrl = res.data.next_redirect_pc_url;
-    if (redirectUrl) {
-      openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700);
-    } else {
-      alert("결제 URL을 받아오지 못했습니다.");
+    const reservationData = res.data.reservationDB;
+    if (!reservationData) {
+      throw new Error('예약 데이터가 없습니다.');
     }
 
+    reservation.value = reservationData;
+    const { user_no, svcid, reservation_id } = reservationData;
+
+    const [userRes, stadiumRes, paidRes] = await Promise.all([
+      axios.get('/login_api/mypage/detailView', {
+        params: { userNo: user_no }
+      }),
+      axios.get('/stadium_api/stadium/detailView', {
+        params: { SVCID: svcid }
+      }),
+      axios.get('/board_api/match/reservation-paid', {
+        params: { reservationId: reservation_id }
+      })
+    ]);
+
+    user.value = userRes.data.member;
+    stadium.value = stadiumRes.data.stadiumDB.stadium;
+    isPaid.value = paidRes.data.paid === true;
+
   } catch (err) {
-    if (err.response?.data?.message) {
-      alert(err.response.data.message);
-    } else {
-      alert("결제 요청 중 오류가 발생했습니다.");
-    }
+    console.error('예약 확인 실패:', err);
+    alert('예약 정보를 불러오는 중 오류가 발생했습니다.');
   }
-};
+});
 
 const openCenteredPopup = (url, title, w, h) => {
   const dualScreenLeft = window.screenX ?? window.screenLeft;
@@ -131,4 +123,14 @@ const openCenteredPopup = (url, title, w, h) => {
   if (popup?.focus) popup.focus();
 };
 
+const goToMatchRegister = () => {
+  router.push({
+    name: 'matchregister',
+    state: {
+      reservation: reservation.value,
+      user: user.value,
+      stadium: stadium.value
+    }
+  });
+};
 </script>

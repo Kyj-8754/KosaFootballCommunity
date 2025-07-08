@@ -186,4 +186,12 @@ public class MatchService {
         }
         return matchDAO.getReservationIdByBoardId(boardId);
     }
+    
+    // 예약 ID 기준 결제 완료 여부 확인
+    public boolean isReservationPaid(Long reservationId) {
+        if (reservationId == null) {
+            throw new IllegalArgumentException("reservation_id는 null일 수 없습니다.");
+        }
+        return matchDAO.isReservationPaid(reservationId);
+    }
 }

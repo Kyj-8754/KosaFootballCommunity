@@ -53,4 +53,7 @@ public interface MatchDAO {
     
     // 연동된 예약 id 찾기
     Long getReservationIdByBoardId(@Param("board_id") Long boardId);
+    
+    // 예약 ID로 결제 여부 확인
+    boolean isReservationPaid(@Param("reservation_id") Long reservationId);
 }
