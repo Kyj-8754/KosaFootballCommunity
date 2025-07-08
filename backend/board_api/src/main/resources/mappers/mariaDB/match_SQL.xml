@@ -284,5 +284,21 @@
 	    #{reservation_id}
 	  )
 	</insert>
+	
+	<!-- 클럽 매치 리스트 -->
+	<select id="selectFilteredClubMatches" parameterType="long" resultType="map">
+	  SELECT 
+	    m.match_id,
+	    m.match_title,
+	    m.match_status,
+	    m.match_date
+	  FROM 
+	    match_participant mp
+	  JOIN 
+	    `match` m ON mp.match_id = m.match_id
+	  WHERE 
+	    mp.club_id = #{club_id}
+	    AND m.match_status = 'waiting'
+	</select>
 
 </mapper>

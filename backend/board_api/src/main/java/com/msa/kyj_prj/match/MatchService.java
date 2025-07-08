@@ -208,4 +208,12 @@ public class MatchService {
         log.info("svcid = {}", match.getSVCID());
         matchDAO.insertMatch(match);
     }
+    
+    // 클럽 ID 기준 필터링된 매치 목록 조회 (active, completed 제외)
+    public List<Map<String, Object>> getFilteredClubMatches(Long clubId) {
+        if (clubId == null) {
+            throw new IllegalArgumentException("club_id는 null일 수 없습니다.");
+        }
+        return matchDAO.selectFilteredClubMatches(clubId);
+    }
 }

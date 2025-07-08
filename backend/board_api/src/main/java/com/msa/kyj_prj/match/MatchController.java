@@ -177,4 +177,10 @@ public class MatchController {
             ));
         }
     }
+    
+    // 클럽 ID 기준 필터링된 매치 목록 조회 (match_status != 'active', 'completed')
+    @GetMapping("/club/matches")
+    public List<Map<String, Object>> getFilteredClubMatches(@RequestParam Long clubId) {
+        return matchService.getFilteredClubMatches(clubId);
+    }
 }
