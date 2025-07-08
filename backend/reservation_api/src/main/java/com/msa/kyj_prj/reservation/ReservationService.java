@@ -85,7 +85,7 @@ public class ReservationService{
 	}
 	
 	// 10분 기점으로 예약 만료
-	@Scheduled(cron = "0 0/10 * * * ?", zone = "Asia/Seoul")
+	@Scheduled(cron = "0 0 */2 * * *", zone = "Asia/Seoul")
 	public void expiredReservation() {
 		log.info("예약 만료 스케쥴러 시작");
 		try {
