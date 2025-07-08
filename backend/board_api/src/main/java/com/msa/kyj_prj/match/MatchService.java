@@ -216,4 +216,16 @@ public class MatchService {
         }
         return matchDAO.selectFilteredClubMatches(clubId);
     }
+    
+    public void applyAndApproveImmediately(MatchParticipant participant) {
+        // 1. 먼저 기본 신청
+        matchDAO.insertMatchParticipant(participant);
+
+        // 2. 바로 상태를 'approve'로 업데이트
+        Map<String, Object> param = new HashMap<>();
+        param.put("match_id", participant.getMatch_id());
+        param.put("user_no", participant.getUser_no());
+        param.put("user_status", "approve");
+        matchDAO.updateMatchParticipantStatus(param);
+    }
 }
