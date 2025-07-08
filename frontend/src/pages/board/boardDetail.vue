@@ -2,6 +2,17 @@
   <div class="board-detail">
     <PostHeader v-if="post" :post="post" />
 
+    <template v-if="!post">
+      <div class="text-red-500 text-center mt-4">
+        존재하지 않는 게시글입니다.
+      </div>
+      <div class="text-center mt-4">
+        <button class="btn btn-outline-primary" @click="router.push({ name: 'boardList' })">
+          📋 게시판 목록으로 이동
+        </button>
+      </div>
+    </template>
+
     <!-- 게시글 로드 전에는 아무것도 렌더링하지 않음 -->
     <template v-if="post">
       <!-- 모집게시판일 경우: 탭 -->
@@ -56,16 +67,16 @@
         :userName="userName"
         @submit="addComment"
       />
-    </template>
 
-    <!-- 댓글은 post 없어도 보여줄 수 있도록 별도 조건 -->
-    <CommentList
-      :comments="comments"
-      :userNo="userNo"
-      @edit="editComment"
-      @delete="deleteComment"
-      @reply="addComment"
-    />
+      <!-- 댓글은 post 없어도 보여줄 수 있도록 별도 조건 -->
+      <CommentList
+        :comments="comments"
+        :userNo="userNo"
+        @edit="editComment"
+        @delete="deleteComment"
+        @reply="addComment"
+      />
+    </template>
   </div>
 </template>
 
