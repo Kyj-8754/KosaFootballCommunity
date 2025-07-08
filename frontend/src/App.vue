@@ -27,10 +27,11 @@ import AlarmToast from '@/components/common/AlarmToast.vue';
 import { connectWebSocket } from '@/utils/stomp';
 import { useAlarmStore } from '@/stores/alarmStore';
 import scrollUp from '@/components/scrollUp.vue'
+import { injectSetToken } from '@/utils/tokenGenerator.js'
 
 const alarmStore = useAlarmStore();
 
-import { injectSetToken } from '@/utils/tokenGenerator.js'
+
 
 const token = ref(localStorage.getItem('accessToken') || '')
 // 토큰 설정 함수

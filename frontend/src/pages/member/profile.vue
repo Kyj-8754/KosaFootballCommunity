@@ -17,10 +17,9 @@
         <button v-if="canRevokeManager" class="btn btn-danger"@click="revokeManager">매니저 권한 해제</button>
       </div>
       
-      
       <router-link v-if="member" :to="friendLink" class="friend-count router-link">{{ friends.length }}명의 친구</router-link>
 
-      <router-link v-if="member" :to="{name: 'Member_Profile_Update', query: { userNo: member.userNo }}" class="btn btn-primary">프로필 설정</router-link>
+      <router-link v-if="member && isMyProfile" :to="{name: 'Member_Profile_Update', query: { userNo: member.userNo }}" class="btn btn-primary">프로필 설정</router-link>
 
       <div class="comment-box">
         <h3>소개글</h3>
@@ -82,8 +81,8 @@ const style = ref(null)
 const stat = ref(null)
 const friends = ref([])
 
-const isManager = computed(() => {
-  return authCode?.value === 'ROLE_A1'
+const isMyProfile = computed(() => {
+  return member.value?.userNo === loginUserNo.value
 })
 
 // 매니저 권한 부여 버튼 표시 조건
@@ -201,6 +200,9 @@ const revokeManager = async () => {
 
 onMounted(async () => {
   await fetchMemberDetail()
+  console.log('👤 로그인 유저:', loginUserNo.value)
+  console.log('👤 프로필 유저:', member.value?.userNo)
+  console.log('👥 같음?', loginUserNo.value === member.value?.userNo)
   console.log('🔐 authCode:', authCode?.value)
   console.log('👤 member:', member.value?.authCode)
   await loadFriendList()
