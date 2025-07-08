@@ -163,6 +163,20 @@ const sendSmsCode = async () => {
   }
 
   try {
+    // 1. 전화번호 중복 체크
+    const checkRes = await fetch('/login_api/user/na/isExistPhone', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json;charset=utf-8' },
+      body: JSON.stringify({ userPhone: form.userPhone })
+    })
+
+    const checkJson = await checkRes.json()
+    if (checkJson.res_code === '409') {
+      alert(checkJson.res_msg) // 이미 가입된 번호
+      return
+    }
+
+    // 2. 인증 코드 요청
     const res = await fetch('/login_api/user/na/smsCode', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -177,8 +191,8 @@ const sendSmsCode = async () => {
       alert(json.res_msg || '전송 실패')
     }
   } catch (err) {
-    console.error('SMS 전송 오류:', err)
-    alert('서버 오류로 전송 실패')
+    console.error('SMS 인증 오류:', err)
+    alert('서버 오류로 인증 실패')
   }
 }
 
