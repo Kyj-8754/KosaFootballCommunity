@@ -1,4 +1,4 @@
-package com.msa.kyj_prj.kakaopay;
+package com.msa.kyj_prj.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -21,5 +21,8 @@ public class KakaoPayRequestDTO {
 
     @JsonProperty("total_amount")
     private int totalAmount;
+    
+    @JsonProperty("authCode")
+    private String authCode;
 
 }

@@ -1,22 +1,30 @@
 <template>
   <div class="comment-list">
-    <template v-for="item in pagedComments" :key="item.reply_id">
-      <div :class="{ 'child-comments': item.parent_reply_id !== null }">
-        <CommentItem
-          :comment="item"
-          @like="handleLike"
-          @edit="handleEdit"
-          @delete="handleDelete"
-          @reply="handleReply"
-        />
-      </div>
-    </template>
+    <!-- ❌ 댓글 없을 때 -->
+    <div v-if="flattenedComments.length === 0" class="text-center text-muted py-4">
+      댓글이 없습니다.
+    </div>
 
-    <Pagination
-      :currentPage="currentPage"
-      :totalPages="totalPages"
-      @changePage="handlePageChange"
-    />
+    <!-- ✅ 댓글 있을 때 -->
+    <template v-else>
+      <template v-for="item in pagedComments" :key="item.reply_id">
+        <div :class="{ 'child-comments': item.parent_reply_id !== null }">
+          <CommentItem
+            :comment="item"
+            @like="handleLike"
+            @edit="handleEdit"
+            @delete="handleDelete"
+            @reply="handleReply"
+          />
+        </div>
+      </template>
+
+      <Pagination
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        @changePage="handlePageChange"
+      />
+    </template>
   </div>
 </template>
 

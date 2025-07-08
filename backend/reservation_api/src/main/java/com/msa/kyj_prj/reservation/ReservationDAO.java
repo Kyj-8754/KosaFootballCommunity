@@ -1,8 +1,6 @@
 package com.msa.kyj_prj.reservation;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,4 +17,6 @@ public interface ReservationDAO {
 	public List<ReservationDTO> getReservationList(String user_no);
 	public List<ReservationDTO> getPaymentList(String user_no);
 	public void updateStatusToCancelled(int reservation_id);
+	public void updateBoardId(@Param("reservation_id") Long reservationId, @Param("board_id") Long boardId);
+	public void expiredReservation();
 }

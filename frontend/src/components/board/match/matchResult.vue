@@ -3,6 +3,13 @@
     <!-- 탭 전환 버튼 -->
     <div class="tab-buttons">
       <button
+        @click="activeTab = 'pom'"
+        :class="{ active: activeTab === 'pom' }"
+      >
+        POM
+      </button>
+
+      <button
         v-for="(_, index) in sets"
         :key="'set-' + index"
         @click="() => { activeTab = 'set'; activeSetIndex = index }"
@@ -10,67 +17,80 @@
       >
         세트 {{ index + 1 }}
       </button>
-
-      <button
-        @click="activeTab = 'pom'"
-        :class="{ active: activeTab === 'pom' }"
-      >
-        POM
-      </button>
     </div>
 
-    <!-- 세트별 결과 카드 -->
-    <div class="result-set-card" v-if="activeTab === 'set' && currentSet.length > 0">
-      <div class="score-row">
-        <!-- 왼쪽 팀 -->
-        <div class="team">
-          <div class="club-name">{{ teamA.name }}</div>
-          <div class="score">{{ teamA.score }}</div>
-        </div>
-
-        <!-- 중앙 -->
-        <div class="middle-info">
-          <div class="status">경기 종료</div>
-          <div class="date-place">세트 {{ activeSetIndex + 1 }}</div>
-        </div>
-
-        <!-- 오른쪽 팀 -->
-        <div class="team right">
-          <div class="club-name">{{ teamB.name }}</div>
-          <div class="score">{{ teamB.score }}</div>
-        </div>
+    <!-- ✅ 세트 탭 선택 시 -->
+    <div v-if="activeTab === 'set'">
+      <!-- 세트 데이터 자체 없음 -->
+      <div v-if="sets.length === 0" class="text-center text-muted py-3">
+        세트 데이터가 없습니다.
       </div>
 
-      <!-- 양쪽으로 나눈 하이라이트 로그 -->
-      <div class="highlight-split">
-        <div class="highlight-side left">
-          <p
-            v-for="log in getTeamHighlights(currentSet, teamA.club_id)"
-            :key="log.log_id"
-          >
-            {{ formatHighlight(log, 'left') }}
-          </p>
-        </div>
-        <div class="highlight-side right">
-          <p
-            v-for="log in getTeamHighlights(currentSet, teamB.club_id)"
-            :key="log.log_id"
-          >
-            {{ formatHighlight(log, 'right') }}
-          </p>
-        </div>
+      <!-- 세트는 있지만 현재 세트가 비어 있음 -->
+      <div v-else-if="currentSet.length === 0" class="text-center text-muted py-3">
+        선택한 세트에 로그가 없습니다.
       </div>
-    </div>
 
-    <!-- POM 로그 카드 -->
-    <div v-if="activeTab === 'pom'" class="result-set-card">
-      <div v-if="poms.length === 0">POM 로그가 없습니다.</div>
-      <div v-else>
-        <div class="highlight-split single-column">
-          <div class="highlight-side">
-            <p v-for="log in poms" :key="log.log_id">
-              {{ log.log_memo || '내용 없음' }}
+      <!-- 세트 로그 출력 -->
+      <div v-else class="result-set-card">
+        <div class="score-row">
+          <div class="team">
+            <div class="club-name">{{ teamA.name }}</div>
+            <div class="score">{{ teamA.score }}</div>
+          </div>
+
+          <div class="middle-info">
+            <div class="status">경기 종료</div>
+            <div class="date-place">세트 {{ activeSetIndex + 1 }}</div>
+          </div>
+
+          <div class="team right">
+            <div class="club-name">{{ teamB.name }}</div>
+            <div class="score">{{ teamB.score }}</div>
+          </div>
+        </div>
+
+        <div class="highlight-split">
+          <div class="highlight-side left">
+            <p
+              v-for="log in getTeamHighlights(currentSet, teamA.club_id)"
+              :key="log.log_id"
+            >
+              {{ formatHighlight(log, 'left') }}
             </p>
+          </div>
+          <div class="highlight-side right">
+            <p
+              v-for="log in getTeamHighlights(currentSet, teamB.club_id)"
+              :key="log.log_id"
+            >
+              {{ formatHighlight(log, 'right') }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ POM 탭 -->
+    <div v-if="activeTab === 'pom'" class="result-set-card">
+      <div v-if="poms.length === 0" class="text-center" style="color: white;">
+        POM 로그가 없습니다.
+      </div>
+
+      <div v-else class="pom-card-list">
+        <div 
+          class="pom-card" 
+          v-for="log in poms" 
+          :key="log.log_id"
+        >
+          <div class="pom-title">🏆 POM</div>
+          <div class="pom-name">{{ log.user_name || '이름 없음' }}</div>
+          <div class="pom-club">{{ log.club_name || '클럽 없음' }}</div>
+          <div class="pom-stats">
+            <template v-if="getPomStats(log.user_no)">
+              골: {{ getPomStats(log.user_no).goal }} / 
+              도움: {{ getPomStats(log.user_no).assist }}
+            </template>
           </div>
         </div>
       </div>
@@ -89,7 +109,7 @@ const props = defineProps({
 
 const sets = ref([])
 const poms = ref([])
-const activeTab = ref('set') // 'set' or 'pom'
+const activeTab = ref('pom') // 'set' or 'pom'
 const activeSetIndex = ref(0)
 
 const currentSet = computed(() => sets.value[activeSetIndex.value] || [])
@@ -103,6 +123,8 @@ onMounted(async () => {
       axios.get(`/board_api/match-log/sets/${props.matchId}`),
       axios.get(`/board_api/match-log/pom/${props.matchId}`)
     ])
+    console.log('📦 sets 데이터:', setsRes.data)
+    console.log('📦 poms 데이터:', pomsRes.data)
     sets.value = setsRes.data
     poms.value = pomsRes.data
   } catch (err) {
@@ -118,7 +140,7 @@ function getTeams(setLogs) {
     if (log.log_type === '경기 참가') {
       teams[log.club_id] = {
         club_id: log.club_id,
-        name: `클럽 ${log.club_id}`,
+        name: log.club_name || `클럽 ${log.club_id}`,  // ✅ 실제 이름 사용
         score: 0,
         result: '대기 중'
       }
@@ -136,10 +158,8 @@ function getTeams(setLogs) {
     }
   }
 
-  // ✅ club_id 기준 정렬
   return Object.values(teams).sort((a, b) => a.club_id - b.club_id)
 }
-
 
 function getTeamHighlights(setLogs, clubId) {
   return setLogs.filter(log =>
@@ -149,14 +169,31 @@ function getTeamHighlights(setLogs, clubId) {
 }
 
 function formatHighlight(log, side = 'left') {
-  const user = log.user_no ? `선수 ${log.user_no}` : ''
+  const user = log.user_name || `선수 ${log.user_no}` || ''  // ✅ 이름 우선
   const type = log.log_type
-  const time = log.log_memo || '' // ex: 54' 같은 분 정보가 log_memo에 들어온다고 가정
+  const time = log.log_memo || '' // ex: 54' 같은 정보
+
   if (side === 'left') {
     return `${user} ${time} ${type}`
   } else {
     return `${type} ${time} ${user}`
   }
+}
+
+function getPomStats(userNo) {
+  let goal = 0
+  let assist = 0
+
+  for (const set of sets.value) {
+    for (const log of set) {
+      if (log.user_no === userNo) {
+        if (log.log_type === '골') goal++
+        if (log.log_type === '도움') assist++
+      }
+    }
+  }
+
+  return { goal, assist }
 }
 </script>
 
@@ -275,4 +312,44 @@ function formatHighlight(log, side = 'left') {
   align-items: center;
 }
 
+.pom-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.pom-card {
+  background-color: #001f3f;
+  padding: 16px 24px;
+  border-radius: 8px;
+  color: white;
+  text-align: center;
+  min-width: 200px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.pom-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #ffcc00;
+}
+
+.pom-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.pom-club {
+  font-size: 16px;
+  margin-bottom: 4px;
+  opacity: 0.85;
+}
+
+.pom-stats {
+  font-size: 14px;
+  opacity: 0.9;
+}
 </style>

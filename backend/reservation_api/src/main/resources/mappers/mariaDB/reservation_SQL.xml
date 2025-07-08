@@ -73,4 +73,28 @@ WHERE r.reservation_id = #{reservation_id}
 	      cancelled_at = now()
 	  WHERE reservation_id = #{reservation_id}
 	</update>
+	
+	<update id="updateBoardId" parameterType="map">
+	  UPDATE reservation
+	  SET board_id = #{board_id}
+	  WHERE reservation_id = #{reservation_id}
+	</update>
+
+	<update id="expiredReservation">
+		UPDATE reservation r
+		JOIN reservation_slot rs ON r.slot_id = rs.slot_id
+		JOIN (
+			SELECT p.reservation_id
+			FROM payment p
+			JOIN (
+				SELECT reservation_id, max(id) AS latest_id
+				FROM payment
+				GROUP BY reservation_id
+			) latest ON p.id = latest.latest_id
+			WHERE p.status IS NULL OR p.status != 'paid'
+		) unpaid ON r.reservation_id = unpaid.reservation_id
+		SET r.status = 'expired'
+		WHERE r.status = 'reserved'
+		AND timestamp(rs.slot_date, rs.start_time) &lt; now();
+	</update>
 </mapper>

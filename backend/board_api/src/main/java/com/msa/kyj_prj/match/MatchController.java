@@ -5,9 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/match")
 public class MatchController {
@@ -100,5 +103,101 @@ public class MatchController {
     @PostMapping("/status")
     public void updateStatus(@RequestBody Map<String, Object> param) {
         matchService.updateMatchParticipantStatus(param);
+    }
+    
+    // board_id로 reservation_id 조회
+    @GetMapping("/reservation-id")
+    public ResponseEntity<Map<String, Object>> getReservationIdByBoardId(@RequestParam Long boardId) {
+        try {
+            Long reservationId = matchService.getReservationIdByBoardId(boardId);  // MatchService 통해 호출
+
+            if (reservationId == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of(
+                        "res_code", "404",
+                        "res_msg", "해당 게시글에 대한 예약이 존재하지 않습니다."
+                    ));
+            }
+
+            return ResponseEntity.ok(Map.of(
+                "res_code", "200",
+                "res_msg", "예약 ID 조회 성공",
+                "reservation_id", reservationId
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of(
+                    "res_code", "500",
+                    "res_msg", "서버 오류 발생: " + e.getMessage()
+                ));
+        }
+    }
+    
+    // reservation_id로 결제 완료 여부 확인
+    @GetMapping("/reservation-paid")
+    public ResponseEntity<Map<String, Object>> isReservationPaid(@RequestParam Long reservationId) {
+        try {
+            boolean paid = matchService.isReservationPaid(reservationId);
+
+            return ResponseEntity.ok(Map.of(
+                "res_code", "200",
+                "res_msg", "결제 상태 조회 성공",
+                "paid", paid
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "res_code", "400",
+                "res_msg", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "res_code", "500",
+                "res_msg", "서버 오류 발생: " + e.getMessage()
+            ));
+        }
+    }
+    
+    // 매치 등록
+    @PostMapping("/register")
+    public ResponseEntity<?> registerMatch(@RequestBody Match match) {
+        try {
+            matchService.registerMatch(match);
+            return ResponseEntity.ok(Map.of(
+                "res_code", "200",
+                "res_msg", "매치 등록 성공"
+            ));
+        } catch (Exception e) {
+            // 💥 콘솔에 로그 출력 추가!
+            e.printStackTrace();
+            log.error("❌ 매치 등록 중 예외 발생", e);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "res_code", "500",
+                "res_msg", "매치 등록 실패: " + e.getMessage()
+            ));
+        }
+    }
+    
+    // 클럽 ID 기준 필터링된 매치 목록 조회 (match_status != 'active', 'completed')
+    @GetMapping("/club/matches")
+    public List<Map<String, Object>> getFilteredClubMatches(@RequestParam Long clubId) {
+        return matchService.getFilteredClubMatches(clubId);
+    }
+    
+    // 클럽 매치 신청
+    @PostMapping("/apply/approve")
+    public ResponseEntity<?> applyAndApproveImmediately(@RequestBody MatchParticipant participant) {
+        try {
+            matchService.applyAndApproveImmediately(participant);
+            return ResponseEntity.ok(Map.of(
+                "res_code", "200",
+                "res_msg", "참가와 승인 완료"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "res_code", "500",
+                "res_msg", "참가 승인 중 오류: " + e.getMessage()
+            ));
+        }
     }
 }

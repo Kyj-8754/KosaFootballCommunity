@@ -65,7 +65,7 @@ public class WeatherCollectorService {
 
 
     // 매일 0시와 12시에 자동 실행
-    @Scheduled(cron = "0 0 0,12 * * *")
+    @Scheduled(cron = "0 0 0,12 * * *", zone = "Asia/Seoul")
     public void scheduledForecastCollection() {
         collectAndStoreForecasts();
         System.out.println("스케줄링 실행 완료: " + java.time.LocalDateTime.now());

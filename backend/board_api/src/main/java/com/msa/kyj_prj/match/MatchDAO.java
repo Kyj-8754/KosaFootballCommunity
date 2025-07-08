@@ -49,11 +49,23 @@ public interface MatchDAO {
     // match_id 기준으로 match_closed 값 수정 (Map 기반)
     int updateMatchStatus(Map<String, Object> param);
 
-	// 매치 목록 검색
+	// 매치 목록 검색 이거 주석 풀어야함
     List<Match> selectAllMatches(Map<String, Object> params);
 
     // 임시 추가
     @Select("SELECT user_name FROM user WHERE user_no = #{userNo}")
     String findUserNameByUserNo(@Param("userNo") Integer userNo); // ✅ 바인딩 이름 지정
 
+    
+    // 연동된 예약 id 찾기
+    Long getReservationIdByBoardId(@Param("board_id") Long boardId);
+    
+    // 예약 ID로 결제 여부 확인
+    boolean isReservationPaid(@Param("reservation_id") Long reservationId);
+    
+    // 매치 등록
+    void insertMatch(Match match);
+    
+    // 클럽 ID 기준 매치 리스트 조회 (active, completed 제외)
+    List<Map<String, Object>> selectFilteredClubMatches(@Param("club_id") Long clubId);
 }
