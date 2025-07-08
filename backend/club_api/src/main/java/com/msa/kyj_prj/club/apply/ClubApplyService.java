@@ -166,12 +166,14 @@ public class ClubApplyService {
 			if (apply != null) {
 				int club_id = apply.getClub_id();
 				int user_no = apply.getAppli_user_no();
+				int leader_user_no = clubApplyDAO.findLeaderUserNoByClubId(club_id);
+				
 				insertClubMember(club_id, user_no);
 
 				// [1] 승인 알림 전송 (로그 추가)
 				AlarmMessageDTO alarm = new AlarmMessageDTO();
 				alarm.setType("JOIN_APPROVED"); // 문자열 상수로 직접 세팅!
-				alarm.setSenderId("SYSTEM"); // 또는 팀장 user_no
+				alarm.setSenderId(String.valueOf(leader_user_no)); // 또는 팀장 user_no
 				alarm.setReceiverId(String.valueOf(user_no)); // 알림 받을 사람(= 승인된 멤버)
 				alarm.setClubId(club_id);
 				alarm.setMessage("클럽 가입이 승인되었습니다!");
@@ -208,11 +210,12 @@ public class ClubApplyService {
 			if (apply != null) {
 				int club_id = apply.getClub_id();
 				int user_no = apply.getAppli_user_no();
+				int leader_user_no = clubApplyDAO.findLeaderUserNoByClubId(club_id);
 
 				// [1] 거절 알림 전송
 				AlarmMessageDTO alarm = new AlarmMessageDTO();
 				alarm.setType("JOIN_REJECTED"); // 문자열 상수로 직접 세팅!
-				alarm.setSenderId("SYSTEM"); // 또는 팀장 user_no
+				alarm.setSenderId(String.valueOf(leader_user_no)); // 또는 팀장 user_no
 				alarm.setReceiverId(String.valueOf(user_no)); // 알림 받을 사람(= 거절된 멤버)
 				alarm.setClubId(club_id);
 				alarm.setMessage("클럽 가입이 거절되었습니다.");

@@ -49,4 +49,7 @@ public interface MyPageDAO {
 	public UserStyle getStyleName(int styleCode);
 	
 	public UserStat getStatName(int statCode);
+	
+	// user no로 user name을 찾는 메소드
+	public String findUserNameByUserNo(@Param("user_no") int user_no);
 }

@@ -3,12 +3,13 @@ package com.msa.do_login.webSocket;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import lombok.RequiredArgsConstructor;
 
-import com.msa.do_login.webSocket.FriendAlarmMessageDTO;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component // 반드시 추가!
 @RequiredArgsConstructor
+@Slf4j
 public class WebSocket {
 
 	private final RestTemplate restTemplate;
@@ -16,11 +17,13 @@ public class WebSocket {
 	@Value("${alarm.api.url}")
 	private String alarmApiUrl;
 	
-	
-	
-	// com.msa.do_login.webSocket.Websocket.java
+
 	public void sendFriendRequestAlarm(String type, String senderId, String senderUserName, String receiverId) {
 	  
+		 // [로그1] 메서드 진입, 파라미터 확인
+        log.info("🟢 sendFriendRequestAlarm 진입: type={}, senderId={}, senderUserName={}, receiverId={}",
+                type, senderId, senderUserName, receiverId);
+		
 	    FriendAlarmMessageDTO alarm = new FriendAlarmMessageDTO();
 	    alarm.setType("FRIEND_REQUEST");
         alarm.setSenderId(senderId);
@@ -32,7 +35,7 @@ public class WebSocket {
 	    try {
 	        restTemplate.postForEntity(alarmApiUrl + "/alarm/send", alarm, Void.class);
 	    } catch (Exception e) {
-	        // 필요시 로그만 남김
+	    	log.error("🔴 FriendAlarmMessageDTO 알람 전송 실패!", e);
 	    }
 	}
 
