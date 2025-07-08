@@ -1,6 +1,5 @@
 package com.msa.kyj_prj.stadium;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
