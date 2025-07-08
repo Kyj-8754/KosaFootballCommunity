@@ -12,15 +12,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.msa.kyj_prj.match.alarm.MatchAlarmMessageDTO;
+import com.msa.kyj_prj.webSocket.Websocket;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MatchService {
 
     private final MatchDAO matchDAO;
     private final RestTemplate restTemplate;
+    private final Websocket websoket;
 
     @Value("${alarm.api.url}")
     private String alarmApiUrl;
@@ -44,10 +48,15 @@ public class MatchService {
 
     // 📌 매치 참가 신청 처리 (정원 초과 방지 + 알림 전송 포함)
     public void applyToMatch(MatchParticipant participant) {
+    	
+    	
         Long matchId = participant.getMatch_id();
 
+        // 무슨 매치인지 가져오는 로직
         Match match = matchDAO.selectMatchDetailById(matchId);
         String matchCode = match.getMatch_code();
+        
+        // 참가자가 지금 몇명인지 확인
         int currentCount = matchDAO.countMatchParticipants(matchId);
 
         // 정원 초과 체크
@@ -58,12 +67,13 @@ public class MatchService {
             throw new IllegalStateException("리그 매치는 최대 3팀까지만 참가할 수 있습니다.");
         }
 
+        log.info("참가자 정보" + participant.toString());
         // 참가자 등록
         matchDAO.insertMatchParticipant(participant);
 
-        // 📢 매니저에게 참가 신청 알림 전송
+        // 글 작성자에게 참가 신청 알림 전송
         try {
-            Integer managerUserNo = match.getUser_no();
+            Integer WriterUserNo = match.getUser_no();
             String applicantName = "";
             List<Map<String, Object>> participants = matchDAO.selectParticipantsByMatchId(matchId);
             for (Map<String, Object> p : participants) {
@@ -76,7 +86,7 @@ public class MatchService {
             MatchAlarmMessageDTO alarm = new MatchAlarmMessageDTO();
             alarm.setType("MATCH_APPLY");
             alarm.setSenderId(String.valueOf(participant.getUser_no()));
-            alarm.setReceiverId(String.valueOf(managerUserNo));
+            alarm.setReceiverId(String.valueOf(WriterUserNo));
             alarm.setMatchId(matchId);
             alarm.setMatchTitle(match.getMatch_title());
             alarm.setMessage(applicantName + "님이 [" + match.getMatch_title() + "] 경기에 참가 신청했습니다.");
@@ -144,13 +154,18 @@ public class MatchService {
     
  // 참가자의 상태를 변경하고, 필요시 match_closed 상태도 변경 및 승인/거절 알림 전송
     public int updateMatchParticipantStatus(Map<String, Object> param) {
-        int result = matchDAO.updateMatchParticipantStatus(param);
+        
+    	// DB에 상태 저장(승인/거절)
+    	int result = matchDAO.updateMatchParticipantStatus(param);
 
+    	
         Long matchId = Long.valueOf(param.get("match_id").toString());
         Integer userNo = Integer.valueOf(param.get("user_no").toString());
         String userStatus = param.get("user_status").toString();
 
+        // 해당 매치 가져오는 로직
         Match match = matchDAO.selectMatchDetailById(matchId);
+        
         String matchCode = match.getMatch_code();
         int currentCount = matchDAO.countMatchParticipants(matchId);
 
@@ -170,39 +185,13 @@ public class MatchService {
             closeParam.put("match_closed", newClosed);
             matchDAO.updateMatchClosedStatus(closeParam);
         }
-
-        // 🔔 참가 상태가 승인/거절로 바뀔 때 알림 전송
-        if ("approve".equalsIgnoreCase(userStatus) || "rejected".equalsIgnoreCase(userStatus)) {
-            // 참가자 이름 조회 (user_no → user_name)
-            String receiverName = matchDAO.findUserNameByUserNo(userNo); // DAO에 해당 쿼리 필요
-
-            MatchAlarmMessageDTO alarm = new MatchAlarmMessageDTO();
-            alarm.setMatchId(matchId);
-            alarm.setMatchTitle(match.getMatch_title());
-            alarm.setReceiverId(String.valueOf(userNo)); // 알림 대상(참가자)
-            alarm.setUrl("/match/" + matchId);
-
-            if ("approve".equalsIgnoreCase(userStatus)) {
-                alarm.setType("MATCH_APPROVED");
-                alarm.setSenderId("SYSTEM"); // 혹은 match.getManager_name() 등
-                alarm.setMessage("[" + match.getMatch_title() + "] 경기에 참가가 승인되었습니다!");
-            } else {
-                alarm.setType("MATCH_REJECTED");
-                alarm.setSenderId("SYSTEM");
-                alarm.setMessage("[" + match.getMatch_title() + "] 경기에 참가가 거절되었습니다.");
-            }
-
-            try {
-                restTemplate.postForEntity(alarmApiUrl + "/alarm/send", alarm, Void.class);
-            } catch (Exception e) {
-                // 알람 실패 무시 (필요시 로그만)
-            }
-        }
-
+        
+        
+        // 내가 만든 웹소켓 불러오는 코드
+        websoket.matchWebsocket(userStatus, match, userNo, matchId);
         return result;
     }
 
-    
     
 
     // 📌 특정 매치를 수동으로 종료 처리

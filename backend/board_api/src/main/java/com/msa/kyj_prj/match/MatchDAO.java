@@ -1,10 +1,11 @@
 package com.msa.kyj_prj.match;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface MatchDAO {
@@ -50,8 +51,9 @@ public interface MatchDAO {
 
 	// 매치 목록 검색
     List<Match> selectAllMatches(Map<String, Object> params);
- 
+
     // 임시 추가
-    String findUserNameByUserNo(@Param("user_no") int user_no);
+    @Select("SELECT user_name FROM user WHERE user_no = #{userNo}")
+    String findUserNameByUserNo(@Param("userNo") Integer userNo); // ✅ 바인딩 이름 지정
 
 }
