@@ -11,6 +11,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.msa.do_security.security.exception.AccessTokenException;
+import com.msa.do_security.security.service.OAuth2UserVOService;
 import com.msa.do_security.security.service.UserVODetailsService;
 import com.msa.do_security.security.util.JWTUtil;
 
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TokenCheckFilter extends OncePerRequestFilter {
 	private final JWTUtil jwtUtil;
 	private final UserVODetailsService userVODetailsService;
+	private final OAuth2UserVOService oAtuAuth2UserVOService;
 	private final List<String> excludedPaths;
 	private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
@@ -66,7 +68,8 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 
 		// Header에 전달된 Authorization의 값을 얻는다
 		String headerStr = request.getHeader("Authorization");
-
+		log.info("요청 Authorization 헤더: {}", headerStr);
+		log.info("요청 Method = {}, URI = {}, Authorization 헤더 = {}", request.getMethod(), request.getRequestURI(), request.getHeader("Authorization"));
 		// Authorization의 값이 존재하지 않으면 오류 발생한다
 		if (headerStr == null || headerStr.length() < 8) {
 			throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.UNACCEPT);
@@ -92,6 +95,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 			throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.BADSIGN);
 		} catch (ExpiredJwtException expiredJwtException) {
 			log.error("ExpiredJwtException----------------------");
+			log.error("JWT 만료됨: {}", expiredJwtException.getMessage());
 			throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.EXPIRED);
 		}
 	}
@@ -101,9 +105,15 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 		// uid
 		String userId = (String) payload.get("userId");
 		log.info("userId: " + userId);
-
+		String loginType = (String) payload.get("loginType");
+		log.info("loginType: " + loginType);
 		// uid에 대한 시큐리티 로그인 객체를 얻는다
-		UserDetails userDetails = userVODetailsService.loadUserByUsername(userId);
+		UserDetails userDetails;
+		if ("LOCAL".equalsIgnoreCase(loginType)) {
+	        userDetails = userVODetailsService.loadUserByUsername(userId);
+	    } else {
+	    	userDetails = oAtuAuth2UserVOService.loadUserByUsername(userId, loginType); // 예: GOOGLE, KAKAO, NAVER
+	    }
 		System.out.println(userDetails);
 		// userDetails 객체를 사용하여 인증객체로 생성한다
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

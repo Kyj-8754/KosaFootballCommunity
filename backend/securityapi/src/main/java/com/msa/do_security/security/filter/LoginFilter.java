@@ -43,7 +43,8 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 								"userId", userDTO.getUserId(), 
 								"userNo", userDTO.getUserNo(),
 								"userName", URLEncoder.encode(userDTO.getUserName(), StandardCharsets.UTF_8), 
-								"authCode", "ROLE_"+userDTO.getAuthCode());
+								"authCode", "ROLE_"+userDTO.getAuthCode(),
+								"loginType", "local");
 
 						Map<String, String> keyMap = Map.of(
 								"accessToken", jwtUtil.generateToken(claim, 1), // Access Token 유효기간 1일로 생성 

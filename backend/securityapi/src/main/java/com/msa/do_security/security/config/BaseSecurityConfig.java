@@ -83,7 +83,7 @@ public class BaseSecurityConfig {
 		// UsernamePasswordAuthenticationFilter 필더 객체 실행 전에 동작할 TokenCheckFilter 객체를
 		// 생성하여 설정한다
 		// 해당 소스 작성후 : 브라우저에서 /api/sample/test URL을 실행한다
-		http.addFilterBefore(new TokenCheckFilter(jwtUtil, userVODetailsService, getExcludedPaths()),
+		http.addFilterBefore(new TokenCheckFilter(jwtUtil, userVODetailsService, oAuth2UserService, getExcludedPaths()),
 				UsernamePasswordAuthenticationFilter.class);
 
 		// TokenCheckFilter 필더 객체 실행 전에 동작할 RefreshTokenFilter 객체를 생성하여 설정한다
@@ -110,7 +110,6 @@ public class BaseSecurityConfig {
 			authroize.requestMatchers("/login").permitAll();
 			authroize.requestMatchers("/login?error").permitAll();
 			authroize.requestMatchers("/.well-known/**").permitAll();
-			authroize.requestMatchers("/mypage/**").permitAll();
 			try {
 				customizeAuthorization(authroize);
 			} catch (Exception e) {
@@ -136,7 +135,7 @@ public class BaseSecurityConfig {
 				"/oauth/callback/**",
 				"/.well-known/**",
 				"/user/na/**",
-				"/mypage/**");
+				"/board/**");
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
