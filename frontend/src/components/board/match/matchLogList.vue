@@ -21,7 +21,7 @@
         <template v-if="editingIndex === index">
           <td>{{ formatDateTime(log.log_created_at) }}</td>
           <td>
-            <LogTeamDropdown v-model="editForm.team" />
+            <LogTeamDropdown v-model="editForm.team" :match-id="matchId" />
           </td>
           <td>
             <LogMemberDropdown v-model="editForm.member" :team="editForm.team" />
@@ -61,10 +61,8 @@ import LogMemberDropdown from '@/components/board/match/matchLogMemberDropdown.v
 import LogCodeDropdown from '@/components/board/match/matchLogActionDropdown.vue'
 
 const props = defineProps({
-  logs: {
-    type: Array,
-    required: true
-  }
+  logs: Array,
+  matchId: Number
 })
 
 const emit = defineEmits(['update', 'delete'])
