@@ -5,7 +5,7 @@
       <li class="list-header">
         <span class="num-col">번호</span>
         <span class="name-col">구장명</span>
-        <span class="match-col">리그/매치</span>
+        <span class="match-col">리그/소셜</span>
          <span class="date-col" @click="toggleSort('slot_date')" style="cursor: pointer">
     예약일
     <span v-if="sortKey === 'slot_date'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
