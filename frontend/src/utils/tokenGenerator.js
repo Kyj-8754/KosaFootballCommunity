@@ -53,7 +53,6 @@ instance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`
         return instance(originalRequest)
       } catch (refreshError) {
-        console.error('🔒 토큰 재발급 실패: 로그아웃 처리')
         localStorage.clear()
         window.location.href = '/login'
         return Promise.reject(refreshError)
