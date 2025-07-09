@@ -27,6 +27,9 @@
         </tr>
       </tbody>
     </table>
+      <!-- ✅ 우측 하단 고정 뒤로가기 버튼 -->
+     <button class="btn btn-secondary apply-back-btn" @click="goBack">뒤로가기</button>
+
   </div>
 </template>
 
@@ -74,15 +77,21 @@
   border: 1px solid #ddd;
   cursor: not-allowed;
 }
+
+
+
+
+
 </style>
 
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 import axios from 'axios'
 
 const route = useRoute()
+const router = useRouter()  
 const teamCode = route.params.teamCode
 const clubId = ref(null)
 const applyList = ref([])
@@ -159,4 +168,12 @@ function formatDate(dateStr) {
       pad(date.getSeconds())
     ].join(':');
 }
+
+
+
+function goBack() {
+  router.go(-1)
+}
+
 </script>
+
