@@ -24,15 +24,12 @@ export function connectWebSocket(userNo, onMessage) {
    stompClient.debug = () => {}; // ← 로그 비활성화
 
   stompClient.connect({}, () => {
-    console.log('🟢 WebSocket 연결 성공');
 
     const topicPath = `/topic/alarm/${userNo}`; // ✅ PK 기준 경로
-    console.log("✅ 구독 경로:", topicPath);
 
     stompClient.subscribe(topicPath, (message) => {
       try {
         const data = JSON.parse(message.body);
-        console.log('📩 알림 수신:', data);
         if (onMessage) onMessage(data); // 콜백 함수 존재 시 실행
         // 또는 여기서 바로 토스트 출력도 가능
         // const toast = useToast();
@@ -53,7 +50,6 @@ export function connectWebSocket(userNo, onMessage) {
 export function disconnectWebSocket() {
   if (stompClient?.connected) {
     stompClient.disconnect(() => {
-      console.log('🛑 WebSocket 연결 해제');
     });
   }
 }

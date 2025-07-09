@@ -48,8 +48,6 @@ onMounted(() => {
   const savedToken = localStorage.getItem('accessToken')
   if (savedToken) {
     token.value = savedToken
-    console.log("🔍 JWT Payload:", payload);
-
   }
 })
 

@@ -81,7 +81,6 @@ const fetchLogs = async () => {
   try {
     const res = await axios.get(`/board_api/match-log/${matchId}`)
     logs.value = res.data
-    console.log('logs:', logs.value)
   } catch (e) {
     console.error('로그 조회 실패:', e)
   }

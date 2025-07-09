@@ -218,7 +218,6 @@ const initKakaoMap = () => {
     console.warn('좌표 없음')
     return
   }
-  console.log(x,y);
   	const centerPos = new kakao.maps.LatLng(Number(y), Number(x));
   	// 이미지 지도에 표시할 마커입니다
 	  

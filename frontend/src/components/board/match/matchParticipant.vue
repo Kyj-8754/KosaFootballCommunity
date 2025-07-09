@@ -95,7 +95,6 @@ const updateStatus = async (participant) => {
       user_no: participant.user_no,
       user_status: participant.user_status
     })
-    console.log('✅ 상태 변경 완료:', participant)
   } catch (err) {
     console.error('❌ 상태 변경 실패:', err)
     alert('상태 변경에 실패했습니다.')

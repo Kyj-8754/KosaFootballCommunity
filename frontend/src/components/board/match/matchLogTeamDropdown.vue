@@ -33,7 +33,6 @@ const fetchTeams = async () => {
   try {
     const res = await axios.get(`/board_api/match-log/approved-teams/${props.matchId}`)
     teams.value = res.data
-    console.log('✅ 받은 팀 목록:', teams.value)
   } catch (e) {
     console.error('팀 목록 로딩 실패:', e)
   }
