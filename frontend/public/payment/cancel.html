@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>결제 성공</title></head>
+<body>
+<script>
+  window.opener.postMessage("paymentCancel", "*");
+  alert("결제가 취소되었습니다.");
+  window.close();
+</script>
+</body>
+</html>
+

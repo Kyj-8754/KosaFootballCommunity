@@ -1,7 +1,7 @@
 <template>
   <div class="log-input-form">
     <!-- 팀 선택 드롭다운 -->
-    <LogTeamDropdown v-model="selectedTeam" />
+    <LogTeamDropdown v-model="selectedTeam" :match-id="matchId" />
 
     <!-- 회원 선택 드롭다운 -->
     <LogMemberDropdown v-model="selectedMember" :team="selectedTeam" />
@@ -10,24 +10,46 @@
     <LogCodeDropdown v-model="selectedLogCode" />
 
     <!-- 메모 입력 -->
-    <input v-model="memo" type="text" class="memo-input" placeholder="내용을 입력해주세요" />
+    <input
+      :type="isScoreLog ? 'number' : 'text'"
+      v-model="memo"
+      class="memo-input"
+      :placeholder="isScoreLog ? '0~10 사이 숫자 입력' : '내용을 입력해주세요'"
+      :min="isScoreLog ? 0 : null"
+      :max="isScoreLog ? 10 : null"
+    />
 
     <!-- 등록 버튼 -->
     <button @click="submitLog" class="submit-button">등록</button>
 
-    <!-- 로그 리스트 -->
-    <LogList :logs="logs" @delete="deleteLog" @update="updateLog" />
+    <!-- 로그 리스트 컴포넌트 -->
+    <LogList
+      :logs="pagedLogs"
+      :match-id="matchId"
+      @delete="deleteLog"
+      @update="updateLog"
+    />
+
+    <!-- 페이지네이션 (여기서 감싸기) -->
+    <div class="pagination-wrapper">
+      <Pagination
+        :currentPage="currentPage"
+        :totalPages="totalPages"
+        @changePage="changePage"
+      />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router' // 추가
 import axios from 'axios'
 import LogTeamDropdown from '@/components/board/match/matchLogTeamDropdown.vue'
 import LogMemberDropdown from '@/components/board/match/matchLogMemberDropdown.vue'
 import LogCodeDropdown from '@/components/board/match/matchLogActionDropdown.vue'
 import LogList from '@/components/board/match/matchLogList.vue'
+import Pagination from '@/components/pagination.vue'
 
 const route = useRoute() // 추가
 
@@ -38,9 +60,26 @@ const memo = ref('')
 const logs = ref([])
 const matchId = Number(route.params.id)
 
+const currentPage = ref(1)
+const itemsPerPage = 10
+
+const pagedLogs = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  return logs.value.slice(start, start + itemsPerPage)
+})
+
+const totalPages = computed(() =>
+  Math.ceil(logs.value.length / itemsPerPage)
+)
+
+const changePage = (page) => {
+  currentPage.value = page
+}
+
+
 const fetchLogs = async () => {
   try {
-    const res = await axios.get(`/match-log/${matchId}`)
+    const res = await axios.get(`/board_api/match-log/${matchId}`)
     logs.value = res.data
   } catch (e) {
     console.error('로그 조회 실패:', e)
@@ -48,9 +87,12 @@ const fetchLogs = async () => {
 }
 
 const deleteLog = async (index) => {
+  const confirmed = window.confirm('정말로 이 로그를 삭제하시겠습니까?')
+  if (!confirmed) return
+
   try {
     const logId = logs.value[index].log_id
-    await axios.delete(`/match-log/delete/${logId}`)
+    await axios.delete(`/board_api/match-log/delete/${logId}`)
     await fetchLogs()
   } catch (e) {
     console.error('삭제 실패:', e)
@@ -60,6 +102,15 @@ const deleteLog = async (index) => {
 
 const updateLog = async ({ index, team, member, logCode, memo }) => {
   try {
+    // 점수 로그일 경우 숫자 및 범위 체크
+    if (logCode === '실력 점수' || logCode === '매너 점수') {
+      const score = Number(memo)
+      if (isNaN(score) || score < 0 || score > 10) {
+        alert('실력 점수 또는 매너 점수는 0~10 사이의 숫자여야 합니다.')
+        return
+      }
+    }
+
     const log = logs.value[index]
     const payload = {
       log_id: log.log_id,
@@ -69,7 +120,8 @@ const updateLog = async ({ index, team, member, logCode, memo }) => {
       log_type: logCode,
       log_memo: memo
     }
-    await axios.put('/match-log/update', payload)
+
+    await axios.put('/board_api/match-log/update', payload)
     await fetchLogs()
   } catch (e) {
     console.error('수정 실패:', e)
@@ -78,9 +130,13 @@ const updateLog = async ({ index, team, member, logCode, memo }) => {
 }
 
 const submitLog = async () => {
-  if (!selectedTeam.value || !selectedMember.value || !selectedLogCode.value) {
-    alert('모든 항목을 선택해주세요.')
-    return
+  // 숫자 제한 검사
+  if (isScoreLog.value) {
+    const score = Number(memo.value)
+    if (isNaN(score) || score < 0 || score > 10) {
+      alert('실력 점수 또는 매너 점수는 0~10 사이의 숫자여야 합니다.')
+      return
+    }
   }
 
   const payload = {
@@ -92,7 +148,7 @@ const submitLog = async () => {
   }
 
   try {
-    await axios.post('/match-log/add', payload)
+    await axios.post('/board_api/match-log/add', payload)
     alert('로그가 등록되었습니다.')
     await fetchLogs()
   } catch (e) {
@@ -106,8 +162,26 @@ const submitLog = async () => {
   memo.value = ''
 }
 
-onMounted(() => {
-  fetchLogs()
+const validateMatch = async () => {
+  try {
+    const res = await axios.get(`/board_api/match/${matchId}`)
+    if (!res.data || Object.keys(res.data).length === 0) {
+      throw new Error('해당 매치 없음')
+    }
+  } catch (e) {
+    console.error('유효하지 않은 matchId:', e)
+    alert('존재하지 않는 매치입니다.')
+    window.location.href = '/match/matchlist' // 또는 router.replace(...)
+  }
+}
+
+const isScoreLog = computed(() =>
+  selectedLogCode.value === '실력 점수' || selectedLogCode.value === '매너 점수'
+)
+
+onMounted(async () => {
+  await validateMatch()     // ← 먼저 유효성 체크
+  await fetchLogs()         // ← 그 후 로그 조회
 })
 </script>
 
@@ -136,5 +210,11 @@ onMounted(() => {
 }
 .submit-button:hover {
   background-color: #0056b3;
+}
+.pagination-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
 }
 </style>

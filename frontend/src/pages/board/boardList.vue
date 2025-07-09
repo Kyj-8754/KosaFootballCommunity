@@ -41,7 +41,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
-const token = inject('token')
+
 const posts = ref([])
 const currentPage = ref(1)
 const postsPerPage = 10
@@ -72,7 +72,6 @@ const handleCategorySelect = (category) => {
 
 const fetchPosts = async () => {
   try {
-    console.log('전송할 토큰:', token.value)
     const response = await axios.get('/board_api/board/list', {
       params: {
         ...searchFilters.value,
