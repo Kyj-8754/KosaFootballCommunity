@@ -49,7 +49,7 @@
           <select v-model="reservation.reservation_type" class="form-select">
             <option disabled value="">선택하세요</option>
             <option value="social">소셜</option>
-            <option value="match">매치</option>
+            <option value="league">리그</option>
           </select>
         </div>
         <div class="d-flex justify-content-between">
