@@ -54,7 +54,7 @@
     </form>
   </div>
 </template>
- <script setup>
+<script setup>
 import { ref, onMounted, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
