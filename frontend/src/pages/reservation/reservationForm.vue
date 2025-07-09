@@ -127,7 +127,6 @@ const openConfirmModal = () => {
 // 예약하기
 const confirmReservation = async () => {
   showModal.value = false
-  console.log(reservation.value);
   try {
     const res = await axios.post(
       '/reservation_api/reservation/reservation_std',
@@ -141,7 +140,6 @@ const confirmReservation = async () => {
     // 🎯 stadium 정보 초기화
     // stadiumStore.clearStadium();
     const reservationId = res.data.reservation_id;
-    console.log(reservationId); // ❌ lazy loading 시에는 종종 비어있음
     router.push({name: 'reservation_Confirm', params: {reservationId}});
   }
   } catch (error) {
@@ -162,7 +160,6 @@ const confirmReservation = async () => {
     .then(res => {
       if (res.data.res_code === '200'){
         reservationDB.value = res.data.slots;
-        console.log(reservationDB.value);
       } else {
         alert(res.data.res_msg);
       }

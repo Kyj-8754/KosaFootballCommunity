@@ -64,7 +64,6 @@ const login = async () => {
       },
       { withCredentials: true }
     )
-		console.log("✅ 응답 성공:", res.status, res.data);
     localStorage.setItem('accessToken', res.data.accessToken)
     localStorage.setItem('refreshToken', res.data.refreshToken)
 		token.value = res.data.accessToken
@@ -106,16 +105,8 @@ const loginWith = async (provider) => {
     const response = err.response?.data
     
     if (response?.res_code === 'need_register') {
-      // 🔍 디버깅 로그 추가
-      console.log('🟡 소셜 회원가입 필요 응답:', response)
 
       const { provider, providerId, nickname, profileImage } = response
-
-      console.log('🟢 이동할 쿼리 파라미터 확인:')
-      console.log('provider:', provider)
-      console.log('providerId:', providerId)
-      console.log('nickname:', nickname)
-      console.log('profileImage:', profileImage)
 
       router.push({
         name: 'Member_SocialRegister', // ← 문자열 끝에 공백 있었던 거 제거

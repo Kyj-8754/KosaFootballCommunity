@@ -115,18 +115,13 @@ const fetchReservationId = async () => {
     return
   }
 
-  console.log('🔍 board_id 요청 전:', post.value.board_id)
-
   try {
     const res = await axios.get('/board_api/match/reservation-id', {
       params: { boardId: post.value.board_id }
     })
 
-    console.log('📦 reservation-id 응답:', res.data)
-
     if (res.data.res_code === '200') {
       reservationId.value = res.data.reservation_id
-      console.log('✅ reservationId 저장됨:', reservationId.value)
     } else {
       console.warn('⚠️ 예약 ID 없음:', res.data.res_msg)
     }

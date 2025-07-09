@@ -108,10 +108,6 @@ onMounted(async () => {
     stadium.value = stadiumRes.data.stadiumDB.stadium;
     isPaid.value = paidRes.data.paid === true;
 
-    console.log('👤 [사용자 데이터]', userRes.data);
-    console.log('🏟 [구장 데이터]', stadiumRes.data);
-    console.log('💳 [결제 상태 응답]', paidRes.data);
-
   } catch (err) {
     console.error('예약 확인 실패:', err);
   }
@@ -120,8 +116,6 @@ onMounted(async () => {
 const requestPayment = async () => {
   const confirmPayment = confirm("결제 하시겠습니까?");
   if (!confirmPayment) return;
-
-  console.log("✅ 결제 요청 시작");
 
   try {
     const res = await axios.post('/kakao_api/kakaopay/ready', {
@@ -132,16 +126,12 @@ const requestPayment = async () => {
       authCode: authCode.value
     });
 
-    console.log("✅ 결제 요청 완료");
-
     const redirectUrl = res.data.next_redirect_pc_url;
     if (redirectUrl) {
       openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700);
     } else {
       alert("결제 URL을 받아오지 못했습니다.");
     }
-
-    console.log("✅ 결제 URL 받아오기 완료");
 
   } catch (err) {
     if (err.response?.data?.message) {

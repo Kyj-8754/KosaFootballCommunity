@@ -70,8 +70,6 @@ const onSubmit = async () => {
       reservation_id: reservation_id
     }
 
-    console.log('[payload]', payload)
-
     await axios.post('/board_api/match/register', payload)
 
     alert('매치가 성공적으로 등록되었습니다.')
@@ -88,8 +86,4 @@ const onSubmit = async () => {
     alert('매치 등록 중 오류가 발생했습니다.')
   }
 }
-
-console.log('🟢 매치 등록 진입 시 전달 데이터:', {
-  svcid, userNo, slot_date, start_time, reservation_type, reservation_id
-});
 </script>

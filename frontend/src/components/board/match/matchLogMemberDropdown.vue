@@ -28,10 +28,8 @@ const members = ref([])
 // 초기 로딩 시 승인된 유저 목록 불러오기
 const fetchMembers = async () => {
   try {
-    console.log('회원 목록 로딩중')
     const res = await axios.get(`/board_api/match-log/approved-users/${matchId}`)
     members.value = res.data
-    console.log('받은 회원 목록:', res.data)
   } catch (e) {
     console.error('회원 목록 로딩 실패:', e)
   }
