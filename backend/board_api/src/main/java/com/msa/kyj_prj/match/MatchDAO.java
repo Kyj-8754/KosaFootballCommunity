@@ -45,7 +45,7 @@ public interface MatchDAO {
     // match_id 기준으로 match_closed 값 수정 (Map 기반)
     int updateMatchClosedStatus(Map<String, Object> param);
     
-    // match_id 기준으로 match_closed 값 수정 (Map 기반)
+    // match_id 기준으로 match_status 값 수정 (Map 기반)
     int updateMatchStatus(Map<String, Object> param);
 
 	// 매치 목록 검색
@@ -62,4 +62,10 @@ public interface MatchDAO {
     
     // 클럽 ID 기준 매치 리스트 조회 (active, completed 제외)
     List<Map<String, Object>> selectFilteredClubMatches(@Param("club_id") Long clubId);
+    
+    // 취소/만료된 예약 ID 목록 조회
+    List<Long> getCancelledOrExpiredReservationIds();
+
+    // 예약 ID로 매치 ID 목록 조회
+    List<Match> getMatchesByReservationId(@Param("reservation_id") Long reservationId);
 }
