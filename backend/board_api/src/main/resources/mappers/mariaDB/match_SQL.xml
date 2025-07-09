@@ -300,5 +300,20 @@
 	    mp.club_id = #{club_id}
 	    AND m.match_status = 'waiting'
 	</select>
+	
+	<!-- 취소/만료된 예약 ID 조회 -->
+	<select id="getCancelledOrExpiredReservationIds" resultType="long">
+	    SELECT reservation_id
+	    FROM reservation
+	    WHERE status IN ('cancelled', 'expired')
+	</select>
+	
+	<!-- 예약 ID로 match_status가 waiting 또는 active인 match 조회 -->
+	<select id="getMatchesByReservationId" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT match_id, match_status
+	    FROM `match`
+	    WHERE reservation_id = #{reservation_id}
+	      AND match_status IN ('waiting', 'active', 'completed')
+	</select>
 
 </mapper>

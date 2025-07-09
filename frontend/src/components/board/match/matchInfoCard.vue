@@ -131,6 +131,7 @@ const statusLabel = (code) => {
     case 'waiting': return '대기중'
     case 'active': return '진행중'
     case 'completed': return '진행 완료'
+    case 'cancelled' : return '취소됨'
     default: return code
   }
 }
