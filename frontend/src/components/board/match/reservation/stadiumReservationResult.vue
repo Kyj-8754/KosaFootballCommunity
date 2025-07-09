@@ -68,7 +68,14 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const props = defineProps({
-  reservationId: { type: String, required: true }
+  reservationId: {
+    type: [String, Number],
+    required: true
+  },
+  boardId: {
+    type: [String, Number],
+    required: true
+  }
 })
 
 const user = ref({})
@@ -170,7 +177,8 @@ const goToMatchRegister = () => {
       slot_date: reservation.value.slot_date,
       start_time: reservation.value.start_time,
       reservation_type: reservation.value.reservation_type,
-      reservation_id: reservation.value.reservation_id
+      reservation_id: reservation.value.reservation_id,
+      board_id: props.boardId
     }
   });
 };
