@@ -42,6 +42,7 @@ import axios from 'axios'
 
 const router = useRouter()
 const authCode = inject('authCode')
+const userNo = inject('userNo')
 
 const posts = ref([])
 const currentPage = ref(1)
@@ -73,13 +74,28 @@ const handleCategorySelect = (category) => {
 
 const fetchPosts = async () => {
   try {
-    const response = await axios.get('/board_api/board/list', {
-      params: {
-        ...searchFilters.value,
-        sortColumn: sortOptions.value.column,
-        sortDirection: sortOptions.value.direction
-      }
-    })
+    const isRecruitBoard = searchFilters.value.category === '모집게시판'
+
+    let response
+
+    if (isRecruitBoard) {
+      response = await axios.get('/board_api/board/recruitlist', {
+        params: {
+          userNo: userNo.value, // ✅ 로그인 사용자 번호
+          keyword: searchFilters.value.keyword || '',
+          sortDirection: sortOptions.value.direction || 'desc'
+        }
+      })
+    } else {
+      response = await axios.get('/board_api/board/list', {
+        params: {
+          ...searchFilters.value,
+          sortColumn: sortOptions.value.column,
+          sortDirection: sortOptions.value.direction
+        }
+      })
+    }
+
     posts.value = response.data
   } catch (error) {
     console.error('게시글 목록 불러오기 실패:', error)

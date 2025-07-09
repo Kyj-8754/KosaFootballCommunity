@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,6 +95,16 @@ public class BoardController {
         int user_no = Integer.parseInt(data.get("user_no").toString());
         boolean liked = boardService.hasUserLikedBoard(board_id, user_no);
         return Map.of("result", "success", "liked", liked);
+    }
+    
+    @GetMapping("/recruitlist")
+    public ResponseEntity<?> getRecruitBoards(
+        @RequestParam int userNo,
+        @RequestParam(required = false) String keyword,
+        @RequestParam(defaultValue = "desc") String sortDirection
+    ) {
+        List<Board> result = boardService.findRecruitBoards(userNo, keyword, sortDirection);
+        return ResponseEntity.ok(result);
     }
 
 }

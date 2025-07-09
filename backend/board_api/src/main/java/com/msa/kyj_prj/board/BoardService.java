@@ -78,4 +78,8 @@ public class BoardService {
             log.error("❌ 게시글 상태 삭제 중 오류 발생: {}", e.getMessage());
         }
     }
+    
+    public List<Board> findRecruitBoards(int userNo, String keyword, String sortDirection) {
+        return boardDAO.findRecruitBoards(userNo, keyword, sortDirection);
+    }
 }
