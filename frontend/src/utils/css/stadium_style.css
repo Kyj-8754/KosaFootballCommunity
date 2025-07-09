@@ -1,0 +1,25 @@
+.table-fixed {
+		table-layout: fixed;
+		word-break: break-word;
+	}
+
+	.cell {
+		max-width: 200px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.cell a {
+		display: inline-block;
+		width: 100%;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.card-img-top {
+		width: 100%;
+		height: 200px;
+		object-fit: cover;
+	}
