@@ -82,13 +82,10 @@ const userNo = inject('userNo')
 const clubId = ref(null)
 const isApplied = ref(false)
 const showMap = ref(false)
-const currentCount = ref(0)
 
 const props = defineProps({
-  match: {
-    type: Object,
-    required: true
-  }
+  match: { type: Object, required: true },
+  currentCount: { type: Number, default: 0 } // ✅ 추가됨
 })
 
 const checkClubLeader = async () => {
