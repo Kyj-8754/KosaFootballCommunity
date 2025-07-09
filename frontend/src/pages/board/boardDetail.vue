@@ -42,7 +42,11 @@
         </div>
 
         <div v-else-if="activeTab === 'reservation'">
-          <ReservationConfirm :reservationId="reservationId" class="mt-3" />
+          <ReservationConfirm
+            :reservationId="reservationId"
+            :boardId="post.board_id"
+            class="mt-3"
+          />
         </div>
       </div>
 
