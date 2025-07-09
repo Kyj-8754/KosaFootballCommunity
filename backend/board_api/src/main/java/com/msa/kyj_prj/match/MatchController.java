@@ -200,4 +200,20 @@ public class MatchController {
             ));
         }
     }
+    
+    // 매치 취소처리
+    @PostMapping("/matches/cancel")
+    public ResponseEntity<String> cancelMatches(@RequestParam String type,
+                                                @RequestParam Long id) {
+        try {
+            matchService.cancelMatchesByTypeAndId(type, id);
+            return ResponseEntity.ok("✅ 매치 상태 변경 완료 (type=" + type + ", id=" + id + ")");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("❌ 잘못된 요청: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("❌ 매치 상태 변경 중 오류: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("서버 오류: " + e.getMessage());
+        }
+    }
 }

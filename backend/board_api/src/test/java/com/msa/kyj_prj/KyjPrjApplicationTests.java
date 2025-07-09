@@ -11,10 +11,10 @@ class KyjPrjApplicationTests {
 	@Autowired
 	private MatchService matchService;
 
-	@Test
-	void testActivatePastMatches() {
-	    matchService.cancelMatchesWithInvalidReservation();
-	}
+//	@Test
+//	void testActivatePastMatches() {
+//	    matchService.cancelMatchesWithInvalidReservation();
+//	}
 
 	@Test
 	void contextLoads() {

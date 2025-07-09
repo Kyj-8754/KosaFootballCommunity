@@ -315,5 +315,12 @@
 	    WHERE reservation_id = #{reservation_id}
 	      AND match_status IN ('waiting', 'active', 'completed')
 	</select>
+	
+	<!-- 결제 id 기반 예약 id 호출 -->
+	<select id="getReservationIdByPaymentId" parameterType="long" resultType="long">
+	    SELECT reservation_id
+	    FROM payment
+	    WHERE payment_id = #{payment_id}
+	</select>
 
 </mapper>
