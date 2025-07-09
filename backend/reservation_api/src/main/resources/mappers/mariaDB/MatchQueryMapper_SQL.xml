@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.msa.kyj_prj.webSocket.MatchQueryMapper">
+    <select id="selectParticipantsUserNoByMatchId" resultType="com.msa.kyj_prj.dto.WebsocketDTO" parameterType="int">
+    	select  m2.user_no as receiverId , m.match_title, m.user_no as senderId,  m.match_id 
+    	FROM `match`m
+		join match_participant m2 on m.match_id = m2.match_id
+		WHERE m.reservation_id = #{reservation_id} AND user_status = 'approve';
+    </select>
+</mapper>
