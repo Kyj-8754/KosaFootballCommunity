@@ -290,4 +290,52 @@ public class MatchService {
         param.put("user_status", "approve");
         matchDAO.updateMatchParticipantStatus(param);
     }
+    
+    @Scheduled(cron = "0 0 */2 * * *", zone = "Asia/Seoul") // 2시간마다 실행
+    public void cancelMatchesWithInvalidReservation() {
+        log.info("🕒 [스케줄러 시작] 예약 상태가 취소(cancelled) 또는 만료(expired)된 매치를 찾아 상태를 변경합니다.");
+
+        // 1. 취소되었거나 만료된 예약 ID 조회
+        List<Long> invalidReservationIds = matchDAO.getCancelledOrExpiredReservationIds();
+        log.info("🔍 취소/만료된 예약 ID 개수: {}", invalidReservationIds.size());
+        log.debug("📋 예약 ID 목록: {}", invalidReservationIds);
+
+        int totalMatchesChecked = 0;
+        int totalMatchesUpdated = 0;
+
+        for (Long reservationId : invalidReservationIds) {
+            log.debug("➡ 예약 ID {} 에 연동된 매치 검색 중...", reservationId);
+            List<Match> matches = matchDAO.getMatchesByReservationId(reservationId);
+            log.debug("📌 예약 ID {} → 연동된 매치 수: {}", reservationId, matches.size());
+
+            for (Match match : matches) {
+                totalMatchesChecked++;
+
+                Long matchId = match.getMatch_id();
+                String currentStatus = match.getMatch_status();
+                log.debug("🔎 매치 ID: {}, 현재 상태: {}", matchId, currentStatus);
+
+                if ("waiting".equalsIgnoreCase(currentStatus)
+                	    || "active".equalsIgnoreCase(currentStatus)
+                	    || "completed".equalsIgnoreCase(currentStatus)) {
+                    Map<String, Object> param = new HashMap<>();
+                    param.put("match_id", matchId);
+                    param.put("match_status", "cancelled");
+                    int result = matchDAO.updateMatchStatus(param);
+
+                    if (result > 0) {
+                        log.info("✅ 매치 ID {} 의 상태를 cancelled 로 변경 완료 (예약 ID: {})", matchId, reservationId);
+                        totalMatchesUpdated++;
+                    } else {
+                        log.warn("⚠ 매치 ID {} 상태 변경 실패 (update 쿼리 결과 없음)", matchId);
+                    }
+                } else {
+                    log.debug("⏭ 매치 ID {} 는 상태가 waiting/active 아님 → 건너뜀", matchId);
+                }
+            }
+        }
+
+        log.info("🧾 [스케줄러 종료] 총 매치 확인: {}, 상태 변경된 매치 수: {}", totalMatchesChecked, totalMatchesUpdated);
+    }
+
 }

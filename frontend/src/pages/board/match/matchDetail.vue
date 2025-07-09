@@ -64,7 +64,6 @@ const fetchMatchDetail = async () => {
 
 onMounted(() => {
   fetchMatchDetail()
-  console.log('✅ 받은 match 데이터:', match)
 })
 </script>
 

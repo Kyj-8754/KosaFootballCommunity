@@ -116,7 +116,6 @@ function goToClubCreate() {
 function update() {
   axios.post('/stadium_api/stadium/update')
     .then(res => {
-      console.log('업데이트 시작')
     })
     .catch(err => {
       console.error('API 호출 실패:', err)

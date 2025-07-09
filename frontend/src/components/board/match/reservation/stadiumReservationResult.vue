@@ -68,7 +68,14 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const props = defineProps({
-  reservationId: { type: String, required: true }
+  reservationId: {
+    type: [String, Number],
+    required: true
+  },
+  boardId: {
+    type: [String, Number],
+    required: true
+  }
 })
 
 const user = ref({})
@@ -79,7 +86,7 @@ const authCode = inject('authCode');
 const userNo = inject('userNo');
 const token = inject('token')
 
-onMounted(async () => {
+const loadReservationData = async () => {
   try {
     const res = await axios.post('/reservation_api/reservation/reservation_confirm', {
       reservation_id: props.reservationId
@@ -112,20 +119,18 @@ onMounted(async () => {
     stadium.value = stadiumRes.data.stadiumDB.stadium;
     isPaid.value = paidRes.data.paid === true;
 
-    console.log('👤 [사용자 데이터]', userRes.data);
-    console.log('🏟 [구장 데이터]', stadiumRes.data);
-    console.log('💳 [결제 상태 응답]', paidRes.data);
-
   } catch (err) {
     console.error('예약 확인 실패:', err);
   }
+};
+
+onMounted(async () => {
+  await loadReservationData();
 });
 
 const requestPayment = async () => {
   const confirmPayment = confirm("결제 하시겠습니까?");
   if (!confirmPayment) return;
-
-  console.log("✅ 결제 요청 시작");
 
   try {
     const res = await axios.post('/kakao_api/kakaopay/ready', {
@@ -136,16 +141,12 @@ const requestPayment = async () => {
       authCode: authCode.value
     });
 
-    console.log("✅ 결제 요청 완료");
-
     const redirectUrl = res.data.next_redirect_pc_url;
     if (redirectUrl) {
       openCenteredPopup(redirectUrl, '카카오페이 결제', 500, 700);
     } else {
       alert("결제 URL을 받아오지 못했습니다.");
     }
-
-    console.log("✅ 결제 URL 받아오기 완료");
 
   } catch (err) {
     if (err.response?.data?.message) {
@@ -173,6 +174,14 @@ const openCenteredPopup = (url, title, w, h) => {
   );
 
   if (popup?.focus) popup.focus();
+
+  // ✅ 팝업이 닫히면 loadReservationData() 실행
+  const checkClosed = setInterval(() => {
+    if (popup.closed) {
+      clearInterval(checkClosed);
+      loadReservationData(); // 💡 무조건 상태 새로고침
+    }
+  }, 500);
 };
 
 const goToMatchRegister = () => {
@@ -184,7 +193,8 @@ const goToMatchRegister = () => {
       slot_date: reservation.value.slot_date,
       start_time: reservation.value.start_time,
       reservation_type: reservation.value.reservation_type,
-      reservation_id: reservation.value.reservation_id
+      reservation_id: reservation.value.reservation_id,
+      board_id: props.boardId
     }
   });
 };

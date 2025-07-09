@@ -45,7 +45,15 @@ const setToken = (newToken) => {
 }
 injectSetToken(setToken)
 
-// JWT Payload 디코딩 함수
+// 3. 마운트 시 로컬스토리지에서 토큰 로딩
+onMounted(() => {
+  const savedToken = localStorage.getItem('accessToken')
+  if (savedToken) {
+    token.value = savedToken
+  }
+})
+
+// ✅ JWT Payload 디코딩 함수
 const decodeJwtPayload = (tokenStr) => {
   try {
     const base64Payload = tokenStr.split('.')[1]

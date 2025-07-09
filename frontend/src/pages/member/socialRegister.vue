@@ -135,7 +135,6 @@ const findZipcode = () => {
 onMounted(() => {
   const query = route.query
 
-  console.log("🔍 소셜 회원가입 쿼리 파라미터:", query)
   if (!query.provider || !query.providerId || !query.nickname) {
     alert('잘못된 접근입니다.')
     router.replace('/member/loginForm')

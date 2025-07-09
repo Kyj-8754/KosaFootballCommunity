@@ -48,6 +48,7 @@ const slot_date = history.state?.slot_date || ''
 const start_time = history.state?.start_time || ''
 const reservation_type = history.state?.reservation_type || ''
 const reservation_id = history.state?.reservation_id || ''
+const board_id = history.state?.board_id || null
 
 const title = ref('')
 const description = ref('')
@@ -70,9 +71,18 @@ const onSubmit = async () => {
       reservation_id: reservation_id
     }
 
-    console.log('[payload]', payload)
-
     await axios.post('/board_api/match/register', payload)
+
+    // 매치 등록 성공 후 게시글 삭제
+    if (board_id) {
+      try {
+        await axios.delete(`/board_api/board/${board_id}`)
+        console.log(`📌 게시글 ${board_id} 삭제 완료`)
+      } catch (deleteErr) {
+        console.error('❌ 게시글 삭제 실패:', deleteErr)
+        alert('매치는 등록되었지만, 기존 게시글 삭제에 실패했습니다.')
+      }
+    }
 
     alert('매치가 성공적으로 등록되었습니다.')
     router.push({ name: 'matchList' })
@@ -88,8 +98,4 @@ const onSubmit = async () => {
     alert('매치 등록 중 오류가 발생했습니다.')
   }
 }
-
-console.log('🟢 매치 등록 진입 시 전달 데이터:', {
-  svcid, userNo, slot_date, start_time, reservation_type, reservation_id
-});
 </script>
