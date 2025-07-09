@@ -108,7 +108,6 @@
 		JOIN user u ON r.from_user_no = u.user_no
 		WHERE to_user_no = #{userNo}
 		AND r.relation_status = 'WAIT'
-		AND u.user_exit_status='N'
 	</select>
 	
 	<!-- 친구 수락 요청 처리 로직 -->
@@ -139,9 +138,6 @@
 	        (r.to_user_no = #{userNo} AND u.user_no = r.from_user_no)
 	      )
 	    WHERE r.relation_status = 'ACCEPTED'
-	    WHERE to_user_no = #{userNo}
-		AND r.relation_status = 'WAIT'
-		AND u.user_exit_status='N'
 	</select>
 	
 	<!-- 스타일 이름 가져오기 -->
