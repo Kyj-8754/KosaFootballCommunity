@@ -34,6 +34,7 @@
 							<p class="card-text"><strong>지역명:</strong> {{ item.areanm }}</p>
 							<p class="card-text"><strong>장소명:</strong> {{ item.placenm }}</p>
 							<p class="card-text"><strong>연락처:</strong> {{ item.telno }}</p>
+							<p class="card-text"><strong>가격:</strong> {{ item.price }}</p>
 							<p class="card-text"><strong>이용 시간:</strong> {{ item.v_MIN }} ~ {{ item.v_MAX }}</p>
 							</div>
 						</div>

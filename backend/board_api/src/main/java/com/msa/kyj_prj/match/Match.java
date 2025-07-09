@@ -15,7 +15,8 @@ public class Match {
     private String match_title;              // 매치 제목
     private LocalDateTime match_created_at;  // 매치 등록일
     private LocalDateTime match_modified_at; // 매치 수정일
-    private Integer user_no;                 // 매니저 ID
+    private Integer user_no;                 // 주최자 ID
+    private Integer manager_no;                 // 매니저 ID
     private LocalDateTime match_date;        // 경기일
     private String SVCID;                    // 구장 ID
     private String match_closed;             // 마감 여부
@@ -24,6 +25,7 @@ public class Match {
     private String match_status;             // 매치 상태
     private String match_board_status;       // 게시글 상태
     private String match_code;               // 경기 종류
+    private Long reservation_id;                   // 예약 ID
     
     // 스타디움 테이블 조인
     private String SVCNM;
@@ -39,5 +41,9 @@ public class Match {
     private String AREANM;
     private String ADRES;
     private String DTLCONT;
+    private Integer price;
+    
+    // 유저 테이블 조인
+    private String manager_name;
 
 }

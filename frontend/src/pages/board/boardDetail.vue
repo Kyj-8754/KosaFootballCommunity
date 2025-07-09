@@ -1,42 +1,81 @@
 <template>
   <div class="board-detail">
     <PostHeader v-if="post" :post="post" />
-    <PostContent
-      v-if="post"
-      :post="post"
-      :liked="liked"
-      :likeCount="likeCount"
-      @toggle-like="toggleLike"
-    />
-   <LikeButton
-      v-if="post"
-      :liked="liked"
-      :likeCount="likeCount"
-      @toggle-like="toggleLike"
-    />
-    <FileDownload v-if="post" :board-id="post.board_id" />
-    <PostActionButtons
-      v-if="post"
-      :userNo="userNo"
-      :postUserNo="post.user_no"
-      :authCode="authCode"
-      @edit="handleEdit"
-      @delete="handleDelete"
-    />
-    <CommentForm
-      v-if="post"
-      :boardId="post.board_id"
-      :userNo="userNo"
-      :userName="userName"
-      @submit="addComment"
-    />
-    <CommentList
-      :comments="comments"
-      :userNo="userNo"
-      @edit="editComment"
-      @delete="deleteComment"
-      @reply="addComment"
-    />
+
+    <template v-if="!post">
+      <div class="text-red-500 text-center mt-4">
+        존재하지 않는 게시글입니다.
+      </div>
+      <div class="text-center mt-4">
+        <button class="btn btn-outline-primary" @click="router.push({ name: 'boardList' })">
+          📋 게시판 목록으로 이동
+        </button>
+      </div>
+    </template>
+
+    <!-- 게시글 로드 전에는 아무것도 렌더링하지 않음 -->
+    <template v-if="post">
+      <!-- 모집게시판일 경우: 탭 -->
+      <div v-if="post.board_category === '모집게시판'">
+        <!-- 탭 메뉴 -->
+        <div class="tab-buttons mb-3">
+          <button
+            class="btn"
+            :class="activeTab === 'content' ? 'btn-primary' : 'btn-outline-primary'"
+            @click="activeTab = 'content'"
+          >
+            📄 게시글 내용
+          </button>
+          <button
+            class="btn ms-2"
+            :class="activeTab === 'reservation' ? 'btn-primary' : 'btn-outline-primary'"
+            @click="activeTab = 'reservation'"
+          >
+            📅 예약 정보
+          </button>
+        </div>
+
+        <!-- 탭 콘텐츠 -->
+        <div v-if="activeTab === 'content'">
+          <PostContent :post="post" :liked="liked" :likeCount="likeCount" @toggle-like="toggleLike" />
+          <FileDownload :board-id="post.board_id" />
+        </div>
+
+        <div v-else-if="activeTab === 'reservation'">
+          <ReservationConfirm :reservationId="reservationId" class="mt-3" />
+        </div>
+      </div>
+
+      <!-- 일반 게시글 -->
+      <div v-else>
+        <PostContent :post="post" :liked="liked" :likeCount="likeCount" @toggle-like="toggleLike" />
+        <LikeButton :liked="liked" :likeCount="likeCount" @toggle-like="toggleLike" />
+        <FileDownload :board-id="post.board_id" />
+      </div>
+
+      <!-- 공통 영역 -->
+      <PostActionButtons
+        :userNo="userNo"
+        :postUserNo="post.user_no"
+        :authCode="authCode"
+        @edit="handleEdit"
+        @delete="handleDelete"
+      />
+      <CommentForm
+        :boardId="post.board_id"
+        :userNo="userNo"
+        :userName="userName"
+        @submit="addComment"
+      />
+
+      <CommentList
+        :comments="comments"
+        :userNo="userNo"
+        @edit="editComment"
+        @delete="deleteComment"
+        @reply="addComment"
+      />
+    </template>
   </div>
 </template>
 
@@ -52,6 +91,7 @@ import CommentList from '@/components/reply/replyList.vue'
 import CommentForm from '@/components/reply/replyRegisterForm.vue'
 import LikeButton from '@/components/board/boardLikeButton.vue'
 import FileDownload from '@/components/file/FileDownload.vue'
+import ReservationConfirm from '@/components/board/match/reservation/stadiumReservationResult.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -64,6 +104,31 @@ const likeCount = ref(0)
 const userNo = inject('userNo')
 const userName = inject('userName')
 const authCode = inject('authCode')
+
+const activeTab = ref('content')  // 'content' | 'reservation'
+
+const reservationId = ref(null)
+
+const fetchReservationId = async () => {
+  if (!post.value || post.value.board_category !== '모집게시판') {
+    console.warn('⛔ 게시글이 없거나 모집게시판이 아님:', post.value)
+    return
+  }
+
+  try {
+    const res = await axios.get('/board_api/match/reservation-id', {
+      params: { boardId: post.value.board_id }
+    })
+
+    if (res.data.res_code === '200') {
+      reservationId.value = res.data.reservation_id
+    } else {
+      console.warn('⚠️ 예약 ID 없음:', res.data.res_msg)
+    }
+  } catch (error) {
+    console.error('❌ 예약 ID 조회 실패:', error)
+  }
+}
 
 const fetchPost = async () => {
   try {
@@ -98,11 +163,13 @@ const fetchLikeCount = async () => {
 }
 
 const fetchLiked = async () => {
-  if (!post.value) return
+  // 로그인 사용자만 좋아요 여부 확인
+  if (!post.value || !userNo?.value) return
+
   try {
     const response = await axios.post('/board_api/board/like/check', {
       board_id: post.value.board_id,
-      user_no: userNo?.value ?? null
+      user_no: userNo.value
     })
 
     liked.value = response.data.liked
@@ -111,28 +178,33 @@ const fetchLiked = async () => {
   }
 }
 
-
 const toggleLike = async () => {
   if (!post.value) return
+
+  // 비로그인 상태 처리
+  if (!userNo?.value) {
+    alert('로그인이 필요한 서비스입니다.')
+    router.push({ name: 'Member_LoginForm' })
+    return
+  }
 
   try {
     if (!liked.value) {
       await axios.post('/board_api/board/like', null, {
         params: {
           board_id: post.value.board_id,
-          user_no: userNo?.value ?? null
+          user_no: userNo.value
         }
       })
     } else {
       await axios.delete('/board_api/board/like', {
         params: {
           board_id: post.value.board_id,
-          user_no: userNo?.value ?? null
+          user_no: userNo.value
         }
       })
     }
 
-    // 상태 새로고침
     await fetchLikeCount()
     await fetchLiked()
   } catch (err) {
@@ -140,6 +212,7 @@ const toggleLike = async () => {
     alert('좋아요 처리 중 오류가 발생했습니다.')
   }
 }
+
 
 const handleEdit = () => {
   if (post.value) {
@@ -165,6 +238,14 @@ const handleDelete = async () => {
 
 const addComment = async (replyData) => {
   const maxLength = 1000
+
+  // 비로그인 상태 처리
+  if (!userNo?.value) {
+    alert('로그인이 필요한 서비스입니다.')
+    router.push({ name: 'Member_LoginForm' })
+    return
+  }
+
   if (replyData.reply_content.length > maxLength) {
     alert(`댓글은 최대 ${maxLength}자까지 입력할 수 있습니다.`)
     return
@@ -178,6 +259,7 @@ const addComment = async (replyData) => {
     alert('댓글 등록에 실패했습니다.')
   }
 }
+
 
 const editComment = async (replyId, newContent) => {
   // ✅ 1000자 제한 검증
@@ -226,6 +308,7 @@ onMounted(async () => {
     await fetchComments()
     await fetchLikeCount()
     await fetchLiked()  // 좋아요 상태도 함께 초기화
+    await fetchReservationId()
 
   } catch (error) {
     console.error('초기 로딩 실패:', error)

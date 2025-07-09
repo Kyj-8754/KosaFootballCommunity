@@ -51,6 +51,16 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/stadium_api/, ""),
       },
+      "/reservation_api": {
+        target: "http://localhost:8101",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/reservation_api/, ""),
+      },
+      "/kakao_api": {
+        target: "http://localhost:8102",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/kakao_api/, ""),
+      },
       "/login_api": {
         target: "http://localhost:8111",
         changeOrigin: true,

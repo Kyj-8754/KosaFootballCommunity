@@ -146,5 +146,17 @@
 	        AND user_no = #{user_no}
 	    )
 	</select>
+	
+	<!-- 만료되거나 취소된 예약의 게시글 삭제 -->
+	<update id="markBoardsAsDeletedFromReservations">
+	  UPDATE board
+	  SET board_status = 'deleted'
+	  WHERE board_status != 'deleted'
+	    AND board_id IN (
+	      SELECT DISTINCT r.board_id
+	      FROM reservation r
+	      WHERE r.status IN ('cancelled', 'expired')
+	    )
+	</update>
 
 </mapper>

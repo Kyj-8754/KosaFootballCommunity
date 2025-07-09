@@ -1,6 +1,6 @@
 <template>
   <div class="query-bar">
-    <!-- 1행: 날짜, 성별, 마감여부, 경기 상태, 게시글 상태 -->
+    <!-- 1행: 날짜, 성별, 마감여부, 경기 상태, 게시글 상태, 지역 -->
     <div class="filter-row">
       <input type="date" v-model="query.afterDate" />
 
@@ -23,6 +23,14 @@
         <option value="active">진행중</option>
         <option value="completed">진행 완료</option>
       </select>
+
+      <!-- ✅ 지역 드롭다운 추가 -->
+      <select v-model="query.areanm">
+        <option value="">전체 지역</option>
+        <option v-for="area in areaList" :key="area" :value="area">
+          {{ area }}
+        </option>
+      </select>
     </div>
 
     <!-- 2행: 검색창 + 버튼 -->
@@ -40,8 +48,10 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
+import axios from 'axios'
 
+const areaList = ref([])
 const emit = defineEmits(['query'])
 
 const initialQuery = {
@@ -49,7 +59,8 @@ const initialQuery = {
   afterDate: '',
   gender_condition: '',
   match_closed: '',
-  match_status: ''
+  match_status: '',
+  areanm: '' // ✅ 지역 초기값 추가
 }
 
 const query = reactive({ ...initialQuery })
@@ -62,6 +73,15 @@ const onReset = () => {
   Object.assign(query, initialQuery)
   emit('query', { ...initialQuery })
 }
+
+onMounted(async () => {
+  try {
+    const res = await axios.get('/board_api/match/areas') // 백엔드 엔드포인트 호출
+    areaList.value = res.data
+  } catch (err) {
+    console.error('지역 목록 불러오기 실패:', err)
+  }
+})
 </script>
 
 <style scoped>

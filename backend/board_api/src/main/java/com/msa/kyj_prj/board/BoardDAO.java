@@ -34,4 +34,6 @@ public interface BoardDAO {
 	int countBoardLike(Long board_id);
 	// 게시글 좋아요 여부 확인
 	int hasUserLikedBoard(@Param("board_id") Long board_id, @Param("user_no") int user_no);
+	// 예약 취소/만료된 게시글 상태 삭제 처리
+	void markBoardsAsDeletedFromReservations();
 }
