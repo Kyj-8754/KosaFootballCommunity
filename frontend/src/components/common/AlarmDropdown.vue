@@ -45,6 +45,14 @@ export default {
       alarmCount: 0
     };
   },
+
+  computed: {
+    // ✅ [여기에 추가]
+    unreadCount() {
+      // alarms 배열 중 read_yn이 'N'인 것만 개수 세기
+      return this.alarms.filter(alarm => alarm.read_yn === 'N').length;
+    }
+  },
   methods: {
     toggleList() {
       this.showList = !this.showList;
@@ -77,14 +85,17 @@ export default {
         this.fetchAlarms();
       });
     },
-    readAll() {
-      // ✅ 프록시 주소로 변경!
-      axios.put('/alarm_api/history/read/all', {
-        params: { receiver_id: this.userNo }
-      }).then(() => {
-        this.fetchAlarms();
-      });
-    },
+  readAll() {
+  axios.put('/alarm_api/history/read/all', null, {
+  params: { receiver_id: this.userNo }
+  }).then(() => {
+  this.alarms.forEach(alarm => alarm.read_yn = 'Y');
+  // 또는 this.fetchAlarms();
+  });
+
+}
+
+,
     deleteAlarm(alarmId) {
       // ✅ 프록시 주소로 변경!
       axios.delete(`/alarm_api/history/${alarmId}`).then(() => {
