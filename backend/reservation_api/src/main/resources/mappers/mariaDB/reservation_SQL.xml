@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "mybatis-3-mapper.dtd">
 
-<!DOCTYPE mapper 
-	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.msa.kyj_prj.reservation.ReservationDAO">		
 	<select id="getReservationForm" resultType="com.msa.kyj_prj.dto.SlotDTO">
@@ -97,4 +97,7 @@ WHERE r.reservation_id = #{reservation_id}
 		WHERE r.status = 'reserved'
 		AND timestamp(rs.slot_date, rs.start_time) &lt; now();
 	</update>
+	
+
+
 </mapper>

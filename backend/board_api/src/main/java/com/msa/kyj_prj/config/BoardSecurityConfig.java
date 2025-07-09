@@ -26,6 +26,9 @@ public class BoardSecurityConfig extends BaseSecurityConfig{
 	@Override
 	protected void customizeAuthorization(AuthorizationManagerRequestMatcherRegistry authorize) throws Exception {
 		((AuthorizedUrl) authorize.requestMatchers("/board/**")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/match/**")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/match-log/**")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/reply/**")).permitAll();
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {

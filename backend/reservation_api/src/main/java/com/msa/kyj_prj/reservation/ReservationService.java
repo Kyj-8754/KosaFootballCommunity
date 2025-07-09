@@ -10,12 +10,15 @@ import com.msa.kyj_prj.dto.SlotDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import com.msa.kyj_prj.webSocket.ReservationCancelAlarmMessageDTO;
+import com.msa.kyj_prj.webSocket.Websocket;
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ReservationService{
 	private final ReservationDAO reservationDAO;
+	private final Websocket websocket; // 웹소켓 메소드
+	
 	
 	// 예약 등록 폼
 	public List<SlotDTO> getReservationForm(String SVCID, String date) {
@@ -57,6 +60,9 @@ public class ReservationService{
 	    
 	    System.out.println("DAO 가기전임" + reservation_id);
 	    reservationDAO.updateStatusToCancelled(reservation_id);
+	    
+	    // 여기에 웹소켓 코드 추가
+	     websocket.sendReservationCancelAlarmByReservationId(reservation_id);
 	}
 	
 	// 예약 리스트

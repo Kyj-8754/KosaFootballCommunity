@@ -135,7 +135,10 @@ public class BaseSecurityConfig {
 				"/oauth/callback/**",
 				"/.well-known/**",
 				"/user/na/**",
-				"/board/**");
+				"/board/**",
+				"/match/**",
+				"/match-log/**",
+				"/reply/**");
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
