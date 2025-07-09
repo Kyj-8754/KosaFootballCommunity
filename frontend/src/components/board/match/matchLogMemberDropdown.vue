@@ -1,11 +1,13 @@
 <template>
-  <select v-model="selectedMember">
-    <option disabled value="">회원 선택</option>
-    <option :value="null">선택 안 함</option>
-    <option v-for="member in members" :key="member.user_no" :value="member.user_no">
-      {{ member.user_name }}
-    </option>
-  </select>
+  <div class="dropdown-wrapper">
+    <select id="member-select" v-model="selectedMember" class="dropdown-select">
+      <option disabled value="">회원 선택</option>
+      <option :value="null">선택 안 함</option>
+      <option v-for="member in members" :key="member.user_no" :value="member.user_no">
+        {{ member.user_name }}
+      </option>
+    </select>
+  </div>
 </template>
 
 <script setup>
@@ -47,3 +49,28 @@ onMounted(() => {
   fetchMembers()
 })
 </script>
+
+<style scoped>
+/* 공통 드롭다운 스타일 */
+.dropdown-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0; /* ✅ 바깥 여백: 위아래 */
+}
+
+.dropdown-select {
+  padding: 6px; /* ✅ 내부 여백 */
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+}
+
+.dropdown-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+</style>
