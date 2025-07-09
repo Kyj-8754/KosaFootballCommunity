@@ -9,31 +9,38 @@
 		SELECT * 
 		FROM user
 		WHERE user_no = #{userNo}
+		AND user_exit_status='N'
 	</select>
+	
 	<!-- 회원 번호로 회원 계정 불러오기 -->
 	<select id="getLocalAccount" parameterType="int" resultType="com.msa.do_login.user.vo.LocalAccount">
 		SELECT * 
 		FROM local_account
 		WHERE user_no = #{userNo}
+		AND user_exit_status='N'
 	</select>
+	
 	<!-- 스타일 코드로 스타일 명칭 불러오기 -->
 	<select id="getUserStyle" parameterType="int" resultType="com.msa.do_login.user.vo.UserStyle">
 		SELECT * 
 		FROM user_style
 		WHERE style_code = #{styleCode}
 	</select>
+	
 	<!-- 능력치 코드로 능력치 명칭 불러오기 -->
 	<select id="getUserStat" parameterType="int" resultType="com.msa.do_login.user.vo.UserStat">
 		SELECT * 
 		FROM user_stat
 		WHERE stat_code = #{statCode}
 	</select>
+	
 	<!-- 회원 번호로 소셜 계정 불러오기 -->
 	<select id="getSocialAccount" parameterType="int" resultType="com.msa.do_security.security.vo.SocialAccountVO">
 		SELECT * 
 		FROM social_account
 		WHERE user_no = #{userNo}
 	</select>
+	
 	<!-- 회원 정보 수정 로직 -->
 	<update id="update">
 	UPDATE user
@@ -55,6 +62,7 @@
 		style_code = #{styleCode},
 		stat_code = #{statCode}
 	WHERE user_no = #{userNo}
+	AND user_exit_status='N'
 	</update>
 	
 	<!-- 회원 정보 수정 이력 남기기 위한 로직 -->
@@ -78,6 +86,7 @@
 		SELECT * 
 		FROM user
 		WHERE user_code = #{keyword}
+		AND user_exit_status='N'
 	</select>
 	
 	<!-- 친구 신청 처리 로직 -->
@@ -99,6 +108,7 @@
 		JOIN user u ON r.from_user_no = u.user_no
 		WHERE to_user_no = #{userNo}
 		AND r.relation_status = 'WAIT'
+		AND u.user_exit_status='N'
 	</select>
 	
 	<!-- 친구 수락 요청 처리 로직 -->
@@ -129,6 +139,9 @@
 	        (r.to_user_no = #{userNo} AND u.user_no = r.from_user_no)
 	      )
 	    WHERE r.relation_status = 'ACCEPTED'
+	    WHERE to_user_no = #{userNo}
+		AND r.relation_status = 'WAIT'
+		AND u.user_exit_status='N'
 	</select>
 	
 	<!-- 스타일 이름 가져오기 -->
