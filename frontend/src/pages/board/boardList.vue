@@ -2,8 +2,16 @@
   <div class="board-list-container">
     <!-- 소트와 필터를 같은 줄에 배치 -->
     <div class="sort-filter-row">
-      <BoardFilter @search="handleSearch" />
-      <SortButtons :sort="sortOptions" @update:sort="updateSort" />
+      <BoardFilter
+        :category="currentCategory"
+        @search="handleSearch"
+      />
+
+      <SortButtons
+        :sort="sortOptions"
+        :category="currentCategory"
+        @update:sort="updateSort"
+      />
     </div>
     <CategoryButtons @select="handleCategorySelect" />
     <BoardNoticeList @view="handleViewPost" />
@@ -43,6 +51,8 @@ import axios from 'axios'
 const router = useRouter()
 const authCode = inject('authCode')
 const userNo = inject('userNo')
+
+const currentCategory = computed(() => searchFilters.value.category)
 
 const posts = ref([])
 const currentPage = ref(1)

@@ -1,7 +1,11 @@
 <template>
   <div class="sort-bar">
-    <select v-model="selectedColumn" @change="updateSort">
-      <option v-for="col in columns" :key="col.value" :value="col.value">
+    <select
+      v-model="selectedColumn"
+      @change="updateSort"
+      :disabled="isRecruitBoard"
+    >
+      <option v-for="col in filteredColumns" :key="col.value" :value="col.value">
         {{ col.label }}
       </option>
     </select>
@@ -12,9 +16,8 @@
   </div>
 </template>
 
-
 <script setup>
-import { defineProps, defineEmits, ref, watch } from 'vue'
+import { defineProps, defineEmits, ref, watch, computed, onMounted } from 'vue'
 
 const props = defineProps({
   sort: Object, // { column: '', direction: '' }
@@ -25,15 +28,37 @@ const props = defineProps({
       { label: '조회순', value: 'board_viewcount' },
       { label: '추천순', value: 'board_likecount' }
     ]
+  },
+  category: {
+    type: String,
+    default: ''
   }
 })
 
 const emit = defineEmits(['update:sort'])
 
+const isRecruitBoard = computed(() => props.category === '모집게시판')
+
+const filteredColumns = computed(() => {
+  return isRecruitBoard.value
+    ? [{ label: '등록순', value: 'board_id' }]
+    : props.columns
+})
+
 const selectedColumn = ref(props.sort.column || props.columns[0].value)
 const direction = ref(props.sort.direction || 'desc')
 
-// 드롭다운 변경 시
+// 마운트 시 모집게시판이면 정렬 강제 고정
+onMounted(() => {
+  if (isRecruitBoard.value) {
+    selectedColumn.value = 'board_id'
+    emit('update:sort', {
+      column: 'board_id',
+      direction: direction.value
+    })
+  }
+})
+
 const updateSort = () => {
   emit('update:sort', {
     column: selectedColumn.value,
@@ -41,41 +66,38 @@ const updateSort = () => {
   })
 }
 
-// 방향 토글
 const toggleDirection = () => {
   direction.value = direction.value === 'asc' ? 'desc' : 'asc'
   updateSort()
 }
 
-// 외부 sort prop이 바뀔 경우 반영
 watch(() => props.sort, (newSort) => {
   selectedColumn.value = newSort.column
   direction.value = newSort.direction
 })
 </script>
 
-
 <style scoped>
 .sort-bar {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin: 1rem 0; /* board-filter와 통일 */
+  margin: 1rem 0;
 }
 
 .sort-bar select {
   padding: 6px 10px;
-  font-size: 0.9rem;     /* 🔁 board-filter와 통일 */
-  height: 36px;          /* 🔁 높이 통일 */
+  font-size: 0.9rem;
+  height: 36px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
 }
 
 .sort-bar button {
-  padding: 6px 10px;     /* 🔁 board-filter와 통일 */
-  font-size: 0.9rem;     /* 🔁 폰트 크기 통일 */
-  height: 36px;          /* 🔁 높이 통일 */
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  height: 36px;
   background-color: #007bff;
   color: white;
   border: 1px solid #007bff;
