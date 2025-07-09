@@ -85,7 +85,7 @@ const isPaid = ref(false);
 const authCode = inject('authCode');
 const userNo = inject('userNo');
 
-onMounted(async () => {
+const loadReservationData = async () => {
   try {
     const res = await axios.post('/reservation_api/reservation/reservation_confirm', {
       reservation_id: props.reservationId
@@ -118,6 +118,10 @@ onMounted(async () => {
   } catch (err) {
     console.error('예약 확인 실패:', err);
   }
+};
+
+onMounted(async () => {
+  await loadReservationData();
 });
 
 const requestPayment = async () => {
@@ -166,6 +170,14 @@ const openCenteredPopup = (url, title, w, h) => {
   );
 
   if (popup?.focus) popup.focus();
+
+  // ✅ 팝업이 닫히면 loadReservationData() 실행
+  const checkClosed = setInterval(() => {
+    if (popup.closed) {
+      clearInterval(checkClosed);
+      loadReservationData(); // 💡 무조건 상태 새로고침
+    }
+  }, 500);
 };
 
 const goToMatchRegister = () => {
