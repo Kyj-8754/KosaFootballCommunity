@@ -60,8 +60,8 @@ const user = ref({});
 const stadium = ref({});
 const userNo = inject('userNo') // 로그인한 유저 정보 가져옴
 const authCode = inject('authCode') // 로그인한 유저 권한
-const token = inject('token') // 로그인한 유저 권한
 
+console.log(authCode?.value, userNo.value);
 
 // 결제 핸들러 이벤트, 감지해서 메시지를 띄우고 닫힘
 const handlePaymentMessage = (event) => {

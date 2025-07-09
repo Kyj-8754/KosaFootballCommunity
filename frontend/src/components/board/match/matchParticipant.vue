@@ -5,35 +5,48 @@
       <button
         v-for="tab in tabOptions"
         :key="tab"
-        :class="{ active: activeTab === tab }"
+        :class="['tab-btn', { active: activeTab === tab }]"
         @click="activeTab = tab"
       >
         {{ tabLabelMap[tab] }}
       </button>
     </div>
 
-    <div v-if="loading">불러오는 중...</div>
-    <div v-else>
-      <ul v-if="filteredParticipants.length > 0">
-        <li v-for="p in filteredParticipants" :key="p.user_no" class="participant-item">
+    <div v-if="loading" class="loading">불러오는 중...</div>
+
+    <ul v-else-if="filteredParticipants.length > 0" class="participant-ul">
+      <li v-for="p in filteredParticipants" :key="p.user_no" class="participant-item">
+        <div class="user-info">
           <strong>{{ p.user_name }}</strong>
           <template v-if="props.matchCode === 'league' && p.club_name">
             (<span class="club-name">{{ p.club_name }}</span>)
           </template>
-          - 신청일: {{ formatDate(p.created_at) }}
-          <select
-            v-if="userNo === props.matchUserNo || userNo === props.matchManagerNo"
-            v-model="p.user_status"
-            @change="updateStatus(p)"
+          <span class="date">· 신청일: {{ formatDate(p.created_at) }}</span>
+        </div>
+
+        <div
+          v-if="userNo === props.matchUserNo || userNo === props.matchManagerNo"
+          class="status-buttons"
+        >
+          <button
+            v-if="p.user_status !== 'approve'"
+            class="btn btn-approve"
+            @click="changeStatus(p, 'approve')"
           >
-            <option value="apply">신청자</option>
-            <option value="approve">승인됨</option>
-            <option value="reject">거절됨</option>
-          </select>
-        </li>
-      </ul>
-      <div v-else>해당 상태의 참가자가 없습니다.</div>
-    </div>
+            승인
+          </button>
+          <button
+            v-if="p.user_status !== 'reject'"
+            class="btn btn-reject"
+            @click="changeStatus(p, 'reject')"
+          >
+            거절
+          </button>
+        </div>
+      </li>
+    </ul>
+
+    <div v-else class="empty-message">해당 상태의 참가자가 없습니다.</div>
   </div>
 </template>
 
@@ -43,19 +56,18 @@ import axios from 'axios'
 import { format } from 'date-fns'
 
 const props = defineProps({
-  matchId: { type: Number, required: true },
-  matchCode: { type: String, required: true },
-  matchUserNo: { type: Number, required: true },
-  matchManagerNo: { type: Number, required: true }
+  matchId: Number,
+  matchCode: String,
+  matchUserNo: Number,
+  matchManagerNo: Number
 })
+
+const userNo = inject('userNo')
 
 const participants = ref([])
 const loading = ref(false)
-
 const tabOptions = ['apply', 'approve', 'reject']
 const activeTab = ref('apply')
-
-const userNo = inject('userNo')
 
 const tabLabelMap = {
   apply: '신청자',
@@ -88,14 +100,14 @@ const fetchParticipants = async () => {
   }
 }
 
-const updateStatus = async (participant) => {
+const changeStatus = async (participant, newStatus) => {
   try {
     await axios.post('/board_api/match/status', {
       match_id: props.matchId,
       user_no: participant.user_no,
-      user_status: participant.user_status
+      user_status: newStatus
     })
-    console.log('✅ 상태 변경 완료:', participant)
+    participant.user_status = newStatus
   } catch (err) {
     console.error('❌ 상태 변경 실패:', err)
     alert('상태 변경에 실패했습니다.')
@@ -113,37 +125,98 @@ watch(() => props.matchId, fetchParticipants, { immediate: true })
 <style scoped>
 .participant-list {
   padding: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  background-color: #f9f9f9;
+  background: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 
 .tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
-.tabs button {
-  padding: 6px 12px;
+.tab-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #eee;
+  background-color: #f0f0f0;
   cursor: pointer;
+  transition: 0.2s;
 }
-
-.tabs button.active {
-  background: #007bff;
-  color: white;
+.tab-btn:hover {
+  background-color: #e0e0e0;
+}
+.tab-btn.active {
+  background-color: #007bff;
+  color: #fff;
   border-color: #007bff;
 }
 
-.participant-item {
-  margin-bottom: 8px;
+.loading,
+.empty-message {
+  padding: 12px;
+  text-align: center;
+  color: #666;
 }
 
-select {
+.participant-ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.participant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  transition: box-shadow 0.2s;
+}
+.participant-item:hover {
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.user-info {
+  font-size: 14px;
+}
+.club-name {
+  color: #555;
+}
+.date {
   margin-left: 8px;
-  padding: 4px;
+  color: #999;
+}
+
+.status-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-approve {
+  background-color: #4caf50;
+  color: #fff;
+}
+.btn-approve:hover {
+  background-color: #43a047;
+}
+.btn-reject {
+  background-color: #f44336;
+  color: #fff;
+}
+.btn-reject:hover {
+  background-color: #e53935;
 }
 </style>

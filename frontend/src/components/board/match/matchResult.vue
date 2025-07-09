@@ -123,8 +123,6 @@ onMounted(async () => {
       axios.get(`/board_api/match-log/sets/${props.matchId}`),
       axios.get(`/board_api/match-log/pom/${props.matchId}`)
     ])
-    console.log('📦 sets 데이터:', setsRes.data)
-    console.log('📦 poms 데이터:', pomsRes.data)
     sets.value = setsRes.data
     poms.value = pomsRes.data
   } catch (err) {

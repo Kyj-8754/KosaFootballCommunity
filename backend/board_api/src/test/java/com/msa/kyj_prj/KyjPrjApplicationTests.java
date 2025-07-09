@@ -13,7 +13,7 @@ class KyjPrjApplicationTests {
 
 	@Test
 	void testActivatePastMatches() {
-	    matchService.activatePastMatches();
+	    matchService.cancelMatchesWithInvalidReservation();
 	}
 
 	@Test
