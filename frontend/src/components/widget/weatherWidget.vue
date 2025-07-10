@@ -75,7 +75,6 @@ watchEffect(async () => {
   background-color: #f3f4f6;
   border-radius: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  width: 365px;
 }
 
 .top-section {
@@ -101,7 +100,7 @@ watchEffect(async () => {
 
 .update-info {
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 11px;
   color: #666;
   text-align: left;
 }
