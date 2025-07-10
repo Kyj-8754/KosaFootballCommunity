@@ -19,6 +19,7 @@
         <button @click="update">구장 업데이트</button>
         <weatherWidget/>
         <BoardCategoryTabs />
+        <RecentMatchList />
 				<div>
             <p>현재 시간: {{ serverTime }}</p>
         </div>
@@ -76,6 +77,7 @@ const router = useRouter()
 
 import weatherWidget from '@/components/widget/weatherWidget.vue'
 import BoardCategoryTabs from '@/components/main/BoardCategoryTabs.vue'
+import RecentMatchList from '@/components/main/RecentMatchList.vue'
 
 const serverTime = ref('')
 
