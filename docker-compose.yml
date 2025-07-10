@@ -8,7 +8,7 @@ networks:
 # 서비스 선언
 services:
 # 마리아DB 생성
-  maridb:
+  mariadb:
     container_name: maria_db
     image: mariadb
     restart: always
