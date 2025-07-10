@@ -39,10 +39,10 @@ services:
     container_name: reservation_api
     networks:
       - msateamprj_network
-# kakaoPay_api 생성
-  kakaoPay_api:
-    image: span5189/kakaoPay_api:latest
-    container_name: kakaoPay_api
+# kakaopay_api 생성
+  kakaopay_api:
+    image: span5189/kakaopay_api:latest
+    container_name: kakaopay_api
     networks:
       - msateamprj_network
 # security_api 생성
@@ -101,7 +101,7 @@ services:
     depends_on:
       - stadium_api
       - reservation_api
-      - kakaoPay_api
+      - kakaopay_api
       - security_api
       - login_api
       - alarm_api
