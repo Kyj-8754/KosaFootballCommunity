@@ -161,7 +161,8 @@ const loadMap = () => {
 
   if (!window.kakao || !window.kakao.maps) {
     const script = document.createElement('script')
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=93d2abfcd442ea0ead3eed0dce1e66b3&autoload=false`
+    const apiKey = import.meta.env.VITE_KAKAOMAP_API_KEY
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`
     script.onload = kakaoMapReady
     document.head.appendChild(script)
   } else {
