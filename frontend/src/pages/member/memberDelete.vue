@@ -11,20 +11,17 @@
 
 <script setup>
 import { ref, inject } from 'vue'
-import { useRoute } from 'vue-router'
 import axios from 'axios'
 
 const token = inject('token')
 const logout = inject('logout')
 const loginType = inject('loginType')
-const route = useRoute()
+const userNo = inject('userNo')
 
 const password = ref('')
 
 const onSubmit = async () => {
-  console.log('전달할 loginType:', loginType.value)
-  const userNo = route.query.userNo
-  if (!userNo) {
+  if (!userNo?.value) {
     alert('회원 정보가 없습니다.')
     return
   }
@@ -34,7 +31,7 @@ const onSubmit = async () => {
 
   try {
     const res = await axios.post('/login_api/user/deleteMember', {
-      userNo,
+      userNo: userNo.value,
       password: password.value,
       loginType: loginType.value
     }, {

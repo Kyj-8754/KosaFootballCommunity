@@ -19,7 +19,7 @@
       
       <router-link v-if="member" :to="friendLink" class="friend-count router-link">{{ friends.length }}명의 친구</router-link>
 
-      <router-link v-if="member && isMyProfile" :to="{name: 'Member_Profile_Update', query: { userNo: member.userNo }}" class="btn btn-primary">프로필 설정</router-link>
+      <router-link v-if="member && isMyProfile" :to="{ name: 'Member_Profile_Update' }" class="btn btn-primary">프로필 설정</router-link>
 
       <div class="comment-box">
         <h3>소개글</h3>
@@ -105,12 +105,13 @@ const canRevokeManager = computed(() => {
 
 const friendLink = computed(() => {
   if (!member.value || !loginUserNo?.value) return {}
-
   const isMe = member.value.userNo === loginUserNo.value
-  return {
-    name: isMe ? 'Member_Friend' : 'Member_Other_Friend',
-    query: {
-      userNo: isMe ? loginUserNo.value : member.value.userNo
+  if (isMe) {
+    return { name: 'Member_Friend' }
+  } else {
+    return {
+      name: 'Member_Other_Friend',
+      query: { userNo: member.value.userNo }
     }
   }
 })

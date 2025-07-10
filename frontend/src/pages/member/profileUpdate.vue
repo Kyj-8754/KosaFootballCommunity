@@ -44,7 +44,7 @@
         <input type="submit" value="변경" class="btn btn-primary" />
         <router-link
           v-if="form.userNo"
-          :to="{ name: 'Member_Profile', query: { userNo: form.userNo } }"
+          :to="{ name: 'Member_Profile' }"
           class="btn btn-outline-secondary"
         >
           취소
@@ -56,12 +56,12 @@
 
 <script setup>
 import { ref, onMounted, inject } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
-const route = useRoute()
 const router = useRouter()
 const token = inject('token')
+const userNo = inject('userNo')
 
 const form = ref({
   userNo: '',
@@ -73,16 +73,14 @@ const form = ref({
 
 // 회원 정보 불러오기
 const fetchMemberDetail = async () => {
-  const userNo = route.query.userNo
-
-  if (!userNo) {
+  if (!userNo?.value) {
     alert('회원 번호가 전달되지 않았습니다.')
     router.push('/')
     return
   }
 
   try {
-    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo}`, {
+    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo.value}`, {
       headers: {
         Authorization: `Bearer ${token.value}`
       }
@@ -108,22 +106,29 @@ onMounted(fetchMemberDetail)
 // 수정 요청
 const onSubmit = async () => {
   try {
-    const res = await axios.post(`/login_api/mypage/profileUpdate?userNo=${form.value.userNo}`, form.value)
-    const result = res.data
+    const res = await axios.post(
+      `/login_api/mypage/profileUpdate?userNo=${form.value.userNo}`,
+      form.value,
+      {
+        headers: {
+          Authorization: `Bearer ${token.value}`
+        }
+      }
+    )
 
+    const result = res.data
     alert(result.res_msg)
 
     if (result.res_code !== '400') {
-      router.push({
-        name: 'Member_Profile',
-        query: { userNo: form.value.userNo }
-      })
+      router.push({ name: 'Member_Profile',
+      query: { userNo: form.value.userNo }  })
     }
   } catch (err) {
     console.error('[회원 정보 수정 중 오류]', err)
     alert('회원 정보 수정 중 오류 발생')
   }
 }
+
 </script>
 
 <style scoped>
