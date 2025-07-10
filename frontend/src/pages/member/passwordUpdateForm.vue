@@ -31,74 +31,12 @@
 </template>
 
 <script setup>
-import { reactive, ref, inject } from 'vue'
-import { useRouter } from 'vue-router'
+import { useUpdatePassword } from '@/utils/script/user.js'
 
-const router = useRouter()
-const token = inject('token')
-const userNo = inject('userNo')
-
-const form = reactive({
-  currentPassword: '',
-  newPassword: '',
-  confirmNewPassword: ''
-})
-
-const passwdMsg = ref('')
-
-// 제출 처리
-const onSubmit = async () => {
-  const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]).{8,}$/
-
-  if (!pwRegex.test(form.newPassword)) {
-    passwdMsg.value = '영문자, 숫자, 특수문자를 포함한 8자 이상이어야 합니다'
-    form.newPassword = ''
-    form.confirmNewPassword = ''
-    return
-  }
-
-  if (form.newPassword !== form.confirmNewPassword) {
-    passwdMsg.value = '비밀번호가 일치하지 않습니다'
-    form.newPassword = ''
-    form.confirmNewPassword = ''
-    return
-  }
-
-  passwdMsg.value = ''
-
-  try {
-    const response = await fetch('/login_api/user/updatePassword', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        Authorization: `Bearer ${token.value}`
-      },
-      body: JSON.stringify({
-        currentPassword: form.currentPassword,
-        newPassword: form.newPassword,
-        userNo: userNo.value
-      })
-    })
-
-    const json = await response.json()
-
-    if (json.res_code === '200') {
-      alert(json.res_msg)
-      router.push({ name: 'Member_MyPage' }) // ✅ query 제거
-    } else {
-      alert(json.res_msg || '비밀번호 변경에 실패했습니다.')
-    }
-  } catch (error) {
-    console.error('비밀번호 변경 중 오류 발생:', error)
-    alert('서버 오류로 비밀번호 변경에 실패했습니다.')
-  }
-}
-
-// 입력 초기화
-const onCancel = () => {
-  form.currentPassword = ''
-  form.newPassword = ''
-  form.confirmNewPassword = ''
-  passwdMsg.value = ''
-}
+const {
+  form,
+  passwdMsg,
+  onSubmit,
+  onCancel
+} = useUpdatePassword()
 </script>
