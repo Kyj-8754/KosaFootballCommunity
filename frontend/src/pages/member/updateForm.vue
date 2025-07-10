@@ -24,11 +24,6 @@
         </select>
       </div>
 
-      <div class="mb-3">
-        <label for="phone" class="form-label">전화번호</label>
-        <input type="text" id="phone" v-model="form.userPhone" maxlength="11" class="form-control" />
-      </div>
-
       <div class="mb-3 d-flex gap-2">
         <div class="flex-grow-1">
           <label for="zipcode" class="form-label">우편번호</label>
@@ -58,127 +53,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
-
-const router = useRouter()
-const token = inject('token')
-const userNo = inject('userNo')
-
-const form = ref({
-  userNo: '',
-  userId: '',
-  userName: '',
-  userBirth: '',
-  userPhone: '',
-  userPostCode: '',
-  userAddr: '',
-  userDetailAddr: '',
-  userGender: ''
-})
-
-let originalData = ref({})
-let isPostcodeLoaded = false
-
-const fetchMemberDetail = async () => {
-  if (!userNo?.value) {
-    alert('로그인이 필요합니다.')
-    router.push('/')
-    return
-  }
-
-  try {
-    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo.value}`, {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    })
-
-    const data = res.data.member
-    originalData.value = data
-
-    form.value = {
-      userNo: data.userNo,
-      userId: data.userId,
-      userName: data.userName,
-      userBirth: formatDate(data.userBirth),
-      userPhone: data.userPhone,
-      userPostCode: data.userPostCode,
-      userAddr: data.userAddr,
-      userDetailAddr: data.userDetailAddr,
-      userGender: data.userGender
-    }
-  } catch (err) {
-    console.error('[회원 정보 조회 실패]', err)
-    alert('회원 정보를 불러오지 못했습니다.')
-    router.push('/')
-  }
-}
-
-const formatDate = (dateStr) => {
-  if (!dateStr) return ''
-  try {
-    const date = new Date(dateStr)
-    return date.toISOString().slice(0, 10)
-  } catch {
-    console.warn('[날짜 파싱 실패]', dateStr)
-    return ''
-  }
-}
-
-const handleFindZipcode = () => {
-  if (!window.daum || !window.daum.Postcode) {
-    alert('우편번호 API가 아직 로딩되지 않았습니다.')
-    return
-  }
-
-  new window.daum.Postcode({
-    oncomplete: (data) => {
-      form.value.userPostCode = data.zonecode
-      form.value.userAddr = data.address
-    }
-  }).open()
-}
-
-onMounted(() => {
-  fetchMemberDetail()
-
-  if (!window.daum?.Postcode && !isPostcodeLoaded) {
-    const script = document.createElement('script')
-    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'
-    script.onload = () => {
-      isPostcodeLoaded = true
-      console.log('✅ 우편번호 스크립트 로드 완료')
-    }
-    script.onerror = () => {
-      console.error('❌ 우편번호 스크립트 로드 실패')
-    }
-    document.body.appendChild(script)
-  }
-})
-
-const onSubmit = async () => {
-  try {
-    const res = await fetch(`/login_api/mypage/update?userNo=${form.value.userNo}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        Authorization: `Bearer ${token.value}`
-      },
-      body: JSON.stringify(form.value)
-    })
-
-    const result = await res.json()
-    alert(result.res_msg)
-    if (result.res_code !== '400') {
-      router.push({ name: 'Member_MyPage' }) // ✅ 쿼리 제거
-    }
-  } catch (err) {
-    console.error('[회원 정보 수정 중 오류]', err)
-    alert('회원 정보 수정 중 오류 발생')
-  }
-}
+import { useUserInfoEdit } from '@/utils/script/user.js'
+const { form, onSubmit, handleFindZipcode } = useUserInfoEdit()
 </script>
 
 <style scoped>

@@ -10,44 +10,6 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
-import axios from 'axios'
-
-const token = inject('token')
-const logout = inject('logout')
-const loginType = inject('loginType')
-const userNo = inject('userNo')
-
-const password = ref('')
-
-const onSubmit = async () => {
-  if (!userNo?.value) {
-    alert('회원 정보가 없습니다.')
-    return
-  }
-
-  const confirmDelete = confirm('정말로 탈퇴하시겠습니까?')
-  if (!confirmDelete) return
-
-  try {
-    const res = await axios.post('/login_api/user/deleteMember', {
-      userNo: userNo.value,
-      password: password.value,
-      loginType: loginType.value
-    }, {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    })
-
-    alert(res.data.res_msg)
-
-    if (res.data.res_code === '200') {
-      logout()
-    }
-  } catch (err) {
-    console.error('회원 탈퇴 오류:', err)
-    alert('회원 탈퇴에 실패했습니다.')
-  }
-}
+import { useDeleteMember } from '@/utils/script/user'
+const { password, onSubmit } = useDeleteMember()
 </script>

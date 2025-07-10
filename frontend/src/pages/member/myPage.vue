@@ -45,35 +45,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import axios from 'axios'
-
-const token = inject('token')
-const route = useRoute()
-const member = ref(null)
-const userNo = inject('userNo')
-const loginType = inject('loginType')
-
-const showPasswordChangeBtn = computed(() => loginType?.value === 'local')
-
-onMounted(async () => {
-  if (!userNo?.value) {
-    console.warn('userNo가 없습니다.')
-    return
-  }
-
-  try {
-    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo.value}`, {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    })
-    member.value = res.data.member
-  } catch (err) {
-    console.error('회원 정보 조회 실패:', err)
-  }
-})
+import { useMemberDetail } from '@/utils/script/user'
+const { member, showPasswordChangeBtn } = useMemberDetail()
 </script>
 
 <style scoped>
