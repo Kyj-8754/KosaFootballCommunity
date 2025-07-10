@@ -72,6 +72,7 @@ const routes = [
   { path: '/club/:teamCode/updateForm', name: 'Club_UpdateForm', component: () => import  ('@/pages/club/updateForm.vue') },
   { path: '/club/:teamCode/applyList', name: 'Club_ApplyList', component: () => import  ('@/pages/club/applyList.vue') },
   { path: '/club/:teamCode/memberList', name: 'Club_MemberList', component: () => import  ('@/pages/club/memberList.vue') },
+  { path: '/club/clubMatchList', name: 'Club_MatchList', component: () => import  ('@/pages/club/clubMatchList.vue') },
 
   // 모집글 관련
   { path: '/recruitBoard', name: 'Recruit_List', component: () => import ('@/pages/recruitBoard/list.vue')},
