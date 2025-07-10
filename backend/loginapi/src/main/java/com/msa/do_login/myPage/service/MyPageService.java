@@ -1,14 +1,15 @@
 package com.msa.do_login.myPage.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import com.msa.do_login.webSocket.WebSocket;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.msa.do_login.myPage.dao.MyPageDAO;
 import com.msa.do_login.myPage.dto.FriendDTO;
+import com.msa.do_login.myPage.dto.MyClubInfoDTO;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
@@ -131,6 +132,14 @@ public class MyPageService {
 	
 	public UserStat getStatName(int statCode) {
 		return myPageDAO.getStatName(statCode);
+	}
+	
+	public List<MyClubInfoDTO> getClubList(int userNo){
+	    List<MyClubInfoDTO> clubList = myPageDAO.getClubList(userNo);
+	    if (clubList == null) {
+	        clubList = Collections.emptyList();
+	    }
+	    return clubList;
 	}
 	
 }

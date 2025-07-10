@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.msa.do_login.myPage.dao.MyPageDAO;
 import com.msa.do_login.myPage.dto.FriendDTO;
+import com.msa.do_login.myPage.dto.MyClubInfoDTO;
 import com.msa.do_login.myPage.service.MyPageService;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
 import com.msa.do_login.webSocket.WebSocket;
-import com.msa.do_login.myPage.dao.MyPageDAO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,11 @@ public class MyPageController {
 	    response.put("res_code", "200");
 	    response.put("res_msg", "회원 정보 조회 성공");
 	    response.put("member", userInfo);
-
+	    
+	    List<MyClubInfoDTO> myClubList = myPageService.getClubList(userNo);
+	    log.info("팀 목록  = {}", myClubList);
+	    response.put("myClubList", myClubList);
+	    
 	    // 스타일 이름과 능력 이름은 null이 아닐 경우에만 추가
 	    if (userInfo.getStyleCode() != null) {
 	        UserStyle userStyle = myPageService.getStyleName(userInfo.getStyleCode());
