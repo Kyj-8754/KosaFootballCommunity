@@ -12,6 +12,14 @@
           · {{ stat.statName }}
         </span>
       </p>
+      <p class="user-info" v-if="myClubList.length">
+        <template v-for="(club, index) in myClubList" :key="club.clubId">
+          <router-link :to="`/club/${club.teamCode}`" class="btn btn-link p-0 m-0">
+            {{ club.clubName }}
+          </router-link>
+          <span v-if="index < myClubList.length - 1"> · </span>
+        </template>
+      </p>
       <div class="button-group">
         <button v-if="canGrantManager" class="btn btn-success"@click="grantManager">매니저 권한 부여</button>
         <button v-if="canRevokeManager" class="btn btn-danger"@click="revokeManager">매니저 권한 해제</button>
@@ -57,11 +65,6 @@
         <p>옐로 카드 <span class="card-count">0</span></p>
         <p>레드 카드 <span class="card-count">0</span></p>
       </div>
-
-      <div class="praise-section">
-        <h3>👏 칭찬해요</h3>
-        <p class="no-praise">칭찬 내역이 없어요</p>
-      </div>
     </div>
   </div>
 </template>
@@ -80,6 +83,7 @@ const member = ref(null)
 const style = ref(null)
 const stat = ref(null)
 const friends = ref([])
+const myClubList = ref([])
 
 const isMyProfile = computed(() => {
   return member.value?.userNo === loginUserNo.value
@@ -131,6 +135,7 @@ const fetchMemberDetail = async () => {
       }
     })
     member.value = res.data.member
+    myClubList.value = res.data.myClubList || []
     style.value = res.data.userStyle
     stat.value = res.data.userStat
   } catch (err) {
@@ -206,6 +211,7 @@ onMounted(async () => {
   console.log('👥 같음?', loginUserNo.value === member.value?.userNo)
   console.log('🔐 authCode:', authCode?.value)
   console.log('👤 member:', member.value?.authCode)
+  console.log('👤 team:', myClubList.value)
   await loadFriendList()
 })
 </script>
