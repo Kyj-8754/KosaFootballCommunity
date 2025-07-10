@@ -322,5 +322,25 @@
 	    FROM payment
 	    WHERE payment_id = #{payment_id}
 	</select>
+	
+	<!-- 최근 완료된 과거 매치 5개 조회 -->
+	<select id="selectRecentCompletedMatches" resultType="com.msa.kyj_prj.match.Match">
+	  SELECT
+	    match_id,
+	    match_title,
+	    match_created_at,
+	    match_date,
+	    SVCID,
+	    match_closed,
+	    gender_condition,
+	    match_status,
+	    match_board_status,
+	    match_code
+	  FROM `match`
+	  WHERE match_status = 'completed'
+	    AND match_date &lt; NOW()
+	  ORDER BY match_date DESC
+	  LIMIT 5
+	</select>
 
 </mapper>

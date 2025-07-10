@@ -216,4 +216,10 @@ public class MatchController {
                                  .body("서버 오류: " + e.getMessage());
         }
     }
+    
+    @GetMapping("/recent-completed")
+    public ResponseEntity<List<Match>> getRecentCompletedMatches() {
+        List<Match> matches = matchService.getRecentCompletedMatches();
+        return ResponseEntity.ok(matches);
+    }
 }

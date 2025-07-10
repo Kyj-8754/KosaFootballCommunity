@@ -20,6 +20,7 @@
         <weatherWidget/>
         <BoardCategoryTabs />
         <RecentMatchList />
+        <OldMatchList />
 				<div>
             <p>현재 시간: {{ serverTime }}</p>
         </div>
@@ -78,6 +79,7 @@ const router = useRouter()
 import weatherWidget from '@/components/widget/weatherWidget.vue'
 import BoardCategoryTabs from '@/components/main/BoardCategoryTabs.vue'
 import RecentMatchList from '@/components/main/RecentMatchList.vue'
+import OldMatchList from '@/components/main/OldMatchList.vue'
 
 const serverTime = ref('')
 
