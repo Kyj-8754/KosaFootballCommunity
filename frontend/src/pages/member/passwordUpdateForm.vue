@@ -48,20 +48,19 @@ const passwdMsg = ref('')
 
 // 제출 처리
 const onSubmit = async () => {
-  console.log(userNo)
   const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]).{8,}$/
 
-  if (!pwRegex.test(form.value.newPassword)) {
+  if (!pwRegex.test(form.newPassword)) {
     passwdMsg.value = '영문자, 숫자, 특수문자를 포함한 8자 이상이어야 합니다'
-    form.value.newPassword = ''
-    form.value.confirmNewPassword = ''
+    form.newPassword = ''
+    form.confirmNewPassword = ''
     return
   }
 
-  if (form.value.newPassword !== form.value.confirmNewPassword) {
+  if (form.newPassword !== form.confirmNewPassword) {
     passwdMsg.value = '비밀번호가 일치하지 않습니다'
-    form.value.newPassword = ''
-    form.value.confirmNewPassword = ''
+    form.newPassword = ''
+    form.confirmNewPassword = ''
     return
   }
 
@@ -75,9 +74,9 @@ const onSubmit = async () => {
         Authorization: `Bearer ${token.value}`
       },
       body: JSON.stringify({
-        currentPassword: form.value.currentPassword,
-        newPassword: form.value.newPassword,
-        userNo : userNo.value
+        currentPassword: form.currentPassword,
+        newPassword: form.newPassword,
+        userNo: userNo.value
       })
     })
 
@@ -85,7 +84,7 @@ const onSubmit = async () => {
 
     if (json.res_code === '200') {
       alert(json.res_msg)
-      router.push({ name: 'Member_MyPage', query: { userNo: userNo.value } })
+      router.push({ name: 'Member_MyPage' }) // ✅ query 제거
     } else {
       alert(json.res_msg || '비밀번호 변경에 실패했습니다.')
     }

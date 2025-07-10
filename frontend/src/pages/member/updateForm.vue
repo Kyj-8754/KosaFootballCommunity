@@ -14,14 +14,16 @@
         <label for="birth" class="form-label">생년월일</label>
         <input type="date" id="birth" v-model="form.userBirth" required class="form-control" />
       </div>
-			<div class="mb-3">
-				<label class="form-label">성별</label>
-				<select v-model="form.userGender" class="form-select" required>
-					<option value="" disabled>성별을 선택해주세요</option>
-					<option value="M">남성</option>
-					<option value="F">여성</option>
-				</select>
-			</div>
+
+      <div class="mb-3">
+        <label class="form-label">성별</label>
+        <select v-model="form.userGender" class="form-select" required>
+          <option value="" disabled>성별을 선택해주세요</option>
+          <option value="M">남성</option>
+          <option value="F">여성</option>
+        </select>
+      </div>
+
       <div class="mb-3">
         <label for="phone" class="form-label">전화번호</label>
         <input type="text" id="phone" v-model="form.userPhone" maxlength="11" class="form-control" />
@@ -49,19 +51,20 @@
 
       <div class="link-area">
         <input type="submit" value="변경" class="btn btn-primary" />
-        <router-link :to="{ name: 'Member_MyPage', query: { userNo: userNo } }" class="btn btn-outline-secondary">취소</router-link>
+        <router-link :to="{ name: 'Member_MyPage' }" class="btn btn-outline-secondary">취소</router-link>
       </div>
     </form>
   </div>
 </template>
+
 <script setup>
 import { ref, onMounted, inject } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
-const route = useRoute()
 const router = useRouter()
 const token = inject('token')
+const userNo = inject('userNo')
 
 const form = ref({
   userNo: '',
@@ -79,25 +82,21 @@ let originalData = ref({})
 let isPostcodeLoaded = false
 
 const fetchMemberDetail = async () => {
-  const userNo = route.query.userNo
-  console.log('[fetchMemberDetail] userNo:', userNo)
-
-  if (!userNo) {
-    alert('회원 번호가 전달되지 않았습니다.')
+  if (!userNo?.value) {
+    alert('로그인이 필요합니다.')
     router.push('/')
     return
   }
 
   try {
-    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo}`, {
+    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo.value}`, {
       headers: {
         Authorization: `Bearer ${token.value}`
       }
     })
 
     const data = res.data.member
-    // 전체 원본 저장
-    originalData.value = data 
+    originalData.value = data
 
     form.value = {
       userNo: data.userNo,
@@ -160,13 +159,12 @@ onMounted(() => {
 })
 
 const onSubmit = async () => {
-
   try {
     const res = await fetch(`/login_api/mypage/update?userNo=${form.value.userNo}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
-				Authorization: `Bearer ${token.value}`
+        Authorization: `Bearer ${token.value}`
       },
       body: JSON.stringify(form.value)
     })
@@ -174,10 +172,7 @@ const onSubmit = async () => {
     const result = await res.json()
     alert(result.res_msg)
     if (result.res_code !== '400') {
-      router.push({
-				name: 'Member_MyPage',
-				query: { userNo: form.value.userNo }
-			})
+      router.push({ name: 'Member_MyPage' }) // ✅ 쿼리 제거
     }
   } catch (err) {
     console.error('[회원 정보 수정 중 오류]', err)
