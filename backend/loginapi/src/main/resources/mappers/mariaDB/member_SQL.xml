@@ -87,7 +87,6 @@
 		UPDATE local_account
 		SET user_pwd = #{encodedNewPwd}
 		WHERE user_no = #{userNo}
-		AND user_exit_status='N'
 	</update>
 	
 	<!-- user_name과 user_phone으로 UserVO 조회 -->
