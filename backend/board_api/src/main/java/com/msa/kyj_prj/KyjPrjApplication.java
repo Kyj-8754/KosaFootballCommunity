@@ -10,11 +10,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan(basePackages = "com.msa") 
 @MapperScan("com.msa")
 @EnableScheduling
-
 public class KyjPrjApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(KyjPrjApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(KyjPrjApplication.class, args);
+    }
 }

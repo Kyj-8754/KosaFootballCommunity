@@ -70,6 +70,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['back', 'complete'])
 
+const token = inject('token')
 const userNo = inject('userNo')
 const user = ref({})
 const stadium = ref({})
@@ -109,7 +110,10 @@ defineExpose({
 onMounted(async () => {
   // 유저 정보
   const userRes = await axios.get('/login_api/mypage/detailView', {
-    params: { userNo: userNo.value }
+    params: { userNo: userNo.value },
+    headers: {
+      Authorization: `Bearer ${token.value}`
+      }
   })
   user.value = userRes.data.member
   reservation.value.user_no = userNo.value

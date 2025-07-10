@@ -48,9 +48,6 @@ import { ref, inject, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 
-// ✅ [추가] Pinia userStore import
-import { useUserStore } from '@/stores/userStore'
-const userStore = useUserStore()
 
 const userId = ref('')
 const userPwd = ref('')

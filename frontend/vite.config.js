@@ -73,30 +73,30 @@ export default defineConfig({
       rewrite: (path) => path.replace(/^\/security_api/, ""),
     },
 
-      // // 작업중
+      
       // club_api
       '/club_api': {
         target: 'http://localhost:8121',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/club_api/, "/club"),
       },
+      '/club_info': {
+        target: 'http://localhost:8121',
+        changeOrigin: true,
+      },
 
-
-      // 🟡 recruit_api (포트 8085)
       '/recruits_api': {
         target: 'http://localhost:8122',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/recruits_api/, "/recruits"),
       },
 
-      // 🟢 alarm_api (포트 8086)
       '/alarm_api': {
         target: 'http://localhost:8120',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/alarm_api/, "/alarm"),
       },
 
-      // 선택: WebSocket 서버용 경로 프록시
       '/ws': {
         target: 'http://localhost:8120',
         ws: true,

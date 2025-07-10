@@ -42,9 +42,11 @@ const routes = [
 
   // 클럽 관련
   { path: '/club', name: 'Club_List', component: () => import ('@/pages/club/list.vue') },
-  { path: '/club/registForm', name: 'Club_RegistForm', component: () => import ('@/pages/club/registForm.vue') },
-  { path: '/club/:teamCode', name: 'Club_DetailView', component: () => import ('@/pages/club/detailView.vue') },
-  { path: '/club/:teamCode/updateForm', name: 'Club_UpdateForm', component: ()=>import ('@/pages/club/updateForm.vue') },
+  { path: '/club/registForm', name: 'Club_RegistForm', component: () => import  ('@/pages/club/registForm.vue') },
+  { path: '/club/:teamCode', name: 'Club_DetailView', component: () => import  ('@/pages/club/detailView.vue') },
+  { path: '/club/:teamCode/updateForm', name: 'Club_UpdateForm', component: () => import  ('@/pages/club/updateForm.vue') },
+  { path: '/club/:teamCode/applyList', name: 'Club_ApplyList', component: () => import  ('@/pages/club/applyList.vue') },
+  { path: '/club/:teamCode/memberList', name: 'Club_MemberList', component: () => import  ('@/pages/club/memberList.vue') },
 
   // 모집글 관련
   { path: '/recruitBoard', name: 'Recruit_List', component: () => import ('@/pages/recruitBoard/list.vue')},
@@ -57,6 +59,9 @@ const routes = [
     { path:'/match/matchdetail/:id', name: 'matchDetail', component: () => import ('@/pages/board/match/matchDetail.vue')},
     { path:'/match/matchlog/:id', name: 'matchLog', component: () => import ('@/pages/board/match/matchLog.vue')},
     { path:'/match/matchregisterform', name: 'matchregister', component: () => import ('@/pages/board/match/matchRegisterForm.vue')},
+
+  // 웹소켓 관련 알림 리스트
+
 
   // 404 Not Found
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import ('@/pages/NotFound.vue')}

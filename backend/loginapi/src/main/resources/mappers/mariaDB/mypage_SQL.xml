@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  "mybatis-3-mapper.dtd">
 <mapper namespace="com.msa.do_login.myPage.dao.MyPageDAO">
 	<!-- 회원 번호로 회원 정보 불러오기 -->
 	<select id="getUserVO" parameterType="int" resultType="com.msa.do_login.user.vo.UserVO">
@@ -161,4 +160,13 @@
 		WHERE (from_user_no = #{targetUserNo} AND to_user_no = #{loginUserNo})
         OR (from_user_no = #{loginUserNo} AND to_user_no = #{targetUserNo})
 	</select>
+	
+	
+	<!-- user no 로  user name 찾기 -->
+	<select id="findUserNameByUserNo" parameterType="int" resultType="string">
+    SELECT user_name FROM user WHERE user_no = #{user_no}
+	</select>
+
+
+	
 </mapper>
