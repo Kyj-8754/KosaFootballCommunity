@@ -36,6 +36,8 @@
           </tr>
         </tbody>
       </table>
+          <!-- 안내 문구 -->
+    <div class="update-info">※ 단기예보는 매일 0시/12시 갱신됩니다.</div>
     </div>
   </div>
 </template>
@@ -97,5 +99,12 @@ function ptyText(code) {
 
 .toggle-button:hover {
   background-color: #e5e7eb; /* hover:bg-gray-100 */
+}
+
+.update-info {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+  text-align: left;
 }
 </style>
