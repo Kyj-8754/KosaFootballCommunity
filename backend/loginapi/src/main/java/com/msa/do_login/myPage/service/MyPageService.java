@@ -36,7 +36,6 @@ public class MyPageService {
 		}
 		memberDB.setUserName(member.getUserName());
 	    memberDB.setUserBirth(member.getUserBirth());
-	    memberDB.setUserPhone(member.getUserPhone());
 	    memberDB.setUserPostCode(member.getUserPostCode());
 	    memberDB.setUserAddr(member.getUserAddr());
 	    memberDB.setUserDetailAddr(member.getUserDetailAddr());
