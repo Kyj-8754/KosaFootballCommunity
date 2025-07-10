@@ -85,17 +85,20 @@ const handleCategorySelect = (category) => {
 const fetchPosts = async () => {
   try {
     const isRecruitBoard = searchFilters.value.category === '모집게시판'
+    const isA1orA2 = authCode.value === 'ROLE_A1' || authCode.value === 'ROLE_A2'
 
     let response
 
     if (isRecruitBoard) {
-      response = await axios.get('/board_api/board/recruitlist', {
-        params: {
-          userNo: userNo.value, // ✅ 로그인 사용자 번호
-          keyword: searchFilters.value.keyword || '',
-          sortDirection: sortOptions.value.direction || 'desc'
-        }
-      })
+      const params = {
+        keyword: searchFilters.value.keyword || '',
+        sortDirection: sortOptions.value.direction || 'desc'
+      }
+
+      // ✅ ROLE_A1 또는 ROLE_A2가 아니면 userNo 추가
+      params.userNo = isA1orA2 ? '' : userNo.value
+
+      response = await axios.get('/board_api/board/recruitlist', { params })
     } else {
       response = await axios.get('/board_api/board/list', {
         params: {

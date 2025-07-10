@@ -79,7 +79,7 @@ public class BoardService {
         }
     }
     
-    public List<Board> findRecruitBoards(int userNo, String keyword, String sortDirection) {
+    public List<Board> findRecruitBoards(Integer userNo, String keyword, String sortDirection) {
         return boardDAO.findRecruitBoards(userNo, keyword, sortDirection);
     }
 }

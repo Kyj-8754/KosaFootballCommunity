@@ -99,7 +99,7 @@ public class BoardController {
     
     @GetMapping("/recruitlist")
     public ResponseEntity<?> getRecruitBoards(
-        @RequestParam int userNo,
+        @RequestParam(required = false) Integer userNo,
         @RequestParam(required = false) String keyword,
         @RequestParam(defaultValue = "desc") String sortDirection
     ) {
