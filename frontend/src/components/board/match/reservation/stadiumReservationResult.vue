@@ -68,7 +68,14 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const props = defineProps({
-  reservationId: { type: String, required: true }
+  reservationId: {
+    type: [String, Number],
+    required: true
+  },
+  boardId: {
+    type: [String, Number],
+    required: true
+  }
 })
 
 const user = ref({})
@@ -77,8 +84,9 @@ const reservation = ref({})
 const isPaid = ref(false);
 const authCode = inject('authCode');
 const userNo = inject('userNo');
+const token = inject('token')
 
-onMounted(async () => {
+const loadReservationData = async () => {
   try {
     const res = await axios.post('/reservation_api/reservation/reservation_confirm', {
       reservation_id: props.reservationId
@@ -94,7 +102,10 @@ onMounted(async () => {
 
     const [userRes, stadiumRes, paidRes] = await Promise.all([
       axios.get('/login_api/mypage/detailView', {
-        params: { userNo: user_no }
+        params: { userNo: user_no },
+          headers: {
+           Authorization: `Bearer ${token.value}`
+          }
       }),
       axios.get('/stadium_api/stadium/detailView', {
         params: { SVCID: svcid }
@@ -111,6 +122,10 @@ onMounted(async () => {
   } catch (err) {
     console.error('예약 확인 실패:', err);
   }
+};
+
+onMounted(async () => {
+  await loadReservationData();
 });
 
 const requestPayment = async () => {
@@ -159,6 +174,14 @@ const openCenteredPopup = (url, title, w, h) => {
   );
 
   if (popup?.focus) popup.focus();
+
+  // ✅ 팝업이 닫히면 loadReservationData() 실행
+  const checkClosed = setInterval(() => {
+    if (popup.closed) {
+      clearInterval(checkClosed);
+      loadReservationData(); // 💡 무조건 상태 새로고침
+    }
+  }, 500);
 };
 
 const goToMatchRegister = () => {
@@ -170,7 +193,8 @@ const goToMatchRegister = () => {
       slot_date: reservation.value.slot_date,
       start_time: reservation.value.start_time,
       reservation_type: reservation.value.reservation_type,
-      reservation_id: reservation.value.reservation_id
+      reservation_id: reservation.value.reservation_id,
+      board_id: props.boardId
     }
   });
 };

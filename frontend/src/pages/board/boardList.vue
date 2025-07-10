@@ -41,6 +41,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const router = useRouter()
+const authCode = inject('authCode')
 
 const posts = ref([])
 const currentPage = ref(1)

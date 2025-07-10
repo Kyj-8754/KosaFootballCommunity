@@ -3,6 +3,7 @@ package com.msa.do_login.myPage.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.msa.do_login.webSocket.WebSocket;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.msa.do_login.myPage.dto.FriendDTO;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
+import com.msa.do_login.webSocket.WebSocket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MyPageService {
 	private final MyPageDAO myPageDAO;
 	private final PasswordEncoder passwordEncoder;
+	private final WebSocket websocket;
 	
 	public UserVO getUserVO(int userNo) {
 		return myPageDAO.getUserVO(userNo);

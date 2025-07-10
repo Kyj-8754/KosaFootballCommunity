@@ -11,12 +11,10 @@
       </tr>
     </thead>
     <tbody>
-      <!-- 데이터가 없을 경우 안내 메시지 -->
       <tr v-if="logs.length === 0">
-        <td colspan="6">등록된 로그가 없습니다.</td>
+        <td colspan="6" class="empty-row">등록된 로그가 없습니다.</td>
       </tr>
 
-      <!-- 데이터가 있는 경우 -->
       <tr v-else v-for="(log, index) in logs" :key="log.log_id">
         <template v-if="editingIndex === index">
           <td>{{ formatDateTime(log.log_created_at) }}</td>
@@ -39,9 +37,9 @@
               :max="isScoreLog ? 10 : null"
             />
           </td>
-          <td>
-            <button @click="saveEdit(index)">저장</button>
-            <button @click="cancelEdit">취소</button>
+          <td class="action-buttons">
+            <button class="btn btn-save" @click="saveEdit(index)">저장</button>
+            <button class="btn btn-cancel" @click="cancelEdit">취소</button>
           </td>
         </template>
 
@@ -51,9 +49,9 @@
           <td>{{ log.user_name }}</td>
           <td>{{ log.log_type }}</td>
           <td>{{ log.log_memo }}</td>
-          <td>
-            <button @click="startEdit(index)">수정</button>
-            <button @click="$emit('delete', index)">삭제</button>
+          <td class="action-buttons">
+            <button class="btn btn-edit" @click="startEdit(index)">수정</button>
+            <button class="btn btn-delete" @click="$emit('delete', index)">삭제</button>
           </td>
         </template>
       </tr>
@@ -121,7 +119,6 @@ const formatDateTime = (isoString) => {
   return isoString.replace('T', ' ')
 }
 
-// logCode에 따라 숫자 점수 입력 제한
 const isScoreLog = computed(() =>
   editForm.value.logCode === '실력 점수' || editForm.value.logCode === '매너 점수'
 )
@@ -133,25 +130,72 @@ const isScoreLog = computed(() =>
   border-collapse: collapse;
   margin-top: 16px;
   font-size: 14px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
 }
 .log-table th,
 .log-table td {
-  border: 1px solid #ccc;
-  padding: 8px;
+  border: 1px solid #e0e0e0;
+  padding: 10px;
   text-align: center;
 }
 .log-table th {
-  background-color: #f2f2f2;
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+.empty-row {
+  color: #888;
+  padding: 20px 0;
+  text-align: center;
 }
 .memo-input {
   width: 100%;
-  padding: 4px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   font-size: 13px;
 }
-button {
-  margin: 0 2px;
-  padding: 4px 8px;
-  font-size: 12px;
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+.btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-edit {
+  background-color: #1976d2;
+  color: #fff;
+}
+.btn-edit:hover {
+  background-color: #1565c0;
+}
+.btn-delete {
+  background-color: #e53935;
+  color: #fff;
+}
+.btn-delete:hover {
+  background-color: #c62828;
+}
+.btn-save {
+  background-color: #388e3c;
+  color: #fff;
+}
+.btn-save:hover {
+  background-color: #2e7d32;
+}
+.btn-cancel {
+  background-color: #9e9e9e;
+  color: #fff;
+}
+.btn-cancel:hover {
+  background-color: #757575;
 }
 </style>

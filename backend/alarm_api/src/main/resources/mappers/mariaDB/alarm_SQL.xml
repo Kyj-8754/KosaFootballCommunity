@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "mybatis-3-mapper.dtd">
+  
+  <mapper namespace="com.msa.kyj_prj.alarm.dao.AlarmDAO">
+
+  <!-- 1. 알림 저장 -->
+  <insert id="insertAlarm" parameterType="com.msa.kyj_prj.alarm.dto.Alarm">
+    INSERT INTO tbl_alarm
+      (receiver_id, sender_id, type, message, url)
+    VALUES
+      (#{receiver_id}, #{sender_id}, #{type}, #{message}, #{url})
+  </insert>
+
+  <!-- 2. 알림 리스트 조회 (이름 조인, 최신순, 페이징) -->
+  <select id="selectAlarmList" resultType="com.msa.kyj_prj.alarm.dto.Alarm">
+    SELECT
+      a.alarm_id,
+      a.receiver_id,
+      a.sender_id,
+      a.type,
+      a.message,
+      a.url,
+      a.read_yn,
+      a.created_at,
+      ru.user_name AS receiver_name,
+      su.user_name AS sender_name
+    FROM tbl_alarm a
+      JOIN user ru ON a.receiver_id = ru.user_no
+      LEFT JOIN user su ON a.sender_id = su.user_no
+    WHERE a.receiver_id = #{receiver_id}
+    ORDER BY a.created_at DESC
+    LIMIT #{pageStart}, #{pageSize}
+  </select>
+
+  <!-- 3. 알림 전체 개수 -->
+  <select id="countAlarm" resultType="int">
+    SELECT COUNT(*) FROM tbl_alarm WHERE receiver_id = #{receiver_id}
+  </select>
+
+  <!-- 4. 단일 알림 읽음 처리 -->
+  <update id="updateAlarmRead">
+    UPDATE tbl_alarm SET read_yn = 'Y' WHERE alarm_id = #{alarm_id}
+  </update>
+
+  <!-- 5. 전체 알림 읽음 처리 -->
+  <update id="updateAllAlarmRead">
+    UPDATE tbl_alarm SET read_yn = 'Y' WHERE receiver_id = #{receiver_id}
+  </update>
+
+  <!-- 6. 단일 알림 삭제 -->
+  <delete id="deleteAlarm">
+    DELETE FROM tbl_alarm WHERE alarm_id = #{alarm_id}
+  </delete>
+
+  <!-- 7. 전체 알림 삭제 -->
+  <delete id="deleteAllAlarm">
+    DELETE FROM tbl_alarm WHERE receiver_id = #{receiver_id}
+  </delete>
+
+</mapper>

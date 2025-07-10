@@ -42,7 +42,11 @@
         </div>
 
         <div v-else-if="activeTab === 'reservation'">
-          <ReservationConfirm :reservationId="reservationId" class="mt-3" />
+          <ReservationConfirm
+            :reservationId="reservationId"
+            :boardId="post.board_id"
+            class="mt-3"
+          />
         </div>
       </div>
 
@@ -133,6 +137,15 @@ const fetchReservationId = async () => {
 const fetchPost = async () => {
   try {
     const response = await axios.get(`/board_api/board/${postId}`)
+    const postData = response.data
+    
+    // ✅ board_status가 deleted이면 접근 차단
+    if (postData.board_status === 'deleted') {
+      alert('삭제된 게시글입니다.')
+      router.push({ name: 'boardList' })
+      return
+    }
+
     post.value = response.data
   } catch (error) {
     console.error('게시글 조회 실패:', error)

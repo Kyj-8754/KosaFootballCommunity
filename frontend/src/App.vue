@@ -14,8 +14,8 @@
     <AlarmToast /> <!-- 🔔 알림 토스트 전역 표시 -->
 
     <Footer />
+    <scrollUp />
   </div>
-  <scrollUp />
 </template>
 
 <script setup>
@@ -45,7 +45,14 @@ const setToken = (newToken) => {
 }
 injectSetToken(setToken)
 
-// JWT Payload 디코딩 함수
+onMounted(() => {
+  const savedToken = localStorage.getItem('accessToken')
+  if (savedToken) {
+    token.value = savedToken
+  }
+})
+
+// ✅ JWT Payload 디코딩 함수
 const decodeJwtPayload = (tokenStr) => {
   try {
     const base64Payload = tokenStr.split('.')[1]

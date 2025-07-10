@@ -1,10 +1,11 @@
 package com.msa.kyj_prj.match;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
 public interface MatchDAO {
@@ -48,8 +49,13 @@ public interface MatchDAO {
     // match_id 기준으로 match_status 값 수정 (Map 기반)
     int updateMatchStatus(Map<String, Object> param);
 
-	// 매치 목록 검색
+	// 매치 목록 검색 이거 주석 풀어야함
     List<Match> selectAllMatches(Map<String, Object> params);
+
+    // 임시 추가
+    @Select("SELECT user_name FROM user WHERE user_no = #{userNo}")
+    String findUserNameByUserNo(@Param("userNo") Integer userNo); // ✅ 바인딩 이름 지정
+
     
     // 연동된 예약 id 찾기
     Long getReservationIdByBoardId(@Param("board_id") Long boardId);
