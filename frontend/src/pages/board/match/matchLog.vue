@@ -129,8 +129,41 @@ const updateLog = async ({ index, team, member, logCode, memo }) => {
   }
 }
 
+const validateLogInput = () => {
+  const logType = selectedLogCode.value
+  const requiresMember = [
+    '출석', '결석', '지각', '조퇴', '골', '어시스트', '자책골', '파울',
+    '옐로 카드', '레드 카드', '스마일 카드', '선방', '코너 킥', '패널티 킥',
+    '실력 점수', '매너 점수', 'POM'
+  ]
+  const requiresTeam = ['경기 참가', '승리', '패배', '무승부']
+  const forbidsBoth = ['경기 시작', '경기 종료', '경기 중단', '경기 재개']
+
+  if (requiresMember.includes(logType) && !selectedMember.value) {
+    alert(`${logType} 항목은 반드시 멤버를 선택해야 합니다.`)
+    return false
+  }
+
+  if (requiresTeam.includes(logType) && !selectedTeam.value) {
+    alert(`${logType} 항목은 반드시 팀을 선택해야 합니다.`)
+    return false
+  }
+
+  if (forbidsBoth.includes(logType)) {
+    if (selectedTeam.value || selectedMember.value) {
+      alert(`${logType} 항목은 팀/멤버를 선택하면 안 됩니다.`)
+      return false
+    }
+  }
+
+  return true
+}
+
 const submitLog = async () => {
   // 숫자 제한 검사
+
+  if (!validateLogInput()) return
+
   if (isScoreLog.value) {
     const score = Number(memo.value)
     if (isNaN(score) || score < 0 || score > 10) {
