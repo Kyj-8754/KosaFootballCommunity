@@ -59,13 +59,13 @@
 	
 	<update id="update">
 		update stadium set 
-			  SVCNM = #{SVCNM},
-    PLACENM = #{PLACENM},
-    TELNO = #{TELNO},
-    V_MIN = #{V_MIN},
-    V_MAX = #{V_MAX},
-    NOTICE = #{NOTICE},
-    ADRES = #{ADRES}
+		  	SVCNM = #{SVCNM},
+		    PLACENM = #{PLACENM},
+		    TELNO = #{TELNO},
+		    V_MIN = #{V_MIN},
+		    V_MAX = #{V_MAX},
+		    NOTICE = #{NOTICE},
+		    ADRES = #{ADRES}
 		where SVCID = #{SVCID}
 	</update>
 	
@@ -75,7 +75,7 @@
 	</select>
 	
 	<insert id="regist">
-		insert into STADIUM (
+		insert into stadium (
 			SVCID, 
 			SVCNM, 
 			PLACENM,
@@ -113,7 +113,7 @@
 	</insert>
 	
 	<insert id="registPatch">
-		insert into STADIUM_PATCH (
+		insert into stadium_patch (
 			SVCID, 
 			SVCNM, 
 			PLACENM,
