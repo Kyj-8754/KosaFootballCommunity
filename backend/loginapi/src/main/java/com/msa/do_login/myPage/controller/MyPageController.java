@@ -20,12 +20,11 @@ import com.msa.do_login.myPage.service.MyPageService;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
-import com.msa.do_login.webSocket.WebSocket; // ✅ 반드시 추가!
+import com.msa.do_login.webSocket.WebSocket;
 import com.msa.do_login.myPage.dao.MyPageDAO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 
 @RestController
 @Slf4j
@@ -160,12 +159,9 @@ public class MyPageController {
 	public ResponseEntity<Map<String, Object>> requestFriend(@RequestBody Map<String, Object> requestBody) {
 	    Map<String, Object> response = new HashMap<>();
 	    
-	    //
-	    
 	    String senderId = String.valueOf(requestBody.get("requesterNo"));
 	//    String senderUserName = (String) requestBody.get("requesterName");
 	    String receiverId = String.valueOf(requestBody.get("requestedNo"));
-
 
 	    // userNo 추출
 	    // 친구 요청 보내는 사람 userno
@@ -174,21 +170,15 @@ public class MyPageController {
 	    Integer requestedNo = (Integer) requestBody.get("requestedNo");
 	    log.info("친구 요청자 정보 도착: requesterNo = {}", requesterNo);
 	    log.info("친구 요청받는 사람 정보 도착: requestedNo = {}", requestedNo);
-	    
-	   
-
+	 
 	    if (requesterNo == null || requestedNo == null) {
 	        response.put("res_code", "400");
 	        response.put("res_msg", "요청 정보가 부족합니다.");
 	        return ResponseEntity.badRequest().body(response);
 	    }
-
 	    String senderUserName = myPageDAO.findUserNameByUserNo(requesterNo);
-	    // 서비스에서 처리 (예: 친구 요청 테이블에 insert 등)
-	    boolean success = myPageService.requestFriend(requesterNo, requestedNo);  // 서비스에 맞게 수정
-
+	    boolean success = myPageService.requestFriend(requesterNo, requestedNo);
 	    if (success) {
-	    	// 여기에 알림 전송 코드를 만든다 
 	    	websocket.sendFriendRequestAlarm(
 	    		    "FRIEND_REQUEST",
 	    		    senderId,
@@ -196,7 +186,6 @@ public class MyPageController {
 	    		    receiverId
 	    		);
 
-	    	
 	        response.put("res_code", "200");
 	        response.put("res_msg", "친구 요청이 완료되었습니다.");
 	        return ResponseEntity.ok(response);

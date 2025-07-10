@@ -45,7 +45,6 @@
 	UPDATE user
 	SET user_name = #{userName},
 		user_birth = #{userBirth},
-		user_phone = #{userPhone},
 		user_post_code = #{userPostCode},
 		user_addr = #{userAddr},
 		user_detail_addr = #{userDetailAddr},
@@ -107,6 +106,7 @@
 		JOIN user u ON r.from_user_no = u.user_no
 		WHERE to_user_no = #{userNo}
 		AND r.relation_status = 'WAIT'
+		AND u.user_exit_status = 'N'
 	</select>
 	
 	<!-- 친구 수락 요청 처리 로직 -->
@@ -128,15 +128,16 @@
 	
 	<!-- 친구 목록 가져오기 -->
 	<select id="getFriendList" parameterType="int" resultType="com.msa.do_login.user.vo.UserVO">
-	    SELECT u.*
-	    FROM user_relation r
-	    JOIN user u
-	      ON (
-	        (r.from_user_no = #{userNo} AND u.user_no = r.to_user_no)
-	        OR
-	        (r.to_user_no = #{userNo} AND u.user_no = r.from_user_no)
-	      )
-	    WHERE r.relation_status = 'ACCEPTED'
+		SELECT u.*
+		FROM user_relation r
+		JOIN user u
+			ON (
+				(r.from_user_no = #{userNo} AND u.user_no = r.to_user_no)
+				OR
+				(r.to_user_no = #{userNo} AND u.user_no = r.from_user_no)
+			)
+		WHERE r.relation_status = 'ACCEPTED'
+		  AND u.user_exit_status = 'N'
 	</select>
 	
 	<!-- 스타일 이름 가져오기 -->
