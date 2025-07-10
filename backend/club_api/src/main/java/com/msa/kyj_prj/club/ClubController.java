@@ -28,10 +28,21 @@ public class ClubController {
 	private ClubService clubService;
 
 	// ✅ 클럽 생성 - JWT 없이 단순 등록
+	// ClubController.java
 	@PostMapping("")
-	public void createClub(@RequestBody Club club) {
-		clubService.insert(club); // ✅ create → insert 로 변경
+	public ResponseEntity<?> createClub(@RequestBody Club club) {
+	    try {
+	        clubService.insert(club);
+	        return ResponseEntity.ok().build();
+	    } catch (IllegalStateException e) {
+	        // 클럽이 이미 있음 → 400 Bad Request + 메시지
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+	    } catch (Exception e) {
+	        // 기타 서버 에러
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("클럽 생성 실패: " + e.getMessage());
+	    }
 	}
+
 
 	// ✅ [단건 조회] 팀 코드로 클럽 조회 - /club/code/{teamCode}
 	@GetMapping("/code/{teamCode}")
@@ -92,6 +103,7 @@ public class ClubController {
 		return ResponseEntity.ok(result);
 	}
 
+	
 	// ✅ [클럽 목록 조회] - /club/list?page=1&size=10 ...
 	// 🔧 이 메서드는 clubs_api 에 대응되므로 URL 수정하거나 컨트롤러를 분리해도 됨
 	@GetMapping("/list")

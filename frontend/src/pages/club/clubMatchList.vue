@@ -1,7 +1,7 @@
 <template>
   <div class="p-4">
     <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-      📋 클럽 매치 리스트
+       클럽 매치 리스트
     </h2>
 
     <div v-if="loading" class="text-gray-500">불러오는 중...</div>

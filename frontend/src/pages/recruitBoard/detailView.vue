@@ -194,6 +194,7 @@ const formatDate = (dateTime) => {
   return dateTime.split(' ')[0].split('T')[0]
 }
 
+
 // ✅ 컴포넌트 마운트시 모집글/가입 상태를 모두 불러옴
 onMounted(async () => {
   await fetchRecruit()

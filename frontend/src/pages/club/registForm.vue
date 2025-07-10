@@ -131,6 +131,18 @@ export default {
         alert('클럽이 등록되었습니다. 이어서 클럽 프로필을 작성하세요.');
         this.$router.push(`/club/${this.club.team_code}`); 
       } catch (error) {
+
+          if (
+      error.response &&
+      error.response.status === 400 &&
+      error.response.data === '이미 해당 유저는 클럽을 보유하고 있습니다.'
+    ) {
+      alert('팀은 1개만 생성할 수 있습니다.');
+      return;
+    }
+
+
+
         console.error('클럽 등록 실패:', error);
         alert('등록에 실패했습니다.');
       }
