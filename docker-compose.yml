@@ -18,10 +18,10 @@ services:
       - shared-data:/var/lib/mysql:rw
     user: kosa
     environment:
-    MARIADB_DATABASE: kosa_db
-    MARIADB_USER: kosa
-    MARIADB_PASSWORD: 1004
-    MARIADB_ROOT_PASSWORD: 1004
+      MARIADB_DATABASE: kosa_db
+      MARIADB_USER: kosa
+      MARIADB_PASSWORD: "1004"
+      MARIADB_ROOT_PASSWORD: "1004"
     networks:
       - msateamprj_network
 
