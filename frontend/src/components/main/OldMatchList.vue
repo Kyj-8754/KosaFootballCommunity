@@ -5,29 +5,36 @@
       <div
         v-for="match in matches"
         :key="match.match_id"
-        class="match-item"
+        class="match-wrapper"
       >
-        <div class="date-col">
-          <div>{{ formatDate(match.match_date) }}</div>
+        <div
+          class="match-item"
+          @click="toggleMatch(match.match_id)"
+        >
+          <div class="date-col">
+            <div>{{ formatDate(match.match_date) }}</div>
+          </div>
+
+          <div class="info-col">
+            <div class="summary">
+              {{ formatTime(match.match_date) }} {{ match.match_title }}
+            </div>
+          </div>
+
+          <div class="type-col">
+            <div class="badge" :class="'status-' + match.match_status">
+              {{ getStatusLabel(match.match_status) }}
+            </div>
+            <div class="badge gender" v-if="match.gender_condition !== 'all'">
+              {{ match.gender_condition === 'male' ? '남성전용' : '여성전용' }}
+            </div>
+            <div class="badge gender" v-else>성별무관</div>
+          </div>
         </div>
 
-        <div class="info-col">
-          <div
-            class="summary"
-            @click="$emit('select', match)"
-          >
-            {{ formatTime(match.match_date) }} {{ match.match_title }}
-          </div>
-        </div>
-
-        <div class="type-col">
-          <div class="badge" :class="'status-' + match.match_status">
-            {{ getStatusLabel(match.match_status) }}
-          </div>
-          <div class="badge gender" v-if="match.gender_condition !== 'all'">
-            {{ match.gender_condition === 'male' ? '남성전용' : '여성전용' }}
-          </div>
-          <div class="badge gender" v-else>성별무관</div>
+        <!-- 매치 클릭 시 하단에 결과 표시 -->
+        <div v-if="openedMatchId === match.match_id" class="match-result-panel">
+          <MatchResult :matchId="match.match_id" />
         </div>
       </div>
     </div>
@@ -37,8 +44,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import MatchResult from '@/components/board/match/matchResult.vue'
 
 const matches = ref([])
+const openedMatchId = ref(null)
 
 const fetchCompletedMatches = async () => {
   try {
@@ -47,6 +56,10 @@ const fetchCompletedMatches = async () => {
   } catch (err) {
     console.error('❌ 완료된 매치 목록을 불러오지 못했습니다:', err)
   }
+}
+
+const toggleMatch = (id) => {
+  openedMatchId.value = (openedMatchId.value === id) ? null : id
 }
 
 onMounted(fetchCompletedMatches)
@@ -86,6 +99,11 @@ const getStatusLabel = (code) => {
   gap: 12px;
 }
 
+.match-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .match-item {
   display: flex;
   align-items: center;
@@ -93,6 +111,7 @@ const getStatusLabel = (code) => {
   border-radius: 8px;
   padding: 12px;
   background-color: #fff;
+  cursor: pointer;
 }
 
 .date-col {
@@ -109,7 +128,6 @@ const getStatusLabel = (code) => {
 
 .summary {
   font-weight: 600;
-  cursor: pointer;
   color: #111;
 }
 
@@ -135,5 +153,13 @@ const getStatusLabel = (code) => {
 
 .gender {
   background-color: #6c757d;
+}
+
+.match-result-panel {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 </style>
