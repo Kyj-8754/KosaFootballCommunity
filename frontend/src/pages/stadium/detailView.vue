@@ -99,150 +99,21 @@
 </style>
 
 <script setup>
-	import DOMPurify from 'dompurify'; // notice관련 문제 해결중
-	import {ref, onMounted, computed, inject, watch, nextTick } from 'vue'
-	import { useRoute, useRouter } from 'vue-router'
-	import axios from 'axios'
-	import 'v-calendar/style.css'
-	import { StadiumDataStore } from '@/stores/stadiumStore'
+	import { stdaiumDetail } from '@/utils/script/stadium'
 	import  StadiumComment  from '@/components/comment/comment.vue'
 
 
-	// pinia를 이용한 저장
-	const stadiumStore = StadiumDataStore();
-
-	//아이디 관련
-	const userId = inject('userId')
-	const userName = inject('userName')
-	//탭관련
-	const activeTab = ref('overview')
-	let isMapInitialized = false
-	let isScriptLoaded = false
-	
-	// 달력관련 시작
-	// 예약 가능한 날짜
-	const availableDates = ref([])
-	// 예약 선택 날짜
-	const selectedDate = ref(null)
-
-	const formatDate = (date) => {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
-
-
-const onDayClick = (day) => {
-  const dateStr = formatDate(day.date)
-
-  if (!availableDates.value.includes(dateStr)) {
-    return // 예약 불가 날짜는 무시
-  }
-
-  selectedDate.value = dateStr;
-  
-}
-
-	// 달력관련 끝
-
-	const safeNotice = computed(() => {
-  		return DOMPurify.sanitize(stadiumDB.value.dtlcont);
-	});
-
-	const router = useRouter() // 보낼 경로
-	const route = useRoute()	// 현재 경로
-	const SVCID = route.query.SVCID // 현재 경로의 SCVID
-	const stadiumDB = ref({})	// 게시물 
-	
-  
-	// 페이지 로딩 시 
-	onMounted(async() => {
-		await fetchStadiumData();	// 게시판
-	});
-
-	// 게시물 불러오기
-	const fetchStadiumData = async () => {
-		const res = await axios.get('/stadium_api/stadium/detailView', { params: { SVCID } });
-		stadiumDB.value = res.data.stadiumDB.stadium;
-		availableDates.value = res.data.stadiumDB.slot.map(item => item.slot_DATE);
-
-		//store저장
-		stadiumStore.setStadium(stadiumDB.value);
-	};	
-
-	// 구장 목록으로 넘어가기
-	function goToList(){
-		router.push({name: 'Stadium_List'})
-	}
-
-	// 예약 창으로 넘어가기
-	function goToReservation(){
-		router.push({name: 'reservation_Form', query: {date: selectedDate.value, SVCID: SVCID}})
-	}
-
-watch(activeTab, async (newTab) => {
-  if (newTab === 'map' && !isMapInitialized) {
-    await nextTick()           // 👉 DOM이 그려진 다음
-    loadKakaoMapScript()       // 👉 스크립트 로드 + 지도 그리기
-  }
-})
-
-// 스크립트를 동적으로 삽입하고 지도 초기화, 키를 숨기기 위해서 관리
-const loadKakaoMapScript = () => {
-
-	if (isScriptLoaded) {
-    window.kakao.maps.load(() => {
-      initKakaoMap()
-    })
-    return
-  }
-
-  const script = document.createElement('script')
-  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${import.meta.env.VITE_KAKAOMAP_API_KEY}&autoload=false`
-  script.async = true
-  document.head.appendChild(script)
-
-  script.onload = () => {
-    window.kakao.maps.load(() => {
-      initKakaoMap()
-    })
-  }
-}
-
-// 지도 초기화 함수
-const initKakaoMap = () => {
-	// X,Y받기
-  const { x, y } = stadiumDB.value
-  if (!x || !y) {
-    console.warn('좌표 없음')
-    return
-  }
-  	const centerPos = new kakao.maps.LatLng(Number(y), Number(x));
-  	// 이미지 지도에 표시할 마커입니다
-	  
-	  const container = document.getElementById('map')
-	  const options = {
-		  center: centerPos,
-		  level: 3
-		}
-		
-		 const map = new window.kakao.maps.Map(container, options)
-		
-		const marker = new kakao.maps.Marker({
-		  position: centerPos
-		})
-
-		
-		marker.setMap(map)
-
-  kakao.maps.event.addListener(map, 'tilesloaded', () => {
-    map.setCenter(centerPos)
-  })
-
-  isMapInitialized = true
-}
-
+	const {
+		availableDates,
+		SVCID,
+		activeTab,
+		stadiumDB,
+		userId,
+		userName,
+		onDayClick,
+		goToList,
+		goToReservation,
+	} = stdaiumDetail()
 </script>
 
 

@@ -4,52 +4,108 @@
 
     <div v-if="club">
       <div class="row mb-4">
-        <!-- 좌측 상단: 이미지 등록 (고정 크기) -->
-        <div class="col-md-3">
-          <div class="border rounded p-3 text-center" style="height: 250px;">
-            <img
-              :src="club.logo_path || 'https://via.placeholder.com/100'"
-              alt="클럽 로고"
-              class="img-fluid mb-3"
-              style="max-height: 100px; object-fit: contain;"
-            />
-            <button class="btn btn-outline-secondary btn-sm w-100">이미지 등록</button>
-          </div>
-        </div>
+     <!-- 좌측 상단: 이미지 등록 (고정 크기) -->
+<div class="col-md-3">
+  <div class="border rounded p-3 text-center" style="height: 250px;">
+    <img
+      :src="club.logo_path ? `http://localhost:8121${club.logo_path}` : 'https://via.placeholder.com/100'"
+      alt="클럽 로고"
+      class="img-fluid mb-3"
+      style="max-height: 100px; object-fit: contain;"
+    />
+  </div>
+</div>
+
 
         <!-- 우측 4개의 동일 박스 -->
         <div class="col-md-9">
           <div class="row row-cols-2 g-3">
             <!-- 박스 1: 경기 전적 -->
-            <div class="col">
-              <div class="border rounded p-3 h-100">
-                <strong>경기 전적</strong>
-                <p class="mb-1">참가수: {{ getTotalGames(club) }}회</p>
-                <p class="mb-1">승 / 무 / 패: {{ club.win_count }} / {{ club.draw_count }} / {{ club.loss_count }}</p>
-                <p class="mb-0">승률: {{ calcWinRate(club) }}%</p>
+               <div class="col">
+              <div class="border rounded p-4 shadow-sm h-100 bg-white">
+                <div class="fw-bold mb-2">경기 전적</div>
+                <div class="mb-1">승: <b>{{ club.win_count }}</b></div>
+                <div class="mb-1">무: <b>{{ club.draw_count }}</b></div>
+                <div class="mb-1">패: <b>{{ club.loss_count }}</b></div>
+                <div class="text-muted mt-2 small">
+                  참가수: {{ (club.win_count || 0) + (club.draw_count || 0) + (club.loss_count || 0) }}
+                  <span class="ms-3">팀 레벨: <span class="badge bg-primary">{{ teamLevel }}</span></span>
+                </div>
               </div>
             </div>
+         
+<!-- 박스 2: 주요 멤버 -->
+<div class="col">
+  <div class="border rounded p-3 h-100 bg-light-subtle position-relative">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <strong>주요 멤버</strong>
+      <button
+        class="btn btn-link p-0 small text-primary fw-bold"
+        style="text-decoration: none;"
+        @click="goToMemberList"
+      >전체 보기</button>
+    </div>
+    <div class="d-flex flex-column gap-2 mt-2">
+      <div v-for="member in topMembers" :key="member.user_no"
+        class="p-3 bg-white rounded-3 shadow-sm d-flex align-items-center gap-3"
+        style="min-height: 60px;"
+      >
+        <div class="flex-grow-1">
+          <span class="fw-bold fs-6">{{ member.user_name }}</span>
+        </div>
+        <span class="badge bg-primary bg-opacity-75 fs-7">
+          참가수: {{ member.match_count }}
+        </span>
+        <span class="badge bg-warning text-dark ms-2 fs-7">
+          POM: {{ member.pom }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
 
-            <!-- 박스 2: 주요 멤버 -->
-            <div class="col">
-              <div class="border rounded p-3 h-100">
-                <strong>주요 멤버 리스트</strong>
-                <ul class="list-unstyled mt-2 mb-0">
-                  <li>멤버 A</li>
-                  <li>멤버 B</li>
-                  <li>멤버 C</li>
-                </ul>
-              </div>
-            </div>
 
-            <!-- 박스 3: 간단한 팀 정보 -->
-            <div class="col">
-              <div class="border rounded p-3 h-100">
-                <strong>간단한 팀 정보</strong>
-                <!-- <p class="mb-1"><strong>팀명:</strong> {{ club.club_name }}</p>
-                <p class="mb-0"><strong>팀 코드:</strong> {{ club.team_code }}</p> -->
-              </div>
-            </div>
+<!-- 박스 3: 클럽 상세 정보 -->
+<div class="col">
+  <div class="border rounded p-3 h-100">
+    <strong>클럽 상세 정보</strong>
+    <template v-if="clubInfo">
+      <!-- 성별 -->
+      <p class="mb-1">
+        <strong>성별:</strong>
+        <span class="badge bg-light text-dark ms-1">{{ clubInfo.gender }}</span>
+      </p>
+      <!-- 나이대 -->
+      <p class="mb-1">
+        <strong>나이대:</strong>
+        <span class="badge bg-light text-dark ms-1">{{ clubInfo.age_group }}</span>
+      </p>
+     <!-- 활동 요일 -->
+<p class="mb-1">
+  <strong>활동 요일:</strong>
+  <span
+    v-for="day in (clubInfo?.active_days ? clubInfo.active_days.split(',') : [])"
+    :key="day"
+    class="badge bg-info text-dark ms-1"
+  >{{ day }}</span>
+</p>
+<!-- 활동 시간 -->
+<p class="mb-0">
+  <strong>활동 시간:</strong>
+  <span
+    v-for="time in (clubInfo?.active_times ? clubInfo.active_times.split(',') : [])"
+    :key="time"
+    class="badge bg-success text-white ms-1"
+  >{{ time }}</span>
+</p>
+
+    </template>
+    <template v-else>
+      <p class="text-muted mb-0">클럽 상세 정보가 없습니다.</p>
+    </template>
+  </div>
+</div>
+
 
             <!-- 박스 4: 팀 소개 -->
             <div class="col">
@@ -62,54 +118,139 @@
         </div>
       </div>
 
-      <!-- 팀장만 수정 버튼 -->
-      <div v-if="isLeader" class="text-end mt-3">
-        <button @click="goToEdit" class="btn btn-primary">수정하기</button>
-      </div>
+<!-- 팀장만 수정/신청목록 버튼 노출 -->
+<div class="mb-2 text-end">
+  <button
+    v-if="club && userNo && club.user_no === userNo"
+    @click="goToApplyList"
+    class="btn btn-warning me-2"
+  >신청목록</button>
+  
+  <button
+    v-if="club && userNo && club.user_no === userNo"
+    @click="goToEdit"
+    class="btn btn-primary me-2"
+  >수정하기</button>
+  <button
+    @click="goToList"
+    class="btn btn-outline-secondary"
+  >목록으로</button>
+</div>
+
+      
     </div>
 
     <p v-else class="text-muted mt-5 text-center">클럽 정보를 불러오는 중입니다...</p>
   </div>
 </template>
 
+<script setup>
+import { ref, inject, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
 
-<script>
-import axios from 'axios';
+const token = inject('token')
+const userNo = inject('userNo')
+const router = useRouter()
+const route = useRoute()
 
-export default {
-  name: 'ClubDetailView',
-  data() {
-    return {
-      club: null,
-      isLeader: false,
-    };
-  },
-  async created() {
-    const teamCode = this.$route.params.teamCode;
-    try {
-      // 🔧 수정 전: /api/clubs/code/${teamCode}
-      // ✅ 수정 후: /club_api/code/${teamCode}
-      const response = await axios.get(`/club_api/code/${teamCode}`);
-      this.club = response.data;
+const club = ref(null)
+const clubInfo = ref(null)     // ✅ 클럽 상세정보 상태 추가
+const clubMember = ref([])
 
-      const loginUserid = sessionStorage.getItem('loginUserid');
-      this.isLeader = loginUserid === this.club.leader_user_id;
-    } catch (error) {
-      console.error('클럽 정보 불러오기 실패:', error);
-      alert('클럽 정보를 불러오는 데 실패했습니다.');
+// ⭐️ 경기수 내림차순 상위 3명만 추출하는 computed
+const topMembers = computed(() => {
+  // match_count가 null/빈값일 때 0으로 간주
+  return [...clubMember.value]
+    .sort((a, b) => (parseInt(b.match_count || 0) - parseInt(a.match_count || 0)))
+    .slice(0, 3)
+})
+
+// ✅ 팀 레벨 산출 공식 (백엔드와 동일, 브론즈~다이아)
+function calculateClubLevel(win, draw, loss) {
+  const total = win + draw + loss
+  if (total === 0) return '브론즈'
+  const rate = (win / total) * 100
+  if (rate >= 90) return '다이아'
+  if (rate >= 70) return '플래티넘'
+  if (rate >= 50) return '골드'
+  if (rate >= 30) return '실버'
+  return '브론즈'
+}
+const teamLevel = computed(() => {
+  if (!club.value) return '-'
+  return calculateClubLevel(
+    club.value.win_count || 0,
+    club.value.draw_count || 0,
+    club.value.loss_count || 0
+  )
+})
+
+onMounted(async () => {
+  const teamCode = route.params.teamCode
+  try {
+    // 1. 클럽 기본 정보 조회 (teamCode로 club 데이터 받아오기)
+    const response = await axios.get(`/club_api/code/${teamCode}`, {
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    club.value = response.data // club에는 club_id, team_code 등 정보가 담김
+
+    // 2. club_id로 멤버 리스트 조회 (해당 클럽 소속 멤버 배열)
+    if (club.value && club.value.club_id) {
+      const memberRes = await axios.get(`/club_api/member/list/${club.value.club_id}`)
+      clubMember.value = memberRes.data // clubMember는 멤버 리스트 배열
     }
-  },
-  methods: {
-    getTotalGames(club) {
-      return (club.win_count || 0) + (club.draw_count || 0) + (club.loss_count || 0);
-    },
-    calcWinRate(club) {
-      const total = this.getTotalGames(club);
-      return total === 0 ? 0 : Math.round((club.win_count / total) * 100);
-    },
-    goToEdit() {
-      this.$router.push(`/club/${this.club.team_code}/edit`);
-    },
-  },
-};
+
+    // 3. club_id로 club_info 상세정보 추가 조회 (성별/나이대/활동 등)
+    if (club.value && club.value.club_id) {
+      // ✅ clubInfo (클럽 상세정보) 조회
+      const clubInfoRes = await axios.get(`/club_info/${club.value.club_id}`)
+      clubInfo.value = clubInfoRes.data // clubInfo는 클럽 상세 정보(성별, 나이대, 활동 요일, 시간 등)
+    }
+
+    // 콘솔로 각각의 데이터 확인 (개발 편의용)
+    console.log('club:', club.value)           // 클럽 기본 정보
+    console.log('members:', clubMember.value)  // 멤버 리스트
+    console.log('clubInfo:', clubInfo.value)   // 클럽 상세정보
+
+  } catch (error) {
+    alert('클럽 정보를 불러오는 데 실패했습니다.')
+  }
+})
+
+// 클럽의 총 경기 수 계산 함수
+const getTotalGames = (clubObj) =>
+  (clubObj.win_count || 0) + (clubObj.draw_count || 0) + (clubObj.loss_count || 0)
+
+// 클럽의 승률 계산 함수
+const calcWinRate = (clubObj) => {
+  const total = getTotalGames(clubObj)
+  return total === 0 ? 0 : Math.round((clubObj.win_count / total) * 100)
+}
+
+
+// 신청자 목록 페이지로 이동 (팀장만 가능)
+const goToApplyList = () => {
+   if (club.value) {
+  router.push(`/club/${club.value.team_code}/applyList`)
+   }
+}
+
+// 수정 페이지로 이동 (팀장만 가능)
+const goToEdit = () => {
+  if (club.value) {
+    router.push(`/club/${club.value.team_code}/updateForm`)
+  }
+}
+
+// 클럽 목록 페이지로 이동
+const goToList = () => {
+  router.push({ name: 'Club_List' })
+}
+
+const goToMemberList = () => {
+  if (club.value && club.value.team_code) {
+    router.push(`/club/${club.value.team_code}/memberList`)
+  }
+}
 </script>

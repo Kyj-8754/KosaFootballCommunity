@@ -19,11 +19,30 @@ public class RecruitService {
 	public List<RecruitBoard> get_all_recruits() {
 		return recruit_dao.find_all();
 	}
-
-	// 조회수 기준 인기순 정렬
+	
+	// 기존: 인기순 정렬 (파라미터 없음)
 	public List<RecruitBoard> get_recruits_order_by_view_count() {
-		return recruit_dao.find_all_order_by_view_count();
+	    return recruit_dao.find_all_order_by_view_count();
 	}
+
+	// 추가: 인기순 정렬 + 검색어
+	public List<RecruitBoard> get_recruits_order_by_view_count(String keyword) {
+	    if (keyword == null || keyword.trim().isEmpty()) {
+	        return recruit_dao.find_all_order_by_view_count();
+	    } else {
+	        return recruit_dao.find_by_keyword_order_by_view_count(keyword);
+	    }
+	}
+	// 전체 모집글 목록 조회 (최신순 + 검색어)
+	public List<RecruitBoard> get_all_recruits(String keyword) {
+	    if (keyword == null || keyword.trim().isEmpty()) {
+	        return recruit_dao.find_all();
+	    } else {
+	        return recruit_dao.find_by_keyword(keyword);
+	    }
+	}
+
+
 
 	// 클럽별 모집글 목록 조회
 	public List<RecruitBoard> get_recruits_by_club(int club_id) {

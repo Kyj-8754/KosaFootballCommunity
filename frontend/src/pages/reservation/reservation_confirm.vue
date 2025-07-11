@@ -45,7 +45,7 @@
 
   </div>
 
- 
+
 </template>
 
 <script setup>
@@ -53,6 +53,7 @@ import axios from 'axios';
 import { inject, onMounted, ref, onUnmounted} from 'vue';
 import { useRoute, useRouter } from 'vue-router'
 
+const token = inject('token');
 const router = useRouter();
 const route = useRoute();
 const reservation = ref({});
@@ -60,6 +61,8 @@ const user = ref({});
 const stadium = ref({});
 const userNo = inject('userNo') // 로그인한 유저 정보 가져옴
 const authCode = inject('authCode') // 로그인한 유저 권한
+
+console.log(authCode?.value, userNo.value);
 
 // 결제 핸들러 이벤트, 감지해서 메시지를 띄우고 닫힘
 const handlePaymentMessage = (event) => {
@@ -96,7 +99,11 @@ const loadReservationDetails = async () =>{
 
   // 병렬로 사용자 정보와 구장 정보 가져오기
   const [userRes, stadiumRes] = await Promise.all([
-    axios.get(`/login_api/mypage/detailView` , {params: { userNo: user_no }}),
+    axios.get(`/login_api/mypage/detailView` , {params: { userNo: user_no },
+      headers: {
+      Authorization: `Bearer ${token.value}`
+      }}
+    ),
     axios.get(`/stadium_api/stadium/detailView`, { params: { SVCID: svcid } })
   ]);
 

@@ -84,6 +84,7 @@ const reservation = ref({})
 const isPaid = ref(false);
 const authCode = inject('authCode');
 const userNo = inject('userNo');
+const token = inject('token')
 
 const loadReservationData = async () => {
   try {
@@ -101,7 +102,10 @@ const loadReservationData = async () => {
 
     const [userRes, stadiumRes, paidRes] = await Promise.all([
       axios.get('/login_api/mypage/detailView', {
-        params: { userNo: user_no }
+        params: { userNo: user_no },
+          headers: {
+           Authorization: `Bearer ${token.value}`
+          }
       }),
       axios.get('/stadium_api/stadium/detailView', {
         params: { SVCID: svcid }

@@ -4,17 +4,35 @@ CREATE TABLE IF NOT EXISTS `user_stat` (
 	PRIMARY KEY (`stat_code`)
 )COMMENT '회원 능력';
 
+INSERT INTO user_stat (stat_code, stat_name) VALUES
+(1, '슛'),
+(2, '패스'),
+(3, '드리블'),
+(4, '체력'),
+(5, '스피드'),
+(6, '피지컬');
+
 CREATE TABLE IF NOT EXISTS `user_style` (
 	`style_code` INT(11) NOT NULL AUTO_INCREMENT COMMENT '스타일 코드',
 	`style_name` VARCHAR(20) NOT NULL COMMENT '스타일명',
 	PRIMARY KEY (`style_code`)
 )COMMENT '회원 스타일';
 
+INSERT INTO user_style (style_code, style_name) VALUES
+(1, '공격'),
+(2, '밸런스'),
+(3, '수비');
+
 CREATE TABLE IF NOT EXISTS `user_authority` (
 	`auth_code`	VARCHAR(10)	NOT NULL COMMENT '권한 코드',
 	`auth_name`	VARCHAR(20)	NOT NULL COMMENT '권한명',
 	PRIMARY KEY (`auth_code`)
 )COMMENT '회원 권한';
+
+INSERT INTO user_authority (auth_code, auth_name) VALUES
+('A1', 'ADMIN'),
+('A2', 'MANAGER'),
+('A3', 'USER');
 
 CREATE TABLE IF NOT EXISTS `user` (
 	`user_no` INT(11) NOT NULL AUTO_INCREMENT COMMENT '회원 번호',
@@ -77,8 +95,8 @@ CREATE TABLE IF NOT EXISTS `user_mod_history` (
 	`mod_user_code`	VARCHAR(10)	NOT NULL COMMENT '회원 코드',
 	`mod_user_gender` VARCHAR(1) NOT NULL COMMENT '성별',
 	`mod_user_comment` VARCHAR(255)	NULL COMMENT '소개',
-	`mod_stat_code` INT(11) NOT NULL COMMENT '스타일 코드',
-	`mod_style_code`	INT(11) NOT NULL COMMENT '능력 코드',
+	`mod_stat_code` INT(11) NULL COMMENT '스타일 코드',
+	`mod_style_code`	INT(11) NULL COMMENT '능력 코드',
 	PRIMARY KEY (`mod_no`),
 	KEY `mod_user_no` (`user_no`),
 	KEY `mod_user_auth_code` (`mod_auth_code`),
@@ -90,28 +108,6 @@ CREATE TABLE IF NOT EXISTS `user_mod_history` (
 	CONSTRAINT `mod_user_stat_code` FOREIGN KEY (`mod_style_code`) REFERENCES `user_stat` (`stat_code`) ON DELETE NO ACTION ON UPDATE CASCADE
 )COMMENT '회원 정보 수정 이력';
 
-CREATE TABLE IF NOT EXISTS `kakao_account` (
-	`kakao_no`	INT(11)	NOT NULL AUTO_INCREMENT,
-	`user_no`	VARCHAR(10)	NOT NULL,
-	`kakao_key`	VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS `user_relation` (
-	`relation_no`	INT(11)	NOT NULL AUTO_INCREMENT,
-	`from_user_no`	INT(11)	NOT NULL,
-	`to_user_no`	INT(11)	NOT NULL,
-	`relation_status`	VARCHAR(255) NOT NULL DEFAULT 'WAIT',
-	`relation_req_date`	VARCHAR(255) NULL,
-	`relation_prc_date`	VARCHAR(255) NULL
-);
-
-CREATE TABLE IF NOT EXISTS `reference_list` (
-	`ref_no`	INT(11)	NOT NULL AUTO_INCREMENT,
-	`ref_from_user_no` INT(11)	NOT NULL,
-	`ref_to_user_no`	INT(11)	NOT NULL,
-	`ref_date`	VARCHAR(255)	NULL
-);
-
 CREATE TABLE IF NOT EXISTS social_account (
     social_no      INT AUTO_INCREMENT,
     user_no        INT NOT NULL,
@@ -120,4 +116,19 @@ CREATE TABLE IF NOT EXISTS social_account (
     PRIMARY KEY (`social_no`),
     UNIQUE KEY uk_provider_user (provider, provider_id),
     CONSTRAINT fk_social_user FOREIGN KEY (user_no) REFERENCES user(user_no)
+);
+
+CREATE TABLE IF NOT EXISTS `user_relation` (
+	`relation_no`	INT(11)	AUTO_INCREMENT,
+	`from_user_no`	INT(11)	NOT NULL COMMENT '요청자',
+	`to_user_no`	INT(11)	NOT NULL COMMENT '요청대상',
+	`relation_status`	VARCHAR(255) NOT NULL DEFAULT 'WAIT',
+	`relation_req_date`	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '친구 신청 일자',
+	`relation_prc_date`	TIMESTAMP NULL COMMENT '처리 일자',
+	PRIMARY KEY (`relation_no`),
+	UNIQUE KEY uniq_user_pair (from_user_no, to_user_no),
+	KEY `req_from_user_no` (`from_user_no`),
+	KEY `req_to_user_no` (`to_user_no`),
+	CONSTRAINT `req_from_user_no` FOREIGN KEY (`from_user_no`) REFERENCES `user` (`user_no`) ON DELETE NO ACTION ON UPDATE CASCADE,
+	CONSTRAINT `req_to_user_no` FOREIGN KEY (`to_user_no`) REFERENCES `user` (`user_no`) ON DELETE NO ACTION ON UPDATE CASCADE
 );

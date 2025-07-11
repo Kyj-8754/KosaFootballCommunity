@@ -21,14 +21,26 @@ public interface LoginDAO {
 	public void insertLocalAccount(LocalAccount account);
 	
 	public void insertSocialAccount(SocialAccount socialAccount);
+	
+	public void deleteUser(int userNo);
+	
+	public void deleteLocalAccount(int userNo);
+	
+	public void deleteSocialAccount(int userNo);
 
 	public LocalAccount getLocalAccount(String userId);
+	
+	public UserVO findUserByPhone(@Param("userPhone") String userPhone);
 
-	boolean existsByUserCode(String userCode);
+	public boolean existsByUserCode(String userCode);
 
 	public LocalAccount findAccountByUserNo(int userNo);
 
 	public Optional<UserVO> findByUserId(String username);
 	
 	public SocialAccount findSocialAccount(@Param("provider") String provider, @Param("providerId") String providerId);
+	
+	public boolean updatePassword(@Param("userNo") int userNo, @Param("encodedNewPwd")String encodedNewPwd);
+	
+	public UserVO findUserByUserNameAndUserPhone(@Param("userName") String userName, @Param("userPhone")String userPhone);
 }

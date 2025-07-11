@@ -32,5 +32,4 @@ public class ReservationDTO {
     
     
     private String svcnm;
-
 }
