@@ -285,13 +285,19 @@
 	  )
 	</insert>
 	
-	<!-- 클럽 매치 리스트 -->
+	<!-- 클럽 매치 리스트 (필터링된) -->
 	<select id="selectFilteredClubMatches" parameterType="long" resultType="map">
 	  SELECT 
 	    m.match_id,
 	    m.match_title,
+	    m.match_created_at,
+	    m.match_date,
+	    m.SVCID,
+	    m.match_closed,
+	    m.gender_condition,
 	    m.match_status,
-	    m.match_date
+	    m.match_board_status,
+	    m.match_code
 	  FROM 
 	    match_participant mp
 	  JOIN 
