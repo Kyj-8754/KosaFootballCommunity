@@ -64,10 +64,10 @@
       <span>담당 매니저: {{ match.manager_name }}</span>
       <span>성별 제한: {{ genderLabel(match.gender_condition) }}</span>
       <span v-if="match.match_code === 'social'">
-        현재 인원 수: {{ currentCount }} / 18
+        현재 인원 수: {{ props.currentCount }} / 18
       </span>
       <span v-else-if="match.match_code === 'league'">
-        현재 팀 수: {{ currentCount }} / 3
+        현재 팀 수: {{ props.currentCount }} / 3
       </span>
     </div>
   </div>
@@ -78,10 +78,10 @@ import { defineProps, ref, onMounted, nextTick, inject } from 'vue'
 import axios from 'axios'
 
 const props = defineProps({
-  match: { type: Object, required: true }
+  match: { type: Object, required: true },
+  currentCount: { type: Number, required: true },
 })
 
-const currentCount = ref(0) // ✅ 수정: props에서 제거하고 로컬 ref로 선언
 const userNo = inject('userNo')
 const clubId = ref(null)
 const isApplied = ref(false)
@@ -187,7 +187,7 @@ const applyToMatch = async () => {
     await axios.post('/board_api/match/apply', payload)
     alert('매치 참가 신청이 완료되었습니다!')
     await checkIsApplied()
-    await fetchParticipantCount()
+    //await fetchParticipantCount()
   } catch (error) {
     console.error('신청 실패:', error)
     if (error.response?.status === 409) {
@@ -215,24 +215,24 @@ const cancelParticipation = async () => {
     })
     alert('참가 신청이 취소되었습니다.')
     await checkIsApplied()
-    await fetchParticipantCount()
+    //await fetchParticipantCount()
   } catch (e) {
     console.error('취소 실패:', e)
     alert('참가 신청 취소에 실패했습니다.')
   }
 }
 
-const fetchParticipantCount = async () => {
-  try {
-    const res = await axios.get('/board_api/match/participants/count', {
-      params: { matchId: props.match.match_id }
-    })
-    currentCount.value = res.data
-  } catch (e) {
-    console.error('인원 수 조회 실패:', e)
-    currentCount.value = 0
-  }
-}
+// const fetchParticipantCount = async () => {
+//   try {
+//     const res = await axios.get('/board_api/match/participants/count', {
+//       params: { matchId: props.match.match_id }
+//     })
+//     currentCount.value = res.data
+//   } catch (e) {
+//     console.error('인원 수 조회 실패:', e)
+//     currentCount.value = 0
+//   }
+// }
 
 const checkClubLeader = async () => {
   if (props.match.match_code !== 'league' || !userNo?.value) return
@@ -255,7 +255,7 @@ const checkClubLeader = async () => {
 
 onMounted(() => {
   checkIsApplied()
-  fetchParticipantCount()
+  //fetchParticipantCount()
   checkClubLeader()
 })
 </script>
