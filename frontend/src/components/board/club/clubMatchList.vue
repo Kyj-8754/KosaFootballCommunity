@@ -218,4 +218,45 @@ const getStatusLabel = (code) => {
 .gender {
   background-color: #6c757d;
 }
+
+.btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.button-col {
+  margin-right: 12px; /* ✅ 오른쪽 여백 추가 */
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-apply {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-apply:hover {
+  background-color: #218838;
+}
+
+.btn-cancel {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #c82333;
+}
 </style>
