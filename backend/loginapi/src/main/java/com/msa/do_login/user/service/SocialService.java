@@ -193,9 +193,9 @@ public class SocialService {
 
 		Map<String, Object> claim = Map.of("userId", account.getProviderId(), "userNo", user.getUserNo(), "userName",
 				URLEncoder.encode(user.getUserName(), StandardCharsets.UTF_8), "authCode",
-				"ROLE_" + user.getAuthCode());
+				"ROLE_" + user.getAuthCode(),"loginType",account.getProvider());
 
-		return Map.of("accessToken", jwtUtil.generateToken(claim, 1), "refreshToken", jwtUtil.generateToken(claim, 5));
+		return Map.of("accessToken", jwtUtil.generateToken(claim, 60 * 24 * 7), "refreshToken", jwtUtil.generateToken(claim, 60 * 24 * 30));
 	}
 
 	@Transactional

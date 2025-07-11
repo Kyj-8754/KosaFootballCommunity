@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class UserVO {
 	private int userNo;
 	private String userName;
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 	private Date userBirth;
 	private String userPhone;
 	private String userPostCode;
@@ -41,9 +42,10 @@ public class UserVO {
 	private String userCode;
 	private String userGender;
 	private String userComment;
-	private int styleCode;
-	private int statCode;
+	private Integer styleCode;
+	private Integer statCode;
 	
+	@JsonIgnore
 	public Collection<GrantedAuthority> getAuthorities() {
 		if (authCode != null && authCode.length() > 0) {
 			return Arrays.stream(authCode.split(",")).map(role -> new SimpleGrantedAuthority("ROLE_" + role)).collect(Collectors.toUnmodifiableList());

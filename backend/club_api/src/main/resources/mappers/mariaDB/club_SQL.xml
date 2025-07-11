@@ -12,7 +12,7 @@
         club_name AS club_name,
         user_no AS user_no,
         logo_path AS logo_path,
-        rating AS rating,
+        club_level AS club_level,
         ranking AS ranking,
         win_count AS win_count,
         draw_count AS draw_count,
@@ -50,11 +50,6 @@
             club_name = #{club_name},
             user_no = #{user_no},
             logo_path = #{logo_path},
-            rating = #{rating},
-            ranking = #{ranking},
-            win_count = #{win_count},
-            draw_count = #{draw_count},
-            loss_count = #{loss_count},
             description = #{description}
         WHERE club_id = #{club_id}
     </update>
@@ -71,7 +66,7 @@
         </where>
         ORDER BY
         <choose>
-            <when test="sortColumn == 'rating'">rating</when>
+            <when test="sortColumn == 'club_level'">club_level</when>
             <when test="sortColumn == 'ranking'">ranking</when>
             <when test="sortColumn == 'club_name'">club_name</when>
             <otherwise>ranking</otherwise>
@@ -120,8 +115,30 @@
   	SELECT * FROM tbl_club WHERE user_no = #{userNo}
 	</select>
 	
-	
+	<!-- team_code로 club_id만 반환 (최소 응답, 프론트가 club_id만 필요할 때) -->
+	<select id="getClubIdByTeamCode" parameterType="string" resultType="int">
+    SELECT club_id
+    FROM tbl_club
+    WHERE team_code = #{teamCode}
+	</select>
 
+	<update id="updateClubLevel">
+    UPDATE tbl_club
+    SET club_level = #{clubLevel}
+    WHERE club_id = #{clubId}
+	</update>
+
+	<update id="updateLogoPath">
+    UPDATE tbl_club
+    SET logo_path = #{logoPath}
+    WHERE club_id = #{clubId}
+	</update>
+
+	<update id="updateLeader" parameterType="map">
+    UPDATE tbl_club
+    SET user_no = #{user_no}
+    WHERE club_id = #{club_id}
+	</update>
 
     
 

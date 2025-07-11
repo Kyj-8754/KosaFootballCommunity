@@ -1,18 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-
 const routes = [
   { path: '/', name: 'Home', component: () => import ('@/pages/Home.vue') },
+
+  // 관리자 관련
+  { path: '/admin/userList', name: 'Admin_UserList', component: () => import ('@/pages/admin/userList.vue') },
 
   // 멤버 관련
   { path: '/oauth/success', name: 'OAuth_Success', component: () => import ('@/pages/oauth/Success.vue') },
   { path: '/member/loginForm', name: 'Member_LoginForm', component: () => import ('@/pages/member/loginForm.vue') },
+  { path: '/member/findId', name: 'Member_FindId', component: () => import ('@/pages/member/findId.vue') },
+  { path: '/member/findPwd', name: 'Member_FindPwd', component: () => import ('@/pages/member/findPwd.vue') },
+  { path: '/member/resetPwd', name: 'Member_ResetPwd', component: () => import ('@/pages/member/resetPwd.vue') },
   { path: '/member/registForm', name: 'Member_RegistForm', component: () => import ('@/pages/member/registForm.vue') },
-  { path: '/member/detailView', name: 'Member_DetailView', component: () => import ('@/pages/member/detailView.vue') },
   { path: '/member/updateForm', name: 'Member_UpdateForm', component: () => import ('@/pages/member/updateForm.vue') },
-  { path: '/member/list', name: 'Member_List', component: () => import ('@/pages/member/list.vue') },
+  { path: '/member/passwordUpdateForm', name: 'Member_PassWordUpdateForm', component: () => import ('@/pages/member/passwordUpdateForm.vue') },
+  { path: '/member/memberDelete', name: 'Member_MemberDelete', component: () => import ('@/pages/member/memberDelete.vue') },
   { path: '/member/socialRegister', name: 'Member_SocialRegister', component: ()=>import ('@/pages/member/socialRegister.vue')},
   { path: '/member/myPage', name: 'Member_MyPage', component: () => import ('@/pages/member/myPage.vue') },
+  { path: '/member/friend', name: 'Member_Friend', component: () => import ('@/pages/member/friend.vue') },
+  { path: '/member/otherFriend', name: 'Member_Other_Friend', component: () => import ('@/pages/member/otherFriend.vue') },
+  { path: '/member/profile', name: 'Member_Profile', component: () => import ('@/pages/member/profile.vue') },
+  { path: '/member/profileUpdate', name: 'Member_Profile_Update', component: () => import ('@/pages/member/profileUpdate.vue') },
 
   // 게시판 관련
   { path:'/board/boardlist', name: 'boardList', component: () => import("@/pages/board/boardList.vue")},
@@ -33,9 +42,11 @@ const routes = [
 
   // 클럽 관련
   { path: '/club', name: 'Club_List', component: () => import ('@/pages/club/list.vue') },
-  { path: '/club/registForm', name: 'Club_RegistForm', component: () => import ('@/pages/club/registForm.vue') },
-  { path: '/club/:teamCode', name: 'Club_DetailView', component: () => import ('@/pages/club/detailView.vue') },
-  { path: '/club/:teamCode/updateForm', name: 'Club_UpdateForm', component: ()=>import ('@/pages/club/updateForm.vue') },
+  { path: '/club/registForm', name: 'Club_RegistForm', component: () => import  ('@/pages/club/registForm.vue') },
+  { path: '/club/:teamCode', name: 'Club_DetailView', component: () => import  ('@/pages/club/detailView.vue') },
+  { path: '/club/:teamCode/updateForm', name: 'Club_UpdateForm', component: () => import  ('@/pages/club/updateForm.vue') },
+  { path: '/club/:teamCode/applyList', name: 'Club_ApplyList', component: () => import  ('@/pages/club/applyList.vue') },
+  { path: '/club/:teamCode/memberList', name: 'Club_MemberList', component: () => import  ('@/pages/club/memberList.vue') },
 
   // 모집글 관련
   { path: '/recruitBoard', name: 'Recruit_List', component: () => import ('@/pages/recruitBoard/list.vue')},
@@ -48,6 +59,9 @@ const routes = [
     { path:'/match/matchdetail/:id', name: 'matchDetail', component: () => import ('@/pages/board/match/matchDetail.vue')},
     { path:'/match/matchlog/:id', name: 'matchLog', component: () => import ('@/pages/board/match/matchLog.vue')},
     { path:'/match/matchregisterform', name: 'matchregister', component: () => import ('@/pages/board/match/matchRegisterForm.vue')},
+
+  // 웹소켓 관련 알림 리스트
+
 
   // 404 Not Found
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import ('@/pages/NotFound.vue')}
