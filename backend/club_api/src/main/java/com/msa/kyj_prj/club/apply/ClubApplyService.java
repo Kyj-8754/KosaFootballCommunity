@@ -394,9 +394,35 @@ public class ClubApplyService {
 	    if (result != 1)
 	        throw new IllegalStateException("❌ 클럽 신청 정보 저장 실패!");
 
-	    // (알림 메시지 전송 등 필요 시 여기에 추가)
+	    // 🔽 [알림 메시지 전송 로직 시작]
+	    try {
+	        String senderName = clubApplyDAO.findUserNameByUserNo(clubApply.getAppli_user_no());
+
+	        AlarmMessageDTO alarm = new AlarmMessageDTO();
+	        alarm.setType("CLUB_APPLY");
+	        alarm.setSenderId(String.valueOf(clubApply.getAppli_user_no()));
+	        alarm.setReceiverId(String.valueOf(leader_user_no)); // 팀장에게 전송
+	        alarm.setClubId(club_id);
+	        alarm.setMessage(senderName + " 님이 클럽가입을 신청했습니다.");
+
+	        log.info("📢 클럽 신청 알림 전송 준비: {}", alarm.toString());
+
+	        String url = alarmApiUrl + "/alarm/send";
+	        ResponseEntity<Void> response = restTemplate.postForEntity(url, alarm, Void.class);
+
+	        if (response.getStatusCode().is2xxSuccessful()) {
+	            log.info("✅ 클럽 가입 알림 전송 성공 (receiver: {})", leader_user_no);
+	        } else {
+	            log.error("❌ 클럽 가입 알림 전송 실패 (status: {})", response.getStatusCode());
+	        }
+	    } catch (Exception e) {
+	        log.error("❌ 클럽 가입 알림 전송 중 예외 발생", e);
+	    }
+	    // 🔼 [알림 메시지 전송 로직 끝]
+
 	    return null;
 	}
+
 
 
 	// ◆ club_id, appli_user_no 기준 신청 취소 (pending만)

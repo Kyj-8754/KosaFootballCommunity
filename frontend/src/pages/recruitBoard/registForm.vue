@@ -92,7 +92,7 @@ const submitForm = async () => {
         title: title.value,
         content: content.value,
         user_no: parseInt(userNoRef.value), // 로그인된 사용자 번호
-        // club_id: selectedClubId.value,   // ← 이 줄 삭제!
+         club_id: selectedClubId.value,   // ← 이 줄 삭제!
       },
       {
         headers: {
