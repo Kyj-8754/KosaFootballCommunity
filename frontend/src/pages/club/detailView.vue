@@ -21,7 +21,15 @@
               class="img-fluid mb-3"
               style="max-height: 250px; object-fit: contain"
             />
-          <ClubApplyButton :club-id="club.club_id" :owner-user-no="club.user_no" /> 
+          </div>
+          <!-- ✅ 버튼은 아래로 분리해서 배치 -->
+          <div class="d-flex justify-content-center mt-4">
+            <ClubApplyButton
+              :club-id="club.club_id"
+              :owner-user-no="club.user_no"
+              class="btn btn-outline-primary"
+              style="font-size: 1rem; padding: 1rem 3rem"
+            />
           </div>
         </div>
 
@@ -185,12 +193,10 @@
 </template>
 
 <script setup>
-import ClubApplyButton from "./ClubApplyButton.vue"
+import ClubApplyButton from "./ClubApplyButton.vue";
 import { ref, inject, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
-
-
 
 const token = inject("token");
 const userNo = inject("userNo");

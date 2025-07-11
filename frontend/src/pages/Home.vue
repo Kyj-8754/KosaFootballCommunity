@@ -45,7 +45,7 @@ import weatherWidget from '@/components/widget/weatherWidget.vue'
 import BoardCategoryTabs from '@/components/main/BoardCategoryTabs.vue'
 import RecentMatchList from '@/components/main/RecentMatchList.vue'
 import OldMatchList from '@/components/main/OldMatchList.vue'
-import clubMatchList from '@/components/board/club/clubMatchList.vue'
+//import clubMatchList from '@/components/board/club/clubMatchList.vue'
 
 const serverTime = ref("");
 

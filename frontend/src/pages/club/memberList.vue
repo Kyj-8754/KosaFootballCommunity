@@ -1,6 +1,6 @@
 <template>
   <div class="container py-5">
-    <h2 class="fw-bold mb-4 text-center">클럽 전체 멤버</h2>
+    <h2 class="fw-bold mb-4 text-center">클럽 멤버 목록</h2>
     <div class="card shadow-sm">
       <div class="card-body p-0">
         <table class="table mb-0 align-middle">

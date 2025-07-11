@@ -153,19 +153,32 @@ public class ClubApplyController {
      */
     @PostMapping("/club")
     public ResponseEntity<?> applyToClub(@RequestBody ClubApply clubApply) {
-    	   System.out.println(">>>> 클럽 가입신청 진입!");
-    	    System.out.println(">>>> clubApply: " + clubApply);
-    	int appli_user_no = clubApply.getAppli_user_no();
+        System.out.println(">>>> 클럽 가입신청 진입!");
+        System.out.println(">>>> clubApply: " + clubApply);
+
+        int appli_user_no = clubApply.getAppli_user_no();
+
         try {
             AlarmMessageDTO alarm = clubApplyService.applyToClub(clubApply, appli_user_no);
-            // (알림 전송 로직/메시지는 필요시 추가)
-            return ResponseEntity.ok("클럽 신청 완료");
+
+            if (alarm != null) {
+                try {
+                    restTemplate.postForEntity(alarmApiUrl + "/alarm/send", alarm, Void.class);
+                    return ResponseEntity.ok("✅ 클럽 신청 및 알림 전송 완료");
+                } catch (Exception e) {
+                    return ResponseEntity.internalServerError().body("신청 성공, 그러나 알림 전송 실패");
+                }
+            } else {
+                return ResponseEntity.ok("✅ 클럽 신청 완료 (알림 없음)");
+            }
+
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("서버 오류가 발생했습니다.");
         }
     }
+
 
     /**
      * [2] 클럽 detail에서 신청 취소 (DELETE)
