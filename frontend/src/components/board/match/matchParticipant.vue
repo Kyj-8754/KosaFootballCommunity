@@ -76,10 +76,6 @@ const tabLabelMap = {
   reject: '거절됨'
 }
 
-console.log('userNo:', userNo?.value)
-console.log('matchUserNo:', props.matchUserNo)
-console.log('matchManagerNo:', props.matchManagerNo)
-
 const filteredParticipants = computed(() =>
   participants.value.filter(p => p.user_status === activeTab.value)
 )
