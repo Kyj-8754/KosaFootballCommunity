@@ -74,4 +74,9 @@ public interface MatchDAO {
 
     // 예약 ID로 매치 ID 목록 조회
     List<Match> getMatchesByReservationId(@Param("reservation_id") Long reservationId);
+
+	Long getReservationIdByPaymentId(Long id);
+	
+	// 최근 완료된 매치 5개 조회
+	List<Match> selectRecentCompletedMatches();
 }

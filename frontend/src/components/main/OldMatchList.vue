@@ -1,13 +1,16 @@
 <template>
   <div class="recent-match-container">
-    <!-- 클럽 매치 리스트 -->
+    <!-- 완료된 매치 리스트 -->
     <div class="match-item-list">
       <div
         v-for="match in matches"
         :key="match.match_id"
         class="match-wrapper"
       >
-        <div class="match-item">
+        <div
+          class="match-item"
+          @click="toggleMatch(match.match_id)"
+        >
           <div class="date-col">
             <div>{{ formatDate(match.match_date) }}</div>
           </div>
@@ -28,6 +31,11 @@
             <div class="badge gender" v-else>성별무관</div>
           </div>
         </div>
+
+        <!-- 매치 클릭 시 하단에 결과 표시 -->
+        <div v-if="openedMatchId === match.match_id" class="match-result-panel">
+          <MatchResult :matchId="match.match_id" />
+        </div>
       </div>
     </div>
   </div>
@@ -36,28 +44,25 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-
-const props = defineProps({
-  clubId: {
-    type: Number,
-    required: true,
-  },
-})
+import MatchResult from '@/components/board/match/matchResult.vue'
 
 const matches = ref([])
+const openedMatchId = ref(null)
 
-const fetchClubMatches = async () => {
+const fetchCompletedMatches = async () => {
   try {
-    const res = await axios.get('/board_api/match/club/matches', {
-      params: { clubId: props.clubId },
-    })
+    const res = await axios.get('/board_api/match/recent-completed')
     matches.value = res.data
   } catch (err) {
-    console.error('❌ 클럽 매치 목록을 불러오지 못했습니다:', err)
+    console.error('❌ 완료된 매치 목록을 불러오지 못했습니다:', err)
   }
 }
 
-onMounted(fetchClubMatches)
+const toggleMatch = (id) => {
+  openedMatchId.value = (openedMatchId.value === id) ? null : id
+}
+
+onMounted(fetchCompletedMatches)
 
 const formatDate = (str) => {
   const date = new Date(str)
@@ -106,6 +111,7 @@ const getStatusLabel = (code) => {
   border-radius: 8px;
   padding: 12px;
   background-color: #fff;
+  cursor: pointer;
 }
 
 .date-col {
@@ -147,5 +153,13 @@ const getStatusLabel = (code) => {
 
 .gender {
   background-color: #6c757d;
+}
+
+.match-result-panel {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 </style>

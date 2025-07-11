@@ -4,7 +4,7 @@
       <option value="tc">제목+내용</option>
       <option value="title">제목</option>
       <option value="content">내용</option>
-      <option value="writer">작성자</option>
+      <option value="writer" :disabled="isRecruitBoard">작성자</option>
     </select>
 
     <input v-model="keyword" placeholder="검색할 내용을 입력해주세요" />
@@ -13,12 +13,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps, computed } from 'vue'
 
 const criteria = ref('tc')
 const keyword = ref('')
 
 const emit = defineEmits(['search'])
+
+const props = defineProps({
+  category: String
+})
+
+const isRecruitBoard = computed(() => props.category === '모집게시판')
 
 const search = () => {
   emit('search', {
@@ -31,7 +37,7 @@ const search = () => {
 <style scoped>
 .board-filter {
   display: flex;
-  justify-content: flex-end; /* 🔄 오른쪽 정렬 */
+  justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
