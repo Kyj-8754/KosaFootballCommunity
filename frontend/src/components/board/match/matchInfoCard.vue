@@ -51,7 +51,6 @@
       <div>주소: {{ match.adres }}</div>
       <div>대표전화: {{ match.telno || '정보없음' }}</div>
       <div>운영전화: {{ match.svcendtelno || '정보없음' }}</div>
-      <!-- 템플릿 내 버튼 부분 -->
       <div class="button-row">
         <button class="btn-blue" @click="copyAddress">주소복사</button>
         <button class="btn-blue" @click="toggleMap">
@@ -78,34 +77,15 @@
 import { defineProps, ref, onMounted, nextTick, inject } from 'vue'
 import axios from 'axios'
 
+const props = defineProps({
+  match: { type: Object, required: true }
+})
+
+const currentCount = ref(0) // ✅ 수정: props에서 제거하고 로컬 ref로 선언
 const userNo = inject('userNo')
 const clubId = ref(null)
 const isApplied = ref(false)
 const showMap = ref(false)
-
-const props = defineProps({
-  match: { type: Object, required: true },
-  currentCount: { type: Number, default: 0 } // ✅ 추가됨
-})
-
-const checkClubLeader = async () => {
-  if (props.match.match_code !== 'league' || !userNo?.value) return
-
-  try {
-    const res = await axios.get('/board_api/match/club', {
-      params: { userNo: userNo.value }
-    })
-
-    if (res.data.club_id) {
-      clubId.value = res.data.club_id
-    } else {
-      clubId.value = null
-    }
-  } catch (e) {
-    console.error('클럽 리더 여부 확인 실패:', e)
-    clubId.value = null
-  }
-}
 
 const imageUrl = `${props.match.img_PATH}`
 
@@ -128,13 +108,9 @@ const statusLabel = (code) => {
     case 'waiting': return '대기중'
     case 'active': return '진행중'
     case 'completed': return '진행 완료'
-    case 'cancelled' : return '취소됨'
+    case 'cancelled': return '취소됨'
     default: return code
   }
-}
-
-const codeLabel = (code) => {
-  return code === 'social' ? '소셜매치' : code === 'league' ? '리그매치' : code
 }
 
 const copyAddress = async () => {
@@ -170,7 +146,6 @@ const loadMap = () => {
   }
 }
 
-// ✅ 신청 여부를 항상 DB에서 확인
 const checkIsApplied = async () => {
   if (!userNo || userNo.value == null) {
     isApplied.value = false
@@ -215,9 +190,7 @@ const applyToMatch = async () => {
     await fetchParticipantCount()
   } catch (error) {
     console.error('신청 실패:', error)
-
-    if (error.response && error.response.status === 409) {
-      // ✅ 백엔드에서 온 메시지 출력
+    if (error.response?.status === 409) {
       alert(error.response.data.error || '신청 조건을 만족하지 않습니다.')
     } else {
       alert('매치 참가 신청에 실패했습니다.')
@@ -252,9 +225,7 @@ const cancelParticipation = async () => {
 const fetchParticipantCount = async () => {
   try {
     const res = await axios.get('/board_api/match/participants/count', {
-      params: {
-        matchId: props.match.match_id
-      }
+      params: { matchId: props.match.match_id }
     })
     currentCount.value = res.data
   } catch (e) {
@@ -263,10 +234,29 @@ const fetchParticipantCount = async () => {
   }
 }
 
+const checkClubLeader = async () => {
+  if (props.match.match_code !== 'league' || !userNo?.value) return
+
+  try {
+    const res = await axios.get('/board_api/match/club', {
+      params: { userNo: userNo.value }
+    })
+
+    if (res.data.club_id) {
+      clubId.value = res.data.club_id
+    } else {
+      clubId.value = null
+    }
+  } catch (e) {
+    console.error('클럽 리더 여부 확인 실패:', e)
+    clubId.value = null
+  }
+}
+
 onMounted(() => {
   checkIsApplied()
   fetchParticipantCount()
-  checkClubLeader() // ✅ 클럽 리더 여부 확인
+  checkClubLeader()
 })
 </script>
 
@@ -321,10 +311,9 @@ onMounted(() => {
   border-radius: 8px;
   padding: 16px;
   margin-top: 12px;
-  margin-bottom: 12px; /* ✅ 다른 컴포넌트와 간격 확보 */
+  margin-bottom: 12px;
   background-color: #f9f9f9;
 }
-
 .btn-blue {
   background-color: #007bff;
   color: white;
@@ -334,11 +323,9 @@ onMounted(() => {
   cursor: pointer;
   font-size: 14px;
 }
-
 .btn-blue:hover {
   background-color: #0056b3;
 }
-
 .button-row {
   margin-top: 4px;
   display: flex;
