@@ -55,6 +55,11 @@ public class MyPageController {
 	    log.info("팀 목록  = {}", myClubList);
 	    response.put("myClubList", myClubList);
 	    
+	    int mannerScore = myPageService.getMannerScore(userNo);
+	    
+	    int level = myPageService.getlevel(userNo);
+	    
+	    
 	    // 스타일 이름과 능력 이름은 null이 아닐 경우에만 추가
 	    if (userInfo.getStyleCode() != null) {
 	        UserStyle userStyle = myPageService.getStyleName(userInfo.getStyleCode());
