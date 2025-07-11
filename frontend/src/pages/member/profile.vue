@@ -36,14 +36,17 @@
       <div class="info-box">
         <p></p>
       </div>
+      
       <div class="info-box">
         <p class="label">매너</p>
-        <p class="value">😊 좋아요</p>
+        <p class="value">
+          {{ manner === null ? '아직 평가를 받지 못했어요' : manner.toFixed(1) }}
+        </p>
       </div>
 
       <div class="info-box">
         <p class="label">레벨</p>
-        <p class="value">🟦 루키</p>
+        <p class="value">{{ getLevelLabel(level) }}</p>
       </div>
     </div>
 
@@ -84,10 +87,22 @@ const style = ref(null)
 const stat = ref(null)
 const friends = ref([])
 const myClubList = ref([])
+const manner = ref(0)
+const level = ref(0)
 
 const isMyProfile = computed(() => {
   return member.value?.userNo === loginUserNo.value
 })
+
+// 등급 조회
+const getLevelLabel = (score) => {
+  if (score == null) return '아직 평가를 받지 못했어요'
+  if (score >= 9) return '🔥 프로'
+  if (score >= 7) return '🏅 세미 프로'
+  if (score >= 5) return '🟦 아마추어'
+  if (score >= 3) return '🟢 비기너'
+  return '🔰 루키'
+}
 
 // 매니저 권한 부여 버튼 표시 조건
 const canGrantManager = computed(() => {
@@ -138,6 +153,8 @@ const fetchMemberDetail = async () => {
     myClubList.value = res.data.myClubList || []
     style.value = res.data.userStyle
     stat.value = res.data.userStat
+    manner.value = res.data.manner
+    level.value = res.data.level
   } catch (err) {
     console.error('회원 정보 조회 실패:', err)
   }

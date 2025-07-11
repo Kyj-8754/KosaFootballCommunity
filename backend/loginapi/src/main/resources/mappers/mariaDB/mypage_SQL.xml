@@ -170,11 +170,25 @@
 
 	<!-- 현재 로그인된 사용자의 클럽 목록 조회 -->
 	<select id="getClubList" parameterType="int" resultType="com.msa.do_login.myPage.dto.MyClubInfoDTO">
-	SELECT tc.team_code, tc.club_name
-	FROM tbl_club tc
-	JOIN tbl_club_member tcm ON tc.club_id = tcm.club_id
-	WHERE tcm.user_no = #{userNo}
-	AND tcm.left_at IS NULL;
+		SELECT tc.team_code, tc.club_name
+		FROM tbl_club tc
+		JOIN tbl_club_member tcm ON tc.club_id = tcm.club_id
+		WHERE tcm.user_no = #{userNo}
+		AND tcm.left_at IS NULL;
+	</select>
+	
+	<select id="getMannerScore" parameterType="int" resultType="Double">
+		SELECT AVG(CAST(log_memo AS UNSIGNED))
+		FROM match_log
+		WHERE user_no = #{userNo}
+		AND log_type = '매너 점수'
+	</select>
+	
+	<select id="getlevel" parameterType="int" resultType="Double">
+		SELECT AVG(CAST(log_memo AS UNSIGNED))
+		FROM match_log
+		WHERE user_no = #{userNo}
+		AND log_type = '실력 점수'
 	</select>
 	
 </mapper>

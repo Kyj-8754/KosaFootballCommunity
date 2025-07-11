@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.msa.do_login.myPage.dao.MyPageDAO;
 import com.msa.do_login.myPage.dto.FriendDTO;
-import com.msa.do_login.myPage.dto.LevelDTO;
-import com.msa.do_login.myPage.dto.MannerScoreDTO;
 import com.msa.do_login.myPage.dto.MyClubInfoDTO;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
@@ -144,13 +142,11 @@ public class MyPageService {
 	    return clubList;
 	}
 	
-	public int getMannerScore(int userNo) {
-//		List<MannerScoreDTO> mannerResult = myPageDAO.getMannerScore(userNo);
-		return 0;
+	public Double getMannerScore(int userNo) {
+		return myPageDAO.getMannerScore(userNo);
 	}
 	
-	public int getlevel(int userNo) {
-//		List<LevelDTO> totalLevel = myPageDAO.getlevel(userNo);
-		return 0;
+	public Double getlevel(int userNo) {
+		return myPageDAO.getlevel(userNo);
 	}
 }
