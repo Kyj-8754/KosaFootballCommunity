@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.msa.do_login.myPage.dao.MyPageDAO;
 import com.msa.do_login.myPage.dto.FriendDTO;
 import com.msa.do_login.myPage.dto.MyClubInfoDTO;
+import com.msa.do_login.myPage.dto.UserProfileDTO;
 import com.msa.do_login.myPage.service.MyPageService;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
@@ -52,15 +53,9 @@ public class MyPageController {
 	    response.put("member", userInfo);
 	    
 	    List<MyClubInfoDTO> myClubList = myPageService.getClubList(userNo);
-	    log.info("팀 목록  = {}", myClubList);
 	    response.put("myClubList", myClubList);
-	    
-	    Double mannerScore = myPageService.getMannerScore(userNo);
-	    response.put("manner", mannerScore);
-	    log.info("매너 정보 = {}", mannerScore);
-	    Double level = myPageService.getlevel(userNo);
-	    response.put("level", level);
-	    log.info("레벨 정보 = {}", level);
+	    UserProfileDTO profileInfo = myPageService.getProfileInfo(userNo);
+	    response.put("profileInfo", profileInfo);
 	    
 	    // 스타일 이름과 능력 이름은 null이 아닐 경우에만 추가
 	    if (userInfo.getStyleCode() != null) {

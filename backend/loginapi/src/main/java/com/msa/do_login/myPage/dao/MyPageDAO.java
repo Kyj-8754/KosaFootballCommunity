@@ -58,4 +58,14 @@ public interface MyPageDAO {
 	public Double getMannerScore(int userNo);
 
 	public Double getlevel(int userNo);
+	
+	public int getMatchCount(int userNo);
+	
+	public int getPOMCount(int userNo);
+	
+	public int getSmileCardCount(int userNo);
+	
+	public int getYellowCardCount(int userNo);
+	
+	public int getRedCardCount(int userNo);
 }

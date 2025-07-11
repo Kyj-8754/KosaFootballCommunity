@@ -191,4 +191,39 @@
 		AND log_type = '실력 점수'
 	</select>
 	
+	<select id="getMatchCount" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM match_log
+		WHERE user_no = #{userNo}
+		AND log_type = '출석'
+	</select>
+	
+	<select id="getPOMCount" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM match_log
+		WHERE user_no = #{userNo}
+		AND log_type = 'POM'
+	</select>
+	
+	<select id="getSmileCardCount" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM match_log
+		WHERE user_no = #{userNo}
+		AND log_type = '스마일 카드'
+	</select>
+	
+	<select id="getYellowCardCount" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM match_log
+		WHERE user_no = #{userNo}
+		AND log_type = '옐로 카드'
+	</select>
+	
+	<select id="getRedCardCount" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM match_log
+		WHERE user_no = #{userNo}
+		AND log_type = '레드 카드'
+	</select>
+	
 </mapper>
