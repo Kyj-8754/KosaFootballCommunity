@@ -68,5 +68,20 @@ public interface ClubApplyDAO {
 
 	// 강퇴 처리 (approved → kicked)
 	int updateKickedStatus(@Param("club_id") int club_id, @Param("appli_user_no") int appli_user_no);
+	
+	
+	// 이건 club 상세보기에서 가입 신청할 떄 필요한 메소드
+	// (1) club_id, appli_user_no로 최신 1건(상태 무관) 조회
+	ClubApply findLastApplyByClubIdAndApplicant(@Param("club_id") int club_id, @Param("appli_user_no") int appli_user_no);
 
+	// (2) club_id, appli_user_no로 pending 상태 신청 취소 (status = 'canceled')
+	int cancelByClubIdAndApplicant(@Param("club_id") int club_id, @Param("appli_user_no") int appli_user_no);
+
+	
+	// 추가!
+	int insertByClubDetail(ClubApply clubApply);
+
+	
+	
+	
 }

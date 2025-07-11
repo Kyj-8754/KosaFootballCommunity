@@ -21,6 +21,7 @@
               class="img-fluid mb-3"
               style="max-height: 250px; object-fit: contain"
             />
+          <ClubApplyButton :club-id="club.club_id" :owner-user-no="club.user_no" /> 
           </div>
         </div>
 
@@ -184,9 +185,12 @@
 </template>
 
 <script setup>
+import ClubApplyButton from "./ClubApplyButton.vue"
 import { ref, inject, onMounted, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
+
+
 
 const token = inject("token");
 const userNo = inject("userNo");

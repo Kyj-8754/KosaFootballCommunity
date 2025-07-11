@@ -144,4 +144,69 @@ public class ClubApplyController {
             return ResponseEntity.badRequest().body("강퇴 처리 실패 (이미 탈퇴/강퇴된 상태거나 승인 전)");
         }
     }
+    
+    
+    
+    /**
+     * [1] 클럽 detail에서 직접 신청 (POST)
+     *   - body: { club_id: int, appli_user_no: int }
+     */
+    @PostMapping("/club")
+    public ResponseEntity<?> applyToClub(@RequestBody ClubApply clubApply) {
+    	   System.out.println(">>>> 클럽 가입신청 진입!");
+    	    System.out.println(">>>> clubApply: " + clubApply);
+    	int appli_user_no = clubApply.getAppli_user_no();
+        try {
+            AlarmMessageDTO alarm = clubApplyService.applyToClub(clubApply, appli_user_no);
+            // (알림 전송 로직/메시지는 필요시 추가)
+            return ResponseEntity.ok("클럽 신청 완료");
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("서버 오류가 발생했습니다.");
+        }
+    }
+
+    /**
+     * [2] 클럽 detail에서 신청 취소 (DELETE)
+     *   - body: { club_id: int, appli_user_no: int }
+     */
+    @DeleteMapping("/club")
+    public ResponseEntity<?> cancelApplyByClubId(@RequestBody ClubApply clubApply) {
+        int club_id = clubApply.getClub_id();
+        int appli_user_no = clubApply.getAppli_user_no();
+        if (club_id == 0 || appli_user_no == 0) {
+            return ResponseEntity.badRequest().body("클럽 정보 또는 사용자 정보가 없습니다.");
+        }
+        boolean result = clubApplyService.cancelApplyByClubId(club_id, appli_user_no);
+        if (result) {
+            return ResponseEntity.ok("가입 신청이 취소되었습니다.");
+        } else {
+            return ResponseEntity.badRequest().body("취소 처리 실패 (이미 취소했거나 존재하지 않는 신청)");
+        }
+    }
+
+    /**
+     * [3] club_id로 상태 조회 (GET)
+     *   - /club/apply/club/status?club_id=1&user_no=5
+     */
+    @GetMapping("/club/status")
+    public ResponseEntity<?> getApplyStatusByClubId(@RequestParam("club_id") int club_id,
+                                                    @RequestParam("user_no") int user_no) {
+        try {
+            ClubApply last = clubApplyService.findLastApplyByClubIdAndApplicant(club_id, user_no);
+            return ResponseEntity.ok(Map.of("status", last != null ? last.getStatus() : "none"));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("가입 신청 상태 조회 중 오류가 발생했습니다.");
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }
