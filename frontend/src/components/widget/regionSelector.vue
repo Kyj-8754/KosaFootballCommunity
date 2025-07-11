@@ -1,7 +1,7 @@
 <!-- RegionSelector.vue -->
 <template>
   <select
-    class="border rounded px-2 py-1 text-sm w-full"
+    class="border rounded px-2 py-1 text-sm"
     :value="modelValue"
     @change="$emit('update:modelValue', $event.target.value)"
   >

@@ -6,13 +6,25 @@
       <!-- 매치 제목 -->
       <div class="mb-3">
         <label class="form-label">매치 제목</label>
-        <input type="text" v-model="title" class="form-control" placeholder="예: 7:7 풋살 매치 모집" />
+        <input
+          type="text"
+          v-model="title"
+          class="form-control"
+          placeholder="예: 7:7 풋살 매치 모집"
+          maxlength="30"
+        />
       </div>
 
       <!-- 상세 설명 -->
       <div class="mb-3">
         <label class="form-label">상세 설명</label>
-        <textarea v-model="description" class="form-control" rows="5" placeholder="매치에 대한 설명을 작성해주세요."></textarea>
+        <textarea
+          v-model="description"
+          class="form-control"
+          rows="5"
+          placeholder="매치에 대한 설명을 작성해주세요."
+          maxlength="3000"
+        ></textarea>
       </div>
 
       <!-- 성별 제한 -->
@@ -99,3 +111,9 @@ const onSubmit = async () => {
   }
 }
 </script>
+
+<style scoped>
+textarea.form-control {
+  resize: none;
+}
+</style>
