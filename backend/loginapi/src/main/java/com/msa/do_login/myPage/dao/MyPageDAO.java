@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.msa.do_login.myPage.dto.LevelDTO;
+import com.msa.do_login.myPage.dto.MannerScoreDTO;
 import com.msa.do_login.myPage.dto.MyClubInfoDTO;
 import com.msa.do_login.user.vo.LocalAccount;
 import com.msa.do_login.user.vo.UserStat;
@@ -54,4 +56,8 @@ public interface MyPageDAO {
 	public String findUserNameByUserNo(@Param("user_no") int user_no);
 	
 	public List<MyClubInfoDTO> getClubList(int userNo);
+	
+//	public List<MannerScoreDTO> getMannerScore(int userNo);
+//	
+//	public List<LevelDTO> getlevel(int userNo);
 }
