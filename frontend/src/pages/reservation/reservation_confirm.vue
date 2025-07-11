@@ -45,7 +45,7 @@
 
   </div>
 
- 
+
 </template>
 
 <script setup>
@@ -53,6 +53,7 @@ import axios from 'axios';
 import { inject, onMounted, ref, onUnmounted} from 'vue';
 import { useRoute, useRouter } from 'vue-router'
 
+const token = inject('token');
 const router = useRouter();
 const route = useRoute();
 const reservation = ref({});
