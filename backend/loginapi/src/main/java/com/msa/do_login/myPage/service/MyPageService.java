@@ -1,14 +1,16 @@
 package com.msa.do_login.myPage.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import com.msa.do_login.webSocket.WebSocket;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.msa.do_login.myPage.dao.MyPageDAO;
 import com.msa.do_login.myPage.dto.FriendDTO;
+import com.msa.do_login.myPage.dto.MyClubInfoDTO;
+import com.msa.do_login.myPage.dto.UserProfileDTO;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
@@ -36,7 +38,6 @@ public class MyPageService {
 		}
 		memberDB.setUserName(member.getUserName());
 	    memberDB.setUserBirth(member.getUserBirth());
-	    memberDB.setUserPhone(member.getUserPhone());
 	    memberDB.setUserPostCode(member.getUserPostCode());
 	    memberDB.setUserAddr(member.getUserAddr());
 	    memberDB.setUserDetailAddr(member.getUserDetailAddr());
@@ -132,6 +133,26 @@ public class MyPageService {
 	
 	public UserStat getStatName(int statCode) {
 		return myPageDAO.getStatName(statCode);
+	}
+	
+	public List<MyClubInfoDTO> getClubList(int userNo){
+	    List<MyClubInfoDTO> clubList = myPageDAO.getClubList(userNo);
+	    if (clubList == null) {
+	        clubList = Collections.emptyList();
+	    }
+	    return clubList;
+	}
+	
+	public UserProfileDTO getProfileInfo(int userNo) {
+		UserProfileDTO profileInfo = new UserProfileDTO();
+		profileInfo.setManner(myPageDAO.getMannerScore(userNo));
+		profileInfo.setLevel(myPageDAO.getlevel(userNo));
+		profileInfo.setMatchCount(myPageDAO.getMatchCount(userNo));
+		profileInfo.setPOMCount(myPageDAO.getPOMCount(userNo));
+		profileInfo.setSmileCardCount(myPageDAO.getSmileCardCount(userNo));
+		profileInfo.setYellowCardCount(myPageDAO.getYellowCardCount(userNo));
+		profileInfo.setRedCardCount(myPageDAO.getRedCardCount(userNo));
+		return profileInfo;
 	}
 	
 }

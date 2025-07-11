@@ -25,7 +25,7 @@
         </div>
 
         <div
-          v-if="userNo?.value === matchUserNo || userNo?.value === matchManagerNo"
+          v-if="userNo === matchUserNo || userNo === matchManagerNo"
           class="status-buttons"
         >
           <button

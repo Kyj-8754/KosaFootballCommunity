@@ -14,9 +14,8 @@
     <AlarmToast /> <!-- 🔔 알림 토스트 전역 표시 -->
 
     <Footer />
-     <scrollUp />
+    <scrollUp />
   </div>
- 
 </template>
 
 <script setup>
@@ -28,10 +27,11 @@ import AlarmToast from '@/components/common/AlarmToast.vue';
 import { connectWebSocket } from '@/utils/stomp';
 import { useAlarmStore } from '@/stores/alarmStore';
 import scrollUp from '@/components/scrollUp.vue'
+import { injectSetToken } from '@/utils/tokenGenerator.js'
 
 const alarmStore = useAlarmStore();
 
-import { injectSetToken } from '@/utils/tokenGenerator.js'
+
 
 const token = ref(localStorage.getItem('accessToken') || '')
 // 토큰 설정 함수
@@ -45,7 +45,6 @@ const setToken = (newToken) => {
 }
 injectSetToken(setToken)
 
-// 3. 마운트 시 로컬스토리지에서 토큰 로딩
 onMounted(() => {
   const savedToken = localStorage.getItem('accessToken')
   if (savedToken) {

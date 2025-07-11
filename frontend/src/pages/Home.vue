@@ -6,9 +6,10 @@
   <div class="container-fluid main-container">
     <div class="row h-100">
       <main class="main-area">
+        <!--
         <h1><strong>환영 합니다.</strong></h1>
 
-        <!-- ✅ 이동 버튼 -->
+
         <div class="mb-3">
           <router-link to="/recruitBoard" class="btn btn-outline-success me-2"
             >팀원 모집 게시판</router-link
@@ -20,14 +21,18 @@
             클럽 매치 참가 리스트
           </button>
         </div>
-
         <button @click="test">구장 리스트 불러오기</button>
         <button @click="update">구장 업데이트</button>
+        -->
+        <!--
         <weatherWidget/>
+        -->
         <BoardCategoryTabs />
         <RecentMatchList />
         <OldMatchList />
+        <!--
         <clubMatchList :clubId="25"/>
+        -->
       </main>
     </div>
   </div>
