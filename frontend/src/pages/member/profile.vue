@@ -71,162 +71,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import axios from 'axios'
+import { useProfileDetail } from '@/utils/script/user.js'
 
-const token = inject('token')
-const loginUserNo = inject('userNo')
-const authCode = inject('authCode')
-const route = useRoute()
-
-const member = ref(null)
-const style = ref(null)
-const stat = ref(null)
-const friends = ref([])
-const myClubList = ref([])
-const profileInfo = ref(null)
-
-const isMyProfile = computed(() => {
-  return member.value?.userNo === loginUserNo.value
-})
-
-// 등급 조회
-const getLevelLabel = (score) => {
-  if (score == null) return '아직 평가를 받지 못했어요'
-  if (score >= 9) return '🔥 프로'
-  if (score >= 7) return '🏅 세미 프로'
-  if (score >= 5) return '🟦 아마추어'
-  if (score >= 3) return '🟢 비기너'
-  return '🔰 루키'
-}
-
-// 매니저 권한 부여 버튼 표시 조건
-const canGrantManager = computed(() => {
-  return (
-    authCode.value === 'ROLE_A1' &&
-    member.value?.authCode === 'A3' &&
-    loginUserNo.value !== member.value?.userNo
-  )
-})
-
-// 매니저 권한 해제 버튼 표시 조건
-const canRevokeManager = computed(() => {
-  return (
-    authCode.value === 'ROLE_A1' &&
-    member.value?.authCode === 'A2' &&
-    loginUserNo.value !== member.value?.userNo
-  )
-})
-
-const friendLink = computed(() => {
-  if (!member.value || !loginUserNo?.value) return {}
-  const isMe = member.value.userNo === loginUserNo.value
-  if (isMe) {
-    return { name: 'Member_Friend' }
-  } else {
-    return {
-      name: 'Member_Other_Friend',
-      query: { userNo: member.value.userNo }
-    }
-  }
-})
-
-// 회원 정보 조회 함수
-const fetchMemberDetail = async () => {
-  const userNo = route.query.userNo
-  if (!userNo) {
-    console.warn('userNo 쿼리 파라미터가 없습니다.')
-    return
-  }
-
-  try {
-    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo}`, {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    })
-    member.value = res.data.member
-    myClubList.value = res.data.myClubList || []
-    style.value = res.data.userStyle
-    stat.value = res.data.userStat
-    profileInfo.value = res.data.profileInfo
-  } catch (err) {
-    console.error('회원 정보 조회 실패:', err)
-  }
-}
-
-// 친구 목록 조회 함수
-const loadFriendList = async () => {
-  const userNo = route.query.userNo
-  if (!userNo) return
-  try {
-    const res = await axios.get('/login_api/mypage/friends', {
-      params: { userNo },
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    })
-    if (res.data?.res_code === '200') {
-      friends.value = res.data.data
-    }
-  } catch (err) {
-    console.error('친구 목록 불러오기 실패', err)
-  }
-}
-
-// 관리자 권한 부여
-const grantManager = async () => {
-  const userNo = route.query.userNo
-  if (!confirm('관리자 권한을 부여하시겠습니까?')) return
-
-  try {
-    const res = await axios.post('/login_api/admin/grantManager', { userNo }, {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    })
-    alert(res.data.res_msg)
-    if (res.data.res_code === '200') {
-      await fetchMemberDetail()
-    }
-  } catch (err) {
-    alert('권한 부여 중 오류 발생')
-    console.error(err)
-  }
-}
-
-// 관리자 권한 해제
-const revokeManager = async () => {
-  const userNo = route.query.userNo
-  if (!confirm('관리자 권한을 해제하시겠습니까?')) return
-
-  try {
-    const res = await axios.post('/login_api/admin/revokeManager', { userNo }, {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    })
-    alert(res.data.res_msg)
-    if (res.data.res_code === '200') {
-      await fetchMemberDetail()
-    }
-  } catch (err) {
-    alert('권한 해제 중 오류 발생')
-    console.error(err)
-  }
-}
-
-onMounted(async () => {
-  await fetchMemberDetail()
-  console.log('👤 로그인 유저:', loginUserNo.value)
-  console.log('👤 프로필 유저:', member.value?.userNo)
-  console.log('👥 같음?', loginUserNo.value === member.value?.userNo)
-  console.log('🔐 authCode:', authCode?.value)
-  console.log('👤 member:', member.value?.authCode)
-  console.log('👤 team:', myClubList.value)
-  await loadFriendList()
-})
+const {
+  member,
+  style,
+  stat,
+  friends,
+  myClubList,
+  profileInfo,
+  isMyProfile,
+  canGrantManager,
+  canRevokeManager,
+  getLevelLabel,
+  friendLink,
+  grantManager,
+  revokeManager
+} = useProfileDetail()
 </script>
 
 

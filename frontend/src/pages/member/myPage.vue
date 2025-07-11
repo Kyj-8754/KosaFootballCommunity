@@ -31,8 +31,8 @@
 
         <div class="mt-4 d-flex justify-content-center gap-3" v-if="member">
           <router-link :to="{ name: 'Member_Profile', query: { userNo: member.userNo } }" class="btn btn-outline-primary">프로필보기</router-link>
-          <router-link :to="{name: 'Home'}" class="btn btn-outline-primary">신청 내역</router-link>
-          <router-link :to="{name: 'Home'}" class="btn btn-outline-primary">사용 내역</router-link>
+          <router-link :to="{ name: 'Reservation_List' }" class="btn btn-outline-primary">예약 내역</router-link>
+          <router-link v-if="isManager" :to="{ name: 'Payment_List' }" class="btn btn-outline-primary">결제 내역</router-link>
           <router-link :to="{ name: 'Member_Friend' }" class="btn btn-outline-primary">친구</router-link>
           <router-link :to="{name: 'Home'}" class="btn btn-outline-primary">친구가 신청한 매치</router-link>
           <router-link :to="{ name: 'Member_UpdateForm' }" class="btn btn-primary">회원 정보 수정</router-link>
@@ -46,7 +46,7 @@
 
 <script setup>
 import { useMemberDetail } from '@/utils/script/user'
-const { member, showPasswordChangeBtn } = useMemberDetail()
+const { member, showPasswordChangeBtn, isManager } = useMemberDetail()
 </script>
 
 <style scoped>
