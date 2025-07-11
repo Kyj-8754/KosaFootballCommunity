@@ -11,12 +11,6 @@
 
 
         <div class="mb-3">
-          <router-link to="/recruitBoard" class="btn btn-outline-success me-2"
-            >팀원 모집 게시판</router-link
-          >
-          <router-link to="/club" class="btn btn-outline-info me-2"
-            >클럽 순위</router-link
-          >
           <button class="btn btn-outline-info me-2" @click="goToClubMatchList">
             클럽 매치 참가 리스트
           </button>
@@ -30,9 +24,9 @@
         <BoardCategoryTabs />
         <RecentMatchList />
         <OldMatchList />
-        <!--
-        <clubMatchList :clubId="25"/>
-        -->
+       
+        <!-- <clubMatchList :clubId="4"/> -->
+       
       </main>
     </div>
   </div>
@@ -46,10 +40,10 @@ import { useRouter } from "vue-router";
 const token = inject("token");
 const router = useRouter();
 
-import weatherWidget from '@/components/widget/weatherWidget.vue'
-import BoardCategoryTabs from '@/components/main/BoardCategoryTabs.vue'
-import RecentMatchList from '@/components/main/RecentMatchList.vue'
-import OldMatchList from '@/components/main/OldMatchList.vue'
+import weatherWidget from "@/components/widget/weatherWidget.vue";
+import BoardCategoryTabs from "@/components/main/BoardCategoryTabs.vue";
+import RecentMatchList from "@/components/main/RecentMatchList.vue";
+import OldMatchList from "@/components/main/OldMatchList.vue";
 //import clubMatchList from '@/components/board/club/clubMatchList.vue'
 
 const serverTime = ref("");

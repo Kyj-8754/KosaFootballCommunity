@@ -72,8 +72,7 @@ export default {
   methods: {
     async fetchClubs() {
       try {
-        // 🔧 수정 전: /api/clubs
-        // ✅ 수정 후: /club_api
+       
         const response = await axios.get('/club_api/list')
         this.clubs = response.data.data
       } catch (error) {
