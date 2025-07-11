@@ -7,12 +7,17 @@
 	
 	<!-- 회원 코드 존재 여부 확인 구문 -->
 	<select id="existsByUserCode" parameterType="String" resultType="boolean">
-		SELECT COUNT(*) > 0 FROM user WHERE user_code = #{userCode}
+		SELECT COUNT(*) > 0 
+		FROM user 
+		WHERE user_code = #{userCode}
+		AND user_exit_status='N'
 	</select>
 	
 	<!-- 아이디 존재 여부 확인 구문 -->
 	<select id="getLocalAccount" parameterType="String" resultType="com.msa.do_login.user.vo.LocalAccount">
-		SELECT * FROM local_account WHERE user_id = #{userId}
+		SELECT * 
+		FROM local_account 
+		WHERE user_id = #{userId}
 	</select>
 	
 	<!-- 전화번호 중복 가입 여부 확인 구문 -->
@@ -20,6 +25,7 @@
 	  SELECT * 
 	  FROM user 
 	  WHERE user_phone = #{userPhone}
+	  AND user_exit_status='N'
 	</select>
 	
 	<!-- 회원 가입 구문 -->
@@ -33,6 +39,7 @@
 		  #{userDetailAddr}, #{authCode}, #{userCode}, #{userGender}
 		)
 	</insert>
+	
 	<insert id="insertLocalAccount">
 		INSERT INTO local_account (user_no, user_id, user_pwd) 
 		VALUES (#{userNo}, #{userId}, #{userPwd})
@@ -55,10 +62,10 @@
 	
 	<!-- provider를 통해 SocialAccount 조회 -->
 	<select id="findSocialAccount" resultType="com.msa.do_login.user.vo.SocialAccount">
-	SELECT *
-	FROM social_account
-	WHERE provider = #{provider}
-	AND provider_id = #{providerId}
+		SELECT *
+		FROM social_account
+		WHERE provider = #{provider}
+		AND provider_id = #{providerId}
 	</select>
 	
 	<!-- 소셜 회원가입 구문 -->
@@ -72,6 +79,7 @@
 		SELECT * 
 		FROM user
 		WHERE user_no = #{userNo}
+		AND user_exit_status='N'
 	</select>
 	
 	<!-- 새로운 비밀번호 업데이트 -->
@@ -87,6 +95,26 @@
 		FROM user
 		WHERE user_name = #{userName}
 		AND user_phone = #{userPhone}
+		AND user_exit_status='N'
 	</select>
 	
+	<!-- user 정보 논리적 삭제 -->
+	<update id="deleteUser">
+		UPDATE user
+		SET user_exit_status = 'Y',
+			user_exit_date = NOW()
+		WHERE user_no = #{userNo}
+	</update>
+	
+	<!-- local 계정 물리적 삭제 -->
+	<delete id="deleteLocalAccount">
+		DELETE FROM local_account
+		WHERE user_no = #{userNo}
+	</delete>
+	
+	<!-- social 계정 물리적 삭제 -->
+	<delete id="deleteSocialAccount">
+		DELETE FROM local_account
+		WHERE user_no = #{userNo}
+	</delete>
 </mapper>

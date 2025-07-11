@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class UserVO {
 	private int userNo;
 	private String userName;
-	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
 	private Date userBirth;
 	private String userPhone;
 	private String userPostCode;
