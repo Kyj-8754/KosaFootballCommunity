@@ -39,14 +39,12 @@
       
       <div class="info-box">
         <p class="label">매너</p>
-        <p class="value">
-          {{ manner === null ? '아직 평가를 받지 못했어요' : manner.toFixed(1) }}
-        </p>
+        <p class="value">{{ profileInfo?.manner == null? '아직 평가를 받지 못했어요' : profileInfo.manner.toFixed(1) + '점'}}</p>
       </div>
 
       <div class="info-box">
         <p class="label">레벨</p>
-        <p class="value">{{ getLevelLabel(level) }}</p>
+        <p class="value">{{ getLevelLabel(profileInfo?.level) }}</p>
       </div>
     </div>
 
@@ -55,18 +53,18 @@
       <div class="match-info">
         <div class="match-box">
           <p class="title">⚽ 경기</p>
-          <p class="count">0</p>
+          <p class="count">{{ profileInfo?.matchCount ?? 0 }}</p>
         </div>
         <div class="match-box">
           <p class="title">👑 POM</p>
-          <p class="count">0</p>
+          <p class="count">{{ profileInfo?.POMCount ?? 0 }}</p>
         </div>
       </div>
 
       <div class="card-info">
-        <p>스마일 카드 <span class="card-count">0</span></p>
-        <p>옐로 카드 <span class="card-count">0</span></p>
-        <p>레드 카드 <span class="card-count">0</span></p>
+        <p>스마일 카드 <span class="card-count">{{ profileInfo?.smileCardCount ?? 0 }}</span></p>
+        <p>옐로 카드 <span class="card-count">{{ profileInfo?.yellowCardCount ?? 0 }}</span></p>
+        <p>레드 카드 <span class="card-count">{{ profileInfo?.redCardCount ?? 0 }}</span></p>
       </div>
     </div>
   </div>
@@ -87,8 +85,7 @@ const style = ref(null)
 const stat = ref(null)
 const friends = ref([])
 const myClubList = ref([])
-const manner = ref(0)
-const level = ref(0)
+const profileInfo = ref(null)
 
 const isMyProfile = computed(() => {
   return member.value?.userNo === loginUserNo.value
@@ -153,8 +150,7 @@ const fetchMemberDetail = async () => {
     myClubList.value = res.data.myClubList || []
     style.value = res.data.userStyle
     stat.value = res.data.userStat
-    manner.value = res.data.manner
-    level.value = res.data.level
+    profileInfo.value = res.data.profileInfo
   } catch (err) {
     console.error('회원 정보 조회 실패:', err)
   }
