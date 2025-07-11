@@ -52,7 +52,7 @@
           </li>
           <li class="nav-item">
             <!-- 임시로 클럽 순위로 설정(나중에 클럽 리그 일정으로 변경 예정)  -->
-            <router-link class="nav-link" :to="{ name: 'Club_List' }">클럽</router-link>
+            <router-link class="nav-link" :to="{ name: 'Club_MatchSchedule' }">클럽</router-link>
           </li>
         </ul>
       </div>
