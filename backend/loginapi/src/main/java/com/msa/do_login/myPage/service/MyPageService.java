@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.msa.do_login.myPage.dao.MyPageDAO;
 import com.msa.do_login.myPage.dto.FriendDTO;
 import com.msa.do_login.myPage.dto.MyClubInfoDTO;
+import com.msa.do_login.myPage.dto.UserProfileDTO;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
@@ -142,11 +143,16 @@ public class MyPageService {
 	    return clubList;
 	}
 	
-	public Double getMannerScore(int userNo) {
-		return myPageDAO.getMannerScore(userNo);
+	public UserProfileDTO getProfileInfo(int userNo) {
+		UserProfileDTO profileInfo = new UserProfileDTO();
+		profileInfo.setManner(myPageDAO.getMannerScore(userNo));
+		profileInfo.setLevel(myPageDAO.getlevel(userNo));
+		profileInfo.setMatchCount(myPageDAO.getMatchCount(userNo));
+		profileInfo.setPOMCount(myPageDAO.getPOMCount(userNo));
+		profileInfo.setSmileCardCount(myPageDAO.getSmileCardCount(userNo));
+		profileInfo.setYellowCardCount(myPageDAO.getYellowCardCount(userNo));
+		profileInfo.setRedCardCount(myPageDAO.getRedCardCount(userNo));
+		return profileInfo;
 	}
 	
-	public Double getlevel(int userNo) {
-		return myPageDAO.getlevel(userNo);
-	}
 }
