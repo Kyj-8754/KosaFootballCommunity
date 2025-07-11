@@ -18,6 +18,23 @@
             </div>
           </div>
 
+          <div class="button-col">
+            <button
+              v-if="!match.applied"
+              @click="applyToMatch(match.match_id)"
+              class="btn btn-apply"
+            >
+              참가
+            </button>
+            <button
+              v-else
+              @click="cancelMatch(match.match_id)"
+              class="btn btn-cancel"
+            >
+              참가 취소
+            </button>
+          </div>
+
           <div class="type-col">
             <div class="badge" :class="'status-' + match.match_status">
               {{ getStatusLabel(match.match_status) }}
@@ -34,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -45,13 +62,66 @@ const props = defineProps({
 })
 
 const matches = ref([])
+const userNo = inject('userNo')
+
+const applyToMatch = async (matchId) => {
+  try {
+    await axios.post('/board_api/match/apply/approve', {
+      match_id: matchId,
+      club_id: props.clubId,
+      user_no: userNo.value,
+    })
+    fetchClubMatches()
+  } catch (err) {
+    console.error('❌ 참가 실패:', err)
+  }
+}
+
+const cancelMatch = async (matchId) => {
+  try {
+    await axios.delete('/board_api/match/cancel', {
+      params: {
+        matchId,
+        userNo: userNo.value,
+      },
+    })
+    fetchClubMatches()
+  } catch (err) {
+    console.error('❌ 취소 실패:', err)
+  }
+}
+
+const checkUserApplied = async (matchId) => {
+  try {
+    const res = await axios.get('/board_api/match/applied', {
+      params: {
+        matchId,
+        userNo: userNo.value,
+      },
+    })
+    return res.data === true
+  } catch (err) {
+    console.error('❌ 신청 여부 확인 실패:', err)
+    return false
+  }
+}
 
 const fetchClubMatches = async () => {
   try {
     const res = await axios.get('/board_api/match/club/matches', {
       params: { clubId: props.clubId },
     })
-    matches.value = res.data
+
+    const rawMatches = res.data
+
+    const withApplied = await Promise.all(
+      rawMatches.map(async (match) => {
+        const applied = await checkUserApplied(match.match_id)
+        return { ...match, applied }
+      })
+    )
+
+    matches.value = withApplied
   } catch (err) {
     console.error('❌ 클럽 매치 목록을 불러오지 못했습니다:', err)
   }
