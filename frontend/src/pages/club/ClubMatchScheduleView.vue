@@ -3,14 +3,22 @@
     <h2 class="fw-bold mb-3">리그 일정</h2>
 
     <!-- 버튼 우측 정렬 -->
-    <div class="mb-3 text-end" style="margin-top: -25px">
-      <router-link to="/recruitBoard" class="btn btn-outline-success me-2">
-        팀원 모집 게시판
-      </router-link>
-      <router-link to="/club" class="btn btn-outline-info me-2">
-        클럽 순위
-      </router-link>
-    </div>
+<div class="mb-3 text-end" style="margin-top: -25px">
+  <router-link
+    to="/recruitBoard"
+    class="tab-btn me-2"
+    :class="{ active: isActiveTab('/recruitBoard') }"
+  >
+    팀원 모집 게시판
+  </router-link>
+  <router-link
+    to="/club"
+    class="tab-btn me-2"
+    :class="{ active: isActiveTab('/club') }"
+  >
+    클럽 순위
+  </router-link>
+</div>
 
     <!-- ✅ 매치 일정 리스트 출력 -->
     <div class="list-group">
@@ -25,7 +33,7 @@
             {{ formatDate(match.match_date) }}
             {{ formatTime(match.match_date) }}
           </div>
-          <div>{{ match.match_title }}</div>
+          <div>{{ match.match_title }}</div><!-- 나중에 주소 바꿔야함 클럽 매치 신청으로-->
         </div>
         <div>
           <span
@@ -46,10 +54,15 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
+const route = useRoute();
 const matches = ref([]);
+
+function isActiveTab(path) {
+  return route.path === path;
+}
 
 // ✅ 👇 전역에 있어야 템플릿에서 접근 가능
 const goToMatchDetail = (matchId) => {
@@ -74,12 +87,10 @@ const fetchMatches = async () => {
   }
 };
 
+// 여기서 조건 걸기 
 const filteredMatches = computed(() => {
-  const filtered = matches.value
-    .filter((match) => match.match_closed === "closed")
-    .sort((a, b) => new Date(a.match_date) - new Date(b.match_date));
-
-  return filtered;
+  return matches.value
+    .sort((a, b) => new Date(a.match_date) - new Date(b.match_date)); 
 });
 
 const formatDate = (str) => {
@@ -105,3 +116,29 @@ const getStatusLabel = (code) => {
 
 onMounted(fetchMatches);
 </script>
+
+<style scoped>
+.tab-btn {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da; /* 연한 회색 테두리 */
+  border-radius: 0.25rem;
+  background-color: white;
+  color: black;
+  text-decoration: none;
+  font-weight: 500;
+  transition: none;
+}
+
+.tab-btn:hover {
+  background-color: white !important;
+  color: black !important;
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+}
+
+.tab-btn.active {
+  background-color: white !important;
+  color: black !important;
+  border-color: black !important;
+}
+</style>
