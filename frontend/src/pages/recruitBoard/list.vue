@@ -1,6 +1,24 @@
 <template>
-  <div class="container my-5" style="max-width: 900px">
+  <div class="container my-5">
     <h2 class="fw-bold mb-3">모집 게시판</h2>
+
+    <!-- 버튼 우측 정렬 (margin-bottom만 설정하고 margin-top 제거) -->
+    <div class="d-flex justify-content-end mb-3">
+      <router-link
+        to="/club/clubMatchSchedule"
+        class="tab-btn me-2"
+        :class="{ active: isActiveTab('/club/clubMatchSchedule') }"
+      >
+        리그 일정
+      </router-link>
+      <router-link
+        to="/club"
+        class="tab-btn"
+        :class="{ active: isActiveTab('/club') }"
+      >
+        클럽 순위
+      </router-link>
+    </div>
 
     <!-- 버튼 + 검색/정렬 한 줄 -->
     <div class="mb-3 d-flex justify-content-between align-items-center">
@@ -76,11 +94,16 @@
 import { ref, computed, onMounted, inject } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router"; // ❗ 이 줄 빠졌어요!
 
 // 1. provide된 값 받기
 const token = inject("token");
 const userNo = inject("userNo");
 const router = useRouter();
+const route = useRoute();
+function isActiveTab(path) {
+  return route.path === path;
+}
 
 // 2. 상태(reactive 변수)
 const recruits = ref([]);
@@ -99,9 +122,7 @@ const filteredRecruits = computed(() => {
 async function fetchRecruits(sortType = "") {
   try {
     const url =
-      sortType === "popular"
-        ? "/recruits_api?sort=popular"
-        : "/recruits_api";
+      sortType === "popular" ? "/recruits_api?sort=popular" : "/recruits_api";
     const response = await axios.get(url);
     recruits.value = response.data;
   } catch (e) {
@@ -143,3 +164,28 @@ onMounted(() => {
   checkHasClub();
 });
 </script>
+<style scoped>
+.tab-btn {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da; /* 연회색 테두리 */
+  border-radius: 0.25rem;
+  background-color: white;
+  color: black;
+  text-decoration: none;
+  font-weight: 500;
+  transition: none;
+}
+
+.tab-btn:hover {
+  background-color: white !important;
+  color: black !important;
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+}
+
+.tab-btn.active {
+  background-color: white !important;
+  color: black !important;
+  border-color: black !important; /* 강조하고 싶다면 */
+}
+</style>
