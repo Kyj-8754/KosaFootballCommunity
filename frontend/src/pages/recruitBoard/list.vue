@@ -72,6 +72,19 @@
         class="list-group-item d-flex justify-content-between align-items-start text-dark text-decoration-none"
         style="cursor: pointer"
       >
+        <!-- 클럽 로고 썸네일
+<img
+  :src="
+    recruit.logo_path
+      ? `http://localhost:8121/uploads/club_logos/${recruit.logo_path}`
+      : fallbackImg
+  "
+  @error="handleImageError"
+  alt="클럽 로고"
+  style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; margin-left: 8px; margin-right: 12px;"
+/> -->
+
+
         <!-- 팀명 -->
         <div class="fw-bold me-3" style="width: 30%; padding-top: 12px">
           {{ recruit.club_name }}
@@ -94,7 +107,7 @@
 import { ref, computed, onMounted, inject } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import { useRoute } from "vue-router"; // ❗ 이 줄 빠졌어요!
+import { useRoute } from "vue-router";
 
 // 1. provide된 값 받기
 const token = inject("token");
@@ -104,6 +117,11 @@ const route = useRoute();
 function isActiveTab(path) {
   return route.path === path;
 }
+// const fallbackImg = "https://placehold.co/40x40?text=IMG";
+// // ✅ 이미지 로딩 실패 시 기본 이미지로 대체
+// const handleImageError = (event) => {
+//   event.target.src = fallbackImg;
+// };
 
 // 2. 상태(reactive 변수)
 const recruits = ref([]);

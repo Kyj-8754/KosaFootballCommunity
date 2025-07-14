@@ -34,15 +34,24 @@ public class ClubInfoService {
 
 	// 클럽 상세정보 수정 (업서트 포함)
     // ✅ 클럽 상세정보 수정 (업서트 처리)
-    public int updateClubInfo(ClubInfo clubInfo) {
-        ClubInfo existing = clubInfoDAO.getClubInfo(clubInfo.getClub_id());
+	public int updateClubInfo(ClubInfo clubInfo) {
+	    // ✅ 필수 값 검증
+	    if (clubInfo.getGender() == null || clubInfo.getGender().isBlank()
+	        || clubInfo.getAge_group() == null || clubInfo.getAge_group().isBlank()
+	        || clubInfo.getActive_days() == null || clubInfo.getActive_days().isBlank()
+	        || clubInfo.getActive_times() == null || clubInfo.getActive_times().isBlank()) {
 
-        if (existing == null) {
-            return clubInfoDAO.insertClubInfo(clubInfo);  // INSERT 실행 (MyBatis XML에 있음)
-        } else {
-            return clubInfoDAO.updateClubInfo(clubInfo);  // UPDATE 실행 (MyBatis XML에 있음)
-        }
-    }
+	        throw new IllegalArgumentException("성별, 나이대, 활동 요일, 활동 시간을 모두 입력해 주세요.");
+	    }
+
+	    ClubInfo existing = clubInfoDAO.getClubInfo(clubInfo.getClub_id());
+
+	    if (existing == null) {
+	        return clubInfoDAO.insertClubInfo(clubInfo);
+	    } else {
+	        return clubInfoDAO.updateClubInfo(clubInfo);
+	    }
+	}
 	// 전체 클럽 info 리스트(관리/테스트용)
 	public List<ClubInfo> listClubInfo() {
 		return clubInfoDAO.listClubInfo();
