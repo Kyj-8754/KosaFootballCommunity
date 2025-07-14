@@ -89,11 +89,4 @@ public class StadiumController {
 		stadiumService.syncAll();
 	}
 	
-	// 구장 예약창에 정보 전달
-	@PostMapping("reservationForm")
-	public void reservationForm(@Parameter(description = "경기장 서비스ID", example = "1") @RequestParam String SVCID, 
-			@Parameter(description = "예약 날짜", example = "1") @RequestParam String date) throws Exception{
-		stadiumService.getreservationForm(SVCID, date);
-	}
-	
 }
