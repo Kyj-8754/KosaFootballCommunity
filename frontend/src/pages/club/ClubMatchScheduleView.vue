@@ -3,22 +3,22 @@
     <h2 class="fw-bold mb-3">리그 일정</h2>
 
     <!-- 버튼 우측 정렬 -->
-<div class="mb-3 text-end" style="margin-top: -25px">
-  <router-link
-    to="/recruitBoard"
-    class="tab-btn me-2"
-    :class="{ active: isActiveTab('/recruitBoard') }"
-  >
-    팀원 모집 게시판
-  </router-link>
-  <router-link
-    to="/club"
-    class="tab-btn me-2"
-    :class="{ active: isActiveTab('/club') }"
-  >
-    클럽 순위
-  </router-link>
-</div>
+    <div class="mb-3 text-end" style="margin-top: -25px">
+      <router-link
+        to="/recruitBoard"
+        class="tab-btn me-2"
+        :class="{ active: isActiveTab('/recruitBoard') }"
+      >
+        팀원 모집 게시판
+      </router-link>
+      <router-link
+        to="/club"
+        class="tab-btn me-2"
+        :class="{ active: isActiveTab('/club') }"
+      >
+        클럽 순위
+      </router-link>
+    </div>
 
     <!-- ✅ 매치 일정 리스트 출력 -->
     <div class="list-group">
@@ -26,71 +26,131 @@
         v-for="match in filteredMatches"
         :key="match.match_id"
         class="list-group-item d-flex justify-content-between align-items-center"
-        @click="goToMatchDetail(match.match_id)"
-        style="cursor: pointer">
-        <div>
+      >
+        <!-- 왼쪽: 날짜 및 제목 -->
+        <div @click="goToMatchDetail(match.match_id)" style="cursor: pointer;">
           <div class="fw-bold">
-            {{ formatDate(match.match_date) }}
-            {{ formatTime(match.match_date) }}
+            {{ formatDate(match.match_date) }} {{ formatTime(match.match_date) }}
           </div>
-          <div>{{ match.match_title }}</div><!-- 나중에 주소 바꿔야함 클럽 매치 신청으로-->
+          <div>{{ match.match_title }}</div>
         </div>
-        <div>
+
+        <!-- 오른쪽: 상태 뱃지 + 버튼 -->
+        <div class="d-flex align-items-center gap-2"
+         style="margin-right: 1rem;">
           <span
-            class="badge rounded-pill"
+            class="badge rounded-pill d-flex align-items-center"
             :class="{
               'bg-primary': match.match_status === 'active',
               'bg-warning text-dark': match.match_status === 'waiting',
+              'bg-secondary': match.match_status === 'completed' || match.match_status === 'cancelled'
             }"
+            style="height: 30px; padding: 0 12px; font-size: 0.875rem;"
           >
             {{ getStatusLabel(match.match_status) }}
           </span>
+
+          <button
+            v-if="!match.applied"
+            @click.stop="applyToMatch(match.match_id)"
+            class="btn btn-outline-success btn-sm"
+            style="height: 30px;"
+          >
+            참가
+          </button>
+          <button
+            v-else
+            @click.stop="cancelMatch(match.match_id)"
+            class="btn btn-outline-danger btn-sm"
+            style="height: 30px;"
+          >
+            참가 취소
+          </button>
         </div>
       </div>
     </div>
   </div>
 </template>
 
+
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, inject } from "vue";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
+const userNo = inject("userNo");
 const matches = ref([]);
 
-function isActiveTab(path) {
-  return route.path === path;
-}
-
-// ✅ 👇 전역에 있어야 템플릿에서 접근 가능
-const goToMatchDetail = (matchId) => {
+const isActiveTab = (path) => route.path === path;
+const goToMatchDetail = (matchId) =>
   router.push(`/match/matchdetail/${matchId}`);
+
+const applyToMatch = async (matchId) => {
+  try {
+    await axios.post("/board_api/match/apply/approve", {
+      match_id: matchId,
+      club_id: null, // 필요 시 props로 club_id 넘기기
+      user_no: userNo.value,
+    });
+    fetchMatches();
+  } catch (err) {
+    console.error("❌ 참가 실패:", err);
+  }
+};
+
+const cancelMatch = async (matchId) => {
+  try {
+    await axios.delete("/board_api/match/cancel", {
+      params: {
+        matchId,
+        userNo: userNo.value,
+      },
+    });
+    fetchMatches();
+  } catch (err) {
+    console.error("❌ 취소 실패:", err);
+  }
+};
+
+const checkUserApplied = async (matchId) => {
+  try {
+    const res = await axios.get("/board_api/match/applied", {
+      params: {
+        matchId,
+        userNo: userNo.value,
+      },
+    });
+    return res.data === true;
+  } catch (err) {
+    console.error("❌ 신청 여부 확인 실패:", err);
+    return false;
+  }
 };
 
 const fetchMatches = async () => {
   try {
     const res = await axios.get("/match/league/closed");
+    const rawMatches = Array.isArray(res.data) ? res.data : res.data.data || [];
 
-    console.log("✅ 서버 응답 (res.data):", res.data);
+    const withApplied = await Promise.all(
+      rawMatches.map(async (match) => {
+        const applied = await checkUserApplied(match.match_id);
+        return { ...match, applied };
+      })
+    );
 
-    const responseData = res.data;
-
-    matches.value = Array.isArray(responseData)
-      ? responseData
-      : responseData.data || [];
-
-    console.log("✅ matches.value (after parsing):", matches.value);
+    matches.value = withApplied;
   } catch (err) {
     console.error("❌ 매치 목록 불러오기 실패:", err);
   }
 };
 
-// 여기서 조건 걸기 
 const filteredMatches = computed(() => {
-  return matches.value
-    .sort((a, b) => new Date(a.match_date) - new Date(b.match_date)); 
+  return matches.value.sort(
+    (a, b) => new Date(a.match_date) - new Date(b.match_date)
+  );
 });
 
 const formatDate = (str) => {
@@ -109,11 +169,14 @@ const getStatusLabel = (code) => {
       return "대기중";
     case "active":
       return "진행중";
+    case "completed":
+      return "진행 완료";
+    case "cancelled":
+      return "취소됨";
     default:
       return code;
   }
 };
-
 onMounted(fetchMatches);
 </script>
 
