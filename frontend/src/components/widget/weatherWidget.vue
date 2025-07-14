@@ -70,9 +70,10 @@ watchEffect(async () => {
   width: 300px;
   padding: 16px;
   margin: 0 auto;
-  background-color: #cceeff; /* ✅ 하늘색으로 변경 */
+  background-color: #ffffff;        /* ✅ 흰색 배경 */
+  border: 1px solid #d1d5db;        /* ✅ 연한 회색 테두리 (Tailwind 기준 gray-300) */
   border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05); /* ✅ 그림자 약하게 */
 }
 
 .top-section {
@@ -93,6 +94,5 @@ watchEffect(async () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  /*margin-right: 8px;*/
 }
 </style>
