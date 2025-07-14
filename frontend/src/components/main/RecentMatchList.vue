@@ -1,6 +1,6 @@
 <template>
   <div class="recent-match-container">
-
+    <h5>최근 매치</h5>
     <!-- 소셜/리그 탭 -->
     <div class="match-type-tabs">
       <button

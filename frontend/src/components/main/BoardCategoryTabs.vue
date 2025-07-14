@@ -1,5 +1,6 @@
 <template>
   <div class="board-tabs-container">
+    <h5>게시글</h5>
     <!-- 카테고리 탭 -->
     <div class="tab-buttons">
       <button
