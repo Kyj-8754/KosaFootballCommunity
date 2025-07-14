@@ -24,7 +24,7 @@
       <weatherWidget />
     </div>
     -->
-    <div class="floating-weather-widget" ref="widget">
+    <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
       <weatherWidget />
     </div>
   </div>
