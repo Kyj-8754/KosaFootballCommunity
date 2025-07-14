@@ -2,6 +2,7 @@ package com.msa.kyj_prj.match;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,9 +205,11 @@ public class MatchService {
     
     @Scheduled(cron = "0 0 */2 * * *", zone = "Asia/Seoul") // 매 2시간마다 실행
     public void activatePastMatches() {
-        List<Match> allMatches = matchDAO.selectFilteredMatches(new HashMap<>());
-        LocalDateTime now = LocalDateTime.now();
+        ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        LocalDateTime now = LocalDateTime.now(seoulZone);  // ✅ 서울 기준으로 현재 시간 설정
         LocalDate today = now.toLocalDate();
+
+        List<Match> allMatches = matchDAO.selectFilteredMatches(new HashMap<>());
 
         for (Match match : allMatches) {
             LocalDateTime matchDateTime = match.getMatch_date();
@@ -227,7 +230,6 @@ public class MatchService {
             }
         }
     }
-
     // 📌 유저가 특정 매치에 이미 신청했는지 여부 확인
     public boolean hasUserApplied(Long matchId, Integer userNo) {
         Map<String, Object> param = new HashMap<>();
