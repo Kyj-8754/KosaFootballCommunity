@@ -1,5 +1,5 @@
 <template>
-  <div class="weather-widget">
+  <div class="weather-widget" :style="{ opacity: opacity }">
     <!-- 상단 영역 -->
     <div class="top-section">
       <WeatherImageBox :sky="current.SKY" :pty="current.PTY" />
@@ -8,11 +8,23 @@
         <WeatherDetail :data="current" />
       </div>
     </div>
+
     <!-- 하단 시간별 예보 -->
     <ForecastTimeline :forecasts="forecastList" />
+
+    <!-- ✅ 투명도 조절 슬라이더 -->
+    <div class="opacity-slider">
+      <label>투명도: {{ (opacity * 100).toFixed(0) }}%</label>
+      <input
+        type="range"
+        min="0.1"
+        max="1"
+        step="0.01"
+        v-model="opacity"
+      />
+    </div>
   </div>
 </template>
-
 
 <script setup>
 import { ref, watchEffect } from 'vue'
@@ -21,6 +33,8 @@ import WeatherImageBox from './weatherImageBox.vue'
 import RegionSelector from './regionSelector.vue'
 import WeatherDetail from './weatherDetail.vue'
 import ForecastTimeline from './forecastTimeline.vue'
+
+const opacity = ref(1)
 
 const region = ref('강남구')
 const forecastList = ref([])
@@ -83,5 +97,17 @@ watchEffect(async () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.opacity-slider {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #555;
+  opacity: 1 !important;
+}
+
+.opacity-slider input[type='range'] {
+  width: 100%;
+  margin-top: 4px;
 }
 </style>
