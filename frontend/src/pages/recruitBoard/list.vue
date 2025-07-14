@@ -2,7 +2,7 @@
   <div class="container my-5">
     <h2 class="fw-bold mb-3">모집 게시판</h2>
 
-    <!-- 버튼 우측 정렬 (margin-bottom만 설정하고 margin-top 제거) -->
+    <!-- 버튼 우측 정렬 -->
     <div class="d-flex justify-content-end mb-3">
       <router-link
         to="/club/clubMatchSchedule"
@@ -63,45 +63,79 @@
     <div v-if="filteredRecruits.length === 0" class="alert alert-warning">
       등록된 모집글이 없습니다.
     </div>
-    <ul v-else class="list-group">
+    <ul class="list-group border rounded" style="overflow: hidden">
       <router-link
         v-for="recruit in filteredRecruits"
         :key="recruit.bno"
         :to="`/recruitBoard/${recruit.bno}`"
         tag="li"
-        class="list-group-item d-flex justify-content-between align-items-start text-dark text-decoration-none"
-        style="cursor: pointer"
+        class="list-group-item d-flex justify-content-between align-items-center text-dark text-decoration-none"
+        style="
+          cursor: pointer;
+          border-bottom: 1px solid #e0e0e0;
+          background: #fff;
+          min-height: 58px;
+        "
       >
-        <!-- 클럽 로고 썸네일
-<img
-  :src="
-    recruit.logo_path
-      ? `http://localhost:8121/uploads/club_logos/${recruit.logo_path}`
-      : fallbackImg
-  "
-  @error="handleImageError"
-  alt="클럽 로고"
-  style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; margin-left: 8px; margin-right: 12px;"
-/> -->
-
-
-        <!-- 팀명 -->
-        <div class="fw-bold me-3" style="width: 30%; padding-top: 12px">
+        <!-- 클럽명 -->
+        <div
+          class="fw-bold me-3"
+          style="
+            width: 30%;
+            display: flex;
+            align-items: center;
+            padding-left: 18px;
+            height: 100%;
+          "
+        >
           {{ recruit.club_name }}
         </div>
 
-        <!-- 모집글 제목 및 기타 정보 -->
-        <div class="flex-grow-1">
-          <div class="fw-bold">{{ recruit.title }}</div>
-          <div class="small text-muted mt-1">
+        <!-- 모집글 제목 및 기타 정보 (정확하게 세로 중앙!) -->
+        <div
+          class="flex-grow-1"
+          style="
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 30px;
+            gap: 2px;
+            height: 100%;
+          "
+        >
+          <div
+            class="fw-bold"
+            style="font-size: 1.09em; line-height: 1.25; margin-bottom: 2px"
+          >
+            {{ recruit.title }}
+          </div>
+          <div class="small text-muted" style="line-height: 1.2; margin: 0">
             조회수: {{ recruit.view_count }} | 등록일:
             {{ formatDate(recruit.reg_date) }}
           </div>
+        </div>
+
+        <!-- 신청수 뱃지 + 모집 상태 뱃지 -->
+        <div class="d-flex align-items-center" style="gap: 8px;">
+          <span
+            class="badge bg-light text-dark"
+            style="font-size: 0.98em; min-width: 68px; font-weight: normal;"
+          >
+            신청 {{ recruit.apply_count }}명
+          </span>
+          <span
+            class="badge"
+            :class="recruit.is_closed === 1 ? 'bg-secondary' : 'bg-success'"
+            style="font-size: 0.98em; min-width: 68px"
+          >
+            {{ recruit.is_closed === 1 ? "모집 마감" : "모집 중" }}
+          </span>
         </div>
       </router-link>
     </ul>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted, inject } from "vue";
