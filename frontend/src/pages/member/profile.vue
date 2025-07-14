@@ -189,14 +189,21 @@ const {
 /* 경기 / POM */
 .match-info {
   display: flex;
+  align-items: center;
   gap: 20px;
+  background-color: #f1f3f5;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  min-height: 120px;
 }
 .match-box {
   flex: 1;
-  padding: 16px;
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  background-color: #f9f9f9;
 }
 .match-box .title {
   font-size: 13px;
@@ -212,9 +219,10 @@ const {
 /* 카드 정보 */
 .card-info {
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
-  background-color: #f9f9f9;
+  background-color: #f1f3f5;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
 }
 .card-info p {
   display: flex;
@@ -230,8 +238,7 @@ const {
 .left-panel,
 .right-panel,
 .comment-box,
-.match-box,
-.card-info {
+.match-box {
   background: transparent;
   border: none;
   box-shadow: none;
