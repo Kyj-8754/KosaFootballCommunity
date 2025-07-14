@@ -35,7 +35,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security' 
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
 	
-	implementation project(':securityapi')
+	implementation project(':security_api')
 
 	// 오라클11 설정
 	// https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc11
