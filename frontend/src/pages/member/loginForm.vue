@@ -47,3 +47,73 @@
 import { useLoginForm } from '@/utils/script/user'
 const { userId, userPwd, login, loginWith } = useLoginForm()
 </script>
+<style>
+.logincontainer {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.login-form h2 {
+  font-size: 1.8rem;
+  color: #212529;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-form .form-control {
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: box-shadow 0.2s ease-in-out;
+}
+.login-form .form-control:focus {
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
+}
+
+.login-form > div:last-child {
+  margin-top: 0.8rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+.login-form a {
+  color: #6c757d;
+  font-weight: 500;
+}
+.login-form a:hover {
+  text-decoration: underline;
+}
+
+.social-login .btn {
+  margin-bottom: 0.5rem;
+  padding: 10px 14px;
+  font-weight: 600;
+  border: none;
+  font-size: 0.95rem;
+}
+
+.social-login .btn-danger {
+  background-color: #db4437;
+  color: white;
+}
+.social-login .btn-danger:hover {
+  background-color: #c23321;
+}
+
+.social-login .btn-success {
+  background-color: #03c75a;
+  color: white;
+}
+.social-login .btn-success:hover {
+  background-color: #02b24f;
+}
+
+.social-login .btn-warning {
+  background-color: #fee500;
+  color: #3c1e1e;
+}
+.social-login .btn-warning:hover {
+  background-color: #ffeb3b;
+}
+
+</style>

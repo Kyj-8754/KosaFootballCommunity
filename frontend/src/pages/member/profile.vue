@@ -2,29 +2,28 @@
   <div class="profile-wrapper">
     <!-- 왼쪽 영역 -->
     <div class="left-panel">
-      <h2 class="user-name">{{ member?.userName || '불러오는 중...' }}</h2>
+      <!-- 이름 + 버튼 수평 정렬 -->
+      <div class="user-header">
+        <h2 class="user-name">{{ member?.userName || '불러오는 중...' }}</h2>
+        <div class="button-group">
+          <button v-if="canGrantManager" class="btn btn-success" @click="grantManager">매니저 권한 부여</button>
+          <button v-if="canRevokeManager" class="btn btn-danger" @click="revokeManager">매니저 권한 해제</button>
+        </div>
+      </div>
+
       <p class="user-info">
         {{ member?.userAddr || '불러오는 중...' }}
-        <span v-if="member?.styleCode">
-          · {{ style.styleName }}
-        </span>
-        <span v-if="member?.statCode">
-          · {{ stat.statName }}
-        </span>
+        <span v-if="member?.styleCode"> · {{ style.styleName }}</span>
+        <span v-if="member?.statCode"> · {{ stat.statName }}</span>
       </p>
+
       <p class="user-info" v-if="myClubList.length">
         <template v-for="(club, index) in myClubList" :key="club.clubId">
-          <router-link :to="`/club/${club.teamCode}`" class="btn btn-link p-0 m-0">
-            {{ club.clubName }}
-          </router-link>
+          <router-link :to="`/club/${club.teamCode}`" class="btn btn-link p-0 m-0">{{ club.clubName }}</router-link>
           <span v-if="index < myClubList.length - 1"> · </span>
         </template>
       </p>
-      <div class="button-group">
-        <button v-if="canGrantManager" class="btn btn-success"@click="grantManager">매니저 권한 부여</button>
-        <button v-if="canRevokeManager" class="btn btn-danger"@click="revokeManager">매니저 권한 해제</button>
-      </div>
-      
+
       <router-link v-if="member" :to="friendLink" class="friend-count router-link">{{ friends.length }}명의 친구</router-link>
 
       <router-link v-if="member && isMyProfile" :to="{ name: 'Member_Profile_Update' }" class="btn btn-primary">프로필 설정</router-link>
@@ -33,13 +32,10 @@
         <h3>소개글</h3>
         <p class="user-comment">{{ member?.userComment || '소개글이 없습니다...' }}</p>
       </div>
-      <div class="info-box">
-        <p></p>
-      </div>
-      
+
       <div class="info-box">
         <p class="label">매너</p>
-        <p class="value">{{ profileInfo?.manner == null? '아직 평가를 받지 못했어요' : profileInfo.manner.toFixed(1) + '점'}}</p>
+        <p class="value">{{ profileInfo?.manner == null ? '아직 평가를 받지 못했어요' : profileInfo.manner.toFixed(1) + '점' }}</p>
       </div>
 
       <div class="info-box">
@@ -90,116 +86,154 @@ const {
 } = useProfileDetail()
 </script>
 
-
 <style scoped>
 .profile-wrapper {
   display: flex;
-  gap: 30px;
-  padding: 30px;
+  gap: 48px;
+  padding: 32px 40px;
   font-family: 'Pretendard', sans-serif;
 }
 
+/* 왼쪽 프로필 */
 .left-panel {
-  width: 300px;
-  border-right: 1px solid #eee;
-  padding-right: 30px;
+  flex: 0 0 45%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.right-panel {
-  flex: 1;
+/* 이름 + 버튼 수평 정렬 */
+.user-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 .user-name {
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 700;
+  color: #212529;
+  margin: 0;
 }
 
-.user-info {
-  margin-top: 5px;
-  color: #666;
-}
-
-.friend-count {
-  margin: 10px 0;
-  font-weight: bold;
-}
-
-.profile-settings {
-  margin: 20px 0;
-  padding: 8px 12px;
-  background: #f0f0f0;
-  border-radius: 8px;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.info-box {
-  margin-top: 20px;
-}
-
-.label {
-  font-size: 14px;
-  color: #999;
-}
-
-.value {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.match-info {
-  display: flex;
-  gap: 40px;
-  margin-bottom: 20px;
-}
-
-.match-box .title {
-  font-size: 14px;
-  color: #666;
-}
-
-.match-box .count {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.card-info p {
-  margin: 5px 0;
-  font-size: 14px;
-}
-
-.card-count {
-  float: right;
-  font-weight: bold;
-}
-
-.praise-section {
-  margin-top: 30px;
-}
-
-.praise-section h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.no-praise {
-  color: #999;
-}
-
-.comment-box h3 {
-  font-size: 20px;
-}
-
+/* 버튼 */
 .button-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0 20px;
+  gap: 6px;
+}
+.button-group button {
+  min-width: 110px;
+  font-size: 13px;
+  padding: 6px 12px;
 }
 
-.button-group button,
-.button-group a {
-  min-width: 120px;
+/* 주소, 포지션 등 */
+.user-info {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.4;
+  margin-top: -2px;
+}
+
+/* 친구 수 */
+.friend-count {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2b2b2b;
+  margin-top: 4px;
+}
+
+/* 소개글 */
+.comment-box {
+  margin-top: 18px;
+}
+.comment-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #222;
+}
+.user-comment {
+  font-size: 17px;
+  color: #333;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+/* 매너 / 레벨 */
+.info-box {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.label {
+  color: #888;
+}
+.value {
+  font-weight: 600;
+  color: #212529;
+}
+
+/* 오른쪽 패널 */
+.right-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 경기 / POM */
+.match-info {
+  display: flex;
+  gap: 20px;
+}
+.match-box {
+  flex: 1;
+  padding: 16px;
+  border-radius: 8px;
   text-align: center;
+  background-color: #f9f9f9;
+}
+.match-box .title {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 4px;
+}
+.match-box .count {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+}
+
+/* 카드 정보 */
+.card-info {
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+}
+.card-info p {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+  color: #444;
+}
+.card-count {
+  font-weight: 600;
+}
+
+/* 공통 배경 제거 */
+.left-panel,
+.right-panel,
+.comment-box,
+.match-box,
+.card-info {
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 </style>

@@ -78,5 +78,84 @@ const {
 .find-form {
   max-width: 400px;
   margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+h1.text-center {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #212529;
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.find-form .form-label {
+  font-weight: 600;
+  color: #212529;
+  font-size: 0.95rem;
+}
+
+.find-form .form-control {
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  border: 1px solid #ced4da;
+  transition: box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.find-form .form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+}
+
+.find-form input[type="button"],
+.find-form button[type="submit"] {
+  white-space: nowrap;
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.find-form input[type="button"]:hover,
+.find-form button[type="submit"]:hover {
+  opacity: 0.9;
+}
+
+.find-form span.text-success,
+.find-form span.text-danger {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+
+.find-form .btn-outline-primary {
+  border-color: #0d6efd;
+  color: #0d6efd;
+}
+.find-form .btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: #fff;
+}
+.find-form .btn-outline-success {
+  border-color: #198754;
+  color: #198754;
+}
+.find-form .btn-outline-success:hover {
+  background-color: #198754;
+  color: #fff;
+}
+
+.find-form .btn-primary {
+  width: 100%;
+  font-size: 1rem;
+}
+
+@media (max-width: 480px) {
+  .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
 }
 </style>

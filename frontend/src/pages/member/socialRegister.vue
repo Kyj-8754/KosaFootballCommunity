@@ -66,3 +66,100 @@
 import { useSocialRegister } from '@/utils/script/user.js'
 const { form, onSubmit, onReset, findZipcode } = useSocialRegister()
 </script>
+
+<style scoped>
+.container-fluid.main-container {
+  padding-top: 40px;
+  padding-bottom: 60px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.card {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
+}
+
+.form-control,
+.form-select {
+  font-size: 14px;
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: none;
+}
+
+textarea.form-control {
+  resize: none;
+}
+
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.d-flex.gap-2 {
+  gap: 8px;
+}
+
+.btn {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border: none;
+  color: white;
+}
+
+.btn-outline-secondary {
+  background-color: transparent;
+  border: none;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.btn-outline-secondary:hover {
+  background-color: rgba(108, 117, 125, 0.1);
+}
+
+.text-danger,
+.text-success {
+  font-size: 13px;
+  margin-top: 4px;
+}
+</style>
