@@ -55,75 +55,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
-
-const route = useRoute()
-const router = useRouter()
-const token = inject('token')
-
-const form = ref({
-  userNo: '',
-  userName: '',
-  userComment: '',
-  styleCode: '',
-  statCode: ''
-})
-
-// 회원 정보 불러오기
-const fetchMemberDetail = async () => {
-  const userNo = route.query.userNo
-
-  if (!userNo) {
-    alert('회원 번호가 전달되지 않았습니다.')
-    router.push('/')
-    return
-  }
-
-  try {
-    const res = await axios.get(`/login_api/mypage/detailView?userNo=${userNo}`, {
-      headers: {
-        Authorization: `Bearer ${token.value}`
-      }
-    })
-
-    const data = res.data.member
-    form.value = {
-      userNo: data.userNo,
-      userName: data.userName,
-      userComment: data.userComment,
-      styleCode: data.styleCode ?? '',
-      statCode: data.statCode ?? ''
-    }
-  } catch (err) {
-    console.error('[회원 정보 조회 실패]', err)
-    alert('회원 정보를 불러오지 못했습니다.')
-    router.push('/')
-  }
-}
-
-onMounted(fetchMemberDetail)
-
-// 수정 요청
-const onSubmit = async () => {
-  try {
-    const res = await axios.post(`/login_api/mypage/profileUpdate?userNo=${form.value.userNo}`, form.value)
-    const result = res.data
-
-    alert(result.res_msg)
-
-    if (result.res_code !== '400') {
-      router.push({
-        name: 'Member_Profile',
-        query: { userNo: form.value.userNo }
-      })
-    }
-  } catch (err) {
-    console.error('[회원 정보 수정 중 오류]', err)
-    alert('회원 정보 수정 중 오류 발생')
-  }
-}
+import { useProfileUpdate } from '@/utils/script/user.js'
+const { form, onSubmit } = useProfileUpdate()
 </script>
 
 <style scoped>

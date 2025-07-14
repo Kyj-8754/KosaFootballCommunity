@@ -3,7 +3,7 @@
     <!-- ✅ 로그인 상태에 따라 조건 분기 -->
     <div v-if="isAuthenticated">
       <span>
-        <router-link :to="{ name: 'Member_MyPage', query: { userNo: userNo } }">{{ userName }} 내 정보</router-link>
+        <router-link :to="{ name: 'Member_MyPage' }">{{ userName }} 내 정보</router-link>
         /
         <a href="#" @click.prevent="logout">로그아웃</a>
 

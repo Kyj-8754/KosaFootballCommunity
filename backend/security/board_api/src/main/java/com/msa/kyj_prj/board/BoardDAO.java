@@ -36,4 +36,8 @@ public interface BoardDAO {
 	int hasUserLikedBoard(@Param("board_id") Long board_id, @Param("user_no") int user_no);
 	// 예약 취소/만료된 게시글 상태 삭제 처리
 	void markBoardsAsDeletedFromReservations();
+	// 모집게시판 전용 게시글 목록 조회 (Map 사용하지 않음)
+	List<Board> findRecruitBoards(@Param("userNo") Integer userNo,
+            @Param("keyword") String keyword,
+            @Param("sortDirection") String sortDirection);
 }

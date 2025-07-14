@@ -138,7 +138,8 @@ public class BaseSecurityConfig {
 				"/board/**",
 				"/match/**",
 				"/match-log/**",
-				"/reply/**");
+				"/reply/**",
+				"/file/**");
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {

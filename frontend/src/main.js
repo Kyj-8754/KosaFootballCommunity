@@ -12,6 +12,19 @@ import 'v-calendar/style.css'
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';  // 스타일도 반드시 import
 
+// main.js 상단 or axios 설정 파일
+import axios from 'axios'
+
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem('accessToken') // inject 대신 이거!
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+
 const app = createApp(App);
 const pinia = createPinia();
 

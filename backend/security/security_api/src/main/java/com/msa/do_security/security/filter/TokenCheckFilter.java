@@ -112,7 +112,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 		if ("LOCAL".equalsIgnoreCase(loginType)) {
 	        userDetails = userVODetailsService.loadUserByUsername(userId);
 	    } else {
-	    	userDetails = oAtuAuth2UserVOService.loadUserByUsername(userId, loginType); // 예: GOOGLE, KAKAO, NAVER
+	    	userDetails = oAtuAuth2UserVOService.loadUserByUsername(userId, loginType);
 	    }
 		System.out.println(userDetails);
 		// userDetails 객체를 사용하여 인증객체로 생성한다

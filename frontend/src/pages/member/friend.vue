@@ -117,176 +117,28 @@
 </template>
 
 <script setup>
-import { ref, inject, watch, onMounted } from 'vue'
-import axios from 'axios'
+import { inject } from 'vue'
+import { useFriendTabs } from '@/utils/script/user'
 
-const token = inject('token')
 const userNo = inject('userNo')
-const activeTab = ref('friends')
+const token = inject('token')
 
-const tabList = [
-  { label: '친구', value: 'friends' },
-  { label: '신청대기', value: 'pending' },
-  { label: '친구검색', value: 'searchFriend' }
-]
+const {
+  activeTab,
+  tabList,
+  friends,
+  pending,
+  searchKeyword,
+  searchResults,
+  getCount,
+  loadFriendList,
+  loadPendingRequests,
+  searchFriends,
+  requestFriend,
+  acceptFriendRequest,
+  rejectFriendRequest
+} = useFriendTabs(userNo, token)
 
-const friends = ref([])
-const pending = ref([])
-const searchKeyword = ref('')
-const searchResults = ref([])
-
-const getCount = (type) => {
-  if (type === 'friends') return friends.value.length
-  if (type === 'pending') return pending.value.length
-  if (type === 'searchFriend') return searchResults.value.length
-  return 0
-}
-
-const loadFriendList = async () => {
-  if (!userNo?.value) return
-  try {
-    const res = await axios.get('/login_api/mypage/friends', {
-      params: { userNo: userNo.value },
-      headers: {
-      Authorization: `Bearer ${token.value}`
-      }
-    })
-    if (res.data?.res_code === '200') {
-      friends.value = res.data.data
-    }
-  } catch (err) {
-    console.error('친구 목록 불러오기 실패', err)
-  }
-}
-
-const loadPendingRequests = async () => {
-  if (!userNo?.value) return
-  try {
-    const res = await axios.get('/login_api/mypage/pending', {
-      params: { userNo: userNo.value },
-      headers: {
-      Authorization: `Bearer ${token.value}`
-      }
-    })
-    if (res.data?.res_code === '200') {
-      pending.value = res.data.data
-    }
-  } catch (err) {
-    console.error('신청 대기 목록 불러오기 실패', err)
-  }
-}
-
-const searchFriends = async () => {
-  const keyword = searchKeyword.value.trim()
-  if (!keyword) {
-    searchResults.value = []
-    return
-  }
-
-  try {
-    const res = await axios.get('/login_api/mypage/search', {
-      params: {
-        keyword,
-        loginUserNo: userNo.value
-      },
-      headers: {
-      Authorization: `Bearer ${token.value}`
-      }
-    })
-
-    if (res.data?.res_code === '200' && res.data.data) {
-      searchResults.value = [res.data.data]
-    } else {
-      searchResults.value = []
-    }
-  } catch (err) {
-    console.error('🔍 친구 검색 오류', err)
-    searchResults.value = []
-    alert('검색 중 문제가 발생했습니다.')
-  }
-}
-
-const requestFriend = async (targetUserNo) => {
-  if (!userNo?.value) {
-    alert('로그인이 필요합니다.')
-    return
-  }
-
-  try {
-    await axios.post('/login_api/mypage/request', {
-      requesterNo: userNo.value,
-      requestedNo: targetUserNo
-    },{
-      headers: {
-      Authorization: `Bearer ${token.value}`
-      }
-    })
-    alert('친구 요청을 보냈습니다.')
-    await searchFriends() // 상태 갱신
-  } catch (err) {
-    console.error('친구 요청 실패:', err)
-    alert('친구 요청에 실패했습니다.')
-  }
-}
-
-const acceptFriendRequest = async (requesterNo) => {
-  try {
-    const res = await axios.post('/login_api/mypage/accept', {
-      requesterNo,
-      requestedNo: userNo.value
-    },{
-      headers: {
-      Authorization: `Bearer ${token.value}`
-      }
-    })
-    if (res.data?.res_code === '200') {
-      alert('친구 요청을 수락했습니다.')
-      pending.value = pending.value.filter(user => user.userNo !== requesterNo)
-      await loadFriendList()
-    } else {
-      alert('친구 수락에 실패했습니다.')
-    }
-  } catch (err) {
-    console.error('친구 수락 오류', err)
-    alert('친구 수락 중 오류가 발생했습니다.')
-  }
-}
-
-const rejectFriendRequest = async (requesterNo) => {
-  try {
-    const res = await axios.post('/login_api/mypage/reject', {
-      requesterNo,
-      requestedNo: userNo.value
-    },{
-      headers: {
-      Authorization: `Bearer ${token.value}`
-      }
-    })
-    if (res.data?.res_code === '200') {
-      alert('친구 요청을 거절했습니다.')
-      pending.value = pending.value.filter(user => user.userNo !== requesterNo)
-    } else {
-      alert('친구 거절에 실패했습니다.')
-    }
-  } catch (err) {
-    console.error('친구 거절 오류', err)
-    alert('친구 거절 중 오류가 발생했습니다.')
-  }
-}
-
-onMounted(() => {
-  if (userNo?.value) {
-    loadFriendList()
-    loadPendingRequests()
-  }
-})
-
-watch(userNo, (val) => {
-  if (val) {
-    loadFriendList()
-    loadPendingRequests()
-  }
-})
 </script>
 
 <style scoped>

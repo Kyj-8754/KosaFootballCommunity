@@ -4,15 +4,25 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/pages/Home.vue'
 import NotFound from '@/pages/NotFound.vue'
 
+// 관리자 관련
+import Admin_UserList from '@/pages/admin/userList.vue';
+
 // 멤버 관련
 import OAuth_Success from '@/pages/oauth/Success.vue';
 import Member_LoginForm from '@/pages/member/loginForm.vue';
+import Member_FindId from '@/pages/member/findId.vue';
+import Member_FindPwd from '@/pages/member/findPwd.vue';
+import Member_ResetPwd from '@/pages/member/resetPwd.vue';
 import Member_RegistForm from '@/pages/member/registForm.vue';
-import Member_DetailView from '@/pages/member/detailView.vue';
 import Member_UpdateForm from '@/pages/member/updateForm.vue';
-import Member_List from '@/pages/member/list.vue';
+import Member_PassWordUpdateForm from '@/pages/member/passwordUpdateForm.vue';
+import Member_MemberDelete from '@/pages/member/memberDelete.vue';
 import Member_SocialRegister from '@/pages/member/socialRegister.vue';
-import Member_MyPage from '@/pages/member/myPage.vue'
+import Member_MyPage from '@/pages/member/myPage.vue';
+import Member_Friend from '@/pages/member/friend.vue';
+import Member_Other_Friend from '@/pages/member/otherFriend.vue';
+import Member_Profile from '@/pages/member/profile.vue';
+import Member_Profile_Update from '@/pages/member/profileUpdate.vue';
 
 // 게시판 관련
 import boardList from "@/pages/board/boardList.vue";
@@ -49,15 +59,25 @@ import matchLog from '@/pages/board/match/matchLog.vue';
 const routes = [
   { path: '/', name: 'Home', component: Home },
 
+  // 관리자 관련
+  { path: '/admin/userList', name: 'Admin_UserList', component: Admin_UserList },
+
   // 멤버 관련
-  { path: '/oauth/success', name: 'OAuth_Success', component: OAuth_Success },
-  { path: '/member/loginForm', name: 'Member_LoginForm', component: Member_LoginForm },
-  { path: '/member/registForm', name: 'Member_RegistForm', component: Member_RegistForm },
-  { path: '/member/detailView', name: 'Member_DetailView', component: Member_DetailView },
-  { path: '/member/updateForm', name: 'Member_UpdateForm', component: Member_UpdateForm },
-  { path: '/member/list', name: 'Member_List', component: Member_List },
-  { path: '/member/socialRegister', name: 'Member_SocialRegister', component: Member_SocialRegister },
-  { path: '/member/myPage', name: 'Member_MyPage', component: Member_MyPage },
+    { path: '/oauth/success', name: 'OAuth_Success', component: OAuth_Success },
+    { path: '/member/loginForm', name: 'Member_LoginForm', component: Member_LoginForm },
+    { path: '/member/findId', name: 'Member_FindId', component: Member_FindId },
+    { path: '/member/findPwd', name: 'Member_FindPwd', component: Member_FindPwd },
+    { path: '/member/resetPwd', name: 'Member_ResetPwd', component: Member_ResetPwd },
+    { path: '/member/registForm', name: 'Member_RegistForm', component: Member_RegistForm },
+    { path: '/member/updateForm', name: 'Member_UpdateForm', component: Member_UpdateForm },
+    { path: '/member/passwordUpdateForm', name: 'Member_PassWordUpdateForm', component: Member_PassWordUpdateForm },
+    { path: '/member/memberDelete', name: 'Member_MemberDelete', component: Member_MemberDelete },
+    { path: '/member/socialRegister', name: 'Member_SocialRegister', component: Member_SocialRegister },
+    { path: '/member/myPage', name: 'Member_MyPage', component: Member_MyPage },
+    { path: '/member/friend', name: 'Member_Friend', component: Member_Friend },
+    { path: '/member/otherFriend', name: 'Member_Other_Friend', component: Member_Other_Friend },
+    { path: '/member/profile', name: 'Member_Profile', component: Member_Profile },
+    { path: '/member/profileUpdate', name: 'Member_Profile_Update', component: Member_Profile_Update },
 
   // 게시판 관련
   { path:'/board/boardlist', name: 'boardList', component: boardList },
