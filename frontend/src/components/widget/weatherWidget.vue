@@ -13,7 +13,12 @@
     <ForecastTimeline :forecasts="forecastList" />
 
     <!-- ✅ 투명도 조절 슬라이더 -->
-    <div class="opacity-slider">
+    <div
+      class="opacity-slider"
+      @mousedown.stop
+      @mouseup.stop
+      @mousemove.stop
+    >
       <label>투명도: {{ (opacity * 100).toFixed(0) }}%</label>
       <input
         type="range"
