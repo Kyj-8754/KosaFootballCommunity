@@ -21,8 +21,10 @@
 					<div class="mb-2">
 						{{ comment.content }}
 					</div>
-				<button class="btn btn-sm btn-outline-secondary me-1" @click="editComment(comment)">수정</button>
-				<button class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.comment_no)">삭제</button>
+					<div v-if="comment.userid === userId">
+						<button class="btn btn-sm btn-outline-secondary me-1" @click="editComment(comment)">수정</button>
+						<button class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.comment_no)">삭제</button>
+					</div>	
 				</div>
 			</div>
 			<!-- 댓글 수정 창 -->
@@ -43,7 +45,7 @@
 		</template>
 	</div>
 	<!-- 댓글 입력 섹션 -->
-	<form id="regist" @submit.prevent="regist">
+	<form id="regist" @submit.prevent="regist" v-if="userId && userName">
 		<div class="container mt-4" style="max-width: 1000px;">
 			<div class="border rounded p-3">
 				<div class="d-flex justify-content-between align-items-center mb-2">
@@ -71,72 +73,10 @@
 </template>
 
 <style>
-.rating-input-stars {
-  display: flex;
-  user-select: none;
-  cursor: pointer;
-  width: 150px;
-  height: 30px;
-  align-items: center;
-  justify-content: flex-end; 
-}
-.input-star-container {
-  position: relative;
-  width: 20%;
-  display: inline-block;
-  height: 100%;
-}
-.input-star {
-  font-size: 30px;
-  color: lightgray;
-  line-height: 1; 
- position: absolute;
-  left: 0;
-  top: 0;
-}
-.input-star.filled {
-  color: gold;
-    z-index: 1;
-}
-.input-star.half {
-  clip-path: inset(0 50% 0 0);
-    z-index: 2;
-}
-
-
-.rating-display-stars {
-  display: flex;
-  align-items: center;
-  font-size: 18px; 
-  line-height: 1;
-}
-.display-star-wrapper {
-  position: relative;
-  width: 20px;
-  height: 20px;
-  margin-right: 2px;
-  overflow: hidden; /* 핵심 */
-}
-.display-star {
-  position: absolute;
-  top: 0;
-  left: 0;
-  color: lightgray;
-}
-.display-star.filled {
-  color: gold;
-  overflow: hidden;
-  white-space: nowrap;
-
-   position: absolute;
-    top: 0;
-  left: 0;
-  width: 0%; /* ← JS에서 동적으로 0%, 50%, 100% 설정 */
-
-}
+	@import "@/utils/css/comment.css";
 </style>
 <script setup>
-import {ref, reactive, onMounted, nextTick} from 'vue'
+import {ref, reactive, onMounted} from 'vue'
 import axios from 'axios'
 
 // 받아줄 기본 정의
