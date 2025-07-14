@@ -3,10 +3,13 @@
     <Header />
 
     <div class="row">
+      <!--
       <div class="col-md-2">
         <NavArea />
       </div>
       <div class="col-md-10">
+      -->
+      <div>
         <router-view />
       </div>
     </div>
@@ -16,7 +19,12 @@
     <scrollUp />
 
     <!-- ✅ 고정 위치 날씨 위젯 -->
+    <!--
     <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
+      <weatherWidget />
+    </div>
+    -->
+    <div class="floating-weather-widget" ref="widget">
       <weatherWidget />
     </div>
   </div>
@@ -181,8 +189,8 @@ onMounted(() => {
 <style scoped>
 .floating-weather-widget {
   position: fixed;
-  top: 0px;
-  right: 0px;
+  top: 200px;
+  left: 0px;
   z-index: 999;
   cursor: grab;
 }
