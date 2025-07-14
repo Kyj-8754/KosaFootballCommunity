@@ -1,0 +1,131 @@
+#version: '3.1'
+
+# 사설망 network 브릿지 생성
+networks:
+  msateamprj_network:
+   driver: bridge
+   
+# 서비스 선언
+services:
+# 마리아DB 생성
+  mariadb:
+    container_name: maria_db
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - shared-data:/var/lib/mysql:rw
+    user: mysql
+    environment:
+      MARIADB_DATABASE: kosa_db
+      MARIADB_USER: kosa
+      MARIADB_PASSWORD: 1004
+      MARIADB_ROOT_PASSWORD: 1004
+    networks:
+      - msateamprj_network
+
+
+
+# stadium_api 생성
+  stadium_api:
+    image: span5189/stadium_api:latest
+    restart: always
+    container_name: stadium-api
+    networks:
+      - msateamprj_network
+# reservation_api 생성
+  reservation_api:
+    image: span5189/reservation_api:latest
+    restart: always
+    container_name: reservation-api
+    networks:
+      - msateamprj_network
+# kakaopay_api 생성
+  kakaopay_api:
+    image: span5189/kakaopay_api:latest
+    restart: always
+    container_name: kakaopay-api
+    networks:
+      - msateamprj_network
+# security_api 생성
+  security_api:
+    image: span5189/security_api:latest
+    restart: always
+    container_name: security-api
+    networks:
+      - msateamprj_network 
+# login_api 생성
+  login_api:
+    image: span5189/login_api:latest
+    restart: always
+    container_name: login-api
+    networks:
+      - msateamprj_network
+# alarm_api 생성
+  alarm_api:
+    image: span5189/alarm_api:latest
+    restart: always
+    container_name: alarm-api
+    networks:
+      - msateamprj_network 
+# club_api 생성
+  club_api:
+    image: span5189/club_api:latest
+    restart: always
+    container_name: club-api
+    networks:
+      - msateamprj_network
+# recruit_api 생성
+  recruit_api:
+    image: span5189/recruit_api:latest
+    restart: always
+    container_name: recruit-api
+    networks:
+      - msateamprj_network 
+# weather_api 생성
+  weather_api:
+    image: span5189/weather_api:latest
+    restart: always
+    container_name: weather-api
+    networks:
+      - msateamprj_network
+# board_api 생성
+  board_api:
+    image: span5189/board_api:latest
+    restart: always
+    container_name: board-api
+    networks:
+      - msateamprj_network 
+
+# nginx 생성
+  nginx:
+    image: nginx:latest
+    container_name: webserver1
+    ports:
+      - 80:80
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - msateamprj_network
+    depends_on:
+      - stadium_api
+      - reservation_api
+      - kakaopay_api
+      - security_api
+      - login_api
+      - alarm_api
+      - club_api
+      - recruit_api
+      - weather_api
+      - board_api
+    restart: always
+
+volumes:
+  shared-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./db_data

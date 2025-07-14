@@ -23,7 +23,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.msa.kyj_prj.dto.Slot;
+import com.msa.kyj_prj.dto.Stadium;
 import com.msa.kyj_prj.page.PageResponseVO_board;
+import com.msa.kyj_prj.util.StadiumDetailResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +37,9 @@ import lombok.extern.slf4j.Slf4j;
 public class StadiumService{
 	private final StadiumDAO stadiumDAO;
 
-	
+	// 1초마다 값 불러내도록 하기위해 설정
     private static final int STEP = 1000;
-    private static final int DELAY_MS = 5000;
+    private static final int DELAY_MS = 1000;
 	
 	
 
@@ -57,8 +60,11 @@ public class StadiumService{
 	}
 	
 	// 구장 상세정보
-	public Stadium getStadium(String SVCID) {
-		return stadiumDAO.getStadium(SVCID);
+	public StadiumDetailResponse getStadium(String SVCID) {
+		Stadium stadium = stadiumDAO.getStadium(SVCID);
+		List<Slot> slot = stadiumDAO.getAvailableDate(SVCID);
+		
+		return new StadiumDetailResponse(stadium, slot);
 	}
 	
 		
@@ -273,26 +279,23 @@ public class StadiumService{
 	    return countNode.asInt();
 	}
 	
-	
-	
-	// 구장 업데이트
-	@Scheduled(cron = "0 35 9 * * *")
-	public void syncAll() throws Exception {
-	    System.out.println("데이터 업데이트 시작");
-	    LocalDateTime start = LocalDateTime.now();
-		stadiumapi();
-		stadiumDAO.callSyncStadiumProcedure();
-		LocalDateTime end = LocalDateTime.now();
+		
+		
+		// 구장 업데이트
+		@Scheduled(cron = "0 35 9 * * *", zone = "Asia/Seoul")
+		public void syncAll() throws Exception {
+			log.info("데이터 업데이트 시작");
+		    LocalDateTime start = LocalDateTime.now();
+			stadiumapi();
+			stadiumDAO.callSyncStadiumProcedure();
+			LocalDateTime end = LocalDateTime.now();
 
-        Duration duration = Duration.between(start, end);
-        
-        System.out.println("업데이트 걸린 시간: " + duration.getSeconds());
-	}
-	
-	//
-	public void getreservationForm(String SVCID, String date) {
-		stadiumDAO.getreservationForm(SVCID, date);
-	}
+	        Duration duration = Duration.between(start, end);
+	        
+	        log.info("업데이트 걸린 시간: " + duration.getSeconds());
+		}
+		
+
 }
 
 

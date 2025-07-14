@@ -60,4 +60,29 @@
     SET view_count = view_count + 1
     WHERE bno = #{bno}
   </update>
+  
+  <!-- ✅ 최신순 + 검색어 -->
+<select id="find_by_keyword" parameterType="string" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+  SELECT r.*, c.club_name
+  FROM tbl_recruit_board r
+  JOIN tbl_club c ON r.club_id = c.club_id
+  WHERE r.title LIKE CONCAT('%', #{keyword}, '%')
+     OR r.content LIKE CONCAT('%', #{keyword}, '%')
+     OR c.club_name LIKE CONCAT('%', #{keyword}, '%')
+  ORDER BY r.bno DESC
+</select>
+
+<!-- ✅ 인기순 + 검색어 -->
+<select id="find_by_keyword_order_by_view_count" parameterType="string" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+  SELECT r.*, c.club_name
+  FROM tbl_recruit_board r
+  JOIN tbl_club c ON r.club_id = c.club_id
+  WHERE r.title LIKE CONCAT('%', #{keyword}, '%')
+     OR r.content LIKE CONCAT('%', #{keyword}, '%')
+     OR c.club_name LIKE CONCAT('%', #{keyword}, '%')
+  ORDER BY r.view_count DESC
+</select>
+
+  
+  
 </mapper>

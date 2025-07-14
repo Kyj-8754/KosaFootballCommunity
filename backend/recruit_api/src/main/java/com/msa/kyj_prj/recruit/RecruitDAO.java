@@ -16,6 +16,11 @@ public interface RecruitDAO {
 
 	// 클럽별 모집글 목록 조회
 	List<RecruitBoard> find_by_club_id(@Param("club_id") int club_id);
+	
+	// 전체 모집글에서 keyword로 검색
+	List<RecruitBoard> find_by_keyword(String keyword);
+	// 조회수순 + keyword 검색
+	List<RecruitBoard> find_by_keyword_order_by_view_count(String keyword);
 
 	// 모집글 단건 조회
 	RecruitBoard find_by_id(@Param("bno") int bno);

@@ -2,11 +2,16 @@ package com.msa.kyj_prj.recruit;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.Map;
-import java.util.HashMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,17 +23,19 @@ public class RecruitController {
 
 	// 전체 모집글 목록 조회 (+ 인기순 정렬 지원)
 	@GetMapping
-	public ResponseEntity<List<RecruitBoard>> get_all_recruits(@RequestParam(required = false) String sort) {
-		List<RecruitBoard> list;
-
-		if ("popular".equalsIgnoreCase(sort)) {
-			list = recruit_service.get_recruits_order_by_view_count();
-		} else {
-			list = recruit_service.get_all_recruits(); // 기본 최신순
-		}
-
-		return ResponseEntity.ok(list);
+	public ResponseEntity<List<RecruitBoard>> get_all_recruits(
+	    @RequestParam(required = false) String sort,
+	    @RequestParam(required = false) String keyword    // <-- 이 부분을 추가!
+	) {
+	    List<RecruitBoard> list;
+	    if ("popular".equalsIgnoreCase(sort)) {
+	        list = recruit_service.get_recruits_order_by_view_count(keyword); // <-- 여기서도 keyword 넘겨줌
+	    } else {
+	        list = recruit_service.get_all_recruits(keyword); // <-- 여기서도 keyword 넘겨줌
+	    }
+	    return ResponseEntity.ok(list);
 	}
+
 
 	// 클럽별 모집글 목록 조회
 	@GetMapping("/club/{club_id}")

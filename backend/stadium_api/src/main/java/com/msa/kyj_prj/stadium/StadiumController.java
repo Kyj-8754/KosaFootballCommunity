@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.msa.kyj_prj.dto.Stadium;
 import com.msa.kyj_prj.page.PageResponseVO_board;
+import com.msa.kyj_prj.util.StadiumDetailResponse;
 import com.msa.kyj_prj.util.Util;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,7 +74,7 @@ public class StadiumController {
 	@GetMapping("detailView")
 	public Map<String, Object> detailView(@Parameter(description = "구장 서비스ID", example = "1") @RequestParam String SVCID) {
 		Map<String, Object> result = new HashMap<>();
-		Stadium stadiumDB = stadiumService.getStadium(SVCID);
+		StadiumDetailResponse stadiumDB = stadiumService.getStadium(SVCID);
 		if (stadiumDB == null) {
 			return result;
 		}

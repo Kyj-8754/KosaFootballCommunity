@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "mybatis-3-mapper.dtd">
+<mapper namespace="com.msa.kyj_prj.match.MatchDAO">
+
+	<!-- 매치 리스트 -->
+	<select id="selectFilteredMatches" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT
+	        m.match_id,
+	        m.match_title,
+	        m.match_created_at,
+	        m.match_date,
+	        m.SVCID,
+	        m.match_closed,
+	        m.gender_condition,
+	        m.match_status,
+	        m.match_board_status,
+	        m.match_code,
+	        s.SVCNM,
+	        s.PLACENM,
+	        s.SUBPLACENM,
+	        s.AREANM
+	    FROM
+	        `match` m
+	    JOIN
+	        stadium s ON m.SVCID COLLATE utf8mb4_general_ci = s.SVCID COLLATE utf8mb4_general_ci
+	    <trim prefix="WHERE" prefixOverrides="AND|OR">
+	        <if test="match_code != null and match_code != ''">
+	            AND m.match_code COLLATE utf8mb4_general_ci = #{match_code}
+	        </if>
+	
+			<if test="afterDate != null and afterDate != ''">
+			    AND m.match_date BETWEEN CONCAT(#{afterDate}, ' 00:00:00') AND CONCAT(#{afterDate}, ' 23:59:59')
+			</if>
+			
+			<!-- ✅ 없으면 현재 시간 이후 -->
+	        <if test="afterDate == null or afterDate == ''">
+	            AND m.match_date > NOW()
+	        </if>
+	
+	        <if test="areanm != null and areanm != ''">
+	            AND s.AREANM COLLATE utf8mb4_general_ci = #{areanm}
+	        </if>
+	
+	        <if test="match_closed != null and match_closed != ''">
+	            AND m.match_closed COLLATE utf8mb4_general_ci = #{match_closed}
+	        </if>
+	
+	        <if test="gender_condition != null and gender_condition != ''">
+	            AND m.gender_condition COLLATE utf8mb4_general_ci = #{gender_condition}
+	        </if>
+	
+	        <if test="match_status != null and match_status != ''">
+	            AND m.match_status COLLATE utf8mb4_general_ci = #{match_status}
+	        </if>
+	
+	        <if test="match_board_status != null and match_board_status != ''">
+	            AND m.match_board_status COLLATE utf8mb4_general_ci = #{match_board_status}
+	        </if>
+	
+	        <if test="match_title != null and match_title != ''">
+	            AND m.match_title COLLATE utf8mb4_general_ci LIKE CONCAT('%', #{match_title}, '%')
+	        </if>
+	        <if test="areanm != null and areanm != ''">
+			    AND s.AREANM COLLATE utf8mb4_general_ci = #{areanm}
+			</if>
+	    </trim>
+	    ORDER BY m.match_date ASC
+	</select>
+	
+	<!-- 매치 상세보기 -->
+	<select id="selectMatchDetailById" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT
+	        m.match_id,
+	        m.match_title,
+	        m.match_created_at,
+	        m.match_modified_at,
+	        m.user_no,
+	        m.manager_no,
+	        u.user_name AS manager_name,
+	        m.match_date,
+	        m.SVCID,
+	        m.match_closed,
+	        m.gender_condition,
+	        m.match_description,
+	        m.match_status,
+	        m.match_board_status,
+	        m.match_code,
+	        s.SVCNM,
+	        s.PLACENM,
+	        s.X,
+	        s.Y,
+	        s.IMG_PATH,
+	        s.TELNO,
+	        s.SUBPLACENM,
+	        s.ORGNM,
+	        s.SVCENDTELNO,
+	        s.AREANM,
+	        s.ADRES,
+	        s.price
+	    FROM
+	        `match` m
+	    JOIN
+	        stadium s ON m.SVCID COLLATE utf8mb4_general_ci = s.SVCID COLLATE utf8mb4_general_ci
+	    JOIN
+	        user u ON m.manager_no = u.user_no
+	    WHERE
+	        m.match_id = #{match_id}
+	</select>
+	
+	<!-- 매치 참가 신청 -->
+	<insert id="insertMatchParticipant" parameterType="com.msa.kyj_prj.match.MatchParticipant">
+	    INSERT INTO match_participant (
+	        match_id,
+	        club_id,
+	        user_no
+	    ) VALUES (
+	        #{match_id},
+	        #{club_id},
+	        #{user_no}
+	    )
+	</insert>	
+	
+	<!-- 참가 여부 확인 (취소 제외) -->
+	<select id="checkUserApplied" resultType="int" parameterType="map">
+	    SELECT COUNT(*)
+	    FROM match_participant
+	    WHERE match_id = #{match_id}
+	      AND user_no = #{user_no}
+	      AND user_status != 'cancelled'
+	</select>
+	
+	<!-- 매치 참가 취소 (물리 삭제) -->
+	<delete id="cancelMatchParticipant" parameterType="map">
+	    DELETE FROM match_participant
+	    WHERE match_id = #{match_id}
+	      AND user_no = #{user_no}
+	</delete>
+	
+	<!-- 특정 매치의 참가자 수 조회 -->
+	<select id="countMatchParticipants" resultType="int" parameterType="long">
+	    SELECT
+	        CASE
+	            WHEN m.match_code = 'social' THEN (
+	                SELECT COUNT(*)
+	                FROM match_participant p
+	                WHERE p.match_id = m.match_id AND p.user_status = 'approve'
+	            )
+	            WHEN m.match_code = 'league' THEN (
+	                SELECT COUNT(DISTINCT p.club_id)
+	                FROM match_participant p
+	                WHERE p.match_id = m.match_id AND p.user_status = 'approve'
+	            )
+	            ELSE 0
+	        END AS participant_count
+	    FROM `match` m
+	    WHERE m.match_id = #{matchId}
+	</select>
+	
+	<!-- 사용자 번호로 클럽 정보 조회 -->
+	<select id="selectClubByUserNo" parameterType="long" resultType="map">
+	    SELECT user_no, club_id
+	    FROM tbl_club
+	    WHERE user_no = #{user_no}
+	</select>
+	
+	<!-- AREANM 리스트 (중복 제거) -->
+	<select id="selectDistinctAreanms" resultType="string">
+	    SELECT DISTINCT AREANM
+	    FROM stadium
+	    ORDER BY AREANM
+	</select>
+	
+	<!-- 특정 매치의 참가자 목록 + 사용자 상세 정보 조회 -->
+	<select id="selectParticipantsByMatchId" resultType="map" parameterType="long">
+	    SELECT 
+	        mp.match_id,
+	        mp.user_no,
+	        mp.club_id,
+	        mp.user_role,
+	        mp.user_status,
+	        mp.created_at,
+	        mp.modified_at,
+	        u.user_name
+	    FROM 
+	        match_participant mp
+	    JOIN 
+	        user u ON mp.user_no = u.user_no
+	    WHERE 
+	        mp.match_id = #{matchId}
+	</select>
+	
+	<!-- 특정 매치 참가자 + 사용자 + 클럽 정보 조회 -->
+	<select id="selectParticipantsWithClubByMatchId" resultType="map" parameterType="long">
+	    SELECT 
+	        mp.match_id,
+	        mp.user_no,
+	        mp.club_id,
+	        mp.user_role,
+	        mp.user_status,
+	        mp.created_at,
+	        mp.modified_at,
+	        u.user_name,
+	        c.club_name
+	    FROM 
+	        match_participant mp
+	    JOIN 
+	        user u ON mp.user_no = u.user_no
+	    LEFT JOIN 
+	        tbl_club c ON mp.club_id = c.club_id
+	    WHERE 
+	        mp.match_id = #{matchId}
+	</select>
+	
+	<!-- 매치 참가자의 상태(user_status) 업데이트 -->
+	<update id="updateMatchParticipantStatus" parameterType="map">
+	    UPDATE match_participant
+	    SET user_status = #{user_status},
+	        modified_at = CURRENT_TIMESTAMP()
+	    WHERE match_id = #{match_id}
+	      AND user_no = #{user_no}
+	</update>
+	
+	<!-- match_id로 match_closed 상태 변경 -->
+	<update id="updateMatchClosedStatus" parameterType="map">
+	    UPDATE `match`
+	    SET match_closed = #{match_closed}
+	    WHERE match_id = #{match_id}
+	</update>
+	
+	<!-- match_id로 match_status 상태 변경 -->
+	<update id="updateMatchStatus" parameterType="map">
+	    UPDATE `match`
+	    SET match_status = #{match_status}
+	    WHERE match_id = #{match_id}
+	</update>
+	
+	<select id="selectAllMatches" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT
+	        match_id,
+	        match_date,
+	        match_status,
+	        match_closed
+	    FROM `match`
+	</select>
+	
+	<!-- 연동된 예약 가져오기 -->
+	<select id="getReservationIdByBoardId" resultType="long" parameterType="long">
+	  SELECT reservation_id
+	  FROM reservation
+	  WHERE board_id = #{board_id}
+	</select>
+	
+	<!-- 예약 ID로 결제 여부 확인 -->
+	<select id="isReservationPaid" resultType="boolean" parameterType="long">
+	  SELECT EXISTS (
+	    SELECT 1
+	    FROM payment
+	    WHERE reservation_id = #{reservation_id}
+	      AND status = 'paid'
+	  )
+	</select>
+	
+	<!-- 매치 등록 -->
+	<insert id="insertMatch" parameterType="com.msa.kyj_prj.match.Match">
+	  INSERT INTO `match` (
+	    match_title,
+	    user_no,
+	    manager_no,
+	    match_date,
+	    SVCID,
+	    gender_condition,
+	    match_description,
+	    match_code,
+	    reservation_id
+	  ) VALUES (
+	    #{match_title},
+	    #{user_no},
+	    #{manager_no},
+	    #{match_date},
+	    #{SVCID},
+	    #{gender_condition},
+	    #{match_description},
+	    #{match_code},
+	    #{reservation_id}
+	  )
+	</insert>
+	
+	<!-- 클럽 매치 리스트 (필터링된) -->
+	<select id="selectFilteredClubMatches" parameterType="long" resultType="map">
+	  SELECT 
+	    m.match_id,
+	    m.match_title,
+	    m.match_created_at,
+	    m.match_date,
+	    m.SVCID,
+	    m.match_closed,
+	    m.gender_condition,
+	    m.match_status,
+	    m.match_board_status,
+	    m.match_code
+	  FROM 
+	    match_participant mp
+	  JOIN 
+	    `match` m ON mp.match_id = m.match_id
+	  WHERE 
+	    mp.club_id = #{club_id}
+	    AND m.match_status = 'waiting'
+	</select>
+	
+	<!-- 취소/만료된 예약 ID 조회 -->
+	<select id="getCancelledOrExpiredReservationIds" resultType="long">
+	    SELECT reservation_id
+	    FROM reservation
+	    WHERE status IN ('cancelled', 'expired')
+	</select>
+	
+	<!-- 예약 ID로 match_status가 waiting 또는 active인 match 조회 -->
+	<select id="getMatchesByReservationId" resultType="com.msa.kyj_prj.match.Match">
+	    SELECT match_id, match_status
+	    FROM `match`
+	    WHERE reservation_id = #{reservation_id}
+	      AND match_status IN ('waiting', 'active', 'completed')
+	</select>
+	
+	<!-- 결제 id 기반 예약 id 호출 -->
+	<select id="getReservationIdByPaymentId" parameterType="long" resultType="long">
+	    SELECT reservation_id
+	    FROM payment
+	    WHERE payment_id = #{payment_id}
+	</select>
+	
+	<!-- 최근 완료된 과거 매치 5개 조회 -->
+	<select id="selectRecentCompletedMatches" resultType="com.msa.kyj_prj.match.Match">
+	  SELECT
+	    match_id,
+	    match_title,
+	    match_created_at,
+	    match_date,
+	    SVCID,
+	    match_closed,
+	    gender_condition,
+	    match_status,
+	    match_board_status,
+	    match_code
+	  FROM `match`
+	  WHERE match_status = 'completed'
+	    AND match_date &lt; NOW()
+	  ORDER BY match_date DESC
+	  LIMIT 5
+	</select>
+
+
+
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msa.do_login.admin.dao.AdminDAO">
+	
+	<select id="getUserList" resultType="com.msa.do_login.user.vo.UserVO">
+		SELECT * 
+		FROM user
+		WHERE user_exit_status = 'N'
+		<if test="searchValue != null and searchValue != ''">
+			<choose>
+				<when test="searchType == 'userName'">
+				AND user_name LIKE CONCAT('%', #{searchValue}, '%')
+				</when>
+				<when test="searchType == 'userCode'">
+				AND user_code = #{searchValue}
+				</when>
+			</choose>
+		</if>
+		ORDER BY user_reg_date DESC
+		LIMIT #{limitPageNo}, #{numPerPage}
+	</select>
+		
+	<select id="getTotalCount" resultType="int">
+		SELECT COUNT(*) 
+		FROM user
+		WHERE user_exit_status = 'N'
+		<if test="searchValue != null and searchValue != ''">
+			<choose>
+				<when test="searchType == 'userName'">
+				AND user_name LIKE CONCAT('%', #{searchValue}, '%')
+				</when>
+				<when test="searchType == 'userCode'">
+				AND user_code = #{searchValue}
+				</when>
+			</choose>
+		</if>
+	</select>
+	
+	<select id="getUserByUserNo" parameterType="int" resultType="com.msa.do_login.user.vo.UserVO">
+		SELECT *
+		FROM user
+		WHERE user_no = #{userNo}
+	</select>
+	
+	<update id="grantManager" parameterType="int">
+		UPDATE user
+		SET auth_code = 'A2'
+		WHERE user_no = #{userNo} AND auth_code = 'A3'
+	</update>
+	
+	<update id="revokeManager" parameterType="int">
+		UPDATE user
+		SET auth_code = 'A3'
+		WHERE user_no = #{userNo} AND auth_code = 'A2'
+	</update>
+	
+</mapper>

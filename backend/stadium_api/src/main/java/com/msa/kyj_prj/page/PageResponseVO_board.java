@@ -3,7 +3,7 @@ package com.msa.kyj_prj.page;
 
 import java.util.List;
 
-import com.msa.kyj_prj.stadium.Stadium;
+import com.msa.kyj_prj.dto.Stadium;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
