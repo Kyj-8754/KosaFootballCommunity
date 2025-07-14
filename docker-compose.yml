@@ -53,7 +53,7 @@ services:
       - msateamprj_network 
 # login_api 생성
   login_api:
-    image: span5189/loginapi:latest
+    image: span5189/login_api:latest
     container_name: login-api
     networks:
       - msateamprj_network
@@ -110,7 +110,6 @@ services:
       - recruit_api
       - weather_api
       - board_api
-
 
 volumes:
   shared-data:
