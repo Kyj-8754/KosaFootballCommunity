@@ -189,7 +189,7 @@ onMounted(() => {
 <style scoped>
 .floating-weather-widget {
   position: fixed;
-  top: 200px;
+  top: 0px;
   left: 0px;
   z-index: 999;
   cursor: grab;
