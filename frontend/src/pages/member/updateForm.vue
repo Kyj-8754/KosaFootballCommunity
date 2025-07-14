@@ -62,25 +62,82 @@ const { form, onSubmit, handleFindZipcode } = useUserInfoEdit()
   display: flex;
   justify-content: center;
   margin-top: 60px;
+  font-family: 'Pretendard', sans-serif;
 }
+
 .update-form {
-  background-color: white;
-  padding: 40px;
-  width: 600px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 32px;
+  width: 100%;
+  max-width: 600px;
 }
+
 .update-form h3 {
+  font-size: 24px;
+  font-weight: 700;
   text-align: center;
-  font-weight: bold;
   margin-bottom: 30px;
+  color: #212529;
 }
-.update-form label {
-  font-weight: bold;
+
+.form-label {
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
 }
-.update-form .form-control {
-  margin-bottom: 15px;
+
+.form-control,
+.form-select {
+  font-size: 14px;
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+  transition: border-color 0.3s ease;
 }
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: none;
+}
+
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.d-flex.gap-2 {
+  gap: 8px;
+}
+
+.btn {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
+.btn-outline-secondary {
+  background-color: transparent;
+  border: none;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.btn-outline-secondary:hover {
+  background-color: rgba(108, 117, 125, 0.1);
+}
+
 .link-area {
   display: flex;
   justify-content: flex-end;

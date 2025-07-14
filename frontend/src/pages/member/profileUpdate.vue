@@ -58,42 +58,84 @@
 import { useProfileUpdate } from '@/utils/script/user.js'
 const { form, onSubmit } = useProfileUpdate()
 </script>
-
 <style scoped>
 .update-container {
   display: flex;
   justify-content: center;
   margin-top: 60px;
+  padding: 0 16px;
 }
+
 .update-form {
-  background-color: white;
-  padding: 40px;
-  width: 600px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 480px;
+  padding: 32px 24px;
+  font-family: 'Pretendard', sans-serif;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
+
 .update-form h3 {
   text-align: center;
-  font-weight: bold;
-  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 32px;
+  color: #212529;
 }
+
 .update-form label {
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 6px;
+  color: #333;
+  display: block;
 }
-.update-form .form-control {
-  margin-bottom: 15px;
+
+.update-form .form-control,
+.update-form .form-select {
+  font-size: 14px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  margin-top: 4px;
 }
+
+.update-form .form-control:focus,
+.update-form .form-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: none;
+}
+
 .link-area {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 24px;
 }
-.profile-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
+
+.btn {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
 }
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
+.btn-outline-secondary {
+  border: 1px solid #ccc;
+  background: transparent;
+  color: #333;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #f5f5f5;
+}
+
 </style>
