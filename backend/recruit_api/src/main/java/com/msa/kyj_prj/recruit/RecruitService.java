@@ -65,27 +65,18 @@ public class RecruitService {
 		recruit_dao.update(board);
 	}
 
-//	// 모집글 삭제
-//	public void delete_recruit(int bno) {
-//		recruit_dao.delete(bno);
-//	}
-
-//	// 팀장 여부 확인
-//	public boolean is_club_leader(int user_no, int club_id) {
-//	    return recruit_dao.is_club_leader(user_no, club_id) > 0;
-//	}
-
-//	public boolean is_club_leader(int userNo, int clubId) {
-//	    Map<String, Object> map = new HashMap<>();
-//	    map.put("user_no", userNo);
-//	    map.put("club_id", clubId);
-//
-//	    int result = recruitDAO.is_club_leader(map);
-//	    return result > 0; // ✅ int → boolean 변환
-//	}
+	// 모집글 삭제
+	public void delete_recruit(int bno) {
+		recruit_dao.delete_recruit(bno);
+	}
 
 	// 조회수 증가
 	public void increase_view_count(int bno) {
 		recruit_dao.increase_view_count(bno);
 	}
+	// 모집글 마감
+	public void close_recruit(int bno) {
+	    recruit_dao.update_is_closed(bno, 1); // 1 = 모집 마감
+	}
+
 }
