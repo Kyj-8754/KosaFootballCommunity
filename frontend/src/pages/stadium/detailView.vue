@@ -58,7 +58,12 @@
 					</div>
 					<!-- 알림 -->
 					<div v-show="activeTab === 'detail'">
-						<p v-html="stadiumDB.notice"></p>
+						<div v-if="stripHtml(stadiumDB.notice).trim() !== ''">
+							<p v-html="stadiumDB.notice"></p>
+						</div>
+						<div v-else>
+							<p class="text-muted">등록된 알림이 없습니다.</p>
+						</div>
 					</div>
 					<!-- 지도 -->
 					<div v-show="activeTab === 'map'">
@@ -113,6 +118,7 @@
 		onDayClick,
 		goToList,
 		goToReservation,
+		stripHtml,
 	} = stdaiumDetail()
 </script>
 

@@ -66,7 +66,7 @@
 
 <script setup>
 import { inject, computed, ref, watch } from 'vue'
-import logoImage from '/public/kosabanner.png'
+import logoImage from '/kosabanner.png'
 import axios from 'axios'
 
 // ✅ AlarmDropdown 컴포넌트 import 추가

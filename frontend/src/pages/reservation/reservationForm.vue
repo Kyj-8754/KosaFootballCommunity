@@ -66,7 +66,7 @@
             {{ selectedDate }}
           </div>
           <div class="modal-body">
-            <p>{{ reservation.date }} {{ reservation.time }}에 예약하시겠습니까?</p>
+            <p>{{ reservation.date }} {{ reservation.time }}예약하시겠습니까?</p>
           </div>
           <div class="modal-footer">
             <button class="btn btn-secondary" @click="showModal = false">아니오</button>
@@ -80,114 +80,14 @@
 
 
 <script setup>
-import axios from 'axios'
-import { ref, onMounted, inject, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import {StadiumDataStore} from '@/stores/stadiumStore'
+  import { form } from '@/utils/script/reservation'
+const {
+  stadiumDB,
+  openConfirmModal,
+  confirmReservation,
 
-const router = useRouter();
-const route = useRoute();
-const SVCID = route.query.SVCID;
-const date = route.query.date;
+}=form()
 
-//구장 불러오기
-const stadiumStore = StadiumDataStore()
-const stadiumDB = stadiumStore.stadiumData
-
-//아이디 관련
-const token = inject('token')
-const user_no = inject('userNo')
-const reservationDB = ref({})	// 예약
-const UserDB = ref({}) // 유저
-
-watch(UserDB, (newVal) => {
-  if (newVal && newVal.userNo) {
-    reservation.value.user_no = newVal.userNo;
-  }
-});
-
-const reservation = ref({
-  slot_id: '',               // 선택한 시간 슬롯 ID
-  reservation_type: '',                 // 'social' or 'match'
-  user_no: UserDB.value.user_no,   // 사용자 번호
-  price: stadiumDB.price
-})
-
-const showModal = ref(false) // 모달창 띄우는 용도
-
-// 날짜, 시간 검증 로직
-const openConfirmModal = () => {
-  if (!reservation.value.slot_id || !reservation.value.reservation_type) {
-    alert('날짜와 시간을 모두 선택하세요.')
-    return
-  }
-  showModal.value = true
-}
-
-
-// 예약하기
-const confirmReservation = async () => {
-  showModal.value = false
-  try {
-    const res = await axios.post(
-      '/reservation_api/reservation/reservation_std',
-      reservation.value,
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-
-    if (res.data.res_code === '200') {
-    alert(res.res_msg);
-
-    // 🎯 stadium 정보 초기화
-    // stadiumStore.clearStadium();
-    const reservationId = res.data.reservation_id;
-    router.push({name: 'reservation_Confirm', params: {reservationId}});
-  }
-  } catch (error) {
-    alert("서버 오류가 발생했습니다.");
-    console.error(error);
-  }
-}
-
-	// 유저 데이터 가져오기
-	const fetchUserData = async () => {
-		const res = await axios.get('/login_api/mypage/detailView', {params: { userNo: user_no.value },headers: {
-        Authorization: `Bearer ${token.value}`
-      }});
-		UserDB.value = res.data.member;
-	};
-
-	// 예약 관련 가져오기
-	const fetchReservationData = async () => {
-		const res = await axios.post('/reservation_api/reservation/reservationForm', { SVCID: SVCID , date: date } )
-    .then(res => {
-      if (res.data.res_code === '200'){
-        reservationDB.value = res.data.slots;
-      } else {
-        alert(res.data.res_msg);
-      }
-    });
-	};	
-
-onMounted(async () => {
- await fetchReservationData();
- await fetchUserData();
-})
-
-
-const timeSlots = computed(() => {
-  if (!Array.isArray(reservationDB.value)) return [];  // 확실하게 배열 체크
-  return reservationDB.value.map(slot => {
-    const timeRange = `${slot.startTime} ~ ${slot.endTime}`;
-    return {
-      label: slot.reservationStatus === 'reserved'
-        ? `${timeRange} (예약됨)`
-        : timeRange,
-      value: slot.slotid,
-      disabled: slot.reservationStatus === 'reserved'
-    };
-  });
-});
 </script>
 
 

@@ -17,7 +17,7 @@
 
 					<form @submit.prevent="searchID" :name="searchID" :id="searchID" class="d-flex align-items-center gap-2">
 						<label for="searchValue" class="me-1 mb-0">검색어:</label>
-						<input type="text" :name="searchValue" :id="searchValue" v-model="pageResponse.searchValue" class="form-control form-control-sm w-auto"> 
+						<input type="text" name="searchValue" id="searchValue" v-model="pageResponse.searchValue" class="form-control form-control-sm w-auto"> 
 						<button type="submit" class="btn btn-outline-secondary btn-sm">검색</button>
 						<button type="button" @click="resetSearch" class="btn btn-primary btn-sm">초기화</button>
 					</form>
@@ -34,7 +34,7 @@
 							<p class="card-text"><strong>지역명:</strong> {{ item.areanm }}</p>
 							<p class="card-text"><strong>장소명:</strong> {{ item.placenm }}</p>
 							<p class="card-text"><strong>연락처:</strong> {{ item.telno }}</p>
-							<p class="card-text"><strong>가격:</strong> {{ item.price }}</p>
+							<p class="card-text"><strong>가격:</strong> {{ item.price }}원</p>
 							<p class="card-text"><strong>이용 시간:</strong> {{ item.v_MIN }} ~ {{ item.v_MAX }}</p>
 							</div>
 						</div>

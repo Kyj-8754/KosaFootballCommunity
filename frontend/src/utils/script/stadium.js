@@ -42,11 +42,27 @@ export function useStadiumList() {
 	  return range
 	})
 	
-	watch([pageNo, searchType, () => route.query.searchValue], ([newPageNo, newSearchType, newSearch]) => {
-		fetchData(newPageNo, newSearchType, newSearch)
-	}, 
-	{ immediate: true }
-	)
+	// watch([pageNo, searchType, () => route.query.searchValue], ([newPageNo, newSearchType, newSearch]) => {
+	// 	fetchData(newPageNo, newSearchType, newSearch)
+	// }, 
+	// { immediate: true }
+	// )
+
+	watch(
+  () => route.query,
+  (query) => {
+    const newPageNo = parseInt(query.pageNo) || 1
+    const newSearchType = query.searchType || ''
+    const newSearchValue = query.searchValue || ''
+
+    // ✅ 명확히 상태 분리해서 저장
+    searchType.value = newSearchType
+    pageResponse.searchValue = newSearchValue
+
+    fetchData(newPageNo, newSearchType, newSearchValue)
+  },
+  { immediate: true }
+)
 	
 	// 값 검색시 넘어가는 로직
 	function searchID() {
@@ -60,11 +76,11 @@ export function useStadiumList() {
 		})
 	}
 	// 값 변경시 다시 list 가져오도록 요청
-	function fetchData(pageNo, searchValue) {
+	function fetchData(pageNo, searchType, searchValue) {
 		axios.get(`/stadium_api/stadium/list`,{
 			params:{
 				pageNo,
-				searchType: searchType.value || '',
+				searchType: searchType || '',
 				searchValue: searchValue || ''}
 			})
 			.then(res => {
@@ -184,6 +200,13 @@ const onDayClick = (day) => {
 		router.push({name: 'reservation_Form', query: {date: selectedDate.value, SVCID: SVCID}})
 	}
 
+	// html관련
+	function stripHtml(html) {
+  const tmp = document.createElement('div')
+  tmp.innerHTML = html || ''
+  return tmp.textContent || tmp.innerText || ''
+}
+
 watch(activeTab, async (newTab) => {
   if (newTab === 'map' && !isMapInitialized) {
     await nextTick()           // 👉 DOM이 그려진 다음
@@ -257,5 +280,6 @@ const initKakaoMap = () => {
 		onDayClick,
 		goToList,
 		goToReservation,
+		stripHtml,
   }
 }
