@@ -70,7 +70,7 @@ watchEffect(async () => {
   width: 300px;
   padding: 16px;
   margin: 0 auto;
-  background-color: #f3f4f6;
+  background-color: #cceeff; /* ✅ 하늘색으로 변경 */
   border-radius: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
