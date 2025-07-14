@@ -6,7 +6,10 @@
       <MatchTitleBar :match="match" />
 
       <!-- 메인 정보 카드 -->
-      <MatchInfoCard :match="match" />
+      <MatchInfoCard
+        :match="match"
+        :currentCount="currentCount"
+      />
 
       <!-- 상세 설명 -->
       <MatchDescription
@@ -16,6 +19,7 @@
         :matchUserNo="match.user_no"
         :matchManagerNo="match.manager_no"
         :matchStatus="match.match_status"
+        @refreshRequest="fetchMatchDetail"
       />
 
       <MatchLogButton 
@@ -51,14 +55,28 @@ import MatchLogButton from '@/components/board/match/matchLogPageButton.vue'
 
 const route = useRoute()
 const match = ref(null)
+const currentCount = ref(0)
 
 const fetchMatchDetail = async () => {
   try {
     const { id } = route.params
     const res = await axios.get(`/board_api/match/${id}`)
     match.value = res.data
+    await fetchParticipantCount(res.data.match_id, res.data.match_code)
   } catch (err) {
     console.error('매치 상세 조회 실패:', err)
+  }
+}
+
+const fetchParticipantCount = async (matchId, matchCode) => {
+  try {
+    const res = await axios.get('/board_api/match/participants/count', {
+      params: { matchId }
+    })
+    currentCount.value = res.data
+  } catch (e) {
+    console.error('인원 수 조회 실패:', e)
+    currentCount.value = 0
   }
 }
 

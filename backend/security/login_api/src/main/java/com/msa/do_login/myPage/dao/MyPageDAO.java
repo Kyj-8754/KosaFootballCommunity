@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.msa.do_login.myPage.dto.FriendDTO;
+import com.msa.do_login.myPage.dto.MyClubInfoDTO;
 import com.msa.do_login.user.vo.LocalAccount;
 import com.msa.do_login.user.vo.UserStat;
 import com.msa.do_login.user.vo.UserStyle;
@@ -52,4 +52,20 @@ public interface MyPageDAO {
 	
 	// user no로 user name을 찾는 메소드
 	public String findUserNameByUserNo(@Param("user_no") int user_no);
+	
+	public List<MyClubInfoDTO> getClubList(int userNo);
+	
+	public Double getMannerScore(int userNo);
+
+	public Double getlevel(int userNo);
+	
+	public int getMatchCount(int userNo);
+	
+	public int getPOMCount(int userNo);
+	
+	public int getSmileCardCount(int userNo);
+	
+	public int getYellowCardCount(int userNo);
+	
+	public int getRedCardCount(int userNo);
 }

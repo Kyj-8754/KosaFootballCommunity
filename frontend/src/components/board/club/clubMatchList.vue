@@ -1,75 +1,58 @@
 <template>
-  <div class="p-4">
-    <h2 class="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-      📋 클럽 매치 리스트
-    </h2>
+  <div class="recent-match-container">
+    <!-- 클럽 매치 리스트 -->
+    <div class="match-item-list">
+      <div
+        v-for="match in matches"
+        :key="match.match_id"
+        class="match-wrapper"
+      >
+        <div class="match-item">
+          <div class="date-col">
+            <div>{{ formatDate(match.match_date) }}</div>
+          </div>
 
-    <div v-if="loading" class="text-gray-500">불러오는 중...</div>
+          <div class="info-col">
+            <div class="summary">
+              {{ formatTime(match.match_date) }} {{ match.match_title }}
+            </div>
+          </div>
 
-    <div v-else-if="matches.length === 0" class="text-gray-500">
-      매치가 없습니다.
-    </div>
+          <div class="button-col">
+            <button
+              v-if="!match.applied"
+              @click="applyToMatch(match.match_id)"
+              class="btn btn-apply"
+            >
+              참가
+            </button>
+            <button
+              v-else
+              @click="cancelMatch(match.match_id)"
+              class="btn btn-cancel"
+            >
+              참가 취소
+            </button>
+          </div>
 
-    <div v-else class="overflow-x-auto">
-      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
-        <thead>
-          <tr class="bg-gray-50 border-b border-gray-200">
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              매치 정보
-            </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              참가 여부
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="match in matches"
-            :key="match.match_id"
-            class="hover:bg-gray-50 transition border-b border-gray-200 last:border-b-0"
-          >
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="flex flex-col">
-                <RouterLink
-                  :to="{ name: 'matchDetail', params: { id: match.match_id } }"
-                  class="text-base font-semibold text-blue-600 hover:underline"
-                >
-                  {{ match.match_title }}
-                </RouterLink>
-                <span class="text-sm text-gray-500 mt-1">
-                  📅 {{ formatDate(match.match_date) }}
-                </span>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right">
-              <button
-                v-if="!match.applied"
-                @click="applyToMatch(match.match_id)"
-                class="bg-green-500 hover:bg-green-600 text-black px-4 py-1.5 rounded-md text-sm font-medium shadow transition"
-              >
-                참가
-              </button>
-
-              <button
-                v-else
-                @click="cancelMatch(match.match_id)"
-                class="bg-red-500 hover:bg-red-600 text-black px-4 py-1.5 rounded-md text-sm font-medium shadow transition"
-              >
-                참가 취소
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+          <div class="type-col">
+            <div class="badge" :class="'status-' + match.match_status">
+              {{ getStatusLabel(match.match_status) }}
+            </div>
+            <div class="badge gender" v-if="match.gender_condition !== 'all'">
+              {{ match.gender_condition === 'male' ? '남성전용' : '여성전용' }}
+            </div>
+            <div class="badge gender" v-else>성별무관</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-// 기존 스크립트 내용은 동일합니다. 변경할 필요 없습니다.
-import { ref, watch, inject } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import axios from 'axios'
-import { RouterLink } from 'vue-router'
 
 const props = defineProps({
   clubId: {
@@ -79,22 +62,36 @@ const props = defineProps({
 })
 
 const matches = ref([])
-const loading = ref(false)
 const userNo = inject('userNo')
 
-// 날짜 포맷
-const formatDate = (raw) => {
-  const d = new Date(raw)
-  return `${d.getFullYear()}-${(d.getMonth() + 1)
-    .toString()
-    .padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')} ${d
-    .getHours()
-    .toString()
-    .padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
+const applyToMatch = async (matchId) => {
+  try {
+    await axios.post('/board_api/match/apply/approve', {
+      match_id: matchId,
+      club_id: props.clubId,
+      user_no: userNo.value,
+    })
+    fetchClubMatches()
+  } catch (err) {
+    console.error('❌ 참가 실패:', err)
+  }
 }
 
-// 신청 여부 확인
-const checkAppliedStatus = async (matchId) => {
+const cancelMatch = async (matchId) => {
+  try {
+    await axios.delete('/board_api/match/cancel', {
+      params: {
+        matchId,
+        userNo: userNo.value,
+      },
+    })
+    fetchClubMatches()
+  } catch (err) {
+    console.error('❌ 취소 실패:', err)
+  }
+}
+
+const checkUserApplied = async (matchId) => {
   try {
     const res = await axios.get('/board_api/match/applied', {
       params: {
@@ -109,68 +106,157 @@ const checkAppliedStatus = async (matchId) => {
   }
 }
 
-// 매치 목록 + 신청 여부 병합
-const fetchMatches = async () => {
-  loading.value = true
+const fetchClubMatches = async () => {
   try {
-    const response = await axios.get('/board_api/match/club/matches', {
+    const res = await axios.get('/board_api/match/club/matches', {
       params: { clubId: props.clubId },
     })
 
-    const rawMatches = response.data
+    const rawMatches = res.data
 
-    const withStatus = await Promise.all(
+    const withApplied = await Promise.all(
       rawMatches.map(async (match) => {
-        const applied = await checkAppliedStatus(match.match_id)
+        const applied = await checkUserApplied(match.match_id)
         return { ...match, applied }
       })
     )
 
-    matches.value = withStatus
+    matches.value = withApplied
   } catch (err) {
-    console.error('❌ 매치 로딩 실패:', err)
-  } finally {
-    loading.value = false
+    console.error('❌ 클럽 매치 목록을 불러오지 못했습니다:', err)
   }
 }
 
-// 참가 신청
-const applyToMatch = async (matchId) => {
-  try {
-    await axios.post('/board_api/match/apply/approve', {
-      match_id: matchId,
-      club_id: props.clubId,
-      user_no: userNo.value,
-    })
-    alert('✅ 참가 완료!')
-    fetchMatches()
-  } catch (err) {
-    console.error('❌ 참가 실패:', err)
-    alert('참가 실패: ' + (err.response?.data?.res_msg || err.message))
-  }
+onMounted(fetchClubMatches)
+
+const formatDate = (str) => {
+  const date = new Date(str)
+  return `${date.getMonth() + 1}월 ${date.getDate()}일`
 }
 
-// 참가 취소
-const cancelMatch = async (matchId) => {
-  try {
-    await axios.delete('/board_api/match/cancel', {
-      params: {
-        matchId,
-        userNo: userNo.value,
-      },
-    })
-    alert('🚫 참가 취소 완료')
-    fetchMatches()
-  } catch (err) {
-    console.error('❌ 취소 실패:', err)
-    alert('취소 실패: ' + (err.response?.data?.res_msg || err.message))
-  }
+const formatTime = (str) => {
+  const date = new Date(str)
+  return `${date.getHours().toString().padStart(2, '0')}:00시`
 }
 
-// 클럽 ID 변경 시 자동 로딩
-watch(() => props.clubId, fetchMatches, { immediate: true })
+const getStatusLabel = (code) => {
+  switch (code) {
+    case 'waiting': return '대기중'
+    case 'active': return '진행중'
+    case 'completed': return '진행 완료'
+    case 'cancelled': return '취소됨'
+    default: return code
+  }
+}
 </script>
 
 <style scoped>
-/* Tailwind 기반이라 커스텀 스타일 불필요 */
+.recent-match-container {
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.match-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.match-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.match-item {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  background-color: #fff;
+}
+
+.date-col {
+  width: 80px;
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+}
+
+.info-col {
+  flex: 1;
+  padding: 0 12px;
+}
+
+.summary {
+  font-weight: 600;
+  color: #111;
+}
+
+.type-col {
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.badge {
+  margin-right: 6px;
+  margin-top: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+  display: inline-block;
+  color: white;
+}
+
+.status-waiting { background-color: #ffc107; }
+.status-active { background-color: #007bff; }
+.status-completed { background-color: #28a745; }
+.status-cancelled { background-color: #dc3545; }
+
+.gender {
+  background-color: #6c757d;
+}
+
+.btn {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.button-col {
+  margin-right: 12px; /* ✅ 오른쪽 여백 추가 */
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-apply {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-apply:hover {
+  background-color: #218838;
+}
+
+.btn-cancel {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #c82333;
+}
 </style>

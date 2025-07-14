@@ -21,6 +21,12 @@ public interface LoginDAO {
 	public void insertLocalAccount(LocalAccount account);
 	
 	public void insertSocialAccount(SocialAccount socialAccount);
+	
+	public void deleteUser(int userNo);
+	
+	public void deleteLocalAccount(int userNo);
+	
+	public void deleteSocialAccount(int userNo);
 
 	public LocalAccount getLocalAccount(String userId);
 	

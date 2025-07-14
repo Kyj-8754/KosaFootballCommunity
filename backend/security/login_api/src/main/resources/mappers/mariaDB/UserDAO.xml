@@ -7,12 +7,17 @@
 	
 	<!-- 회원 코드 존재 여부 확인 구문 -->
 	<select id="existsByUserCodeSecurity" parameterType="String" resultType="boolean">
-		SELECT COUNT(*) > 0 FROM user WHERE user_code = #{userCode}
+		SELECT COUNT(*) > 0 
+		FROM user 
+		WHERE user_code = #{userCode}
+		AND user_exit_status='N'
 	</select>
 	
 	<!-- 아이디 존재 여부 확인 구문 -->
 	<select id="getLocalAccountSecurity" parameterType="String" resultType="com.msa.do_security.security.vo.LocalAccount">
-		SELECT * FROM local_account WHERE user_id = #{userId}
+		SELECT * 
+		FROM local_account 
+		WHERE user_id = #{userId}
 	</select>
 	
 	<!-- 회원 가입 구문 -->
@@ -26,6 +31,7 @@
 		  #{userDetailAddr}, #{authCode}, #{userCode}, #{userGender}
 		)
 	</insert>
+	
 	<insert id="insertLocalAccountSecurity">
 		INSERT INTO local_account (user_no, user_id, user_pwd) 
 		VALUES (#{userNo}, #{userId}, #{userPwd})
@@ -59,5 +65,7 @@
 		SELECT *
 		FROM user
 		WHERE user_no = #{userNo}
+		AND user_exit_status='N'
 	</select>
+
 </mapper>

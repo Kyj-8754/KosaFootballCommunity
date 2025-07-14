@@ -104,6 +104,49 @@ public class UserController {
 	    }
 	}
 	
+	// 회원 탈퇴
+	@PostMapping("/deleteMember")
+	public ResponseEntity<Map<String, Object>> deleteMember(@RequestBody Map<String, Object> payload) {
+	    Map<String, Object> res = new HashMap<>();
+
+	    try {
+	        int userNo = Integer.parseInt(String.valueOf(payload.get("userNo")));
+	        String password = String.valueOf(payload.get("password"));
+	        String loginType = String.valueOf(payload.get("loginType"));
+
+	        log.info("회원 탈퇴 요청: userNo = {}, loginType = {}", userNo, loginType);
+
+	        if (password == null || password.isBlank()) {
+	            res.put("res_code", "400");
+	            res.put("res_msg", "비밀번호는 필수입니다.");
+	            return ResponseEntity.badRequest().body(res);
+	        }
+
+	        boolean success = userService.deleteMember(userNo, password, loginType);
+
+	        if (success) {
+	            res.put("res_code", "200");
+	            res.put("res_msg", "회원 탈퇴가 완료되었습니다.");
+	            return ResponseEntity.ok(res);
+	        } else {
+	            res.put("res_code", "403");
+	            res.put("res_msg", "비밀번호가 일치하지 않아 탈퇴할 수 없습니다.");
+	            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(res);
+	        }
+
+	    } catch (NumberFormatException e) {
+	        res.put("res_code", "400");
+	        res.put("res_msg", "userNo 값이 유효하지 않습니다.");
+	        return ResponseEntity.badRequest().body(res);
+
+	    } catch (Exception e) {
+	        res.put("res_code", "500");
+	        res.put("res_msg", "서버 오류: " + e.getMessage());
+	        return ResponseEntity.internalServerError().body(res);
+	    }
+	}
+
+	
 	// 인증 코드 전송
 	@PostMapping("/na/smsCode")
 	public ResponseEntity<Map<String, Object>> sendSmsToCertification(@RequestParam("userPhone") String userPhone) {

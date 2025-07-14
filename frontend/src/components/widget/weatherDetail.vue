@@ -1,14 +1,15 @@
 <template>
   <div class="text-sm text-gray-800 space-y-1">
     <div>강수확률 : {{ data.POP }}%</div>
-    <div>강수형태: {{ ptyLabel }}</div>
+    <!--<div>강수형태: {{ ptyLabel }}</div>-->
     <div v-if="precipLabel">
       {{ precipLabel }}
     </div>
     <div>하늘상태: {{ skyLabel }}</div>
     <div>기온: {{ data.TMP }}℃</div>
+    <!--
     <div>습도: {{ data.REH }}%</div>
-    <div>풍속: {{ data.WSD }} m/s</div>
+    <div>풍속: {{ data.WSD }} m/s</div>-->
   </div>
 </template>
 

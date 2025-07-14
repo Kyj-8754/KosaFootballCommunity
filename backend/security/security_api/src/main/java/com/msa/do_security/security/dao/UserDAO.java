@@ -22,7 +22,7 @@ public interface UserDAO {
     // 신규 소셜 계정 등록
     void insertSocialAccountSecurity(SocialAccountVO socialAccountVO);
     
-    UserVO findByUserIdSecurity(@Param("username")String username);
+    public UserVO findByUserIdSecurity(@Param("username")String username);
     
     LocalAccount findAccountByUserNoSecurity(int userNo);
     

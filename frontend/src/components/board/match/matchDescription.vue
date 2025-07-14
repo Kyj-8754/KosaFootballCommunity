@@ -16,12 +16,13 @@
     <div class="tab-content">
       <div v-if="activeTab === 'description'" v-html="descriptionHtml" />
       <div v-else-if="activeTab === 'participants'">
-      <MatchParticipant
-        :matchId="matchId"
-        :matchCode="matchCode"
-        :matchUserNo="matchUserNo"        
-        :matchManagerNo="matchManagerNo"  
-      />
+        <MatchParticipant
+          :matchId="matchId"
+          :matchCode="matchCode"
+          :matchUserNo="matchUserNo"
+          :matchManagerNo="matchManagerNo"
+          @statusChanged="$emit('refreshRequest')"
+        />
       </div>
       <div v-else-if="activeTab === 'results'">
         <MatchResult :matchId="matchId" />

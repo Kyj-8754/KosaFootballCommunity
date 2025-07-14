@@ -61,6 +61,27 @@ public class UserService {
 				.userPwd(encodedPwd).build();
 		loginDAO.insertLocalAccount(account);
 	}
+	
+	// 회원 탈퇴
+	@Transactional
+	public boolean deleteMember(int userNo, String password, String loginType) {
+	    LocalAccount account = loginDAO.findAccountByUserNo(userNo);
+	    if (account == null) return false;
+
+	    if (!passwordEncoder.matches(password, account.getUserPwd())) {
+	        return false;
+	    }
+
+	    loginDAO.deleteUser(userNo);
+	    
+	    if ("local".equalsIgnoreCase(loginType)) {
+	        loginDAO.deleteLocalAccount(userNo);
+	    } else {
+	        loginDAO.deleteSocialAccount(userNo);
+	    }
+
+	    return true;
+	}
 
 	// 존재하는 아이디 여부 확인
 	public LocalAccount getLocalAccount(String userId) {

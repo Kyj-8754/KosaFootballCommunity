@@ -2,8 +2,16 @@
   <div class="board-list-container">
     <!-- 소트와 필터를 같은 줄에 배치 -->
     <div class="sort-filter-row">
-      <BoardFilter @search="handleSearch" />
-      <SortButtons :sort="sortOptions" @update:sort="updateSort" />
+      <BoardFilter
+        :category="currentCategory"
+        @search="handleSearch"
+      />
+
+      <SortButtons
+        :sort="sortOptions"
+        :category="currentCategory"
+        @update:sort="updateSort"
+      />
     </div>
     <CategoryButtons @select="handleCategorySelect" />
     <BoardNoticeList @view="handleViewPost" />
@@ -42,6 +50,9 @@ import axios from 'axios'
 
 const router = useRouter()
 const authCode = inject('authCode')
+const userNo = inject('userNo')
+
+const currentCategory = computed(() => searchFilters.value.category)
 
 const posts = ref([])
 const currentPage = ref(1)
@@ -73,13 +84,31 @@ const handleCategorySelect = (category) => {
 
 const fetchPosts = async () => {
   try {
-    const response = await axios.get('/board_api/board/list', {
-      params: {
-        ...searchFilters.value,
-        sortColumn: sortOptions.value.column,
-        sortDirection: sortOptions.value.direction
+    const isRecruitBoard = searchFilters.value.category === '모집게시판'
+    const isA1orA2 = authCode.value === 'ROLE_A1' || authCode.value === 'ROLE_A2'
+
+    let response
+
+    if (isRecruitBoard) {
+      const params = {
+        keyword: searchFilters.value.keyword || '',
+        sortDirection: sortOptions.value.direction || 'desc'
       }
-    })
+
+      // ✅ ROLE_A1 또는 ROLE_A2가 아니면 userNo 추가
+      params.userNo = isA1orA2 ? '' : userNo.value
+
+      response = await axios.get('/board_api/board/recruitlist', { params })
+    } else {
+      response = await axios.get('/board_api/board/list', {
+        params: {
+          ...searchFilters.value,
+          sortColumn: sortOptions.value.column,
+          sortDirection: sortOptions.value.direction
+        }
+      })
+    }
+
     posts.value = response.data
   } catch (error) {
     console.error('게시글 목록 불러오기 실패:', error)

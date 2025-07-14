@@ -95,6 +95,7 @@ const stadiumStore = StadiumDataStore()
 const stadiumDB = stadiumStore.stadiumData
 
 //아이디 관련
+const token = inject('token')
 const user_no = inject('userNo')
 const reservationDB = ref({})	// 예약
 const UserDB = ref({}) // 유저
@@ -150,7 +151,9 @@ const confirmReservation = async () => {
 
 	// 유저 데이터 가져오기
 	const fetchUserData = async () => {
-		const res = await axios.get('/login_api/mypage/detailView', {params: { userNo: user_no.value }});
+		const res = await axios.get('/login_api/mypage/detailView', {params: { userNo: user_no.value },headers: {
+        Authorization: `Bearer ${token.value}`
+      }});
 		UserDB.value = res.data.member;
 	};
 
