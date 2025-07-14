@@ -2,45 +2,48 @@
   <div class="container py-5">
     <h2 class="fw-bold mb-4 text-center">클럽 정보 수정</h2>
 
-<div v-if="club">
-  <div class="row gx-4 gy-5 align-items-start">
-    <!-- 좌측: 팀 로고 & 오버뷰 -->
-    <div class="col-lg-3">
-      <div class="bg-light rounded p-4 text-center shadow-sm">
-        <!-- 이미지 미리보기 우선 적용, 서버 포트 포함! -->
-        <img
-          :src="
-            previewUrl ||
-            (club.logo_path
-              ? `http://localhost:8121${club.logo_path}`
-              : 'https://via.placeholder.com/120')
-          "
-          alt="클럽 로고"
-          class="img-fluid mb-3"
-          style="max-height: 250px; object-fit: contain"
-        />
-        <!-- 파일 업로드: 팀장만 보임 -->
-        <div v-if="isClubOwner" class="mb-2">
-          <!-- 안내문구 추가! -->
-          <div class="form-text mb-2 text-secondary" style="font-size:0.95em;">
-            10메가 바이트 이하의 <b>jpg</b> 파일만 가능합니다.
+    <div v-if="club">
+      <div class="row gx-4 gy-5 align-items-start">
+        <!-- 좌측: 팀 로고 & 오버뷰 -->
+        <div class="col-lg-3">
+          <div class="bg-light rounded p-4 text-center shadow-sm">
+            <!-- 이미지 미리보기 우선 적용, 서버 포트 포함! -->
+            <img
+              :src="
+                previewUrl ||
+                (club.logo_path
+                  ? `http://localhost:8121${club.logo_path}`
+                  : 'https://via.placeholder.com/120')
+              "
+              alt="클럽 로고"
+              class="img-fluid mb-3"
+              style="max-height: 250px; object-fit: contain"
+            />
+            <!-- 파일 업로드: 팀장만 보임 -->
+            <div v-if="isClubOwner" class="mb-2">
+              <!-- 안내문구 추가! -->
+              <div
+                class="form-text mb-2 text-secondary"
+                style="font-size: 0.95em"
+              >
+                10메가 바이트 이하의 <b>jpg</b> 파일만 가능합니다.
+              </div>
+              <input
+                type="file"
+                @change="onFileChange"
+                accept="image/jpeg"
+                class="form-control mb-2"
+              />
+              <button
+                v-if="selectedFile"
+                @click="uploadLogo"
+                class="btn btn-sm btn-outline-primary mb-2"
+              >
+                업로드
+              </button>
+            </div>
           </div>
-          <input
-            type="file"
-            @change="onFileChange"
-            accept="image/jpeg"
-            class="form-control mb-2"
-          />
-          <button
-            v-if="selectedFile"
-            @click="uploadLogo"
-            class="btn btn-sm btn-outline-primary mb-2"
-          >
-            업로드
-          </button>
         </div>
-      </div>
-    </div>
 
         <!-- 우측: 메인 정보 (카드형 2x2 그리드) -->
         <div class="col-lg-9">
@@ -344,6 +347,19 @@ const submitUpdate = async () => {
     alert("팀장만 수정할 수 있습니다.");
     return;
   }
+
+  // ✅ 유효성 검사 추가
+  const { gender, age_group, active_days, active_times } = clubInfo.value;
+  if (
+    !gender ||
+    !age_group ||
+    active_days.length === 0 ||
+    active_times.length === 0
+  ) {
+    alert("⚠️ 성별, 나이대, 활동 요일 및 활동 시간을 모두 선택해주세요.");
+    return;
+  }
+
   try {
     // clubInfo 전송용 데이터
     const clubInfoPayload = {

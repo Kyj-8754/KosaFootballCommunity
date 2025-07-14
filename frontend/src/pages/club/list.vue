@@ -2,22 +2,34 @@
   <div class="container my-4">
     <h2 class="fw-bold mb-3">클럽 순위</h2>
 
-    <!-- 버튼 우측 정렬 -->
-    <div class="mb-3 text-end" style="margin-top: -25px">
-      <router-link
-        to="/recruitBoard"
-        class="tab-btn me-2"
-        :class="{ active: isActiveTab('/recruitBoard') }"
-      >
-        팀원 모집 게시판
-      </router-link>
-      <router-link
-        to="/club/clubMatchSchedule"
-        class="tab-btn me-2"
-        :class="{ active: isActiveTab('/club/clubMatchSchedule') }"
-      >
-        리그 일정
-      </router-link>
+    <!-- ✅ 검색창과 버튼을 같은 줄에 배치 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <!-- 왼쪽: 검색창 -->
+      <input
+        type="text"
+        v-model="searchKeyword"
+        placeholder="클럽 이름 검색"
+        class="form-control"
+        style="max-width: 200px"
+      />
+
+      <!-- 오른쪽: 버튼들 -->
+      <div>
+        <router-link
+          to="/recruitBoard"
+          class="tab-btn me-2"
+          :class="{ active: isActiveTab('/recruitBoard') }"
+        >
+          팀원 모집 게시판
+        </router-link>
+        <router-link
+          to="/club/clubMatchSchedule"
+          class="tab-btn me-2"
+          :class="{ active: isActiveTab('/club/clubMatchSchedule') }"
+        >
+          리그 일정
+        </router-link>
+      </div>
     </div>
 
     <ul class="list-group">
@@ -28,13 +40,33 @@
         style="min-height: 64px"
         @click="goToClub(club.team_code)"
       >
-        <!-- 왼쪽: 메달 + 순위 + 팀명 -->
+        <!-- ✅ 왼쪽: 순위 → 로고 → 클럽명 -->
         <div class="d-flex align-items-center">
           <span v-if="index === 0" class="me-2">🥇</span>
           <span v-else-if="index === 1" class="me-2">🥈</span>
           <span v-else-if="index === 2" class="me-2">🥉</span>
           <span v-else class="me-2 fw-bold">{{ index + 1 }}위</span>
 
+          <!-- 클럽 로고 썸네일 -->
+          <img
+            :src="
+              club.logo_path
+                ? `http://localhost:8121${club.logo_path}`
+                : fallbackImg
+            "
+            @error="handleImageError"
+            alt="클럽 로고"
+            style="
+              width: 40px;
+              height: 40px;
+              object-fit: cover;
+              border-radius: 6px;
+              margin-left: 8px;
+              margin-right: 12px;
+            "
+          />
+
+          <!-- 클럽 이름 -->
           <router-link
             :to="`/club/${club.team_code}`"
             class="text-decoration-none text-dark fw-bold"
@@ -43,22 +75,24 @@
           </router-link>
         </div>
 
-        <!-- 오른쪽: 레벨 + 참가 + 승률 (가로 정렬) -->
-        <div class="d-flex align-items-center gap-3">
-          <span class="badge bg-primary">
-            {{
-              calculateClubLevel(
-                club.win_count || 0,
-                club.draw_count || 0,
-                club.loss_count || 0
-              )
-            }}
-          </span>
-          <span class="text-muted small">참가: {{ getTotalGames(club) }}</span>
-          <span class="text-muted small">승률: {{ calcWinRate(club) }}%</span>
-        </div>
+        <!-- 오른쪽: 레벨 + 참가 + 승률 -->
+      <div class="d-flex align-items-center club-meta">
+  <span class="badge bg-primary level">
+    {{
+      calculateClubLevel(
+        club.win_count || 0,
+        club.draw_count || 0,
+        club.loss_count || 0
+      )
+    }}
+  </span>
+  <span class="text-muted small game-count">참가: {{ getTotalGames(club) }}</span>
+  <span class="text-muted small win-rate">승률: {{ calcWinRate(club) }}%</span>
+</div>
+
       </li>
     </ul>
+
     <p v-if="clubs.length === 0" class="mt-3">클럽 데이터가 없습니다.</p>
   </div>
 </template>
@@ -67,37 +101,28 @@
 import axios from "axios";
 import { useRoute } from "vue-router";
 const route = useRoute();
+const fallbackImg = "https://via.placeholder.com/40"; // ✅ 기본 이미지
+// ✅ 이미지 로딩 실패 시 기본 이미지로 대체
+const handleImageError = (event) => {
+  event.target.src = fallbackImg;
+};
 
 export default {
   name: "ClubList",
   data() {
     return {
       clubs: [],
+      searchKeyword: "",
     };
   },
   created() {
     this.fetchClubs();
   },
   computed: {
-    // ⚠️ sortedClubs 정렬 기준에 club_level 적용 예시(아직 백엔드에서 계산값 미반영 상태)
     sortedClubs() {
-      // TODO: 추후 club_level이 백엔드에서 계산되면 아래 등급 우선 정렬 적용
-      // const levelOrder = { '다이아': 5, '플래티넘': 4, '골드': 3, '실버': 2, '브론즈': 1 }
-      // return [...this.clubs]
-      //   .map(club => ({
-      //     ...club,
-      //     win_rate: this.getWinRateRaw(club),
-      //     club_level_order: levelOrder[club.club_level] || 0
-      //   }))
-      //   .sort((a, b) => {
-      //     if (b.club_level_order !== a.club_level_order) {
-      //       return b.club_level_order - a.club_level_order
-      //     }
-      //     return b.win_rate - a.win_rate
-      //   })
-
-      // 현재는 승률 기준 정렬만 적용
+      const keyword = this.searchKeyword.toLowerCase();
       return [...this.clubs]
+        .filter((club) => club.club_name.toLowerCase().includes(keyword)) // ✅ 필터 추가
         .map((club) => ({
           ...club,
           win_rate: this.getWinRateRaw(club),
@@ -118,6 +143,7 @@ export default {
         console.error("클럽 목록 불러오기 실패:", error);
       }
     },
+
     goToClub(teamCode) {
       this.$router.push(`/club/${teamCode}`);
     },
@@ -174,4 +200,30 @@ export default {
   color: black !important;
   border-color: black !important;
 }
+
+.club-meta {
+  display: flex;
+  justify-content: flex-end; /* 기존 유지 */
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+  margin-right: -20px; /* ✅ 오른쪽으로 너무 붙었을 경우 줄여줌 */
+  transform: translateX(-30px); /* ✅ 전체 묶음을 왼쪽으로 살짝 이동 */
+}
+
+.level {
+  width: 80px;
+  text-align: center;
+}
+
+.game-count {
+  width: 80px;
+  text-align: left;
+}
+
+.win-rate {
+  width: 90px;
+  text-align: left;
+}
+
 </style>
