@@ -13,28 +13,18 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 // @RequiredArgsConstructor // ⛔ StompHandler를 주입받지 않으므로 임시 제거
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    // ✅ 클라이언트에서 연결할 WebSocket 엔드포인트
-    @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*")  // ✅ CORS 유연 대응 (Spring 5.3 이상)
-                .withSockJS();                  // ✅ SockJS fallback 지원
-    }
+	// ✅ 클라이언트에서 연결할 WebSocket 엔드포인트
+	@Override
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
+		registry.addEndpoint("/ws").setAllowedOriginPatterns("*") // ✅ CORS 유연 대응 (Spring 5.3 이상)
+				.withSockJS(); // ✅ SockJS fallback 지원
+	}
 
-    // ✅ STOMP 메시지 브로커 설정
-    @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic", "/sub"); // 둘 다 활성화!  
-        registry.setApplicationDestinationPrefixes("/alarm");
-    }
+	// ✅ STOMP 메시지 브로커 설정
+	@Override
+	public void configureMessageBroker(MessageBrokerRegistry registry) {
+		registry.enableSimpleBroker("/topic", "/sub"); // 둘 다 활성화!
+		registry.setApplicationDestinationPrefixes("/alarm");
+	}
 
-
-    // ⛔ 인증 관련 핸들러는 현재 사용 안 함 (로그인 연동 시 활성화 가능)
-    // @Autowired
-    // private StompHandler stompHandler;
-    //
-    // @Override
-    // public void configureClientInboundChannel(ChannelRegistration registration) {
-    //     registration.interceptors(stompHandler);
-    // }
 }

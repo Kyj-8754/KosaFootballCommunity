@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper 
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.msa.kyj_prj.kakaopay.KakaoDAO">		
+	<insert id="paymentReady"  parameterType="com.msa.kyj_prj.dto.PaymentDTO"
+	useGeneratedKeys="true" keyProperty="id">
+		insert into payment (reservation_id, user_no, amount, method)
+		values(#{reservation_id}, #{user_no}, #{amount}, #{method})
+	</insert>
+	
+	<select id="findById" parameterType="Long" resultType="com.msa.kyj_prj.dto.PaymentDTO">
+		select * 
+		from payment
+		where ID = #{id}
+	</select>
+	
+	<select id="findReservationId" parameterType="com.msa.kyj_prj.dto.PaymentDTO" resultType="String">
+		select status
+		from payment
+		where reservation_id = #{reservation_id}
+		ORDER BY create_at DESC
+		LIMIT 1;
+	</select>
+	
+	<update id="updateTid" parameterType="com.msa.kyj_prj.dto.PaymentDTO">
+		update payment set 
+		TID = #{tid}
+		where ID = #{id}
+	</update>
+
+	<insert id="updatePayment">
+		insert into payment (tid, reservation_id, paid_at, user_no, amount, method, status)
+		values(#{tid}, #{reservation_id}, #{paid_at}, #{user_no}, #{amount}, #{method}, #{status})
+	</insert>
+</mapper>

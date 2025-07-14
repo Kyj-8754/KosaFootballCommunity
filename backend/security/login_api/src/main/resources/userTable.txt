@@ -1,0 +1,134 @@
+CREATE TABLE IF NOT EXISTS `user_stat` (
+	`stat_code`	INT(11)	NOT NULL AUTO_INCREMENT COMMENT '능력 코드',
+	`stat_name`	VARCHAR(20)	NOT NULL COMMENT '능력명',
+	PRIMARY KEY (`stat_code`)
+)COMMENT '회원 능력';
+
+INSERT INTO user_stat (stat_code, stat_name) VALUES
+(1, '슛'),
+(2, '패스'),
+(3, '드리블'),
+(4, '체력'),
+(5, '스피드'),
+(6, '피지컬');
+
+CREATE TABLE IF NOT EXISTS `user_style` (
+	`style_code` INT(11) NOT NULL AUTO_INCREMENT COMMENT '스타일 코드',
+	`style_name` VARCHAR(20) NOT NULL COMMENT '스타일명',
+	PRIMARY KEY (`style_code`)
+)COMMENT '회원 스타일';
+
+INSERT INTO user_style (style_code, style_name) VALUES
+(1, '공격'),
+(2, '밸런스'),
+(3, '수비');
+
+CREATE TABLE IF NOT EXISTS `user_authority` (
+	`auth_code`	VARCHAR(10)	NOT NULL COMMENT '권한 코드',
+	`auth_name`	VARCHAR(20)	NOT NULL COMMENT '권한명',
+	PRIMARY KEY (`auth_code`)
+)COMMENT '회원 권한';
+
+INSERT INTO user_authority (auth_code, auth_name) VALUES
+('A1', 'ADMIN'),
+('A2', 'MANAGER'),
+('A3', 'USER');
+
+CREATE TABLE IF NOT EXISTS `user` (
+	`user_no` INT(11) NOT NULL AUTO_INCREMENT COMMENT '회원 번호',
+	`user_name` VARCHAR(20)	NOT NULL COMMENT '회원 성명',
+	`user_birth` DATE NOT NULL COMMENT '회원 생년월일',
+	`user_phone` VARCHAR(15) NOT NULL COMMENT '회원 전화번호',
+	`user_post_code` VARCHAR(10) NOT NULL COMMENT '우편번호',
+	`user_addr`	VARCHAR(100) NOT NULL COMMENT '주소',
+	`user_detail_addr` VARCHAR(100)	NOT NULL COMMENT '상세주소',
+	`ori_pic_name` VARCHAR(255) NULL COMMENT '원본 프로필 사진명',
+	`new_pic_name` VARCHAR(255) NULL COMMENT '저장 프로필 사진명',
+	`recent_login` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '최근 로그인 시간',
+	`user_reg_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '등록일자',
+	`user_exit_status` VARCHAR(1) NOT NULL DEFAULT 'N' COMMENT '탈퇴여부',
+	`user_exit_date` TIMESTAMP NULL COMMENT '탈퇴일시',
+	`user_fail_status` VARCHAR(1) NOT NULL DEFAULT 'N' COMMENT '로그인 잠금 여부',
+	`user_fail_cnt`	INT(2) NOT NULL DEFAULT 0 COMMENT '로그인 실패 횟수',
+	`auth_code`	VARCHAR(10)	NOT NULL COMMENT '권한 코드',
+	`user_code`	VARCHAR(10)	NOT NULL COMMENT '회원 코드',
+	`user_gender` VARCHAR(1) NOT NULL COMMENT '성별',
+	`user_comment` VARCHAR(255)	NULL COMMENT '소개',
+	`style_code` INT(11) NULL COMMENT '스타일 코드',
+	`stat_code`	INT(11) NULL COMMENT '능력 코드',
+	PRIMARY KEY (`user_no`),
+	KEY `user_auth_code` (`auth_code`),
+	KEY `user_style_code` (`style_code`),
+	KEY `user_stat_code` (`stat_code`),
+	CONSTRAINT `user_auth_code` FOREIGN KEY (`auth_code`) REFERENCES `user_authority` (`auth_code`) ON DELETE NO ACTION ON UPDATE CASCADE,
+	CONSTRAINT `user_style_code` FOREIGN KEY (`style_code`) REFERENCES `user_style` (`style_code`) ON DELETE NO ACTION ON UPDATE CASCADE,
+	CONSTRAINT `user_stat_code` FOREIGN KEY (`stat_code`) REFERENCES `user_stat` (`stat_code`) ON DELETE NO ACTION ON UPDATE CASCADE
+)COMMENT '회원';
+
+CREATE TABLE IF NOT EXISTS `local_account` (
+	`local_no` INT(11) NOT NULL AUTO_INCREMENT COMMENT '로컬 계정 번호',
+	`user_no` INT(11) NOT NULL COMMENT '회원 번호',
+	`user_id` VARCHAR(255) NOT NULL COMMENT '회원 아이디',
+	`user_pwd` VARCHAR(255)	NOT NULL COMMENT '회원 비밀번호',
+	PRIMARY KEY (`local_no`),
+	KEY `local_user_no`(`user_no`),
+	CONSTRAINT `local_user_no` FOREIGN KEY (`user_no`) REFERENCES `user` (`user_no`) ON DELETE NO ACTION ON UPDATE CASCADE
+)COMMENT '로컬계정';
+
+CREATE TABLE IF NOT EXISTS `user_mod_history` (
+	`mod_no` INT(11) NOT NULL AUTO_INCREMENT COMMENT '수정 이력 번호',
+	`user_no` INT(11) NOT NULL COMMENT '회원 번호',
+	`mod_user_name` VARCHAR(20)	NOT NULL COMMENT '회원 성명',
+	`mod_user_birth` DATE NOT NULL COMMENT '회원 생년월일',
+	`mod_user_phone` VARCHAR(15) NOT NULL COMMENT '회원 전화번호',
+	`mod_user_post_code` VARCHAR(10) NOT NULL COMMENT '우편번호',
+	`mod_user_addr`	VARCHAR(100) NOT NULL COMMENT '주소',
+	`mod_user_detail_addr` VARCHAR(100)	NOT NULL COMMENT '상세주소',
+	`mod_ori_pic_name` VARCHAR(255) NULL COMMENT '원본 프로필 사진명',
+	`mod_new_pic_name` VARCHAR(255) NULL COMMENT '저장 프로필 사진명',
+	`mod_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '수정일자',
+	`mod_user_exit_status` VARCHAR(1) NOT NULL DEFAULT 'N' COMMENT '탈퇴여부',
+	`mod_user_exit_date` TIMESTAMP NULL COMMENT '탈퇴일시',
+	`mod_user_fail_status` VARCHAR(1) NOT NULL DEFAULT 'N' COMMENT '로그인 잠금 여부',
+	`mod_user_fail_cnt`	INT(2) NOT NULL DEFAULT 0 COMMENT '로그인 실패 횟수',
+	`mod_auth_code`	VARCHAR(10)	NOT NULL COMMENT '권한 코드',
+	`mod_user_code`	VARCHAR(10)	NOT NULL COMMENT '회원 코드',
+	`mod_user_gender` VARCHAR(1) NOT NULL COMMENT '성별',
+	`mod_user_comment` VARCHAR(255)	NULL COMMENT '소개',
+	`mod_stat_code` INT(11) NULL COMMENT '스타일 코드',
+	`mod_style_code`	INT(11) NULL COMMENT '능력 코드',
+	PRIMARY KEY (`mod_no`),
+	KEY `mod_user_no` (`user_no`),
+	KEY `mod_user_auth_code` (`mod_auth_code`),
+	KEY `mod_user_stat_code` (`mod_stat_code`),
+	KEY `mod_user_style_code` (`mod_style_code`),
+	CONSTRAINT `mod_user_no` FOREIGN KEY (`user_no`) REFERENCES `user` (`user_no`) ON DELETE NO ACTION ON UPDATE CASCADE,
+	CONSTRAINT `mod_user_auth_code` FOREIGN KEY (`mod_auth_code`) REFERENCES `user_authority` (`auth_code`) ON DELETE NO ACTION ON UPDATE CASCADE,
+	CONSTRAINT `mod_user_style_code` FOREIGN KEY (`mod_stat_code`) REFERENCES `user_style` (`style_code`) ON DELETE NO ACTION ON UPDATE CASCADE,
+	CONSTRAINT `mod_user_stat_code` FOREIGN KEY (`mod_style_code`) REFERENCES `user_stat` (`stat_code`) ON DELETE NO ACTION ON UPDATE CASCADE
+)COMMENT '회원 정보 수정 이력';
+
+CREATE TABLE IF NOT EXISTS social_account (
+    social_no      INT AUTO_INCREMENT,
+    user_no        INT NOT NULL,
+    provider       VARCHAR(20) NOT NULL,
+    provider_id    VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`social_no`),
+    UNIQUE KEY uk_provider_user (provider, provider_id),
+    CONSTRAINT fk_social_user FOREIGN KEY (user_no) REFERENCES user(user_no)
+);
+
+CREATE TABLE IF NOT EXISTS `user_relation` (
+	`relation_no`	INT(11)	AUTO_INCREMENT,
+	`from_user_no`	INT(11)	NOT NULL COMMENT '요청자',
+	`to_user_no`	INT(11)	NOT NULL COMMENT '요청대상',
+	`relation_status`	VARCHAR(255) NOT NULL DEFAULT 'WAIT',
+	`relation_req_date`	TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '친구 신청 일자',
+	`relation_prc_date`	TIMESTAMP NULL COMMENT '처리 일자',
+	PRIMARY KEY (`relation_no`),
+	UNIQUE KEY uniq_user_pair (from_user_no, to_user_no),
+	KEY `req_from_user_no` (`from_user_no`),
+	KEY `req_to_user_no` (`to_user_no`),
+	CONSTRAINT `req_from_user_no` FOREIGN KEY (`from_user_no`) REFERENCES `user` (`user_no`) ON DELETE NO ACTION ON UPDATE CASCADE,
+	CONSTRAINT `req_to_user_no` FOREIGN KEY (`to_user_no`) REFERENCES `user` (`user_no`) ON DELETE NO ACTION ON UPDATE CASCADE
+);

@@ -1,0 +1,160 @@
+-- kosa_db.board definition
+
+CREATE TABLE `board` (
+  `board_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_no` int(11) NOT NULL,
+  `user_name` varchar(20) NOT NULL,
+  `board_title` varchar(100) NOT NULL,
+  `board_content` mediumtext NOT NULL,
+  `board_category` varchar(10) NOT NULL,
+  `board_created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `board_modified_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `board_status` varchar(10) NOT NULL DEFAULT 'active',
+  `board_viewcount` int(11) NOT NULL DEFAULT 0,
+  `board_likecount` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`board_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=202 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- kosa_db.board_file definition
+
+CREATE TABLE `board_file` (
+  `file_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `board_id` bigint(20) NOT NULL,
+  `file_original_name` varchar(255) NOT NULL,
+  `file_saved_name` varchar(255) NOT NULL,
+  `file_path` varchar(500) NOT NULL,
+  `file_size` bigint(20) NOT NULL,
+  `file_type` varchar(100) NOT NULL,
+  `file_created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `file_status` varchar(50) NOT NULL DEFAULT 'active',
+  PRIMARY KEY (`file_id`),
+  KEY `board_id` (`board_id`),
+  CONSTRAINT `board_file_ibfk_1` FOREIGN KEY (`board_id`) REFERENCES `board` (`board_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- kosa_db.board_like definition
+
+CREATE TABLE `board_like` (
+  `board_id` bigint(20) NOT NULL,
+  `user_no` int(11) NOT NULL,
+  PRIMARY KEY (`board_id`,`user_no`),
+  CONSTRAINT `board_like_ibfk_1` FOREIGN KEY (`board_id`) REFERENCES `board` (`board_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- kosa_db.location definition
+
+CREATE TABLE `location` (
+  `weather_location` varchar(50) NOT NULL,
+  `weather_location_x` varchar(50) DEFAULT NULL,
+  `weather_location_y` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`weather_location`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- kosa_db.reply definition
+
+CREATE TABLE `reply` (
+  `reply_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `board_id` bigint(20) NOT NULL,
+  `parent_reply_id` bigint(20) DEFAULT NULL,
+  `user_no` int(11) NOT NULL,
+  `user_name` varchar(20) NOT NULL,
+  `reply_content` text NOT NULL,
+  `reply_created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `reply_modified_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `reply_status` varchar(50) NOT NULL DEFAULT 'active',
+  PRIMARY KEY (`reply_id`),
+  KEY `board_id` (`board_id`),
+  KEY `parent_reply_id` (`parent_reply_id`),
+  CONSTRAINT `reply_ibfk_1` FOREIGN KEY (`board_id`) REFERENCES `board` (`board_id`),
+  CONSTRAINT `reply_ibfk_2` FOREIGN KEY (`parent_reply_id`) REFERENCES `reply` (`reply_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- kosa_db.weather definition
+
+CREATE TABLE `weather` (
+  `weather_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `weather_region` varchar(50) DEFAULT NULL,
+  `weather_base_date` varchar(8) DEFAULT NULL,
+  `weather_base_time` varchar(4) DEFAULT NULL,
+  `weather_fcst_date` varchar(8) DEFAULT NULL,
+  `weather_fcst_time` varchar(4) DEFAULT NULL,
+  `weather_code` varchar(3) DEFAULT NULL,
+  `weather_value` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`weather_id`),
+  KEY `weather_location` (`weather_region`),
+  CONSTRAINT `weather_ibfk_1` FOREIGN KEY (`weather_region`) REFERENCES `location` (`weather_location`)
+) ENGINE=InnoDB AUTO_INCREMENT=13801 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO location (weather_location, weather_location_x, weather_location_y) VALUES
+('강남구', '127.047059839521', '37.5179681611717'),
+('강동구', '127.12379233466', '37.530160973856'),
+('강북구', '127.025449504014', '37.6391856183931'),
+('강서구', '126.849532173376', '37.5509655144007'),
+('관악구', '126.951501244173', '37.4782106746327'),
+('광진구', '127.087753081994', '37.5362819442695'),
+('구로구', '126.888292375229', '37.4955054632154'),
+('금천구', '126.896036850324', '37.4570656519531'),
+('노원구', '127.056268317802', '37.6545228397157'),
+('도봉구', '127.047131400119', '37.6687161285201'),
+('동대문구', '127.039896580148', '37.5743917161622'),
+('동작구', '126.939942092863', '37.51252777344'),
+('마포구', '126.901615668932', '37.5663128370109'),
+('서대문구', '126.936759175119', '37.5791546257808'),
+('서초구', '127.032683002019', '37.4836248649455'),
+('성동구', '127.036964999975', '37.5634225092469'),
+('성북구', '127.016690019544', '37.5894551333062'),
+('송파구', '127.105859984389', '37.514477182474'),
+('양천구', '126.866542541936', '37.5170753784215'),
+('영등포구', '126.896367130558', '37.525963157053'),
+('용산구', '126.990478820837', '37.5324522944579'),
+('은평구', '126.928822870137', '37.6024574203071'),
+('종로구', '126.978988255925', '37.5735051436739'),
+('중구', '126.998009728978', '37.5641201543296'),
+('중랑구', '127.09272484193', '37.6065635856848');
+
+-- kosa_db.`match` definition
+
+CREATE TABLE `match` (
+  `match_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `match_title` varchar(100) NOT NULL,
+  `match_created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `match_modified_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `user_no` int(11) NOT NULL,
+  `manager_no` int(11) NOT NULL,
+  `match_date` datetime NOT NULL,
+  `SVCID` varchar(30) NOT NULL,
+  `match_closed` varchar(50) NOT NULL DEFAULT 'active',
+  `gender_condition` varchar(50) NOT NULL,
+  `match_description` text DEFAULT NULL,
+  `match_status` varchar(50) NOT NULL DEFAULT 'waiting',
+  `match_board_status` varchar(50) NOT NULL DEFAULT 'active',
+  `match_code` varchar(50) NOT NULL,
+  PRIMARY KEY (`match_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- kosa_db.match_participant definition
+
+CREATE TABLE `match_participant` (
+  `match_id` bigint(20) NOT NULL,
+  `club_id` int(11) DEFAULT NULL,
+  `user_no` int(11) NOT NULL,
+  `user_role` varchar(50) NOT NULL DEFAULT 'member',
+  `user_status` varchar(50) NOT NULL DEFAULT 'apply',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `modified_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`match_id`,`user_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- kosa_db.match_log definition
+
+CREATE TABLE `match_log` (
+  `log_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `match_id` bigint(20) NOT NULL,
+  `log_type` varchar(50) NOT NULL,
+  `club_id` int(11) DEFAULT NULL,
+  `user_no` int(11) DEFAULT NULL,
+  `log_created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `log_modified_at` datetime DEFAULT NULL ON UPDATE current_timestamp(),
+  `log_memo` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=61 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

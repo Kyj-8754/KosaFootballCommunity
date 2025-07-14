@@ -5,20 +5,77 @@
   
 <mapper namespace="com.msa.kyj_prj.club.member.ClubMemberDAO">
 
-    <!-- ✅ 클럽 멤버 등록 -->
-<insert id="insert" parameterType="com.msa.kyj_prj.club.member.ClubMember">
+<!-- // 클럽 멤버 등록 -->
+	<insert id="insert" parameterType="com.msa.kyj_prj.club.member.ClubMember">
     INSERT INTO tbl_club_member (
         club_id,
         user_no,
         role,
-        joined_at
+        joined_at,
+        match_count,
+        pom
     ) VALUES (
         #{club_id},
         #{user_no},
         #{role},
-        NOW()
+        NOW(),
+        #{match_count},
+        #{pom}
     )
-</insert>
+	</insert>
 
+    <!-- // 클럽별 전체 멤버 리스트 조회 -->
+    <select id="findByClubId" parameterType="int" resultType="com.msa.kyj_prj.club.member.ClubMember">
+    SELECT
+        m.club_id,
+        m.user_no,
+        m.role,
+        m.joined_at,
+        m.left_at,
+        m.match_count,
+        m.pom,
+        u.user_name
+    FROM tbl_club_member m
+    JOIN user u ON m.user_no = u.user_no
+    WHERE m.club_id = #{club_id}
+     AND m.left_at IS NULL
+    ORDER BY m.joined_at ASC
+	</select>
+
+
+    <!-- // 특정 유저의 클럽 멤버 정보 조회 -->
+ 	<select id="findByClubIdAndUserNo" parameterType="map" resultType="com.msa.kyj_prj.club.member.ClubMember">
+    SELECT
+        m.club_id,
+        m.user_no,
+        m.role,
+        m.joined_at,
+        m.left_at,
+        m.match_count,
+        m.pom,
+        u.user_name
+    FROM tbl_club_member m
+    JOIN user u ON m.user_no = u.user_no
+    WHERE m.club_id = #{club_id}
+      AND m.user_no = #{user_no}
+    LIMIT 1
+	</select>
+
+
+    <!-- // 클럽 멤버 탈퇴(삭제) -->
+    <update id="deleteByClubIdAndUserNo" parameterType="map">
+         UPDATE tbl_club_member
+        SET left_at = NOW()
+        WHERE club_id = #{club_id}
+          AND user_no = #{user_no}
+    </update>
+
+    <!-- // 클럽 멤버 역할 변경 -->
+    <update id="updateRoleByClubIdAndUserNo" parameterType="map">
+        UPDATE tbl_club_member
+        SET role = #{role}
+        WHERE club_id = #{club_id}
+          AND user_no = #{user_no}
+    </update>
 
 </mapper>

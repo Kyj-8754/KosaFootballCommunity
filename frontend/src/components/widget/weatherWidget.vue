@@ -10,8 +10,6 @@
     </div>
     <!-- 하단 시간별 예보 -->
     <ForecastTimeline :forecasts="forecastList" />
-    <!-- 안내 문구 -->
-    <div class="update-info">※ 단기예보 데이터는 매일 0시와 12시에 갱신됩니다.</div>
   </div>
   <!--
   <div class="weather-widget">
@@ -75,7 +73,6 @@ watchEffect(async () => {
   background-color: #f3f4f6;
   border-radius: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  width: 365px;
 }
 
 .top-section {
@@ -97,12 +94,5 @@ watchEffect(async () => {
   flex-direction: column;
   gap: 4px;
   /*margin-right: 8px;*/
-}
-
-.update-info {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #666;
-  text-align: left;
 }
 </style>
