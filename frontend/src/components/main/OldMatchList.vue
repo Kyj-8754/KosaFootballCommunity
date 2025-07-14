@@ -1,5 +1,6 @@
 <template>
   <div class="recent-match-container">
+    <h5>매치 결과</h5>
     <!-- 완료된 매치 리스트 -->
     <div class="match-item-list">
       <div
