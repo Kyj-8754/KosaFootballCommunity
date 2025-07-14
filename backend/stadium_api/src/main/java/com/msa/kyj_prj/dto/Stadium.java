@@ -25,7 +25,7 @@ public class Stadium {
 	private String ORGNM;		// 담당기관명
 	@Schema(description = "서비스 담당자 전화번호", example = "SVC123")
 	private String SVCENDTELNO;	// 서비스담당자전화번호
-	@Schema(description = "경기장 ID", example = "SVC123")
+	@Schema(description = "경기장 주소", example = "SVC123")
 	private String ADRES;		// 장소주소
 	@Schema(description = "X 좌표", example = "SVC123")
 	private String X;			// X 좌표
@@ -41,5 +41,6 @@ public class Stadium {
 	private String NOTICE;		// 주의사항
 	@Schema(description = "상세 내용", example = "SVC123")
 	private String DTLCONT;		// 상세내용
+	@Schema(description = "가격", example = "10000")
 	private String PRICE;
 }

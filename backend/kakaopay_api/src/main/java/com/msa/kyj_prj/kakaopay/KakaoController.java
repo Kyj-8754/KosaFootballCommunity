@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.msa.kyj_prj.dto.KakaoPayRequestDTO;
 import com.msa.kyj_prj.dto.PaymentDTO;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +26,14 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/kakaopay")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "kakaopay", description = "카카오페이 관련 API" )
 public class KakaoController {
 
 	private final KakaoService kakaoService;
 
 	// 카카오 api 결제
 	@PostMapping("/ready")
+	@Operation(summary = "결제 준비", description = "예약 데이터를 토대로 카카오 결제 준비단계 API")
 	public ResponseEntity<Map<String, Object>> payment(@RequestBody KakaoPayRequestDTO param) {
 		log.info("결제 시작");
 		try {
@@ -45,6 +49,7 @@ public class KakaoController {
 
 	// 결제 승인 처리
 	@GetMapping("/success")
+	@Operation(summary = "결제 승인처리", description = "카카오 결제 승인 처리 API")
 	public void kakaoPaySuccess(HttpServletResponse response, @RequestParam String pg_token, @RequestParam Long id)
 			throws IOException {
 
@@ -60,6 +65,7 @@ public class KakaoController {
 
 	// 결제 실패 처리
 	@GetMapping("/fail")
+	@Operation(summary = "결제 실패", description = "카카오 결제 실패 처리 API")
 	public void kakaoPayFail(HttpServletResponse response, @RequestParam Long id) throws IOException {
 
 		// 2. 실패 처리
@@ -71,6 +77,7 @@ public class KakaoController {
 
 	// 결제 취소 처리
 	@GetMapping("/cancel")
+	@Operation(summary = "결제 취소", description = "카카오 결제 취소 처리 API")
 	public void kakaoPayCancel(HttpServletResponse response, @RequestParam Long id)
 			throws IOException {
 		// 2. 실패 처리
@@ -81,6 +88,7 @@ public class KakaoController {
 
 	// 결제 환불
 	@PostMapping("/refund")
+	@Operation(summary = "결제 환불", description = "카카오 결제 데이터 기준으로 환불하는 API")
 	public ResponseEntity<Map<String, Object>> kakaoRefund(@RequestBody Map<String, Object> param) {
 		Object userNoObj = param.get("user_no");
 		String user_no = String.valueOf(userNoObj);
