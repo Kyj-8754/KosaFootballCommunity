@@ -4,6 +4,13 @@
 
     <div v-if="recruit">
       <h4 class="mb-3">{{ recruit.title }}</h4>
+
+      <!-- ✅ 모집 상태 표시 -->
+      <span class="badge"
+            :class="recruit.is_closed === 1 ? 'bg-secondary' : 'bg-success'">
+        {{ recruit.is_closed === 1 ? '모집 마감' : '모집 중' }}
+      </span>
+
       <div v-html="recruit.content"></div>
 
       <ul>
@@ -12,35 +19,51 @@
       </ul>
 
       <div class="mb-3">
-
-        <!-- [기존] 팀장이면 "수정하기" 버튼 -->
-        <button
-          v-if="recruit.user_no === userNo"
-          class="btn btn-outline-success btn-sm me-2"
-          @click="goEdit"
-        >
-          수정하기
-        </button>
-
-        <!-- [수정/추가] 상태 값(status)에 따라 버튼/문구를 세분화해서 노출 -->
-        <template v-if="recruit.user_no !== userNo">
-          <button
-            v-if="status === 'none' && isLoggedIn"
-            class="btn btn-outline-primary btn-sm me-2"
-            @click="handleApply"
-          >
-            가입 신청
+        <!-- ✅ 작성자용 버튼: 수정 + 마감 + 삭제 -->
+        <template v-if="recruit.user_no === userNo">
+          <button class="btn btn-outline-success btn-sm me-2" @click="goEdit">
+            수정하기
           </button>
 
           <button
-            v-else-if="status === 'pending'"
-            class="btn btn-outline-secondary btn-sm me-2"
-            @click="handleCancel"
+            v-if="recruit.is_closed === 0"
+            class="btn btn-outline-danger btn-sm me-2"
+            @click="handleCloseRecruit"
           >
-            가입 신청 취소
+            모집 마감
           </button>
 
-          <span v-else-if="status === 'approved'" class="badge bg-success align-middle">
+          <!-- ✅ 삭제 버튼 -->
+          <button
+            class="btn btn-outline-dark btn-sm me-2"
+            @click="handleDeleteRecruit"
+          >
+            삭제하기
+          </button>
+        </template>
+
+        <!-- ✅ 비작성자 버튼들 (모집 중일 때만 신청 가능) -->
+        <template v-else>
+          <template v-if="recruit.is_closed === 0">
+            <button
+              v-if="status === 'none' && isLoggedIn"
+              class="btn btn-outline-primary btn-sm me-2"
+              @click="handleApply"
+            >
+              가입 신청
+            </button>
+
+            <button
+              v-else-if="status === 'pending'"
+              class="btn btn-outline-secondary btn-sm me-2"
+              @click="handleCancel"
+            >
+              가입 신청 취소
+            </button>
+          </template>
+
+          <!-- 상태별 뱃지 -->
+          <span v-if="status === 'approved'" class="badge bg-success align-middle">
             이미 클럽 멤버입니다
           </span>
 
@@ -51,10 +74,14 @@
           <span v-else-if="status === 'canceled'" class="badge bg-warning text-dark align-middle">
             신청이 취소되었습니다
           </span>
-        </template>
-        <!-- [설명] status 값에 따라 신청/취소/완료/거절 상태를 명확히 보여줌 -->
 
+          <!-- ✅ 모집 마감 후 안내 문구 -->
+          <span v-if="recruit.is_closed === 1" class="text-muted small ms-2">
+            ※ 모집이 마감되어 신청할 수 없습니다.
+          </span>
+        </template>
       </div>
+
       <router-link to="/recruitBoard" class="btn btn-secondary btn-sm">목록으로</router-link>
     </div>
 
@@ -62,27 +89,21 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, inject, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 
-// ✅ 전역 주입값
 const token = inject('token') 
 const userNo = inject('userNo')
 const router = useRouter()
 const route = useRoute()
 
-// ✅ 반응형 변수들
 const recruit = ref(null)
-// const isApplied = ref(false) // [삭제] 상태 값은 아래 status로 일원화
-const status = ref('none') // [추가] pending/approved/rejected/canceled/none
-
-// ✅ 로그인 체크(토큰 존재 여부)
+const status = ref('none')
 const isLoggedIn = computed(() => !!token?.value)
 
-// ✅ 모집글 가져오기
+// ✅ 모집글 조회
 const fetchRecruit = async () => {
   const bno = route.params.bno
   try {
@@ -93,23 +114,54 @@ const fetchRecruit = async () => {
     console.error('모집글 조회 실패', e)
   }
 }
+
 const goEdit = () => {
   if (!recruit.value || !recruit.value.bno) return
   router.push(`/recruitBoard/${recruit.value.bno}/updateForm`)
 }
 
-// ✅ 내 가입 신청 상태를 불러오는 함수
+// ✅ 모집 마감 처리
+const handleCloseRecruit = async () => {
+  if (!confirm("정말 모집을 마감하시겠습니까?")) return
+  try {
+    await axios.put(`/recruits_api/${recruit.value.bno}/close`, null, {
+      params: { user_no: userNo.value },
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    recruit.value.is_closed = 1
+    alert("✅ 모집이 마감되었습니다.")
+  } catch (e) {
+    console.error("모집 마감 실패:", e)
+    alert("❌ 모집 마감 처리에 실패했습니다.")
+  }
+}
+
+// ✅ 모집글 삭제 처리
+const handleDeleteRecruit = async () => {
+  if (!confirm("정말 삭제하시겠습니까?")) return
+  try {
+    await axios.delete(`/recruits_api/${recruit.value.bno}`, {
+      params: { user_no: userNo.value },
+      headers: { Authorization: `Bearer ${token.value}` }
+    })
+    alert("✅ 모집글이 삭제되었습니다.")
+    router.push('/recruitBoard')
+  } catch (e) {
+    console.error("모집글 삭제 실패:", e)
+    alert("❌ 모집글 삭제에 실패했습니다.")
+  }
+}
+
+// ✅ 가입 상태 조회
 const fetchApplyStatus = async () => {
   if (!userNo.value) return
   try {
-    // [수정] isApplied가 아니라 status 값을 받아옴
     const res = await axios.get('/club_api/apply/status', {
       params: {
         bno: route.params.bno,
         user_no: userNo.value
       }
     })
-    // [수정/추가] status 값 반환을 기대함(백엔드 수정 필요)
     if (res.data && typeof res.data.status === 'string') {
       status.value = res.data.status
     } else {
@@ -120,7 +172,7 @@ const fetchApplyStatus = async () => {
   }
 }
 
-// ✅ 가입 신청 처리
+// ✅ 가입 신청
 const handleApply = async () => {
   if (!isLoggedIn.value) {
     alert('가입 신청을 하려면 로그인해야 합니다.')
@@ -139,67 +191,50 @@ const handleApply = async () => {
       bno: bno,
       appli_user_no: Number(userNo.value)
     }, {
-      headers: {
-        Authorization: `Bearer ${token?.value}`
-      }
+      headers: { Authorization: `Bearer ${token?.value}` }
     })
 
-    // [수정] isApplied.value = true → status.value = 'pending'
     status.value = 'pending'
     alert('✅ 가입 신청이 완료되었습니다.')
   } catch (e) {
-    // [기존] 오류 핸들링
     console.error('가입 신청 실패:', e)
-    if (e.response && e.response.data) {
-      alert(`❌ 가입 신청 실패: ${e.response.data}`)
-    } else {
-      alert('❌ 가입 신청 중 오류가 발생했습니다.')
-    }
+    alert('❌ 가입 신청 실패')
   }
 }
 
-// ✅ 가입 취소 처리 함수
+// ✅ 신청 취소
 const handleCancel = async () => {
   const bno = recruit.value?.bno
   if (!bno || !userNo?.value) {
     alert('모집글 정보 또는 사용자 정보가 없습니다.')
     return
   }
+
   try {
     await axios.delete('/club_api/apply', {
       data: {
         bno: bno,
         appli_user_no: Number(userNo.value)
       },
-      headers: {
-        Authorization: `Bearer ${token?.value}`
-      }
+      headers: { Authorization: `Bearer ${token?.value}` }
     })
-    // [수정] isApplied.value = false → status.value = 'canceled'
     status.value = 'canceled'
     alert('✅ 가입 신청이 취소되었습니다.')
   } catch (e) {
     console.error('가입 취소 실패:', e)
-    if (e.response && e.response.data) {
-      alert(`❌ 가입 취소 실패: ${e.response.data}`)
-    } else {
-      alert('❌ 가입 취소 중 오류가 발생했습니다.')
-    }
+    alert('❌ 가입 취소 실패')
   }
 }
 
-// ✅ 날짜 포맷 함수
+// ✅ 날짜 포맷
 const formatDate = (dateTime) => {
   if (!dateTime || typeof dateTime !== 'string') return ''
   return dateTime.split(' ')[0].split('T')[0]
 }
 
-// ✅ 컴포넌트 마운트시 모집글/가입 상태를 모두 불러옴
+// ✅ 마운트 시 데이터 로딩
 onMounted(async () => {
   await fetchRecruit()
-  console.log('recruit.value:', recruit.value)
-  console.log('작성자 user_no:', recruit.value?.user_no, typeof recruit.value?.user_no)
-  console.log('내 userNo:', userNo.value, typeof userNo.value)
   await fetchApplyStatus()
 })
 </script>

@@ -83,6 +83,18 @@
   ORDER BY r.view_count DESC
 </select>
 
+<update id="update_is_closed">
+    UPDATE tbl_recruit_board
+    SET is_closed = #{is_closed}
+    WHERE bno = #{bno}
+</update>
+
+<delete id="delete_recruit">
+    DELETE FROM tbl_recruit_board
+    WHERE bno = #{bno}
+</delete>
+
+
   
   
 </mapper>

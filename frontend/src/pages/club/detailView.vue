@@ -190,7 +190,14 @@
                 </template>
 
                 <template v-else>
-                  <p class="text-muted mb-0">클럽 상세 정보가 없습니다.</p>
+                  <div
+                    class="d-flex flex-column align-items-center justify-content-center"
+                    style="height: 130px"
+                  >
+                    <p class="text-muted mb-0">
+                      클럽 상세 정보를 입력해주세요.
+                    </p>
+                  </div>
                 </template>
               </div>
             </div>
@@ -281,33 +288,38 @@ const teamLevel = computed(() => {
 onMounted(async () => {
   const teamCode = route.params.teamCode;
   try {
-    // 1. 클럽 기본 정보 조회 (teamCode로 club 데이터 받아오기)
+    // 1. club, clubMember는 실패하면 alert
     const response = await axios.get(`/club_api/code/${teamCode}`, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
-    club.value = response.data; // club에는 club_id, team_code 등 정보가 담김
+    club.value = response.data;
 
-    // 2. club_id로 멤버 리스트 조회 (해당 클럽 소속 멤버 배열)
     if (club.value && club.value.club_id) {
       const memberRes = await axios.get(
         `/club_api/member/list/${club.value.club_id}`
       );
-      clubMember.value = memberRes.data; // clubMember는 멤버 리스트 배열
+      clubMember.value = memberRes.data;
     }
-
-    // 3. club_id로 club_info 상세정보 추가 조회 (성별/나이대/활동 등)
-    if (club.value && club.value.club_id) {
-      // ✅ clubInfo (클럽 상세정보) 조회
-      const clubInfoRes = await axios.get(`/club_info/${club.value.club_id}`);
-      clubInfo.value = clubInfoRes.data; // clubInfo는 클럽 상세 정보(성별, 나이대, 활동 요일, 시간 등)
-    }
-
-    // 콘솔로 각각의 데이터 확인 (개발 편의용)
-    console.log("club:", club.value); // 클럽 기본 정보
-    console.log("members:", clubMember.value); // 멤버 리스트
-    console.log("clubInfo:", clubInfo.value); // 클럽 상세정보
   } catch (error) {
+    // 이 부분은 club, clubMember만!
     alert("클럽 정보를 불러오는 데 실패했습니다.");
+    return; // 아래 clubInfo 조회 진행하지 않음
+  }
+
+  // 2. clubInfo는 반드시 별도 try-catch에서!
+  if (club.value && club.value.club_id) {
+    try {
+      const clubInfoRes = await axios.get(`/club_info/${club.value.club_id}`);
+      clubInfo.value = clubInfoRes.data;
+    } catch (infoErr) {
+      if (infoErr.response && infoErr.response.status === 404) {
+        // 상세 정보 없음(404)은 안내문구만!
+        clubInfo.value = null;
+      } else {
+        // 진짜 장애만 alert
+        alert("클럽 상세 정보 조회 중 오류가 발생했습니다.");
+      }
+    }
   }
 });
 

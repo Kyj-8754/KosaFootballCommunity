@@ -286,19 +286,34 @@ onMounted(async () => {
     club.value = response.data;
     console.log("클럽 전체 객체:", club.value);
 
-    // 2. 클럽 상세정보(ClubInfo)도 별도 fetch & 배열화
+    // 2. 클럽 상세정보(ClubInfo)도 별도 fetch & 배열화 (try-catch 별도!)
     if (club.value && club.value.club_id) {
-      const clubInfoRes = await axios.get(`/club_info/${club.value.club_id}`);
-      clubInfo.value = {
-        ...clubInfoRes.data,
-        active_days: clubInfoRes.data.active_days
-          ? clubInfoRes.data.active_days.split(",")
-          : [],
-        active_times: clubInfoRes.data.active_times
-          ? clubInfoRes.data.active_times.split(",")
-          : [],
-      };
-      console.log("클럽 상세정보:", clubInfo.value);
+      try {
+        const clubInfoRes = await axios.get(`/club_info/${club.value.club_id}`);
+        clubInfo.value = {
+          ...clubInfoRes.data,
+          active_days: clubInfoRes.data.active_days
+            ? clubInfoRes.data.active_days.split(",")
+            : [],
+          active_times: clubInfoRes.data.active_times
+            ? clubInfoRes.data.active_times.split(",")
+            : [],
+        };
+        console.log("클럽 상세정보:", clubInfo.value);
+      } catch (infoErr) {
+        if (infoErr.response && infoErr.response.status === 404) {
+          // 상세정보 없으면 clubInfo.value만 null로!
+          clubInfo.value = {
+            gender: "",
+            age_group: "",
+            active_days: [],
+            active_times: [],
+          };
+          // 안내문구는 템플릿에서 처리 (alert 없음)
+        } else {
+          alert("클럽 상세 정보 조회 중 오류가 발생했습니다.");
+        }
+      }
     }
 
     // 3. 클럽 멤버 리스트 fetch (TOP3 추출용)
