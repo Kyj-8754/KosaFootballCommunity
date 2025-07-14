@@ -3,14 +3,16 @@
   <template v-if="!isOwner">
     <button
       v-if="status === 'none' && isLoggedIn"
-      class="btn btn-outline-primary"
+      class="btn btn-outline-primary fs-5"
       v-bind="attrs"
-      @click="handleApply" > 가 입 신 청
+      @click="handleApply"
+    >
+      가입신청
     </button>
 
     <button
       v-else-if="status === 'pending'"
-      class="btn btn-outline-secondary btn-sm me-2"
+      class="btn btn-outline-secondary fs-5 me-2"
       @click="handleCancel"
     >
       가입 신청 취소
@@ -43,12 +45,12 @@
 import { ref, inject, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { useAttrs } from 'vue'
+import { useAttrs } from "vue";
 const isOwner = computed(
   () => parseInt(userNo?.value) === parseInt(props.ownerUserNo)
 );
 
-const attrs = useAttrs()
+const attrs = useAttrs();
 // 부모에서 넘겨주는 props
 const props = defineProps({
   clubId: [Number, String], // 모집글 번호

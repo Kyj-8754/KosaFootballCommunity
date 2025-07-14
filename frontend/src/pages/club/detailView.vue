@@ -38,28 +38,52 @@
           <div class="row row-cols-2 g-3">
             <!-- 박스 1: 경기 전적 -->
             <div class="col">
-              <div class="border rounded p-4 shadow-sm h-100 bg-white">
-                <div class="fw-bold mb-2">경기 전적</div>
-                <div class="mb-1">
-                  승: <b>{{ club.win_count }}</b>
+              <div
+                class="border rounded shadow-sm h-100 bg-white"
+                style="padding: 16px 16px 16px 16px"
+              >
+                <div class="fw-bold mb-2" style="margin-top: -1px">
+                  경기 전적
                 </div>
-                <div class="mb-1">
-                  무: <b>{{ club.draw_count }}</b>
+
+                <!-- 승/무/패 -->
+                <div class="d-flex justify-content-between text-center mb-3">
+                  <div class="flex-fill text-center">
+                    <div class="text-muted small">승</div>
+                    <div class="fs-5 fw-bold">{{ club.win_count || 0 }}</div>
+                  </div>
+                  <div class="flex-fill border-start border-end text-center">
+                    <div class="text-muted small">무</div>
+                    <div class="fs-5 fw-bold">{{ club.draw_count || 0 }}</div>
+                  </div>
+                  <div class="flex-fill text-center">
+                    <div class="text-muted small">패</div>
+                    <div class="fs-5 fw-bold">{{ club.loss_count || 0 }}</div>
+                  </div>
                 </div>
-                <div class="mb-1">
-                  패: <b>{{ club.loss_count }}</b>
-                </div>
-                <div class="text-muted mt-2 small">
-                  참가수:
-                  {{
-                    (club.win_count || 0) +
-                    (club.draw_count || 0) +
-                    (club.loss_count || 0)
-                  }}
-                  <span class="ms-3"
-                    >팀 레벨:
-                    <span class="badge bg-primary">{{ teamLevel }}</span></span
-                  >
+
+                <hr />
+
+                <!-- 참가수 / 팀 레벨 / 멤버 수 -->
+                <div class="d-flex justify-content-between text-muted small">
+                  <div>
+                    참가수:
+                    <b>
+                      {{
+                        (club.win_count || 0) +
+                        (club.draw_count || 0) +
+                        (club.loss_count || 0)
+                      }}
+                    </b>
+                  </div>
+                  <div>
+                    팀 레벨:
+                    <span class="badge bg-primary">{{ teamLevel }}</span>
+                  </div>
+                  <div>
+                    멤버:
+                    <b>{{ clubMember.length }}</b>
+                  </div>
                 </div>
               </div>
             </div>
@@ -104,48 +128,67 @@
 
             <!-- 박스 3: 클럽 상세 정보 -->
             <div class="col">
-              <div class="border rounded p-3 h-100">
-                <strong>클럽 상세 정보</strong>
+              <div class="border rounded p-3 h-100 bg-white shadow-sm">
+                <h6 class="fw-bold mb-3">클럽 상세 정보</h6>
+
                 <template v-if="clubInfo">
                   <!-- 성별 -->
-                  <p class="mb-1">
-                    <strong>성별:</strong>
-                    <span class="badge bg-light text-dark ms-1">{{
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span class="text-muted">성별</span>
+                    <span class="badge bg-light text-dark">{{
                       clubInfo.gender
                     }}</span>
-                  </p>
+                  </div>
+
                   <!-- 나이대 -->
-                  <p class="mb-1">
-                    <strong>나이대:</strong>
-                    <span class="badge bg-light text-dark ms-1">{{
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span class="text-muted">나이대</span>
+                    <span class="badge bg-light text-dark">{{
                       clubInfo.age_group
                     }}</span>
-                  </p>
+                  </div>
+
                   <!-- 활동 요일 -->
-                  <p class="mb-1">
-                    <strong>활동 요일:</strong>
-                    <span
-                      v-for="day in clubInfo?.active_days
-                        ? clubInfo.active_days.split(',')
-                        : []"
-                      :key="day"
-                      class="badge bg-info text-dark ms-1"
-                      >{{ day }}</span
-                    >
-                  </p>
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span class="text-muted">활동 요일</span>
+                    <div>
+                      <span
+                        v-for="day in clubInfo?.active_days
+                          ? clubInfo.active_days.split(',')
+                          : []"
+                        :key="day"
+                        class="badge bg-info text-dark me-1"
+                      >
+                        {{ day }}
+                      </span>
+                    </div>
+                  </div>
+
                   <!-- 활동 시간 -->
-                  <p class="mb-0">
-                    <strong>활동 시간:</strong>
-                    <span
-                      v-for="time in clubInfo?.active_times
-                        ? clubInfo.active_times.split(',')
-                        : []"
-                      :key="time"
-                      class="badge bg-success text-white ms-1"
-                      >{{ time }}</span
-                    >
-                  </p>
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span class="text-muted">활동 시간</span>
+                    <div>
+                      <span
+                        v-for="time in clubInfo?.active_times
+                          ? clubInfo.active_times.split(',')
+                          : []"
+                        :key="time"
+                        class="badge bg-success text-white me-1"
+                      >
+                        {{ time }}
+                      </span>
+                    </div>
+                  </div>
                 </template>
+
                 <template v-else>
                   <p class="text-muted mb-0">클럽 상세 정보가 없습니다.</p>
                 </template>
