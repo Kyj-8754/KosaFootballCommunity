@@ -91,3 +91,11 @@ function update() {
     })
 }
 </script>
+
+<style scoped>
+.main-area {
+  display: flex;       /* 또는 display: flex; flex-direction: column; */
+  flex-direction: column;  /* 수직 정렬 시 */
+  gap: 16px;           /* 자식들 사이의 간격 */
+}
+</style>
