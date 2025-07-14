@@ -74,6 +74,7 @@ watchEffect(async () => {
   border: 1px solid #d1d5db;        /* ✅ 연한 회색 테두리 (Tailwind 기준 gray-300) */
   border-radius: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.05); /* ✅ 그림자 약하게 */
+  user-select: none;
 }
 
 .top-section {
