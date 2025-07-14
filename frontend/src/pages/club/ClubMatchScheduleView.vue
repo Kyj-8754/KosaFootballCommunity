@@ -36,7 +36,7 @@
         </div>
 
         <!-- 오른쪽: 상태 뱃지 + 버튼 -->
-        <div class="d-flex align-items-center gap-2"
+        <div class="d-flex align-items-center gap-5"
          style="margin-right: 1rem;">
           <span
             class="badge rounded-pill d-flex align-items-center"
