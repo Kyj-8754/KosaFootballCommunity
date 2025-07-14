@@ -59,7 +59,6 @@
       <router-link to="/">
         <img :src="logoImage" alt="사이트 배너" style="width: 100%; height: auto; object-fit: cover;">
       </router-link>
-      <img :src="logoImage" alt="사이트 배너" style="width: 100%; height: auto; object-fit: cover; cursor: not-allowed; opacity: 0.6;">
     </header>
   </div>
 </template>
@@ -67,7 +66,7 @@
 
 <script setup>
 import { inject, computed, ref, watch } from 'vue'
-import logoImage from '@/assets/image/bannerlogo.jpg'
+import logoImage from '/public/kosabanner.png'
 import axios from 'axios'
 
 // ✅ AlarmDropdown 컴포넌트 import 추가
