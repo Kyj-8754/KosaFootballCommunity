@@ -11,18 +11,6 @@
     <!-- 하단 시간별 예보 -->
     <ForecastTimeline :forecasts="forecastList" />
   </div>
-  <!--
-  <div class="weather-widget">
-    <div class="top-section">
-      <WeatherImageBox :sky="current.SKY" :pty="current.PTY" />
-      <div class="info-section">
-        <RegionSelector v-model="region" />
-        <WeatherDetail :data="current" />
-      </div>
-    <ForecastTimeline :forecasts="forecastList" />
-    </div>
-    <div class="update-info">※ 이 단기예보 데이터는 매일 0시와 12시에 갱신됩니다.</div>
-  </div>-->
 </template>
 
 
