@@ -82,17 +82,17 @@ jobs:
          pushd backend/weather_api && chmod +x ./gradlew && ./gradlew build -x test && popd
          pushd backend/security && chmod +x ./gradlew && ./gradlew :security_api:build -x test && ./gradlew :board_api:build -x test && ./gradlew :login_api:build -x test && popd
           
+      # 프론트엔드 이미지 빌드 및 푸시
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/nginx ./frontend
+          docker push ${{ secrets.USERNAME }}/nginx
 
      # 이미지 빌드
       - name: Build and Push API Images
         run: |
           cd ${{ github.workspace }}  # 루트 경로로 복귀
 
-        # 프론트엔드 이미지 빌드 및 푸시
-      - name: Build and Push Frontend Image
-        run: |
-          docker build -t ${{ secrets.USERNAME }}/nginx ./frontend
-          docker push ${{ secrets.USERNAME }}/nginx
 
           # 위에서 만든 bootjar 토대로 이미지 빌드
           docker build -t ${{ secrets.USERNAME }}/alarm_api ./backend/alarm_api
