@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/file")
+@Tag(name = "파일 API", description = "게시글에 첨부된 파일을 다루는 API")
 public class FileController {
 
     @Autowired
@@ -27,6 +31,7 @@ public class FileController {
 
     // 파일 업로드
     @PostMapping("/upload")
+    @Operation(summary = "파일 업로드", description = "파일을 업로드합니다.")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file,
                                         @RequestParam("board_id") Long boardId) {
         try {
@@ -62,6 +67,7 @@ public class FileController {
     }
 
     // 게시글 첨부파일 목록 조회
+    @Operation(summary = "파일 목록 조회", description = "해당 게시글의 첨부파일 목록을 조회합니다.")
     @GetMapping("/list/{board_id}")
     public ResponseEntity<?> getFiles(@PathVariable Long board_id) {
         try {
@@ -74,6 +80,7 @@ public class FileController {
     }
 
     // 파일 다운로드
+    @Operation(summary = "파일 다운로드", description = "해당 파일을 다운로드합니다.")
     @GetMapping("/download/{file_id}")
     public ResponseEntity<?> downloadFile(@PathVariable Long file_id) {
         try {
@@ -104,6 +111,7 @@ public class FileController {
     }
 
     // 파일 삭제
+    @Operation(summary = "파일 삭제", description = "해당 파일을 삭제합니다.")
     @DeleteMapping("/delete/{file_id}")
     public ResponseEntity<?> deleteFile(@PathVariable Long file_id) {
         try {
