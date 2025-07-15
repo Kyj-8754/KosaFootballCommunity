@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public class MatchController {
 
     @GetMapping("/{id}")
     @Operation(summary = "매치 상세조회", description = "해당 매치의 상세정보를 조회합니다.")
-    public ResponseEntity<?> getMatchDetail(@PathVariable("id") Long matchId) {
+    public ResponseEntity<?> getMatchDetail(@Parameter(description = "매치 id", example = "234") @PathVariable("id") Long matchId) {
         try {
             Match match = matchService.getMatchDetail(matchId);
             if (match == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 매치를 찾을 수 없습니다.");
@@ -71,7 +72,8 @@ public class MatchController {
 
     @GetMapping("/applied")
     @Operation(summary = "매치 참가신청 여부 확인", description = "신청 여부를 확인합니다.")
-    public ResponseEntity<?> checkUserApplied(@RequestParam Long matchId, @RequestParam Integer userNo) {
+    public ResponseEntity<?> checkUserApplied(@Parameter(description = "매치 id", example = "234") @RequestParam Long matchId, 
+    		@Parameter(description = "유저 넘버", example = "234") @RequestParam Integer userNo) {
         try {
             return ResponseEntity.ok(matchService.hasUserApplied(matchId, userNo));
         } catch (Exception e) {
@@ -81,7 +83,8 @@ public class MatchController {
 
     @DeleteMapping("/cancel")
     @Operation(summary = "매치 참가 신청 취소", description = "해당 매치에 참가 신청을 취소합니다.")
-    public ResponseEntity<?> cancelMatchParticipant(@RequestParam Long matchId, @RequestParam Integer userNo) {
+    public ResponseEntity<?> cancelMatchParticipant(@Parameter(description = "매치 id", example = "234") @RequestParam Long matchId, 
+    		@Parameter(description = "유저 넘버", example = "234") @RequestParam Integer userNo) {
         try {
             matchService.cancelMatchParticipant(matchId, userNo);
             return ResponseEntity.ok("참가 신청 취소 완료");
@@ -92,7 +95,7 @@ public class MatchController {
 
     @GetMapping("/participants/count")
     @Operation(summary = "매치 참가자 인원수 조회", description = "해당 매치의 참가자 인원수를 조회합니다.")
-    public ResponseEntity<?> getMatchParticipantCount(@RequestParam Long matchId) {
+    public ResponseEntity<?> getMatchParticipantCount(@Parameter(description = "매치 id", example = "234") @RequestParam Long matchId) {
         try {
             return ResponseEntity.ok(matchService.getMatchParticipantCount(matchId));
         } catch (Exception e) {
@@ -102,7 +105,7 @@ public class MatchController {
 
     @GetMapping("/club")
     @Operation(summary = "소속팀 정보 조회", description = "해당 참가자의 소속팀을 조회합니다.")
-    public ResponseEntity<?> getClubByUserNo(@RequestParam Long userNo) {
+    public ResponseEntity<?> getClubByUserNo(@Parameter(description = "유저 넘버", example = "234") @RequestParam Long userNo) {
         try {
             return ResponseEntity.ok(matchService.getClubByUserNo(userNo));
         } catch (Exception e) {
@@ -122,7 +125,7 @@ public class MatchController {
 
     @GetMapping("/participants")
     @Operation(summary = "매치 참가자 조회(소셜)", description = "해당 매치 참가자의 간략한 정보를 조회합니다.")
-    public ResponseEntity<?> getMatchParticipants(@RequestParam Long matchId) {
+    public ResponseEntity<?> getMatchParticipants(@Parameter(description = "매치 id", example = "234") @RequestParam Long matchId) {
         try {
             return ResponseEntity.ok(matchService.getMatchParticipantsWithNames(matchId));
         } catch (Exception e) {
@@ -132,7 +135,7 @@ public class MatchController {
 
     @GetMapping("/participantswithclub")
     @Operation(summary = "매치 참가자 조회(리그)", description = "해당 매치 참가자의 간략한 정보를 조회합니다.")
-    public ResponseEntity<?> selectParticipantsWithClubByMatchId(@RequestParam Long matchId) {
+    public ResponseEntity<?> selectParticipantsWithClubByMatchId(@Parameter(description = "매치 id", example = "234") @RequestParam Long matchId) {
         try {
             return ResponseEntity.ok(matchService.selectParticipantsWithClubByMatchId(matchId));
         } catch (Exception e) {
@@ -153,7 +156,7 @@ public class MatchController {
 
     @GetMapping("/reservation-id")
     @Operation(summary = "예약 ID 조회", description = "해당 게시글에 대한 예약 정보를 조회합니다.")
-    public ResponseEntity<Map<String, Object>> getReservationIdByBoardId(@RequestParam Long boardId) {
+    public ResponseEntity<Map<String, Object>> getReservationIdByBoardId(@Parameter(description = "게시글 id", example = "234") @RequestParam Long boardId) {
         try {
             Long reservationId = matchService.getReservationIdByBoardId(boardId);
             if (reservationId == null) {
@@ -169,7 +172,7 @@ public class MatchController {
 
     @GetMapping("/reservation-paid")
     @Operation(summary = "결제 상태 조회", description = "해당 예약에 대한 결제 상태를 조회합니다.")
-    public ResponseEntity<Map<String, Object>> isReservationPaid(@RequestParam Long reservationId) {
+    public ResponseEntity<Map<String, Object>> isReservationPaid(@Parameter(description = "예약 id", example = "234") @RequestParam Long reservationId) {
         try {
             boolean paid = matchService.isReservationPaid(reservationId);
             return ResponseEntity.ok(Map.of("res_code", "200", "res_msg", "결제 상태 조회 성공", "paid", paid));
@@ -194,7 +197,7 @@ public class MatchController {
 
     @GetMapping("/club/matches")
     @Operation(summary = "클럽 매치 조회", description = "해당 클럽의 매치를 조회합니다.")
-    public ResponseEntity<?> getFilteredClubMatches(@RequestParam Long clubId) {
+    public ResponseEntity<?> getFilteredClubMatches(@Parameter(description = "클럽 id", example = "234") @RequestParam Long clubId) {
         try {
             return ResponseEntity.ok(matchService.getFilteredClubMatches(clubId));
         } catch (Exception e) {
@@ -215,7 +218,8 @@ public class MatchController {
 
     @PostMapping("/matches/cancel")
     @Operation(summary = "매치 취소", description = "예약/결제가 취소된 매치를 취소처리합니다.")
-    public ResponseEntity<String> cancelMatches(@RequestParam String type, @RequestParam Long id) {
+    public ResponseEntity<String> cancelMatches(@Parameter(description = "매치 상태", example = "active") @RequestParam String type, 
+    		@Parameter(description = "매치 id", example = "234") @RequestParam Long id) {
         try {
             matchService.cancelMatchesByTypeAndId(type, id);
             return ResponseEntity.ok("✅ 매치 상태 변경 완료 (type=" + type + ", id=" + id + ")");

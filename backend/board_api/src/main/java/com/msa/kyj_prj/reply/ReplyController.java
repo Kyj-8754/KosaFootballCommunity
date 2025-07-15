@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -22,7 +23,7 @@ public class ReplyController {
     // 1. 게시글에 달린 댓글 목록 조회
     @GetMapping("/list/{board_id}")
     @Operation(summary = "댓글 리스트 조회", description = "해당 게시글의 댓글 리스트를 조회합니다.")
-    public ResponseEntity<?> getReplies(@PathVariable Long board_id) {
+    public ResponseEntity<?> getReplies(@Parameter(description = "게시글 id", example = "234") @PathVariable Long board_id) {
         try {
             List<Reply> replies = replyService.findRepliesByBno(board_id);
             return ResponseEntity.ok(replies);
@@ -48,7 +49,7 @@ public class ReplyController {
     // 3. 댓글 수정
     @PutMapping("/{reply_id}")
     @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
-    public ResponseEntity<?> updateReply(@PathVariable Long reply_id, @RequestBody Reply reply) {
+    public ResponseEntity<?> updateReply(@Parameter(description = "댓글 id", example = "234") @PathVariable Long reply_id, @RequestBody Reply reply) {
         try {
             reply.setReply_id(reply_id);
             replyService.updateReply(reply);
@@ -62,7 +63,7 @@ public class ReplyController {
     // 4. 댓글 삭제 (논리 삭제)
     @DeleteMapping("/{reply_id}")
     @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
-    public ResponseEntity<?> deleteReply(@PathVariable Long reply_id) {
+    public ResponseEntity<?> deleteReply(@Parameter(description = "댓글 id", example = "234") @PathVariable Long reply_id) {
         try {
             replyService.deleteReply(reply_id);
             return ResponseEntity.ok(Map.of("result", "deleted"));

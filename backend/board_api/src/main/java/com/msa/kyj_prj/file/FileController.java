@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriUtils;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -33,7 +34,7 @@ public class FileController {
     @PostMapping("/upload")
     @Operation(summary = "파일 업로드", description = "파일을 업로드합니다.")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file,
-                                        @RequestParam("board_id") Long boardId) {
+    		@Parameter(description = "게시글 id", example = "234") @RequestParam("board_id") Long boardId) {
         try {
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs();
@@ -69,7 +70,7 @@ public class FileController {
     // 게시글 첨부파일 목록 조회
     @Operation(summary = "파일 목록 조회", description = "해당 게시글의 첨부파일 목록을 조회합니다.")
     @GetMapping("/list/{board_id}")
-    public ResponseEntity<?> getFiles(@PathVariable Long board_id) {
+    public ResponseEntity<?> getFiles(@Parameter(description = "게시글 id", example = "234") @PathVariable Long board_id) {
         try {
             List<FileEntity> files = fileService.getFilesByBoardId(board_id);
             return ResponseEntity.ok(files);
@@ -82,7 +83,7 @@ public class FileController {
     // 파일 다운로드
     @Operation(summary = "파일 다운로드", description = "해당 파일을 다운로드합니다.")
     @GetMapping("/download/{file_id}")
-    public ResponseEntity<?> downloadFile(@PathVariable Long file_id) {
+    public ResponseEntity<?> downloadFile(@Parameter(description = "파일 id", example = "234") @PathVariable Long file_id) {
         try {
             FileEntity file = fileService.findFileById(file_id);
             if (file == null) {
@@ -113,7 +114,7 @@ public class FileController {
     // 파일 삭제
     @Operation(summary = "파일 삭제", description = "해당 파일을 삭제합니다.")
     @DeleteMapping("/delete/{file_id}")
-    public ResponseEntity<?> deleteFile(@PathVariable Long file_id) {
+    public ResponseEntity<?> deleteFile(@Parameter(description = "파일 id", example = "234") @PathVariable Long file_id) {
         try {
             FileEntity file = fileService.findFileById(file_id);
             if (file == null) {
