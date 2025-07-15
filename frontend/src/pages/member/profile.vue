@@ -46,7 +46,7 @@
 
     <!-- 오른쪽 영역 -->
     <div class="right-panel">
-      <div class="match-info">
+      <div class="card-rounded-box match-info">
         <div class="match-box">
           <p class="title">⚽ 경기</p>
           <p class="count">{{ profileInfo?.matchCount ?? 0 }}</p>
@@ -57,7 +57,7 @@
         </div>
       </div>
 
-      <div class="card-info">
+      <div class="card-rounded-box card-info">
         <p>스마일 카드 <span class="card-count">{{ profileInfo?.smileCardCount ?? 0 }}</span></p>
         <p>옐로 카드 <span class="card-count">{{ profileInfo?.yellowCardCount ?? 0 }}</span></p>
         <p>레드 카드 <span class="card-count">{{ profileInfo?.redCardCount ?? 0 }}</span></p>
@@ -242,5 +242,45 @@ const {
   background: transparent;
   border: none;
   box-shadow: none;
+}
+/* 오른쪽 카드 박스 공통 */
+.card-rounded-box {
+  background-color: #e2e2e2;
+  border-radius: 40px;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 120px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* 경기 / POM */
+.match-info {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+}
+.match-box .title {
+  font-size: 14px;
+  color: #444;
+}
+.match-box .count {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+/* 카드 정보 */
+.card-info p {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  margin: 4px 0;
+  color: #333;
+}
+.card-info .card-count {
+  font-weight: 600;
 }
 </style>
