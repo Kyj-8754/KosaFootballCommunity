@@ -24,7 +24,7 @@
     </div>
 
     <div class="form-group mt-4 d-flex gap-2">
-      <input type="submit" value="확인" class="btn btn-success" />
+      <input type="submit" value="변경" class="btn btn-success" />
       <input type="button" value="취소" class="btn btn-secondary" @click="onCancel" />
     </div>
   </form>

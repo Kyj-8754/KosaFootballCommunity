@@ -1,6 +1,9 @@
 <template>
   <form @submit.prevent="onSubmit" style="max-width: 400px; margin: auto;">
     <h2>회원 탈퇴</h2>
+    <p style="color: red;">
+      탈퇴 시 회원 정보는 복구할 수 없습니다.
+    </p>
     <div class="form-group mb-3">
       <label for="password">비밀번호를 입력하세요</label>
       <input v-model="password" id="password" type="password" required class="form-control" />

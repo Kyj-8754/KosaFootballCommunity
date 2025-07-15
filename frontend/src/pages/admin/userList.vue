@@ -21,7 +21,7 @@
   <caption class="text-center fs-5 fw-bold">회원 목록</caption>
     <thead class="table-light">
       <tr>
-        <th></th>
+        <th>번호</th>
         <th>이름</th>
         <th>주소</th>
         <th>등록일</th>

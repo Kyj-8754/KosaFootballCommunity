@@ -737,10 +737,7 @@ export function useUpdatePassword() {
   }
 
   const onCancel = () => {
-    form.currentPassword = ''
-    form.newPassword = ''
-    form.confirmNewPassword = ''
-    passwdMsg.value = ''
+    router.push({ name: 'Member_MyPage' })
   }
 
   return {
