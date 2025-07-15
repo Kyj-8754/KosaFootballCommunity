@@ -199,9 +199,8 @@ body {
 }
 
 .input-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-wrap: nowrap;
+  min-width: 360px;
 }
 
 .input-group input,
@@ -220,7 +219,19 @@ body {
 }
 
 .input-group input {
-  width: 220px;
+  width: 180px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.input-group select {
+  width: 120px;
+}
+
+.input-group .btn {
+  white-space: nowrap;
+  padding: 6px 18px;
+  font-weight: 600;
 }
 
 .input-group .btn {
