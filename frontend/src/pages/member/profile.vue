@@ -150,7 +150,12 @@ const {
 
 .comment-box {
   margin-top: 18px;
+  background-color: #f7f6f6f5;
+  border-radius: 20px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
 }
+
 .comment-box h3 {
   font-size: 18px;
   font-weight: 700;
@@ -249,7 +254,6 @@ const {
 
 .left-panel,
 .right-panel,
-.comment-box,
 .match-box {
   background: transparent;
   border: none;
@@ -299,4 +303,5 @@ const {
 .card-info .card-count {
   font-weight: 600;
 }
+
 </style>
