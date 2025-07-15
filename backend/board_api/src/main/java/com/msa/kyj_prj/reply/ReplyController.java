@@ -8,8 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/reply")
+@Tag(name = "댓글 API", description = "댓글을 다루는 API")
 public class ReplyController {
 
     @Autowired
@@ -17,6 +21,7 @@ public class ReplyController {
 
     // 1. 게시글에 달린 댓글 목록 조회
     @GetMapping("/list/{board_id}")
+    @Operation(summary = "댓글 리스트 조회", description = "해당 게시글의 댓글 리스트를 조회합니다.")
     public ResponseEntity<?> getReplies(@PathVariable Long board_id) {
         try {
             List<Reply> replies = replyService.findRepliesByBno(board_id);
@@ -29,6 +34,7 @@ public class ReplyController {
 
     // 2. 댓글 등록
     @PostMapping
+    @Operation(summary = "댓글 등록", description = "댓글을 등록합니다.")
     public ResponseEntity<?> createReply(@RequestBody Reply reply) {
         try {
             replyService.insertReply(reply);
@@ -41,6 +47,7 @@ public class ReplyController {
 
     // 3. 댓글 수정
     @PutMapping("/{reply_id}")
+    @Operation(summary = "댓글 수정", description = "댓글을 수정합니다.")
     public ResponseEntity<?> updateReply(@PathVariable Long reply_id, @RequestBody Reply reply) {
         try {
             reply.setReply_id(reply_id);
@@ -54,6 +61,7 @@ public class ReplyController {
 
     // 4. 댓글 삭제 (논리 삭제)
     @DeleteMapping("/{reply_id}")
+    @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
     public ResponseEntity<?> deleteReply(@PathVariable Long reply_id) {
         try {
             replyService.deleteReply(reply_id);

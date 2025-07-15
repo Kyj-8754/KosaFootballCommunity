@@ -1,6 +1,8 @@
 package com.msa.kyj_prj.reply;
 
 import java.time.LocalDateTime;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,14 +12,33 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Schema(description = "댓글 DTO")
 public class Reply {
-    private Long reply_id;                 // 댓글 ID (PK, auto_increment)
-    private Long board_id;                // 게시글 ID (FK)
-    private Long parent_reply_id;         // 부모 댓글 ID (nullable)
-    private Integer user_no;              // 작성자 회원번호 (FK)
-    private String user_name;             // 작성자 이름
-    private String reply_content;         // 댓글 내용
-    private LocalDateTime reply_created_at;   // 작성일 (DEFAULT CURRENT_TIMESTAMP)
-    private LocalDateTime reply_modified_at;  // 수정일 (ON UPDATE CURRENT_TIMESTAMP)
-    private String reply_status;          // 상태값 (ex: active, deleted)
+
+    @Schema(description = "댓글 ID", example = "1001")
+    private Long reply_id;
+
+    @Schema(description = "게시글 ID", example = "101")
+    private Long board_id;
+
+    @Schema(description = "부모 댓글 ID (대댓글용, null 가능)", example = "1000")
+    private Long parent_reply_id;
+
+    @Schema(description = "작성자 회원 번호", example = "23")
+    private Integer user_no;
+
+    @Schema(description = "작성자 이름", example = "홍길동")
+    private String user_name;
+
+    @Schema(description = "댓글 내용", example = "좋은 정보 감사합니다!")
+    private String reply_content;
+
+    @Schema(description = "댓글 작성일시", example = "2025-07-15T14:10:00")
+    private LocalDateTime reply_created_at;
+
+    @Schema(description = "댓글 수정일시", example = "2025-07-15T15:00:00")
+    private LocalDateTime reply_modified_at;
+
+    @Schema(description = "댓글 상태 (예: active, deleted)", example = "active")
+    private String reply_status;
 }
