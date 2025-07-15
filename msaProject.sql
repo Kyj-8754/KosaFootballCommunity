@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `user_relation` (
 );
 
 -- 클럽 테이블 (tbl_club)
-CREATE TABLE tbl_club (
+CREATE TABLE IF NOT EXISTS tbl_club (
 club_id INT(11) NOT NULL AUTO_INCREMENT,
 club_name VARCHAR(50) NOT NULL,
 logo_path VARCHAR(255) DEFAULT NULL,
@@ -156,7 +156,7 @@ CONSTRAINT fk_club_user FOREIGN KEY (user_no) REFERENCES user (user_no)
 
 
 -- 모집 게시판 테이블 (tbl_recruit_board)
-CREATE TABLE tbl_recruit_board (
+CREATE TABLE IF NOT EXISTS tbl_recruit_board (
 bno INT(11) NOT NULL AUTO_INCREMENT,
 club_id INT(11) NOT NULL,
 user_no INT(11) NOT NULL,
@@ -175,7 +175,7 @@ CONSTRAINT fk_recruit_user FOREIGN KEY (user_no) REFERENCES user (user_no) ON DE
 
 
 --클럽 지원 테이블 (tbl_club_apply)
-CREATE TABLE tbl_club_apply (
+CREATE TABLE IF NOT EXISTS tbl_club_apply (
 apply_id INT(11) NOT NULL AUTO_INCREMENT,
 bno INT(11) NOT NULL,
 appli_user_no INT(11) DEFAULT NULL,
@@ -193,7 +193,7 @@ CONSTRAINT fk_club_apply_user FOREIGN KEY (appli_user_no) REFERENCES user (user_
 
 
 --클럽 멤버 테이블(tbl_club_member)
-CREATE TABLE tbl_club_member (
+CREATE TABLE IF NOT EXISTS tbl_club_member (
 club_id INT(11) NOT NULL,
 user_no INT(11) NOT NULL,
 POM INT(11) DEFAULT 0,
@@ -210,7 +210,7 @@ CONSTRAINT fk_club_member_user FOREIGN KEY (user_no) REFERENCES user (user_no)
 
 
 -- 클럽 상세 정보 테이블 (tbl_club_info)
-CREATE TABLE tbl_club_info (
+CREATE TABLE IF NOT EXISTS tbl_club_info (
 club_id INT(11) NOT NULL,
 gender ENUM('남성','여성','혼성') NOT NULL,
 age_group ENUM('10~20','20~30','30~40','40~50') NOT NULL,
@@ -222,7 +222,7 @@ CONSTRAINT tbl_club_info_ibfk_1 FOREIGN KEY (club_id) REFERENCES tbl_club (club_
 
 
 -- 📌 알림 테이블 생성 DDL
-CREATE TABLE `tbl_alarm` (
+CREATE TABLE IF NOT EXISTS `tbl_alarm` (
   `alarm_id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '알림 PK',
   `receiver_id` INT(11) NOT NULL COMMENT '알림 수신자(user_no, FK)',
   `sender_id` INT(11) DEFAULT NULL COMMENT '알림 발신자(user_no, FK)',
@@ -240,13 +240,9 @@ CREATE TABLE `tbl_alarm` (
   CONSTRAINT `alarm_sender_id` FOREIGN KEY (`sender_id`) REFERENCES `user` (`user_no`)
     ON DELETE SET NULL
     ON UPDATE CASCADE
-) ENGINE=InnoDB
-  AUTO_INCREMENT=17
-  DEFAULT CHARSET=utf8mb4
-  COLLATE=utf8mb4_uca1400_ai_ci
-  COMMENT='알림';
+)COMMENT='알림';
 
-CREATE TABLE `stadium` (
+CREATE TABLE IF NOT EXISTS `stadium` (
   `SVCID` varchar(30) NOT NULL,
   `SVCNM` varchar(50) DEFAULT NULL,
   `PLACENM` varchar(100) DEFAULT NULL,
@@ -268,7 +264,7 @@ CREATE TABLE `stadium` (
   PRIMARY KEY (`SVCID`)
 );
 
-CREATE TABLE `stadium_patch` (
+CREATE TABLE IF NOT EXISTS `stadium_patch` (
   `SVCID` varchar(30) NOT NULL,
   `SVCNM` varchar(50) DEFAULT NULL,
   `PLACENM` varchar(100) DEFAULT NULL,
@@ -288,7 +284,7 @@ CREATE TABLE `stadium_patch` (
   PRIMARY KEY (`SVCID`)
 );
 
-CREATE TABLE `stadium_comment` (
+CREATE TABLE IF NOT EXISTS `stadium_comment` (
   `comment_no` int NOT NULL AUTO_INCREMENT,
   `content` text NOT NULL,
   `regist_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -304,7 +300,7 @@ CREATE TABLE `stadium_comment` (
   CONSTRAINT `chk_rating_range` CHECK (((`rating` >= 0) and (`rating` <= 5)))
 );
 
-CREATE TABLE `stadium_api_detail` (
+CREATE TABLE IF NOT EXISTS `stadium_api_detail` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `svcid` varchar(30) DEFAULT NULL,
   `code` varchar(50) DEFAULT NULL,
@@ -313,7 +309,7 @@ CREATE TABLE `stadium_api_detail` (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `reservation_slot` (
+CREATE TABLE IF NOT EXISTS `reservation_slot` (
   `slot_id` bigint NOT NULL AUTO_INCREMENT,
   `svcid` varchar(50) NOT NULL,
   `slot_date` date NOT NULL,
@@ -327,7 +323,7 @@ CREATE TABLE `reservation_slot` (
 -- kosa_db.board definition
 
 
-CREATE TABLE `board` (
+CREATE TABLE IF NOT EXISTS `board` (
   `board_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_no` int(11) NOT NULL,
   `user_name` varchar(20) NOT NULL,
@@ -346,7 +342,7 @@ CREATE TABLE `board` (
 
 -- kosa_db.board_file definition
 
-CREATE TABLE `board_file` (
+CREATE TABLE IF NOT EXISTS `board_file` (
   `file_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `board_id` bigint(20) NOT NULL,
   `file_original_name` varchar(255) NOT NULL,
@@ -363,7 +359,7 @@ CREATE TABLE `board_file` (
 
 -- kosa_db.board_like definition
 
-CREATE TABLE `board_like` (
+CREATE TABLE IF NOT EXISTS `board_like` (
   `board_id` bigint(20) NOT NULL,
   `user_no` int(11) NOT NULL,
   PRIMARY KEY (`board_id`,`user_no`),
@@ -374,7 +370,7 @@ CREATE TABLE `board_like` (
 
 -- kosa_db.location definition
 
-CREATE TABLE `location` (
+CREATE TABLE IF NOT EXISTS `location` (
   `weather_location` varchar(50) NOT NULL,
   `weather_location_x` varchar(50) DEFAULT NULL,
   `weather_location_y` varchar(50) DEFAULT NULL,
@@ -410,7 +406,7 @@ INSERT INTO location (weather_location, weather_location_x, weather_location_y) 
 
 -- kosa_db.`match` definition
 
-CREATE TABLE `match` (
+CREATE TABLE IF NOT EXISTS `match` (
   `match_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `match_title` varchar(100) NOT NULL,
   `match_created_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -439,7 +435,7 @@ CREATE TABLE `match` (
 
 -- kosa_db.match_log definition
 
-CREATE TABLE `match_log` (
+CREATE TABLE IF NOT EXISTS `match_log` (
   `log_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `match_id` bigint(20) NOT NULL,
   `log_type` varchar(50) NOT NULL,
@@ -459,7 +455,7 @@ CREATE TABLE `match_log` (
 
 -- kosa_db.match_participant definition
 
-CREATE TABLE `match_participant` (
+CREATE TABLE IF NOT EXISTS `match_participant` (
   `match_id` bigint(20) NOT NULL,
   `club_id` int(11) DEFAULT NULL,
   `user_no` int(11) NOT NULL,
@@ -477,7 +473,7 @@ CREATE TABLE `match_participant` (
 
 -- kosa_db.reply definition
 
-CREATE TABLE `reply` (
+CREATE TABLE IF NOT EXISTS `reply` (
   `reply_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `board_id` bigint(20) NOT NULL,
   `parent_reply_id` bigint(20) DEFAULT NULL,
@@ -498,7 +494,7 @@ CREATE TABLE `reply` (
 
 -- kosa_db.weather definition
 
-CREATE TABLE `weather` (
+CREATE TABLE IF NOT EXISTS `weather` (
   `weather_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `weather_region` varchar(50) DEFAULT NULL,
   `weather_base_date` varchar(8) DEFAULT NULL,
@@ -512,7 +508,7 @@ CREATE TABLE `weather` (
   CONSTRAINT `weather_ibfk_1` FOREIGN KEY (`weather_region`) REFERENCES `location` (`weather_location`)
 );
 
-CREATE TABLE `reservation` (
+CREATE TABLE IF NOT EXISTS `reservation` (
   `reservation_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `slot_id` bigint(20) NOT NULL,
   `reservation_type` enum('social','match') NOT NULL,
@@ -531,7 +527,7 @@ CREATE TABLE `reservation` (
   CONSTRAINT `fk_slot` FOREIGN KEY (`slot_id`) REFERENCES `reservation_slot` (`slot_id`)
 ); 
 
-CREATE TABLE `payment` (
+CREATE TABLE IF NOT EXISTS `payment` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '고유 PK',
   `reservation_id` bigint NOT NULL COMMENT '예약ID FK',
   `amount` int NOT NULL COMMENT '가격',
