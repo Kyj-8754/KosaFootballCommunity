@@ -78,10 +78,6 @@ const logout = inject('logout')
 const userName = inject('userName')
 const authCode = inject('authCode')
 
-
-watch(authCode, (newVal) => {
-  console.log('🔐 authCode 변경됨:', newVal)
-})
 // 로그인 여부 계산
 const isAuthenticated = computed(() => !!token?.value)
 const isAdmin = computed(() => authCode?.value === 'ROLE_A1')
@@ -129,12 +125,6 @@ const runWeatherCollector = async () => {
 /* 알림 드롭다운 */
 .auth-actions .alarm {
   margin-left: 0.5rem;
-}
-
-/* 관리자 전용 링크 강조 */
-.auth-actions .admin-link {
-  font-weight: 600;
-  color: #dc3545;
 }
 
 /* 모바일 대응 */
