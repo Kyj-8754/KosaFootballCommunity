@@ -96,16 +96,8 @@
     <p v-if="clubs.length === 0" class="mt-3">클럽 데이터가 없습니다.</p>
   </div>
 </template>
-
 <script>
 import axios from "axios";
-import { useRoute } from "vue-router";
-const route = useRoute();
-const fallbackImg = "https://via.placeholder.com/40"; // ✅ 기본 이미지
-// ✅ 이미지 로딩 실패 시 기본 이미지로 대체
-const handleImageError = (event) => {
-  event.target.src = fallbackImg;
-};
 
 export default {
   name: "ClubList",
@@ -113,6 +105,9 @@ export default {
     return {
       clubs: [],
       searchKeyword: "",
+      fallbackImg:
+        'data:image/svg+xml;base64,' +
+        btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" rx="8" fill="#e0e0e0"/><text x="50%" y="54%" text-anchor="middle" fill="#888" font-size="12" font-family="Arial" dy=".3em">NO LOGO</text></svg>`)
     };
   },
   created() {
@@ -122,7 +117,7 @@ export default {
     sortedClubs() {
       const keyword = this.searchKeyword.toLowerCase();
       return [...this.clubs]
-        .filter((club) => club.club_name.toLowerCase().includes(keyword)) // ✅ 필터 추가
+        .filter((club) => club.club_name.toLowerCase().includes(keyword))
         .map((club) => ({
           ...club,
           win_rate: this.getWinRateRaw(club),
@@ -131,10 +126,13 @@ export default {
     },
   },
   methods: {
+    // ✅ 이미지 로딩 실패 시 기본 이미지로 대체
+    handleImageError(event) {
+      event.target.src = this.fallbackImg;
+    },
     isActiveTab(path) {
       return this.$route.path.startsWith(path);
     },
-
     async fetchClubs() {
       try {
         const response = await axios.get("/club_api/list");
@@ -143,11 +141,9 @@ export default {
         console.error("클럽 목록 불러오기 실패:", error);
       }
     },
-
     goToClub(teamCode) {
       this.$router.push(`/club/${teamCode}`);
     },
-
     getWinRateRaw(club) {
       const w = club.win_count || 0;
       const d = club.draw_count || 0;
@@ -160,7 +156,9 @@ export default {
     },
     getTotalGames(club) {
       return (
-        (club.win_count || 0) + (club.draw_count || 0) + (club.loss_count || 0)
+        (club.win_count || 0) +
+        (club.draw_count || 0) +
+        (club.loss_count || 0)
       );
     },
     calculateClubLevel(win, draw, loss) {
@@ -176,6 +174,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .tab-btn {
   padding: 0.375rem 0.75rem;

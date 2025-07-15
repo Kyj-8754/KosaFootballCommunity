@@ -36,8 +36,7 @@
         </div>
 
         <!-- 오른쪽: 상태 뱃지 + 버튼 -->
-        <div class="d-flex align-items-center gap-5"
-         style="margin-right: 1rem;">
+        <div class="d-flex align-items-center" style="gap: 12px; margin-right: 1rem;">
           <span
             class="badge rounded-pill d-flex align-items-center"
             :class="{
@@ -54,7 +53,7 @@
             v-if="!match.applied"
             @click.stop="applyToMatch(match.match_id)"
             class="btn btn-outline-success btn-sm"
-            style="height: 30px;"
+            style="height: 30px; min-width: 80px;"
           >
             참가
           </button>
@@ -62,7 +61,7 @@
             v-else
             @click.stop="cancelMatch(match.match_id)"
             class="btn btn-outline-danger btn-sm"
-            style="height: 30px;"
+            style="height: 30px; min-width: 80px;"
           >
             참가 취소
           </button>
