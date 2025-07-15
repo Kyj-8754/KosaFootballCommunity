@@ -23,7 +23,7 @@ public class WidgetController {
     private WidgetService widgetService;
 
     @GetMapping("/forecast")
-    @Operation(summary = "단기예보 조회",description = "입력받은 지역과 시간 데이터를 기반으로 단기예보를 조회합니다.")
+    @Operation(summary = "단기예보 조회", description = "입력받은 지역과 시간 데이터를 기반으로 단기예보를 조회합니다.")
     public ResponseEntity<?> getEarliest5Forecast(
     		@Parameter(description = "서울 구 명", example = "송파구") @RequestParam("region") String weather_region,
     		@Parameter(description = "현재시각", example = "YYYYMMDD") @RequestParam("date") String weather_fcst_date

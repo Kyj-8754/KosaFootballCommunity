@@ -19,7 +19,7 @@ public class WeatherCollectorController {
     private WeatherCollectorService weatherCollectorService;
 
     @GetMapping("/run")
-    @Operation(summary = "단기예보 수집",description = "해당 메서드가 호출될 경우 서울의 단기 예보 데이터를 수집합니다.")
+    @Operation(summary = "단기예보 수집", description = "해당 메서드가 호출될 경우 서울의 단기 예보 데이터를 수집합니다.")
     public ResponseEntity<?> runCollection() {
         try {
             weatherCollectorService.collectAndStoreForecasts();

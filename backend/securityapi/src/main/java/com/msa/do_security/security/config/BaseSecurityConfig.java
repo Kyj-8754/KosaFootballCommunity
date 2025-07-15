@@ -139,7 +139,9 @@ public class BaseSecurityConfig {
 				"/match/**",
 				"/match-log/**",
 				"/reply/**",
-				"/file/**");
+				"/file/**",
+				"/swagger-ui/**", 
+				"/v3/api-docs/**");
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
