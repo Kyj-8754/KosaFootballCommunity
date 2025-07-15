@@ -73,16 +73,16 @@ jobs:
       # 백엔 Gradle 빌드
       - name: Gradle bootJar for each API
         run: |
-         cd backend/alarm_api && chmod +x ./gradlew && ./gradlew build -x test
-         cd ../club_api && chmod +x ./gradlew && ./gradlew build -x test
-         cd ../kakaopay_api && chmod +x ./gradlew && ./gradlew build -x test
-         cd ../recruit_api && chmod +x ./gradlew && ./gradlew build -x test
-         cd ../reservation_api && chmod +x ./gradlew && ../gradlew build -x test
-         cd ../stadium_api && chmod +x ./gradlew && ./gradlew build -x test
-         cd ../weather_api && chmod +x ./gradlew && ./gradlew build -x test
-         cd ../security/security_api && chmod +x ./gradlew && ./gradlew build -x test
-         cd ../board_api && chmod +x ./gradlew && ./gradlew build -x test
-         cd ../login_api && chmod +x ./gradlew && ./gradlew build -x test
+         pushd backend/alarm_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/club_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/kakaopay_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/recruit_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/reservation_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/stadium_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/weather_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/security/security_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/security/board_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/security/login_api && chmod +x ./gradlew && ./gradlew build -x test && popd
           
 
      # 이미지 빌드
