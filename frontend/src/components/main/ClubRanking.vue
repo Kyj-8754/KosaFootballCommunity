@@ -59,7 +59,7 @@ export default {
   data() {
     return {
       clubs: [],
-      fallbackImg: "https://via.placeholder.com/40",
+      fallbackImg: "https://placehold.co/40x40"
     };
   },
   created() {
