@@ -16,10 +16,7 @@
           ({{ friend.userAddr }})
         </div>
       </router-link>
-
-      <!-- 로그인 유저 본인은 버튼 표시 안 함 -->
       <template v-if="loginUserNo !== friend.userNo">
-        <!-- relationStatus가 WAIT이면 비활성화 -->
         <button
           v-if="friend.relationStatus === 'WAIT'"
           disabled
@@ -27,8 +24,6 @@
         >
           친구 요청됨
         </button>
-
-        <!-- relationStatus가 null이면 요청 가능 -->
         <button
           v-else-if="friend.relationStatus == null"
           @click.stop.prevent="requestFriend(friend.userNo)"
@@ -61,16 +56,14 @@ h3 {
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 1.5rem;
-  margin-top: 2rem; /* ⬅ 상단 간격 추가 */
+  margin-top: 2rem;
   color: #333;
 }
 
-/* 전체 wrapper 간격 추가하고 중앙 정렬 느낌 */
 div {
   padding: 0 1rem;
 }
 
-/* 친구 정보 wrapper */
 .friend-info-wrapper {
   display: flex;
   justify-content: space-between;
@@ -82,7 +75,6 @@ div {
   background-color: #fafafa;
 }
 
-/* 친구 링크 영역 */
 .friend-info-link {
   text-decoration: none;
   color: inherit;
@@ -98,7 +90,6 @@ div {
   font-weight: 600;
 }
 
-/* 버튼 */
 .request-btn {
   padding: 6px 12px;
   font-size: 0.9rem;

@@ -1,6 +1,5 @@
 <template>
   <div class="friend-container">
-    <!-- 탭 영역 -->
     <div class="tabs">
       <div
         v-for="tab in tabList"
@@ -12,10 +11,7 @@
         <span class="tab-count">{{ getCount(tab.value) }}</span>
       </div>
     </div>
-
-    <!-- 탭 컨텐츠 영역 -->
     <div class="tab-content">
-      <!-- 친구 목록 -->
       <template v-if="activeTab === 'friends'">
         <div v-if="friends.length > 0">
           <router-link
@@ -32,8 +28,6 @@
         </div>
         <div v-else class="no-data">😢 아직 친구가 없어요</div>
       </template>
-
-      <!-- 신청대기 목록 -->
       <template v-else-if="activeTab === 'pending'">
         <div v-if="pending.length > 0">
           <router-link
@@ -66,9 +60,6 @@
         </div>
         <div v-else class="no-data">⏳ 신청 대기 중인 친구가 없어요</div>
       </template>
-
-
-      <!-- 친구 검색 -->
       <template v-else-if="activeTab === 'searchFriend'">
         <div class="search-wrapper">
           <div class="search-row">
@@ -150,7 +141,6 @@ const {
   padding: 0 1rem;
 }
 
-/* 탭 영역 */
 .tabs {
   display: flex;
   gap: 20px;
@@ -194,10 +184,9 @@ const {
   font-weight: 600;
   color: #0d6efd;
   line-height: 1.2;
-  transform: translateY(1px); /* 숫자 수직 정렬 */
+  transform: translateY(1px);
 }
 
-/* 탭 콘텐츠 영역 */
 .tab-content {
   border: 1px solid #dee2e6;
   border-radius: 0 0 8px 8px;
@@ -206,7 +195,6 @@ const {
   min-height: 200px;
 }
 
-/* 친구 카드, 대기 목록, 검색 결과 공통 */
 .friend-info-link,
 .pending-item,
 .result-info {
@@ -229,14 +217,6 @@ const {
   background-color: #e9f2ff;
 }
 
-/* 대기 항목만 별도 강조 */
-.pending-item {
-  background-color: #fff3cd;
-  border-color: #ffeeba;
-  color: #856404;
-}
-
-/* 대기 항목 내부 구조 */
 .pending-info {
   display: flex;
   justify-content: space-between;
@@ -251,14 +231,12 @@ const {
   white-space: nowrap;
 }
 
-/* 버튼 영역 */
 .action-buttons {
   display: flex;
   gap: 10px;
   flex-shrink: 0;
 }
 
-/* 검색 영역 */
 .search-wrapper {
   display: flex;
   flex-direction: column;
@@ -293,7 +271,6 @@ const {
   background-color: #0b5ed7;
 }
 
-/* 친구 신청 버튼 */
 .request-btn {
   padding: 8px 14px;
   font-size: 0.85rem;
@@ -314,7 +291,6 @@ const {
   cursor: not-allowed;
 }
 
-/* 데이터 없음 메시지 */
 .no-data {
   text-align: center;
   color: #868e96;
@@ -322,7 +298,6 @@ const {
   margin-top: 20px;
 }
 
-/* 반응형 대응 */
 @media (max-width: 768px) {
   .friend-container {
     max-width: 95%;

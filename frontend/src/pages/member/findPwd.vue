@@ -42,8 +42,6 @@
           @click="sendSmsCode"/>
       </div>
     </div>
-
-    <!-- 인증 코드 입력 -->
     <div class="mb-3" v-if="isCodeSent">
       <label for="smsCode" class="form-label">인증 코드</label>
       <div class="d-flex gap-2">
@@ -89,7 +87,7 @@ const {
 <style scoped>
 .find-form {
   max-width: 400px;
-  margin: 3rem auto 0 auto; /* 상단 여백 확보 */
+  margin: 3rem auto 0 auto;
   padding: 2rem 1.5rem;
 }
 

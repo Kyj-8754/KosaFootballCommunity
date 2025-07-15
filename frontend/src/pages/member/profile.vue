@@ -1,8 +1,6 @@
 <template>
   <div class="profile-wrapper">
-    <!-- 왼쪽 영역 -->
     <div class="left-panel">
-      <!-- 이름 + 버튼 수평 정렬 -->
       <div class="user-header">
         <h2 class="user-name">{{ member?.userName || '불러오는 중...' }}</h2>
         <div class="button-group">
@@ -32,19 +30,8 @@
         <h3>소개글</h3>
         <p class="user-comment">{{ member?.userComment || '소개글이 없습니다...' }}</p>
       </div>
-
-      <div class="info-box">
-        <p class="label">매너</p>
-        <p class="value">{{ profileInfo?.manner == null ? '아직 평가를 받지 못했어요' : profileInfo.manner.toFixed(1) + '점' }}</p>
-      </div>
-
-      <div class="info-box">
-        <p class="label">레벨</p>
-        <p class="value">{{ getLevelLabel(profileInfo?.level) }}</p>
-      </div>
     </div>
 
-    <!-- 오른쪽 영역 -->
     <div class="right-panel">
       <div class="card-rounded-box match-info">
         <div class="match-box">
@@ -61,6 +48,20 @@
         <p>스마일 카드 <span class="card-count">{{ profileInfo?.smileCardCount ?? 0 }}</span></p>
         <p>옐로 카드 <span class="card-count">{{ profileInfo?.yellowCardCount ?? 0 }}</span></p>
         <p>레드 카드 <span class="card-count">{{ profileInfo?.redCardCount ?? 0 }}</span></p>
+      </div>
+    </div>
+    <div class="bottom-info-box-group">
+      <div class="info-box">
+        <div class="info-title">매너</div>
+        <div class="info-value">
+          {{ profileInfo?.manner == null ? '아직 평가를 받지 못했어요' : profileInfo.manner.toFixed(1) + '점' }}
+        </div>
+      </div>
+      <div class="info-box">
+        <div class="info-title">레벨</div>
+        <div class="info-value">
+          {{ getLevelLabel(profileInfo?.level) || '아직 평가를 받지 못했어요' }}
+        </div>
       </div>
     </div>
   </div>
@@ -89,12 +90,12 @@ const {
 <style scoped>
 .profile-wrapper {
   display: flex;
+  flex-wrap: wrap;
   gap: 48px;
   padding: 32px 40px;
   font-family: 'Pretendard', sans-serif;
 }
 
-/* 왼쪽 프로필 */
 .left-panel {
   flex: 0 0 45%;
   display: flex;
@@ -102,7 +103,6 @@ const {
   gap: 10px;
 }
 
-/* 이름 + 버튼 수평 정렬 */
 .user-header {
   display: flex;
   justify-content: space-between;
@@ -117,7 +117,6 @@ const {
   margin: 0;
 }
 
-/* 버튼 */
 .button-group {
   display: flex;
   flex-wrap: wrap;
@@ -129,7 +128,6 @@ const {
   padding: 6px 12px;
 }
 
-/* 주소, 포지션 등 */
 .user-info {
   font-size: 15px;
   color: #666;
@@ -137,15 +135,19 @@ const {
   margin-top: -2px;
 }
 
-/* 친구 수 */
+.user-info .btn-link {
+  text-decoration: none !important;
+  color: #007bff;
+}
+
 .friend-count {
   font-size: 16px;
   font-weight: 700;
   color: #2b2b2b;
   margin-top: 4px;
+  text-decoration: none !important;
 }
 
-/* 소개글 */
 .comment-box {
   margin-top: 18px;
 }
@@ -162,23 +164,36 @@ const {
   white-space: pre-line;
 }
 
-/* 매너 / 레벨 */
-.info-box {
+.bottom-info-box-group {
   display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  padding: 6px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-.label {
-  color: #888;
-}
-.value {
-  font-weight: 600;
-  color: #212529;
+  gap: 20px;
+  margin-top: 20px;
+  width: 100%;
 }
 
-/* 오른쪽 패널 */
+.bottom-info-box-group .info-box {
+  flex: 1;
+  background-color: #f7f6f6f5;
+  border-radius: 30px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  font-size: 15px;
+  color: #333;
+  font-weight: 600;
+}
+
+.info-title {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 6px;
+}
+.info-value {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #111;
+}
+
 .right-panel {
   flex: 1;
   display: flex;
@@ -186,7 +201,6 @@ const {
   gap: 24px;
 }
 
-/* 경기 / POM */
 .match-info {
   display: flex;
   align-items: center;
@@ -216,7 +230,6 @@ const {
   color: #222;
 }
 
-/* 카드 정보 */
 .card-info {
   padding: 16px;
   border-radius: 10px;
@@ -234,7 +247,6 @@ const {
   font-weight: 600;
 }
 
-/* 공통 배경 제거 */
 .left-panel,
 .right-panel,
 .comment-box,
@@ -243,9 +255,9 @@ const {
   border: none;
   box-shadow: none;
 }
-/* 오른쪽 카드 박스 공통 */
+
 .card-rounded-box {
-  background-color: #e2e2e2;
+  background-color: #f7f6f6f5;
   border-radius: 40px;
   padding: 24px 32px;
   display: flex;
@@ -255,24 +267,27 @@ const {
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* 경기 / POM */
 .match-info {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   text-align: center;
+  gap: 40px;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
+
 .match-box .title {
   font-size: 14px;
   color: #444;
 }
+
 .match-box .count {
   font-size: 22px;
   font-weight: bold;
   margin-top: 4px;
 }
 
-/* 카드 정보 */
 .card-info p {
   display: flex;
   justify-content: space-between;
@@ -280,6 +295,7 @@ const {
   margin: 4px 0;
   color: #333;
 }
+
 .card-info .card-count {
   font-weight: 600;
 }

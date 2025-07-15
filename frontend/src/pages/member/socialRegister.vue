@@ -50,9 +50,12 @@
                 <input type="text" v-model="form.userDetailAddr" id="detail_address" class="form-control" placeholder="상세주소를 입력해주세요">
               </div>
 
-              <div class="d-flex justify-content-between">
-                <input type="submit" value="회원가입" class="btn btn-primary">
-                <input type="reset" value="초기화" class="btn btn-secondary" @click="onReset">
+              <div class="d-flex justify-content-between mt-4">
+                <input type="reset" value="초기화" class="btn btn-outline-secondary" @click="onReset" />
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary">확인</button>
+                  <router-link :to="{ name: 'Home' }" class="btn btn-outline-secondary">취소</router-link>
+                </div>
               </div>
             </form>
           </div>
@@ -132,29 +135,30 @@ textarea.form-control {
   font-size: 14px;
   padding: 8px 16px;
   border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  border: none;
 }
 
 .btn-primary {
   background-color: #007bff;
-  border: none;
   color: white;
 }
 
-.btn-secondary {
-  background-color: #6c757d;
-  border: none;
-  color: white;
+.btn-primary:hover {
+  background-color: #0069d9;
 }
 
 .btn-outline-secondary {
-  background-color: transparent;
-  border: none;
-  color: #6c757d;
-  font-weight: 500;
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  color: #495057;
 }
 
 .btn-outline-secondary:hover {
-  background-color: rgba(108, 117, 125, 0.1);
+  background-color: #e2e6ea;
+  color: #212529;
 }
 
 .text-danger,

@@ -30,8 +30,6 @@
           @click="sendSmsCode"/>
       </div>
     </div>
-
-    <!-- 인증 코드 입력 -->
     <div class="mb-3" v-if="isCodeSent">
       <label for="smsCode" class="form-label">인증 코드</label>
       <div class="d-flex gap-2">
