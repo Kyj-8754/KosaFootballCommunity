@@ -17,6 +17,8 @@ import com.msa.do_login.admin.service.AdminService;
 import com.msa.do_login.page.Paging;
 import com.msa.do_login.user.vo.UserVO;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,10 +26,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/admin")
+@Tag(name = "관리자 API", description = "관리자 기능 관련 API (회원 목록, 권한 설정 등)")
 public class AdminController {
 	private final AdminService adminService;
 
 	// 유저 목록 조회
+	@Operation(summary = "회원 목록 조회", description = "전체 회원 목록을 페이징 및 검색 조건에 따라 조회합니다.")
 	@GetMapping("/userList")
 	public ResponseEntity<Map<String, Object>> getUserList(@RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "size", defaultValue = "10") int size,
@@ -46,6 +50,7 @@ public class AdminController {
 	}
 	
 	// 사용자 관리자 권한 부여
+	@Operation(summary = "관리자 권한 부여", description = "지정된 회원번호에 대해 관리자 권한을 부여합니다.")
     @PostMapping("/grantManager")
     public ResponseEntity<Map<String, Object>> grantManager(@RequestBody Map<String, String> param) {
         Map<String, Object> map = new HashMap<>();
@@ -63,6 +68,7 @@ public class AdminController {
     }
 
     // 사용자 관리자 권한 해제
+	@Operation(summary = "관리자 권한 해제", description = "지정된 회원번호에 대해 관리자 권한을 해제합니다.")
     @PostMapping("/revokeManager")
     public ResponseEntity<Map<String, Object>> revokeManager(@RequestBody Map<String, String> param) {
         Map<String, Object> map = new HashMap<>();

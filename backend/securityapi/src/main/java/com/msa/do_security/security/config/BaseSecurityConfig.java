@@ -138,7 +138,11 @@ public class BaseSecurityConfig {
 				"/board/**",
 				"/match/**",
 				"/match-log/**",
-				"/reply/**");
+				"/reply/**",
+				"/v3/api-docs/**",
+				"/swagger-ui/**",
+				"/swagger-ui.html",
+				"/webjars/**");
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
