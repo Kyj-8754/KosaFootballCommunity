@@ -80,9 +80,7 @@ jobs:
          pushd backend/reservation_api && chmod +x ./gradlew && ./gradlew build -x test && popd
          pushd backend/stadium_api && chmod +x ./gradlew && ./gradlew build -x test && popd
          pushd backend/weather_api && chmod +x ./gradlew && ./gradlew build -x test && popd
-         pushd backend/security/security_api && chmod +x ./gradlew && ./gradlew build -x test && popd
-         pushd backend/security/board_api && chmod +x ./gradlew && ./gradlew build -x test && popd
-         pushd backend/security/login_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         pushd backend/security && chmod +x ./gradlew && ./gradlew :security_api:build -x test && ./gradlew :board_api:build -x test && ./gradlew :login_api:build -x test && popd
           
 
      # 이미지 빌드
