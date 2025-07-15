@@ -32,9 +32,6 @@ jobs:
              cp -r ./db_data ~/KosaFootballCommunity/
             fi
 
-
-             
-      
       # jdk 설치
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -85,16 +82,14 @@ jobs:
       # 프론트엔드 이미지 빌드 및 푸시
       - name: Build and Push Frontend Image
         run: |
-          docker build -t ${{ secrets.USERNAME }}/nginx ./frontend
+          docker build -f ./Dockerfile -t ${{ secrets.USERNAME }}/nginx .
           docker push ${{ secrets.USERNAME }}/nginx
 
-     # 이미지 빌드
+     # 백엔드 이미지 빌드 및 푸쉬
       - name: Build and Push API Images
         run: |
           cd ${{ github.workspace }}  # 루트 경로로 복귀
 
-
-          # 위에서 만든 bootjar 토대로 이미지 빌드
           docker build -t ${{ secrets.USERNAME }}/alarm_api ./backend/alarm_api
           docker push ${{ secrets.USERNAME }}/alarm_api
 
@@ -142,17 +137,6 @@ jobs:
       with:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        
-    # 프론트엔드 run build
-    - name: Build Frontend
-      working-directory: ./frontend
-      run: |
-         npm install
-         npm run build    
-         
-    # db_data 폴더 만들기
-    - name: Ensure db_data directory exists
-      run: mkdir -p ${{ github.workspace }}/db_data    
         
     - name: docker-compose에서 이미지 다운로드 및 실행
     # | 를 추가하면 여러개의 명령어를 추가할 수 있다.
