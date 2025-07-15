@@ -125,4 +125,4 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./db_data
+      device: /home/ubuntu/db_data
