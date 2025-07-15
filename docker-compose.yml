@@ -100,13 +100,10 @@ services:
 
 # nginx 생성
   nginx:
-    image: nginx:latest
+    image: span5189/nginx:latest
     container_name: webserver1
     ports:
       - 80:80
-    volumes:
-      - ./frontend/dist:/usr/share/nginx/html
-      - ./nginx.conf:/etc/nginx/nginx.conf
     networks:
       - msateamprj_network
     depends_on:

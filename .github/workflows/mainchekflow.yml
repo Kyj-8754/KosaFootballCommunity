@@ -88,6 +88,12 @@ jobs:
         run: |
           cd ${{ github.workspace }}  # 루트 경로로 복귀
 
+        # 프론트엔드 이미지 빌드 및 푸시
+      - name: Build and Push Frontend Image
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/nginx ./frontend
+          docker push ${{ secrets.USERNAME }}/nginx
+
           # 위에서 만든 bootjar 토대로 이미지 빌드
           docker build -t ${{ secrets.USERNAME }}/alarm_api ./backend/alarm_api
           docker push ${{ secrets.USERNAME }}/alarm_api
