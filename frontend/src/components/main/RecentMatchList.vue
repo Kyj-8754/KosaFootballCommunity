@@ -1,5 +1,6 @@
 <template>
   <div class="recent-match-container">
+    <h5>최근 매치</h5>
 
     <!-- 소셜/리그 탭 -->
     <div class="match-type-tabs">
@@ -17,8 +18,9 @@
       </button>
     </div>
 
-    <!-- 매치 리스트 -->
-    <MatchItemList :matches="latestMatches" />
+    <!-- 매치 리스트 또는 결과 없음 메시지 -->
+    <MatchItemList v-if="latestMatches.length > 0" :matches="latestMatches" />
+    <div v-else class="no-result">검색 결과가 없습니다</div>
 
     <!-- 전체 매치로 이동 -->
     <div class="view-more" @click="router.push('/match/matchlist')">
@@ -72,7 +74,7 @@ onMounted(fetchRecentMatches)
   border-radius: 10px;
 }
 
-h3 {
+h5 {
   margin-bottom: 1rem;
   font-size: 1.2rem;
   color: #333;
@@ -105,5 +107,12 @@ h3 {
   font-size: 0.9rem;
   color: #007bff;
   cursor: pointer;
+}
+
+.no-result {
+  text-align: center;
+  color: #999;
+  font-size: 0.9rem;
+  margin: 1rem 0;
 }
 </style>

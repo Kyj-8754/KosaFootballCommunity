@@ -24,6 +24,7 @@
         <BoardCategoryTabs />
         <RecentMatchList />
         <OldMatchList />
+        <ClubRanking />
        
         <!-- <clubMatchList :clubId="4"/> -->
        
@@ -44,7 +45,7 @@ import weatherWidget from "@/components/widget/weatherWidget.vue";
 import BoardCategoryTabs from "@/components/main/BoardCategoryTabs.vue";
 import RecentMatchList from "@/components/main/RecentMatchList.vue";
 import OldMatchList from "@/components/main/OldMatchList.vue";
-//import clubMatchList from '@/components/board/club/clubMatchList.vue'
+import ClubRanking from "@/components/main/ClubRanking.vue";
 
 const serverTime = ref("");
 
@@ -82,3 +83,11 @@ function update() {
     });
 }
 </script>
+
+<style scoped>
+.main-area {
+  display: flex;       /* 또는 display: flex; flex-direction: column; */
+  flex-direction: column;  /* 수직 정렬 시 */
+  gap: 16px;           /* 자식들 사이의 간격 */
+}
+</style>
