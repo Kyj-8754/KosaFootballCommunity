@@ -17,7 +17,7 @@ export function connectWebSocket(userNo, onMessage) {
     return;
   }
 
-  const stompClient = Stomp.over(() => new SockJS('http://localhost:8120/ws')); // 🟢 factory 전달, auto reconnect OK
+stompClient = Stomp.over(() => new SockJS('http://localhost:8120/ws')); // 🟢 factory 전달, auto reconnect OK
 
 
 // ✅ 로그 비활성화 (에러 방지 방식)

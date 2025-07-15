@@ -11,9 +11,9 @@
 
 
         <div class="mb-3">
-          <router-link to="/recruitBoard" class="btn btn-outline-success me-2">팀원 모집 게시판</router-link>
-          <router-link to="/club" class="btn btn-outline-info me-2">클럽 순위</router-link>
-          <button class="btn btn-outline-primary me-2" @click="goToClubCreate">클럽 생성하기</button>
+          <button class="btn btn-outline-info me-2" @click="goToClubMatchList">
+            클럽 매치 참가 리스트
+          </button>
         </div>
         <button @click="test">구장 리스트 불러오기</button>
         <button @click="update">구장 업데이트</button>
@@ -24,71 +24,62 @@
         <BoardCategoryTabs />
         <RecentMatchList />
         <OldMatchList />
-        <!--
-        <clubMatchList :clubId="25"/>
-        -->
+       
+        <!-- <clubMatchList :clubId="4"/> -->
+       
       </main>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, inject } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
 
-const token = inject('token')
-const router = useRouter()
+const token = inject("token");
+const router = useRouter();
 
-import weatherWidget from '@/components/widget/weatherWidget.vue'
-import BoardCategoryTabs from '@/components/main/BoardCategoryTabs.vue'
-import RecentMatchList from '@/components/main/RecentMatchList.vue'
-import OldMatchList from '@/components/main/OldMatchList.vue'
-import clubMatchList from '@/components/board/club/clubMatchList.vue'
+import weatherWidget from "@/components/widget/weatherWidget.vue";
+import BoardCategoryTabs from "@/components/main/BoardCategoryTabs.vue";
+import RecentMatchList from "@/components/main/RecentMatchList.vue";
+import OldMatchList from "@/components/main/OldMatchList.vue";
+//import clubMatchList from '@/components/board/club/clubMatchList.vue'
 
-const serverTime = ref('')
+const serverTime = ref("");
 
-const pageResponse = ref({ 
+const pageResponse = ref({
   list: [],
   totalCount: 0,
   pageNo: 1,
-  size: 10
-}) 
+  size: 10,
+});
 
 onMounted(() => {
-  axios.get('/api/').then(res => {
-    serverTime.value = res.data.serverTime
+  axios.get("/api/").then((res) => {
+    serverTime.value = res.data.serverTime;
     if (res.data.pageResponse && Array.isArray(res.data.pageResponse.list)) {
       pageResponse.value = {
         ...pageResponse.value,
-        ...res.data.pageResponse
-      }
+        ...res.data.pageResponse,
+      };
     } else {
-      console.warn('API 응답에 pageResponse 또는 pageResponse.list가 없습니다')
+      console.warn("API 응답에 pageResponse 또는 pageResponse.list가 없습니다");
     }
-  })
-})
+  });
+});
 
-  function test() {
-  axios.post('/stadium_api/stadium/test')
-  }
-
-function goToClubCreate() {
-  if (token?.value) {
-    router.push('/club/registForm')
-  } else {
-    alert('클럽 생성을 하려면 로그인해야 합니다.')
-    router.push('/member/loginForm') 
-  }
+function test() {
+  axios.post("/stadium_api/stadium/test");
 }
 
 function update() {
-  axios.post('/stadium_api/stadium/update')
-    .then(res => {
-    })
-    .catch(err => {
-      console.error('API 호출 실패:', err)
-    })
+  axios
+    .post("/stadium_api/stadium/update")
+    .then((res) => {})
+    .catch((err) => {
+      console.error("API 호출 실패:", err);
+    });
 }
 </script>
 

@@ -351,6 +351,15 @@
 	  LIMIT 5
 	</select>
 
+	<select id="selectClosedLeagueMatches" resultType="com.msa.kyj_prj.match.Match">
+  SELECT *
+  FROM `match`
+  WHERE match_code = 'league'
+    AND match_date > NOW()
+  ORDER BY match_date ASC
+	</select>
+
+
 
 
 </mapper>
