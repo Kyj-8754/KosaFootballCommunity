@@ -7,7 +7,7 @@ on:
 # 실행
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       # 현재 브랜치 코드 체크아웃
       - uses: actions/checkout@v3
@@ -129,7 +129,7 @@ jobs:
     - name: Ensure db_data volume directory exists
       run: |
         sudo mkdir -p /home/ubuntu/db_data
-        sudo chown -R $USER:$USER /home/ubuntu/db_data
+        sudo chown -R 999:999 /home/ubuntu/db_data
       
     #  도커 허브 로그 
     - name: 운영서버에서 docker hub 로그인
@@ -146,5 +146,11 @@ jobs:
         docker compose down
         docker compose pull
         docker compose up -d
+        
+    # AWS에서 불필요한 공간 삭제
+    - name: Docker Cleanup
+      run: |
+        docker image prune -f # 사용하지 않는 이미지 전체 삭제
+        docker builder prune -a -f   # BuildKit 캐시 삭제
     
     
