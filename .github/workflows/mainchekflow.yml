@@ -124,6 +124,12 @@ jobs:
     # 깃 체크아웃
     - name: Checkout repository
       uses: actions/checkout@v3
+
+    # 실행 전에 디렉토리 보장, 현재 GitHub Actions 사용자(ubuntu 등)에게 권한 부여
+    - name: Ensure db_data volume directory exists
+      run: |
+        sudo mkdir -p /home/ubuntu/db_data
+        sudo chown -R $USER:$USER /home/ubuntu/db_data
       
     #  도커 허브 로그 
     - name: 운영서버에서 docker hub 로그인
