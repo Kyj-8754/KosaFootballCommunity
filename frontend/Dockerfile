@@ -1,7 +1,7 @@
 # Node를 사용한 프론트 빌드
 FROM node:20 as builder
 WORKDIR /app
-COPY frontend/ . 
+COPY . . 
 RUN npm install && npm run build
 
 # Nginx에 빌드된 결과물 복사
