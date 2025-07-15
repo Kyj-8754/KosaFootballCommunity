@@ -135,6 +135,9 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         
+    - name: Ensure db_data directory exists
+      run: mkdir -p ${{ github.workspace }}/db_data    
+        
     - name: docker-compose에서 이미지 다운로드 및 실행
     # | 를 추가하면 여러개의 명령어를 추가할 수 있다.
     # 넘어오는 디렉토리를 기준으로 docker-compose 실행
