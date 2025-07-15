@@ -2,12 +2,12 @@ name: KFC workflow
 on: 
   push:
     # main에 대해서만 실행하도록 설정
-    branches: [ main ]
+    branches: [ cd ]
     
 # 실행
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       # 현재 브랜치 코드 체크아웃
       - uses: actions/checkout@v3
@@ -30,6 +30,9 @@ jobs:
         run: |
           rm -rf ~/KosaFootballCommunity/db_data # 기존 볼륨 삭제
           cp -r ./db_data ~/KosaFootballCommunity/db_data # 최근 볼륨 카피
+
+
+             
       
       # jdk 설치
       - name: Set up JDK 17
@@ -49,6 +52,17 @@ jobs:
         with:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
+
+      # 각 API별 application-secret.properties 파일 생성
+      - name: Create application-secret.properties for each API
+        run: |
+          # kakaopay_api
+          echo "kakao.admin.key=${{ secrets.KAKAO_ADMIN_KEY }}" >> backend/kakaopay_api/src/main/resources/application-secret.properties
+
+          # alarm_api
+          echo "alarm.service.api.key=${{ secrets.ALARM_SERVICE_API_KEY }}" >> backend/alarm_api/src/main/resources/application-secret.properties
+
+
 
       # 하위 폴더 전체 권한 부여
       - name: Set read permissions for all APIs
