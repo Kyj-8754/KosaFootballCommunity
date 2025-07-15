@@ -28,8 +28,9 @@ jobs:
       # DB 볼륨 카피
       - name: mariadbCopy
         run: |
-          rm -rf ~/KosaFootballCommunity/db_data # 기존 볼륨 삭제
-          cp -r ./db_data ~/KosaFootballCommunity/db_data # 최근 볼륨 카피
+            if [ -d ./db_data ]; then
+             cp -r ./db_data ~/KosaFootballCommunity/
+            fi
 
 
              
