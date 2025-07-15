@@ -2,7 +2,7 @@ name: KFC workflow
 on: 
   push:
     # main에 대해서만 실행하도록 설정
-    branches: [ cd ]
+    branches: [ main ]
     
 # 실행
 jobs:
