@@ -14,8 +14,8 @@ import java.util.Map;
 @RequestMapping("/match")
 public class MatchController {
 
-    @Autowired
-    private MatchService matchService;
+	@Autowired
+	private MatchService matchService;
 
     @GetMapping("/social")
     public ResponseEntity<?> getSocialMatches(@RequestParam Map<String, Object> params) {
@@ -200,7 +200,7 @@ public class MatchController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("❌ 잘못된 요청: " + e.getMessage());
         } catch (Exception e) {
-            log.error("❌ 매치 상태 변경 중 오류", e);
+            log.error("❌ 매치 상태 변경 중 오류: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
         }
     }
@@ -213,4 +213,11 @@ public class MatchController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("최근 완료된 매치 조회 실패");
         }
     }
+
+	// //// 리그 매치 목록 조회
+	@GetMapping("/league/closed")
+	public List<Match> getClosedLeagueMatches() {
+		return matchService.getClosedLeagueMatches();
+	}
+
 }

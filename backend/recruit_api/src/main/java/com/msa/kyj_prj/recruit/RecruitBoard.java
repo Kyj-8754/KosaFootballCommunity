@@ -24,4 +24,6 @@ public class RecruitBoard {
     private int view_count;        // 조회수
 
     private int is_closed;// 모집 마감 여부 기본값
+    private int apply_count; // getter, setter 꼭 만들기!
+    
 }
