@@ -45,7 +45,7 @@
         </button>
 
         <button
-          v-if="isPaid"
+          v-if="isPaid && authCode === 'ROLE_A2'"
           class="btn btn-outline-primary"
           @click="goToMatchRegister"
         >
