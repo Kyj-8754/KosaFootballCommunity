@@ -321,7 +321,7 @@ export function useFriendTabs(userNo, token) {
         searchResults.value = []
       }
     } catch (err) {
-      console.error('🔍 친구 검색 오류', err)
+      console.error('친구 검색 오류', err)
       searchResults.value = []
       alert('검색 중 문제가 발생했습니다.')
     }
@@ -450,8 +450,8 @@ export function useLoginForm() {
       alert('로그인 실패: ' + (err.response?.data?.res_msg || '오류 발생'))
       userId.value = ''
       userPwd.value = ''
-      console.error('❌ 실패 상태코드:', err.response?.status)
-      console.error('❌ 실패 응답:', err.response?.data)
+      console.error('실패 상태코드:', err.response?.status)
+      console.error('실패 응답:', err.response?.data)
     }
   }
 
@@ -564,8 +564,11 @@ export function useMemberDetail() {
   const userNo = inject('userNo')
   const loginType = inject('loginType')
   const authCode = inject('authCode')
-
   const member = ref(null)
+  const style = ref(null)
+  const stat = ref(null)
+  const myClubList = ref([])
+  const profileInfo = ref(null)
 
   // 로컬 계정 비밀번호 변경 조건
   const showPasswordChangeBtn = computed(() => loginType?.value === 'local')
@@ -585,14 +588,31 @@ export function useMemberDetail() {
         }
       })
       member.value = res.data.member
+      myClubList.value = res.data.myClubList || []
+      style.value = res.data.userStyle
+      stat.value = res.data.userStat
+      profileInfo.value = res.data.profileInfo
     } catch (err) {
       console.error('회원 정보 조회 실패:', err)
     }
   })
+    const getLevelLabel = (score) => {
+    if (score == null) return '아직 평가를 받지 못했어요'
+    if (score >= 9) return '🔥 프로'
+    if (score >= 7) return '🏅 세미 프로'
+    if (score >= 5) return '🟦 아마추어'
+    if (score >= 3) return '🟢 비기너'
+    return '🔰 루키'
+  }
 
   return {
     member,
+    style,
+    stat,
+    myClubList,
+    profileInfo,
     showPasswordChangeBtn,
+    getLevelLabel,
     isManager
   }
 }
@@ -1256,7 +1276,6 @@ export function useUserInfoEdit() {
 
       const data = res.data.member
       originalData.value = data
-      console.log(data.userBirth)
       form.value = {
         userNo: data.userNo,
         userId: data.userId,
@@ -1332,10 +1351,9 @@ export function useUserInfoEdit() {
       script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'
       script.onload = () => {
         isPostcodeLoaded = true
-        console.log('✅ 우편번호 스크립트 로드 완료')
       }
       script.onerror = () => {
-        console.error('❌ 우편번호 스크립트 로드 실패')
+        console.error('우편번호 스크립트 로드 실패')
       }
       document.body.appendChild(script)
     }
@@ -1354,7 +1372,6 @@ export function useProfileDetail() {
   const loginUserNo = inject('userNo')
   const authCode = inject('authCode')
   const route = useRoute()
-  const router = useRouter()
 
   const member = ref(null)
   const style = ref(null)

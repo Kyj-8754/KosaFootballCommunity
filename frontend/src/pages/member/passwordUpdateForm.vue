@@ -24,8 +24,8 @@
     </div>
 
     <div class="form-group mt-4 d-flex gap-2">
-      <input type="submit" value="변경" class="btn btn-success" />
-      <input type="button" value="취소" class="btn btn-secondary" @click="onCancel" />
+      <button type="submit" class="btn btn-primary">확인</button>
+      <button type="button" class="btn btn-outline-secondary" @click="onCancel">취소</button>
     </div>
   </form>
 </template>
@@ -41,14 +41,35 @@ const {
 } = useUpdatePassword()
 </script>
 
-<style>
+<style scoped>
+.btn {
+  padding: 8px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+}
+
+.btn-outline-secondary {
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  color: #495057;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #e2e6ea;
+  color: #212529;
+}
+
 form {
   max-width: 420px;
   margin: 3rem auto;
   padding: 2rem 1.5rem;
   border-radius: 10px;
-  background-color: transparent; /* 흰 배경 제거 */
-  box-shadow: none; /* 박스 그림자 제거 */
+  background-color: transparent;
+  box-shadow: none;
 }
 
 h2 {
@@ -103,38 +124,9 @@ p[style*="color: red"] {
   display: block;
 }
 
-/* 버튼 영역 정리 */
 .form-group.mt-4 {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-}
-
-input[type="submit"],
-input[type="button"] {
-  padding: 8px 18px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: 6px;
-  cursor: pointer;
-  border: none;
-}
-
-input[type="submit"].btn-success {
-  background-color: #198754;
-  color: white;
-}
-
-input[type="submit"].btn-success:hover {
-  background-color: #157347;
-}
-
-input[type="button"].btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-input[type="button"].btn-secondary:hover {
-  background-color: #5c636a;
 }
 </style>

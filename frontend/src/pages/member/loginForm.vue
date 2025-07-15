@@ -33,8 +33,6 @@
     </form>
 
     <hr class="my-4" />
-
-    <!-- 소셜 로그인 -->
     <div class="social-login">
       <button class="btn btn-danger w-100" @click="loginWith('google')">Google 로그인</button>
       <button class="btn btn-success w-100" @click="loginWith('naver')">Naver 로그인</button>

@@ -128,14 +128,15 @@ const { form, onSubmit, handleFindZipcode } = useUserInfoEdit()
 }
 
 .btn-outline-secondary {
-  background-color: transparent;
+  background-color: #f8f9fa;
   border: none;
   color: #6c757d;
   font-weight: 500;
 }
 
 .btn-outline-secondary:hover {
-  background-color: rgba(108, 117, 125, 0.1);
+  background-color: #e2e6ea;
+  color: #212529;
 }
 
 .link-area {

@@ -20,8 +20,8 @@
     </div>
 
     <div class="form-group mt-4 d-flex gap-2">
-      <input type="submit" value="확인" class="btn btn-success" />
-      <input type="button" value="취소" class="btn btn-secondary" @click="onCancel" />
+      <button type="submit" class="btn btn-primary">확인</button>
+      <button type="button" class="btn btn-outline-secondary" @click="onCancel">취소</button>
     </div>
   </form>
 </template>
@@ -36,8 +36,8 @@ form {
   margin: 3rem auto;
   padding: 2rem 1.5rem;
   border-radius: 10px;
-  background-color: transparent; /* 흰 배경 제거 */
-  box-shadow: none; /* 박스 그림자 제거 */
+  background-color: transparent;
+  box-shadow: none;
   font-family: 'Pretendard', sans-serif;
 }
 
@@ -129,5 +129,35 @@ input[type="button"].btn-secondary {
 
 input[type="button"].btn-secondary:hover {
   background-color: #5c636a;
+}
+
+.btn {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+.btn-outline-secondary {
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  color: #495057;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #e2e6ea;
+  color: #212529;
 }
 </style>
