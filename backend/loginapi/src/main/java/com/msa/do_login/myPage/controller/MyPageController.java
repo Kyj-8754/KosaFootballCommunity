@@ -24,6 +24,8 @@ import com.msa.do_login.user.vo.UserStyle;
 import com.msa.do_login.user.vo.UserVO;
 import com.msa.do_login.webSocket.WebSocket;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,12 +33,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
+@Tag(name = "마이페이지 API", description = "마이페이지 기능 관련 API (정보 조회, 정보 수정 등)")
 public class MyPageController {
 	private final MyPageService myPageService;
 	private final MyPageDAO myPageDAO;
 	private final WebSocket websocket;
 	
 	// 회원 상세정보 조회
+	@Operation(summary = "회원 상세정보 조회", description = "회원 번호를 통해 상세 정보를 조회합니다.")
 	@GetMapping("/detailView")
 	public ResponseEntity<Map<String, Object>> getMemberDetail(@RequestParam int userNo) {
 	    UserVO userInfo = myPageService.getUserVO(userNo);
@@ -70,8 +74,9 @@ public class MyPageController {
 
 	    return ResponseEntity.ok(response);
 	}
-
 	
+	// 회원 정보 수정
+	@Operation(summary = "회원 정보 수정", description = "회원 번호를 통해 회원 정보를 수정합니다.")
 	@PostMapping("/update")
 	public ResponseEntity<Map<String, Object>> update(
 			@RequestParam("userNo") int userNo,
@@ -98,6 +103,7 @@ public class MyPageController {
 	}
 	
 	// 친구 목록 조회
+	@Operation(summary = "친구 목록 조회", description = "회원 번호를 통해 친구 목록을 조회합니다.")
 	@GetMapping("/friends")
 	public ResponseEntity<Map<String, Object>> getFriendList(@RequestParam("userNo") int userNo) {
 	    log.info("친구 목록 조회 요청 도착: userNo = {}", userNo);
@@ -118,6 +124,8 @@ public class MyPageController {
 	    return ResponseEntity.ok(res);
 	}
 	
+	// 다른 사용자의 친구 목록 조회
+	@Operation(summary = "다른 사용자의 친구 목록 조회", description = "다른 사용자의 친구 목록을 로그인한 사용자의 번호를 통해 조회합니다.")
 	@GetMapping("/otherFriends")
 	public ResponseEntity<Map<String, Object>> getOtherFriendList(
 	        @RequestParam("targetUserNo") int targetUserNo,
@@ -139,6 +147,8 @@ public class MyPageController {
 	    return ResponseEntity.ok(res);
 	}
 	
+	// 친구 검색
+	@Operation(summary = "친구 검색", description = "키워드를 기반으로 친구를 검색합니다.")
 	@GetMapping("/search")
 	public ResponseEntity<Map<String, Object>> searchFriends(@RequestParam("keyword") String keyword,
 			@RequestParam("loginUserNo") int loginUserNo) {
@@ -161,12 +171,12 @@ public class MyPageController {
 	    }
 	}
 	// 친구 신청 요청 
+	@Operation(summary = "친구 신청", description = "다른 사용자에게 친구 신청을 보냅니다.")
 	@PostMapping("/request")
 	public ResponseEntity<Map<String, Object>> requestFriend(@RequestBody Map<String, Object> requestBody) {
 	    Map<String, Object> response = new HashMap<>();
 	    
 	    String senderId = String.valueOf(requestBody.get("requesterNo"));
-	//    String senderUserName = (String) requestBody.get("requesterName");
 	    String receiverId = String.valueOf(requestBody.get("requestedNo"));
 
 	    // userNo 추출
@@ -201,7 +211,8 @@ public class MyPageController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 	    }
 	}
-	// 받은 신청 목록 
+	// 받은 신청 목록
+	@Operation(summary = "받은 친구 신청 목록", description = "로그인 사용자가 받은 친구 요청 목록을 조회합니다.")
 	@GetMapping("/pending")
 	public ResponseEntity<Map<String, Object>> getPendingRequests(@RequestParam("userNo") int userNo) {
 	    List<UserVO> pendingList = myPageService.getPendingRequests(userNo);
@@ -222,7 +233,9 @@ public class MyPageController {
 	    return ResponseEntity.ok(response);
 	}
 	
+	// 친구 요청 수락 
 	@PostMapping("/accept")
+	@Operation(summary = "친구 요청 수락", description = "수신한 친구 요청을 수락합니다.")
 	public ResponseEntity<Map<String, Object>> acceptFriend(@RequestBody Map<String, Integer> body) {
 	    int requesterNo = body.get("requesterNo");
 	    int receiverNo = body.get("requestedNo");
@@ -240,6 +253,8 @@ public class MyPageController {
 	    return ResponseEntity.ok(res);
 	}
 
+	// 친구 요청 거절
+	@Operation(summary = "친구 요청 거절", description = "수신한 친구 요청을 거절합니다.")
 	@PostMapping("/reject")
 	public ResponseEntity<Map<String, Object>> rejectFriend(@RequestBody Map<String, Integer> body) {
 	    int requesterNo = body.get("requesterNo");
@@ -258,6 +273,8 @@ public class MyPageController {
 	    return ResponseEntity.ok(res);
 	}
 	
+	// 프로필 정보 수정
+	@Operation(summary = "프로필 정보 수정", description = "회원 번호를 통해 프로필 정보를 수정합니다.")
 	@PostMapping("/profileUpdate")
 	public ResponseEntity<Map<String, Object>> profileUpdate(
 			@RequestParam("userNo") int userNo,

@@ -18,17 +18,21 @@ import com.msa.do_login.user.dto.SocialUserRegisterDTO;
 import com.msa.do_login.user.service.SocialService;
 import com.msa.do_login.user.vo.SocialAccount;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/oauth")
+@Tag(name = "소셜 로그인 API", description = "소셜 로그인 관련 API")
 public class SocialController {
 
     private final SocialService socialService;
 
     // 1. 클라이언트가 소셜 로그인 창으로 리다이렉트할 URL 요청
+    @Operation(summary = "소셜 로그인 인증 URL 요청", description = "클라이언트가 소셜 로그인 인증 URL을 요청합니다.")
     @GetMapping("/authorize/{provider}")
     public ResponseEntity<Map<String, String>> getAuthorizationUrl(@PathVariable String provider) {
         String url = socialService.buildAuthorizationUrl(provider);
@@ -36,6 +40,7 @@ public class SocialController {
     }
 
     // 2. 소셜 로그인 완료 후 리다이렉트되는 콜백 처리
+    @Operation(summary = "소셜 로그인 콜백 처리", description = "소셜 로그인 완료 후 콜백을 처리합니다.")
     @GetMapping("/callback/{provider}")
     public ResponseEntity<?> oauthCallback(
     		@PathVariable("provider") String provider,
@@ -91,6 +96,7 @@ public class SocialController {
     }
     
 	// 회원 가입
+    @Operation(summary = "소셜 회원 가입", description = "소셜 계정을 통해 회원 가입을 처리합니다.")
 	@PostMapping("/na/register")
 	public ResponseEntity<Map<String, Object>> register(@RequestBody SocialUserRegisterDTO dto) {
 		socialService.register(dto);
