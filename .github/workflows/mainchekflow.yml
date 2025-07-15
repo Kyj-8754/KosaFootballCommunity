@@ -123,8 +123,12 @@ jobs:
     # build 가 끝나야 실행하도록 설정
     needs: build
     name: 서버에 배포 단계
-    runs-on: [ self-hosted, label-me ]
+    runs-on: self-hosted
     steps:
+    # 깃 체크아웃
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    #  도커 허브 로그 
     - name: 운영서버에서 docker hub 로그인
       uses: docker/login-action@v1
       with:
@@ -133,8 +137,9 @@ jobs:
         
     - name: docker-compose에서 이미지 다운로드 및 실행
     # | 를 추가하면 여러개의 명령어를 추가할 수 있다.
+    # 넘어오는 디렉토리를 기준으로 docker-compose 실행
       run:  |
-        cd ~/helloWeb
+        cd ${{ github.workspace }}
         docker-compose down
         docker-compose pull
         docker-compose up -d
