@@ -129,7 +129,7 @@ jobs:
     - name: Ensure db_data volume directory exists
       run: |
         sudo mkdir -p /home/ubuntu/db_data
-        sudo chown -R $USER:$USER /home/ubuntu/db_data
+        sudo chown -R 999:999 /home/ubuntu/db_data
       
     #  도커 허브 로그 
     - name: 운영서버에서 docker hub 로그인
