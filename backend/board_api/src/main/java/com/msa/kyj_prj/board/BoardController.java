@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -33,7 +34,7 @@ public class BoardController {
     // 게시글 상세 조회
     @GetMapping("/{board_id}")
     @Operation(summary = "게시글 상세보기", description = "board_id를 기반으로 게시글 상세 데이터를 조회합니다.")
-    public ResponseEntity<?> getBoard(@PathVariable Long board_id) {
+    public ResponseEntity<?> getBoard(@Parameter(description = "게시글 id", example = "234") @PathVariable Long board_id) {
         try {
             Board board = boardService.findBoardByBno(board_id);
             if (board == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("게시글이 존재하지 않습니다.");
@@ -58,7 +59,7 @@ public class BoardController {
     // 게시글 수정
     @PutMapping("/{board_id}")
     @Operation(summary = "게시글 수정", description = "작성된 게시글을 수정합니다.")
-    public ResponseEntity<?> updateBoard(@PathVariable Long board_id, @RequestBody Board board) {
+    public ResponseEntity<?> updateBoard(@Parameter(description = "게시글 id", example = "234") @PathVariable Long board_id, @RequestBody Board board) {
         try {
             board.setBoard_id(board_id);
             boardService.updateBoard(board);
@@ -71,7 +72,7 @@ public class BoardController {
     // 게시글 삭제
     @DeleteMapping("/{board_id}")
     @Operation(summary = "게시글 삭제", description = "게시글을 삭제합니다.")
-    public ResponseEntity<?> deleteBoard(@PathVariable Long board_id) {
+    public ResponseEntity<?> deleteBoard(@Parameter(description = "게시글 id", example = "234") @PathVariable Long board_id) {
         try {
             boardService.deleteBoard(board_id);
             return ResponseEntity.ok(Map.of("result", "deleted"));
@@ -83,7 +84,7 @@ public class BoardController {
     // 게시글 조회수 증가
     @PostMapping("/{board_id}/increaseViewcount")
     @Operation(summary = "조회수 증가", description = "조회수를 증가시킵니다.")
-    public ResponseEntity<?> increaseViewCount(@PathVariable Long board_id) {
+    public ResponseEntity<?> increaseViewCount(@Parameter(description = "게시글 id", example = "234") @PathVariable Long board_id) {
         try {
             boardService.increaseViewCount(board_id);
             return ResponseEntity.ok(Map.of("result", "increased"));
@@ -95,8 +96,8 @@ public class BoardController {
     // 게시글 좋아요
     @PostMapping("/like")
     @Operation(summary = "게시글 좋아요", description = "게시글에 좋아요 처리를 합니다.")
-    public ResponseEntity<?> likeBoard(@RequestParam("board_id") Long board_id,
-                                       @RequestParam("user_no") int user_no) {
+    public ResponseEntity<?> likeBoard(@Parameter(description = "게시글 id", example = "234") @RequestParam("board_id") Long board_id,
+    		@Parameter(description = "유저 넘버", example = "3") @RequestParam("user_no") int user_no) {
         try {
             boardService.insertBoardLike(board_id, user_no);
             return ResponseEntity.ok(Map.of("result", "liked"));
@@ -108,8 +109,8 @@ public class BoardController {
     // 게시글 좋아요 취소
     @DeleteMapping("/like")
     @Operation(summary = "게시글 좋아요 취소", description = "게시글에 좋아요 취소 처리를 합니다.")
-    public ResponseEntity<?> unlikeBoard(@RequestParam("board_id") Long board_id,
-                                         @RequestParam("user_no") int user_no) {
+    public ResponseEntity<?> unlikeBoard(@Parameter(description = "게시글 id", example = "234") @RequestParam("board_id") Long board_id,
+    		@Parameter(description = "유저 넘버", example = "3") @RequestParam("user_no") int user_no) {
         try {
             boardService.deleteBoardLike(board_id, user_no);
             return ResponseEntity.ok(Map.of("result", "unliked"));
@@ -121,7 +122,7 @@ public class BoardController {
     // 게시글 좋아요 개수
     @GetMapping("/like/count")
     @Operation(summary = "게시글 좋아요 개수", description = "게시글의 좋아요 개수를 계산합니다.")
-    public ResponseEntity<?> countBoardLike(@RequestParam("board_id") Long board_id) {
+    public ResponseEntity<?> countBoardLike(@Parameter(description = "게시글 id", example = "234") @RequestParam("board_id") Long board_id) {
         try {
             int count = boardService.countBoardLike(board_id);
             return ResponseEntity.ok(Map.of("result", "success", "likeCount", count));
@@ -148,9 +149,9 @@ public class BoardController {
     @GetMapping("/recruitlist")
     @Operation(summary = "모집 게시판 리스트 출력", description = "모집 게시판의 목록을 조회합니다.")
     public ResponseEntity<?> getRecruitBoards(
-        @RequestParam(required = false) Integer userNo,
-        @RequestParam(required = false) String keyword,
-        @RequestParam(defaultValue = "desc") String sortDirection
+    		@Parameter(description = "유저 넘버", example = "3") @RequestParam(required = false) Integer userNo,
+    		@Parameter(description = "검색 키워드", example = "키워드") @RequestParam(required = false) String keyword,
+    		@Parameter(description = "정렬 기준", example = "desc")@RequestParam(defaultValue = "desc") String sortDirection
     ) {
         try {
             List<Board> result = boardService.findRecruitBoards(userNo, keyword, sortDirection);

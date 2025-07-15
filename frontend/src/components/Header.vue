@@ -69,7 +69,7 @@
             </a>
             <ul class="dropdown-menu show" v-if="showClubDropdown" style="position: absolute;">
               <li><router-link class="dropdown-item" :to="{ name: 'Club_List' }">클럽 순위</router-link></li>
-              <li><router-link class="dropdown-item" :to="{ name: 'Club_MatchSchedule' }">클럽 매치 일정</router-link></li>
+              <li><router-link class="dropdown-item" :to="{ name: 'Club_MatchSchedule' }">리그 매치 일정</router-link></li>
               <li><router-link class="dropdown-item" :to="{ name: 'Recruit_List' }">클럽 모집 게시판</router-link></li>
             </ul>
           </li>
