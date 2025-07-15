@@ -73,16 +73,16 @@ jobs:
       # 백엔 Gradle 빌드
       - name: Gradle bootJar for each API
         run: |
-         cd backend/alarm_api && chmod +x ./gradlew && ./gradlew build . -x test
-         cd ../club_api && chmod +x ./gradlew && ./gradlew build . -x test
-         cd ../kakaopay_api && chmod +x ./gradlew && ./gradlew build . -x test
-         cd ../recruit_api && chmod +x ./gradlew && ./gradlew build . -x test
-         cd ../reservation_api && chmod +x ./gradlew && ../gradlew build . -x test
-         cd ../stadium_api && chmod +x ./gradlew && ./gradlew build . -x test
-         cd ../weather_api && chmod +x ./gradlew && ./gradlew build . -x test
-         cd ../security/security_api && chmod +x ./gradlew && ./gradlew build . -x test
-         cd ../board_api && chmod +x ./gradlew && ./gradlew build . -x test
-         cd ../login_api && chmod +x ./gradlew && ./gradlew build . -x test
+         cd backend/alarm_api && chmod +x ./gradlew && ./gradlew build -x test
+         cd ../club_api && chmod +x ./gradlew && ./gradlew build -x test
+         cd ../kakaopay_api && chmod +x ./gradlew && ./gradlew build -x test
+         cd ../recruit_api && chmod +x ./gradlew && ./gradlew build -x test
+         cd ../reservation_api && chmod +x ./gradlew && ../gradlew build -x test
+         cd ../stadium_api && chmod +x ./gradlew && ./gradlew build -x test
+         cd ../weather_api && chmod +x ./gradlew && ./gradlew build -x test
+         cd ../security/security_api && chmod +x ./gradlew && ./gradlew build -x test
+         cd ../board_api && chmod +x ./gradlew && ./gradlew build -x test
+         cd ../login_api && chmod +x ./gradlew && ./gradlew build -x test
           
 
      # 이미지 빌드
