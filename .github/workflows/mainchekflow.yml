@@ -24,13 +24,6 @@ jobs:
         run: |
           npm install
           npm run build
-      
-      # DB 볼륨 카피
-      - name: mariadbCopy
-        run: |
-            if [ -d ./db_data ]; then
-             cp -r ./db_data ~/KosaFootballCommunity/
-            fi
 
       # jdk 설치
       - name: Set up JDK 17
