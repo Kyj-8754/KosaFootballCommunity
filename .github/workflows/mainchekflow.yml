@@ -125,9 +125,11 @@ jobs:
     name: 서버에 배포 단계
     runs-on: self-hosted
     steps:
+    
     # 깃 체크아웃
     - name: Checkout repository
       uses: actions/checkout@v3
+      
     #  도커 허브 로그 
     - name: 운영서버에서 docker hub 로그인
       uses: docker/login-action@v1
@@ -135,6 +137,14 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         
+    # 프론트엔드 run build
+    - name: Build Frontend
+      working-directory: ./frontend
+      run: |
+         npm install
+         npm run build    
+         
+    # db_data 폴더 만들기
     - name: Ensure db_data directory exists
       run: mkdir -p ${{ github.workspace }}/db_data    
         
