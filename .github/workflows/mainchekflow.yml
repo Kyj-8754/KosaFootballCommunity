@@ -140,8 +140,8 @@ jobs:
     # 넘어오는 디렉토리를 기준으로 docker-compose 실행
       run:  |
         cd ${{ github.workspace }}
-        docker-compose down
-        docker-compose pull
-        docker-compose up -d
+        docker compose down
+        docker compose pull
+        docker compose up -d
     
     
