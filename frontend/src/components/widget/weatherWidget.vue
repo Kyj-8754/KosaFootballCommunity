@@ -1,5 +1,5 @@
 <template>
-  <div class="weather-widget">
+  <div class="weather-widget" :style="{ opacity: opacity }">
     <!-- 상단 영역 -->
     <div class="top-section">
       <WeatherImageBox :sky="current.SKY" :pty="current.PTY" />
@@ -8,23 +8,28 @@
         <WeatherDetail :data="current" />
       </div>
     </div>
+
     <!-- 하단 시간별 예보 -->
     <ForecastTimeline :forecasts="forecastList" />
-  </div>
-  <!--
-  <div class="weather-widget">
-    <div class="top-section">
-      <WeatherImageBox :sky="current.SKY" :pty="current.PTY" />
-      <div class="info-section">
-        <RegionSelector v-model="region" />
-        <WeatherDetail :data="current" />
-      </div>
-    <ForecastTimeline :forecasts="forecastList" />
-    </div>
-    <div class="update-info">※ 이 단기예보 데이터는 매일 0시와 12시에 갱신됩니다.</div>
-  </div>-->
-</template>
 
+    <!-- ✅ 투명도 조절 슬라이더 -->
+    <div
+      class="opacity-slider"
+      @mousedown.stop
+      @mouseup.stop
+      @mousemove.stop
+    >
+      <label>투명도: {{ (opacity * 100).toFixed(0) }}%</label>
+      <input
+        type="range"
+        min="0.1"
+        max="1"
+        step="0.01"
+        v-model="opacity"
+      />
+    </div>
+  </div>
+</template>
 
 <script setup>
 import { ref, watchEffect } from 'vue'
@@ -33,6 +38,8 @@ import WeatherImageBox from './weatherImageBox.vue'
 import RegionSelector from './regionSelector.vue'
 import WeatherDetail from './weatherDetail.vue'
 import ForecastTimeline from './forecastTimeline.vue'
+
+const opacity = ref(1)
 
 const region = ref('강남구')
 const forecastList = ref([])
@@ -70,9 +77,11 @@ watchEffect(async () => {
   width: 300px;
   padding: 16px;
   margin: 0 auto;
-  background-color: #f3f4f6;
+  background-color: #ffffff;        /* ✅ 흰색 배경 */
+  border: 1px solid #d1d5db;        /* ✅ 연한 회색 테두리 (Tailwind 기준 gray-300) */
   border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05); /* ✅ 그림자 약하게 */
+  user-select: none;
 }
 
 .top-section {
@@ -93,6 +102,17 @@ watchEffect(async () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  /*margin-right: 8px;*/
+}
+
+.opacity-slider {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #555;
+  opacity: 1 !important;
+}
+
+.opacity-slider input[type='range'] {
+  width: 100%;
+  margin-top: 4px;
 }
 </style>

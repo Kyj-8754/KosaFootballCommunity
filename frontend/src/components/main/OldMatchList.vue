@@ -1,7 +1,9 @@
 <template>
   <div class="recent-match-container">
-    <!-- 완료된 매치 리스트 -->
-    <div class="match-item-list">
+    <h5>매치 결과</h5>
+
+    <!-- 완료된 매치가 있을 경우 -->
+    <div v-if="matches.length > 0" class="match-item-list">
       <div
         v-for="match in matches"
         :key="match.match_id"
@@ -38,6 +40,9 @@
         </div>
       </div>
     </div>
+
+    <!-- 완료된 매치가 없을 경우 -->
+    <div v-else class="no-result">검색 결과가 없습니다</div>
   </div>
 </template>
 
@@ -161,5 +166,12 @@ const getStatusLabel = (code) => {
   background-color: #f8f9fa;
   border: 1px solid #ddd;
   border-radius: 8px;
+}
+
+.no-result {
+  text-align: center;
+  color: #999;
+  font-size: 0.9rem;
+  margin-top: 1rem;
 }
 </style>

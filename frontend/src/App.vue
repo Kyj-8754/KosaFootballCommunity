@@ -3,23 +3,36 @@
     <Header />
 
     <div class="row">
+      <!--
       <div class="col-md-2">
         <NavArea />
       </div>
       <div class="col-md-10">
+      -->
+      <div>
         <router-view />
       </div>
     </div>
 
-    <AlarmToast /> <!-- 🔔 알림 토스트 전역 표시 -->
-
+    <AlarmToast />
     <Footer />
     <scrollUp />
+
+    <!-- ✅ 고정 위치 날씨 위젯 -->
+    <!--
+    <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
+      <weatherWidget />
+    </div>
+    -->
+    <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
+      <weatherWidget />
+    </div>
   </div>
 </template>
 
+
 <script setup>
-import { provide, ref, computed, onMounted, watch } from 'vue';
+import { provide, ref, computed, onMounted, watch, onBeforeUnmount } from 'vue';
 import Header from '@/components/Header.vue';
 import NavArea from '@/components/NavArea.vue';
 import Footer from '@/components/Footer.vue';
@@ -28,6 +41,7 @@ import { connectWebSocket } from '@/utils/stomp';
 import { useAlarmStore } from '@/stores/alarmStore';
 import scrollUp from '@/components/scrollUp.vue'
 import { injectSetToken } from '@/utils/tokenGenerator.js'
+import weatherWidget from './components/widget/weatherWidget.vue';
 
 const alarmStore = useAlarmStore();
 
@@ -97,6 +111,85 @@ provide('userName', userName)
 provide('authCode', authCode)
 provide('loginType', loginType)
 
+const widget = ref(null)
+
+let isDragging = false
+let offsetX = 0
+let offsetY = 0
+
+const startDrag = (e) => {
+  isDragging = true
+  const rect = widget.value.getBoundingClientRect()
+  offsetX = e.clientX - rect.left
+  offsetY = e.clientY - rect.top
+
+  document.addEventListener('mousemove', onDrag)
+  document.addEventListener('mouseup', endDrag)
+}
+
+// 상하좌우로 이동
+// const onDrag = (e) => {
+//   if (!isDragging) return
+
+//   const widgetEl = widget.value
+//   const widgetRect = widgetEl.getBoundingClientRect()
+//   const widgetWidth = widgetRect.width
+//   const widgetHeight = widgetRect.height
+
+//   const viewportWidth = window.innerWidth
+//   const viewportHeight = window.innerHeight
+
+//   // 계산된 위치
+//   let left = e.clientX - offsetX
+//   let top = e.clientY - offsetY
+
+//   // ✅ 화면 밖으로 나가지 않도록 제한
+//   if (left < 0) left = 0
+//   if (top < 0) top = 0
+//   if (left + widgetWidth > viewportWidth) {
+//     left = viewportWidth - widgetWidth
+//   }
+//   if (top + widgetHeight > viewportHeight) {
+//     top = viewportHeight - widgetHeight
+//   }
+
+//   // 스타일 적용
+//   widgetEl.style.left = `${left}px`
+//   widgetEl.style.top = `${top}px`
+//   widgetEl.style.right = 'auto'
+// }
+
+// 상하로만 이동
+const onDrag = (e) => {
+  if (!isDragging) return;
+
+  const widgetEl = widget.value;
+  const widgetRect = widgetEl.getBoundingClientRect();
+  const widgetHeight = widgetRect.height;
+  const viewportHeight = window.innerHeight;
+
+  // ❌ left는 고정 (초기 위치 유지)
+  const left = widgetEl.offsetLeft;
+
+  // ✅ top만 계산
+  let top = e.clientY - offsetY;
+
+  // ✅ 화면 위아래로 나가지 않도록 제한
+  if (top < 0) top = 0;
+  if (top + widgetHeight > viewportHeight) {
+    top = viewportHeight - widgetHeight;
+  }
+
+  widgetEl.style.left = `${left}px`;
+  widgetEl.style.top = `${top}px`;
+  widgetEl.style.right = 'auto';
+};
+
+const endDrag = () => {
+  isDragging = false
+  document.removeEventListener('mousemove', onDrag)
+  document.removeEventListener('mouseup', endDrag)
+}
 
 onMounted(() => {
 
@@ -119,3 +212,17 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+.floating-weather-widget {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 999;
+  cursor: grab;
+}
+
+.floating-weather-widget:active {
+  cursor: grabbing;
+}
+</style>

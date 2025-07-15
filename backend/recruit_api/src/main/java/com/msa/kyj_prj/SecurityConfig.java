@@ -11,18 +11,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configure(http))
+            .cors(cors -> cors.configure(http)) // CORS 활성화
             .authorizeHttpRequests(auth -> auth
-                // Swagger 관련 경로는 인증 없이 허용
-                .requestMatchers(
-                    "/swagger-ui/**",
-                    "/swagger-ui.html",
-                    "/v3/api-docs/**",
-                    "/swagger-resources/**",
-                    "/webjars/**"
-                ).permitAll()
-                // 그 외는 추후 인증 붙이면 authenticated로 변경
-                .anyRequest().permitAll()
+                .anyRequest().permitAll()      // 모든 요청 허용 (테스트용)
             );
 
         return http.build();
