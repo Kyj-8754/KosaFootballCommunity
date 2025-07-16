@@ -167,11 +167,6 @@ const runWeatherCollector = async () => {
   align-items: center;
 }
 
-.auth-actions a:hover {
-  color: #0d6efd;
-  text-decoration: underline;
-}
-
 /* 알림 드롭다운 */
 .auth-actions .alarm {
   margin-left: 0.5rem;
