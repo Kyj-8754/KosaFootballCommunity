@@ -125,7 +125,7 @@
 
 <script setup>
 import { inject, computed, ref, watch } from "vue";
-import logoImage from "@/assets/image/bannerlogo.jpg";
+import logoImage from '/public/kosabanner.png'
 
 // ✅ AlarmDropdown 컴포넌트 import 추가
 import AlarmDropdown from "@/components/common/AlarmDropdown.vue";
