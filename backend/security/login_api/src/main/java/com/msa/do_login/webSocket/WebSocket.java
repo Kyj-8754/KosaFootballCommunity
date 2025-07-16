@@ -30,7 +30,7 @@ public class WebSocket {
         alarm.setSenderUserName(senderUserName);
         alarm.setReceiverId(receiverId);
         alarm.setMessage(senderUserName + "님이 친구 신청을 보냈습니다!");
-	    alarm.setUrl("/friend");
+	    alarm.setUrl("member/friend");
 	    
 	    try {
 	        restTemplate.postForEntity(alarmApiUrl + "/alarm/send", alarm, Void.class);

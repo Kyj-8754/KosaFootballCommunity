@@ -174,7 +174,7 @@ const filteredRecruits = computed(() => {
 async function fetchRecruits(sortType = "") {
   try {
     const url =
-      sortType === "popular" ? "/recruits_api/recruits?sort=popular" : "/recruits_api/recruits";
+      sortType === "popular" ? "/recruit_api/recruits?sort=popular" : "/recruit_api/recruits";
     const response = await axios.get(url);
     recruits.value = response.data;
   } catch (e) {

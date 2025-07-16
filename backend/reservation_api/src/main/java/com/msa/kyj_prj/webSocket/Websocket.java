@@ -57,7 +57,7 @@ public class Websocket {
         String message = (match_title != null)
                 ? "[" + match_title + "] 경기가 예약 취소로 인해 취소되었습니다."
                 : "예약이 취소되었습니다.";
-        String url = (match_id != null) ? "/match/" + match_id : "/reservation/" + reservation_id;
+        String url = (match_id != null) ? "match/" + match_id : "/reservation/" + reservation_id;
 
         
         // 5. 참가자 전원에게 알림 (매치 연동된 경우)
