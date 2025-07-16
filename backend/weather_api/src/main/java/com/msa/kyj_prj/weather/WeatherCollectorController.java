@@ -7,14 +7,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/weather-collect")
+@Tag(name = "날씨 예보 수집", description = "기상청 예보 데이터 관련 API를 통한 데이터 수집")
 public class WeatherCollectorController {
 
     @Autowired
     private WeatherCollectorService weatherCollectorService;
 
     @GetMapping("/run")
+    @Operation(summary = "단기예보 수집", description = "해당 메서드가 호출될 경우 서울의 단기 예보 데이터를 수집합니다.")
     public ResponseEntity<?> runCollection() {
         try {
             weatherCollectorService.collectAndStoreForecasts();

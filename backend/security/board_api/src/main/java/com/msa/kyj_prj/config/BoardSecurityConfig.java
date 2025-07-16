@@ -30,6 +30,8 @@ public class BoardSecurityConfig extends BaseSecurityConfig{
 		((AuthorizedUrl) authorize.requestMatchers("/match-log/**")).permitAll();
 		((AuthorizedUrl) authorize.requestMatchers("/reply/**")).permitAll();
 		((AuthorizedUrl) authorize.requestMatchers("/file/**")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/swagger-ui/**")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/v3/api-docs/**")).permitAll();
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {

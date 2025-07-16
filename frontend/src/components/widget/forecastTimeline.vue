@@ -88,17 +88,12 @@ function ptyText(code) {
   color: #666;
   padding: 2px 6px;
   border-radius: 4px;
-  background-color: #f9f9f9;
   cursor: pointer;
   user-select: none;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   transition: background-color 0.2s ease-in-out;
-}
-
-.toggle-button:hover {
-  background-color: #e5e7eb; /* hover:bg-gray-100 */
 }
 
 .update-info {

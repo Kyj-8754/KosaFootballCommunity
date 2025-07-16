@@ -21,7 +21,7 @@
   <caption class="text-center fs-5 fw-bold">회원 목록</caption>
     <thead class="table-light">
       <tr>
-        <th></th>
+        <th>번호</th>
         <th>이름</th>
         <th>주소</th>
         <th>등록일</th>
@@ -148,31 +148,38 @@ onMounted(() => {
 <style scoped>
 body {
   background-color: #f8f9fa;
-  font-family: sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
 .memberList-table {
-  width: 800px;
+  width: 100%;
+  max-width: 800px;
   margin: 40px auto;
   border-collapse: collapse;
-  background-color: white;
-  border-radius: 8px;
+  background-color: #fff;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-size: 0.95rem;
 }
 
 .memberList-table th,
 .memberList-table td {
-  padding: 12px;
+  padding: 14px 12px;
   border: 1px solid #dee2e6;
   text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .memberList-table caption {
   caption-side: top;
-  font-size: 22px;
-  font-weight: bold;
-  padding: 15px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  padding: 18px 0;
+  color: #212529;
 }
 
 .clickable-row:hover {
@@ -181,32 +188,79 @@ body {
 }
 
 .controls {
-  width: 800px;
+  width: 100%;
+  max-width: 800px;
   margin: 30px auto 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.pagination-area {
-  width: 800px;
+.input-group {
+  flex-wrap: nowrap;
+  min-width: 360px;
+}
+
+.input-group input,
+.input-group select,
+.input-group .btn {
+  font-size: 0.9rem;
+  height: 38px;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.input-group input,
+.input-group select {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+}
+
+.input-group input {
+  width: 180px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.input-group select {
+  width: 120px;
+}
+
+.input-group .btn {
+  white-space: nowrap;
+  padding: 6px 18px;
+  font-weight: 600;
+}
+
+.input-group .btn {
+  padding: 6px 14px;
+}
+
+.pagination-area,
+.text-center.mt-4 {
+  width: 100%;
+  max-width: 800px;
   margin: 20px auto;
   text-align: center;
 }
 
-.pagination-area .btn-link {
-  margin: 0 5px;
-  text-decoration: none;
-  color: #0d6efd;
-  font-weight: normal;
-  padding: 0.25rem 0.5rem;
+.btn-sm {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 4px;
 }
 
-.pagination-area .btn-link:hover {
-  text-decoration: underline;
+.btn-outline-secondary,
+.btn-outline-primary {
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-.pagination-area .btn-link.fw-bold {
-  font-weight: bold;
+.btn-outline-secondary:hover,
+.btn-outline-primary:hover {
+  opacity: 0.9;
+  background-color: #e9ecef;
 }
 </style>

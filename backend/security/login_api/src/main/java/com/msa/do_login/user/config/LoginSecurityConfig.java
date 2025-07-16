@@ -31,6 +31,10 @@ public class LoginSecurityConfig extends BaseSecurityConfig {
 	protected void customizeAuthorization(AuthorizationManagerRequestMatcherRegistry authorize) throws Exception {
 		((AuthorizedUrl) authorize.requestMatchers("/user/na/**")).permitAll();
 		((AuthorizedUrl) authorize.requestMatchers("/oauth/**")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/v3/api-docs/**")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/swagger-ui/**")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/swagger-ui.html")).permitAll();
+		((AuthorizedUrl) authorize.requestMatchers("/webjars/**")).permitAll();
 		((AuthorizedUrl) authorize.requestMatchers("/mypage/**")).authenticated();
 	}
 	

@@ -1,125 +1,243 @@
 <template>
-  <div class="container my-5" style="max-width: 900px;">
+  <div class="container my-5">
     <h2 class="fw-bold mb-3">모집 게시판</h2>
 
-    <!-- 등록 버튼 + 정렬 버튼 + 팀명 검색창 -->
+    <!-- 버튼 우측 정렬 -->
+    <div class="d-flex justify-content-end mb-3">
+      <router-link
+        to="/club/clubMatchSchedule"
+        class="tab-btn me-2"
+        :class="{ active: isActiveTab('/club/clubMatchSchedule') }"
+      >
+        리그 일정
+      </router-link>
+      <router-link
+        to="/club"
+        class="tab-btn"
+        :class="{ active: isActiveTab('/club') }"
+      >
+        클럽 순위
+      </router-link>
+    </div>
+
+    <!-- 버튼 + 검색/정렬 한 줄 -->
     <div class="mb-3 d-flex justify-content-between align-items-center">
-      <router-link v-if="hasClub" to="/recruitBoard/new" class="btn btn-primary btn-sm"
-      > 등록하기</router-link>
-
-
+      <!-- 왼쪽: 등록/클럽생성 버튼 한 줄로 -->
+      <div class="d-flex align-items-center">
+        <router-link
+          v-if="hasClub"
+          to="/recruitBoard/new"
+          class="btn btn-primary btn-sm me-2"
+        >
+          등록하기
+        </router-link>
+        <button class="btn btn-outline-primary btn-sm" @click="goToClubCreate">
+          클럽 생성하기
+        </button>
+      </div>
+      <!-- 오른쪽: 검색/정렬 -->
       <div class="d-flex align-items-center">
         <input
           type="text"
           v-model="searchTeam"
           placeholder="팀명 검색"
           class="form-control form-control-sm me-2"
-          style="width: 150px;"
+          style="width: 200px"
         />
-        <button class="btn btn-outline-primary btn-sm me-2" @click="fetchRecruits()">최신순</button>
-        <button class="btn btn-outline-secondary btn-sm" @click="fetchRecruits('popular')">인기순</button>
+        <button
+          class="btn btn-outline-primary btn-sm me-2"
+          @click="fetchRecruits()"
+        >
+          최신순
+        </button>
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          @click="fetchRecruits('popular')"
+        >
+          인기순
+        </button>
       </div>
     </div>
 
     <!-- 모집글 목록 -->
-    <div v-if="filteredRecruits.length === 0" class="alert alert-warning">등록된 모집글이 없습니다.</div>
-    <ul v-else class="list-group">
+    <div v-if="filteredRecruits.length === 0" class="alert alert-warning">
+      등록된 모집글이 없습니다.
+    </div>
+    <ul class="list-group border rounded" style="overflow: hidden">
       <router-link
         v-for="recruit in filteredRecruits"
         :key="recruit.bno"
         :to="`/recruitBoard/${recruit.bno}`"
         tag="li"
-        class="list-group-item d-flex justify-content-between align-items-start text-dark text-decoration-none"
-        style="cursor: pointer;"
+        class="list-group-item d-flex justify-content-between align-items-center text-dark text-decoration-none"
+        style="
+          cursor: pointer;
+          border-bottom: 1px solid #e0e0e0;
+          background: #fff;
+          min-height: 58px;
+        "
       >
-        <!-- 팀명 -->
-        <div class="fw-bold me-3" style="width: 30%; padding-top: 12px;">
+        <!-- 클럽명 -->
+        <div
+          class="fw-bold me-3"
+          style="
+            width: 30%;
+            display: flex;
+            align-items: center;
+            padding-left: 18px;
+            height: 100%;
+          "
+        >
           {{ recruit.club_name }}
         </div>
 
-        <!-- 모집글 제목 및 기타 정보 -->
-        <div class="flex-grow-1">
-          <div class="fw-bold">{{ recruit.title }}</div>
-          <div class="small text-muted mt-1">
-            조회수: {{ recruit.view_count }} |
-            등록일: {{ formatDate(recruit.reg_date) }}
+        <!-- 모집글 제목 및 기타 정보 (정확하게 세로 중앙!) -->
+        <div
+          class="flex-grow-1"
+          style="
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 30px;
+            gap: 2px;
+            height: 100%;
+          "
+        >
+          <div
+            class="fw-bold"
+            style="font-size: 1.09em; line-height: 1.25; margin-bottom: 2px"
+          >
+            {{ recruit.title }}
           </div>
+          <div class="small text-muted" style="line-height: 1.2; margin: 0">
+            조회수: {{ recruit.view_count }} | 등록일:
+            {{ formatDate(recruit.reg_date) }}
+          </div>
+        </div>
+
+        <!-- 신청수 뱃지 + 모집 상태 뱃지 -->
+        <div class="d-flex align-items-center" style="gap: 8px;">
+          <span
+            class="badge bg-light text-dark"
+            style="font-size: 0.98em; min-width: 68px; font-weight: normal;"
+          >
+            신청 {{ recruit.apply_count }}명
+          </span>
+          <span
+            class="badge"
+            :class="recruit.is_closed === 1 ? 'bg-secondary' : 'bg-success'"
+            style="font-size: 0.98em; min-width: 68px"
+          >
+            {{ recruit.is_closed === 1 ? "모집 마감" : "모집 중" }}
+          </span>
         </div>
       </router-link>
     </ul>
   </div>
 </template>
 
-<script>
-import axios from 'axios'
-import { inject } from 'vue'  // ✅ App.vue에서 제공한 전역값(userNo 등)을 주입받기 위해 사용
 
-export default {
-  name: 'RecruitList',
+<script setup>
+import { ref, computed, onMounted, inject } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
-  // ✅ Composition API 방식으로 setup() 내에서 inject() 호출
-  setup() {
-    const userNo = inject('userNo'); // App.vue에서 provide한 userNo를 받아옴
-    return { userNo }; // data나 method 등에서 사용할 수 있게 반환
-  },
+// 1. provide된 값 받기
+const token = inject("token");
+const userNo = inject("userNo");
+const router = useRouter();
+const route = useRoute();
+function isActiveTab(path) {
+  return route.path === path;
+}
+// const fallbackImg = "https://placehold.co/40x40?text=IMG";
+// // ✅ 이미지 로딩 실패 시 기본 이미지로 대체
+// const handleImageError = (event) => {
+//   event.target.src = fallbackImg;
+// };
 
-  data() {
-    return {
-      recruits: [],       // 모집글 리스트
-      searchTeam: '',     // 팀명 검색 키워드
-      hasClub: false      // ✅ 로그인한 사용자가 클럽을 보유하고 있는지 여부
-    };
-  },
+// 2. 상태(reactive 변수)
+const recruits = ref([]);
+const searchTeam = ref("");
+const hasClub = ref(false);
 
-  computed: {
-    // ✅ 입력된 검색 키워드와 모집글 목록의 club_name을 비교해서 필터링
-    filteredRecruits() {
-      const keyword = this.searchTeam.toLowerCase();
-      return this.recruits.filter(recruit =>
-        (recruit.club_name || '').toLowerCase().includes(keyword)
-      );
-    }
-  },
+// 3. computed
+const filteredRecruits = computed(() => {
+  const keyword = searchTeam.value.toLowerCase();
+  return recruits.value.filter((recruit) =>
+    (recruit.club_name || "").toLowerCase().includes(keyword)
+  );
+});
 
-  created() {
-    this.fetchRecruits();     // ✅ 컴포넌트가 생성될 때 모집글 리스트 요청
-    this.checkHasClub();      // ✅ 로그인한 유저가 클럽이 있는지 여부 확인
-  },
-
-  methods: {
-    // ✅ 모집글 목록 API 호출 함수
-    async fetchRecruits(sortType = '') {
-      try {
-        // 인기순 정렬이면 쿼리 파라미터 추가, 아니면 기본
-        const url = sortType === 'popular' ? '/recruits_api?sort=popular' : '/recruits_api';
-        const response = await axios.get(url); // GET 요청
-        this.recruits = response.data;         // 결과 저장
-      } catch (e) {
-        alert('모집글을 불러오는 데 실패했습니다.');
-        console.error(e);
-      }
-    },
-
-    // ✅ 클럽 보유 여부 확인 함수
-    async checkHasClub() {
-      // 로그인 정보가 없다면 종료
-      if (!this.userNo) return;
-
-      try {
-        // /club_api/hasClub/{userNo} 엔드포인트로 요청
-        const response = await axios.get(`/club_api/hasClub/${this.userNo}`);
-        this.hasClub = response.data.result; // 응답의 result 값(true/false)을 저장
-      } catch (e) {
-        console.error('클럽 조회 실패', e);
-        this.hasClub = false; // 오류 발생 시 안전하게 false 처리
-      }
-    },
-
-    // ✅ 날짜 포맷 함수 (yyyy-MM-dd 형식으로 변환)
-    formatDate(dateTime) {
-      if (!dateTime || typeof dateTime !== 'string') return '';
-      return dateTime.split(' ')[0].split('T')[0]; // 공백 또는 T 기준으로 앞부분만 추출
-    }
+// 4. 메서드
+async function fetchRecruits(sortType = "") {
+  try {
+    const url =
+      sortType === "popular" ? "/recruits_api?sort=popular" : "/recruits_api";
+    const response = await axios.get(url);
+    recruits.value = response.data;
+  } catch (e) {
+    alert("모집글을 불러오는 데 실패했습니다.");
+    console.error(e);
   }
 }
+
+async function checkHasClub() {
+  if (!userNo?.value) return;
+  try {
+    const response = await axios.get(`/club_api/hasClub/${userNo.value}`);
+    hasClub.value = response.data.result;
+  } catch (e) {
+    console.error("클럽 조회 실패", e);
+    hasClub.value = false;
+  }
+}
+
+function formatDate(dateTime) {
+  if (!dateTime || typeof dateTime !== "string") return "";
+  return dateTime.split(" ")[0].split("T")[0];
+}
+
+function goToClubCreate() {
+  console.log("token:", token);
+  console.log("token.value:", token?.value);
+  if (token?.value) {
+    router.push("/club/registForm");
+  } else {
+    alert("클럽 생성을 하려면 로그인해야 합니다.");
+    router.push("/member/loginForm");
+  }
+}
+
+// 5. 라이프사이클
+onMounted(() => {
+  fetchRecruits();
+  checkHasClub();
+});
 </script>
+<style scoped>
+.tab-btn {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da; /* 연회색 테두리 */
+  border-radius: 0.25rem;
+  background-color: white;
+  color: black;
+  text-decoration: none;
+  font-weight: 500;
+  transition: none;
+}
+
+.tab-btn:hover {
+  background-color: white !important;
+  color: black !important;
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+}
+
+.tab-btn.active {
+  background-color: white !important;
+  color: black !important;
+  border-color: black !important; /* 강조하고 싶다면 */
+}
+</style>
