@@ -47,7 +47,7 @@
       </router-link>
     </div>
 
-    <p v-if="clubs.length === 0" class="mt-3">클럽 데이터가 없습니다.</p>
+    <p v-if="clubs.length === 0" class="mt-3">검색 결과가 없습니다.</p>
   </div>
 </template>
 

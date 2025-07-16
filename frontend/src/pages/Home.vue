@@ -21,11 +21,18 @@
         <!--
         <weatherWidget/>
         -->
-        <BoardCategoryTabs />
-        <RecentMatchList />
-        <OldMatchList />
         <ClubRanking />
-       
+        <!-- 🔽 추가: RecentMatchList와 OldMatchList를 좌우 배치 -->
+        <div class="match-list-row d-flex gap-3 mb-4">
+          <div class="flex-fill">
+            <RecentMatchList />
+          </div>
+          <div class="flex-fill">
+            <OldMatchList />
+          </div>
+        </div>
+        <BoardCategoryTabs />
+        
         <!-- <clubMatchList :clubId="4"/> -->
        
       </main>
@@ -89,5 +96,10 @@ function update() {
   display: flex;       /* 또는 display: flex; flex-direction: column; */
   flex-direction: column;  /* 수직 정렬 시 */
   gap: 16px;           /* 자식들 사이의 간격 */
+}
+.match-list-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px; /* 요소 사이 간격 */
 }
 </style>
