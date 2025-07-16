@@ -76,7 +76,7 @@ export default {
     fetchAlarms() {
       if (!this.userNo) return;
       // ✅ 프록시 주소로 변경!
-      axios.get('/alarm_api/history', {
+      axios.get('/alarm_api/alarm/history', {
         params: { receiver_id: this.userNo, page: 1, size: 10 }
       }).then(res => {
         this.alarms = res.data;
@@ -88,7 +88,7 @@ export default {
     },
     fetchCount() {
       // ✅ 프록시 주소로 변경!
-      axios.get('/alarm_api/history/count', {
+      axios.get('/alarm_api/alarm/history/count', {
         params: { receiver_id: this.userNo }
       }).then(res => {
         this.alarmCount = res.data;
@@ -96,12 +96,12 @@ export default {
     },
     readAlarm(alarmId) {
       // ✅ 프록시 주소로 변경!
-      axios.put(`/alarm_api/history/read/${alarmId}`).then(() => {
+      axios.put(`/alarm_api/alarm/history/read/${alarmId}`).then(() => {
         this.fetchAlarms();
       });
     },
   readAll() {
-  axios.put('/alarm_api/history/read/all', null, {
+  axios.put('/alarm_api/alarm/history/read/all', null, {
   params: { receiver_id: this.userNo }
   }).then(() => {
   this.alarms.forEach(alarm => alarm.read_yn = 'Y');
@@ -113,13 +113,13 @@ export default {
 ,
     deleteAlarm(alarmId) {
       // ✅ 프록시 주소로 변경!
-      axios.delete(`/alarm_api/history/${alarmId}`).then(() => {
+      axios.delete(`/alarm_api/alarm/history/${alarmId}`).then(() => {
         this.fetchAlarms();
       });
     },
     deleteAll() {
       // ✅ 프록시 주소로 변경!
-      axios.delete('/alarm_api/history/all', {
+      axios.delete('/alarm_api/alarm/history/all', {
         params: { receiver_id: this.userNo }
       }).then(() => {
         this.fetchAlarms();
