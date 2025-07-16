@@ -40,4 +40,4 @@ out/
 .DS_Store
 
 # 시크릿키 깃 올라가지 않도록
-/src/main/resources/application-secret.properties
+application-secret.properties

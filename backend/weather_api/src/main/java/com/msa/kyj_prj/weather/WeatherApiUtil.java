@@ -2,6 +2,7 @@ package com.msa.kyj_prj.weather;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -15,9 +16,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class WeatherApiUtil {
-
-    private static final String SERVICE_KEY = "hhJrtCIbQi3NSeHNduSiz4vmFmSGrSO6GWLdls+pc3Ia0rIavAg472tL3bkf4c73d5rinqBCoplCiseQsMZoOg==";
-    private static final String BASE_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
+	
+	@Value("${weather.service.key}")
+    private static String SERVICE_KEY;
+	@Value("${weather.base.url}")
+	private static String BASE_URL;
 
     public static List<Weather> fetchForecast(String x, String y, String regionName) {
         int[] grid = convertGPS2Grid(Double.parseDouble(x), Double.parseDouble(y));
