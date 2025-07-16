@@ -25,7 +25,7 @@
         </div>
 
         <div
-          v-if="userNo === props.matchUserNo || userNo === props.matchManagerNo"
+          v-if="userNo === matchUserNo || userNo === matchManagerNo"
           class="status-buttons"
         >
           <button
@@ -68,6 +68,7 @@ const participants = ref([])
 const loading = ref(false)
 const tabOptions = ['apply', 'approve', 'reject']
 const activeTab = ref('apply')
+const emit = defineEmits(['statusChanged'])
 
 const tabLabelMap = {
   apply: '신청자',
@@ -108,6 +109,7 @@ const changeStatus = async (participant, newStatus) => {
       user_status: newStatus
     })
     participant.user_status = newStatus
+    emit('statusChanged') // ✅ 상위로 이벤트 전달
   } catch (err) {
     console.error('❌ 상태 변경 실패:', err)
     alert('상태 변경에 실패했습니다.')

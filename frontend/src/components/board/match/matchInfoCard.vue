@@ -51,7 +51,6 @@
       <div>주소: {{ match.adres }}</div>
       <div>대표전화: {{ match.telno || '정보없음' }}</div>
       <div>운영전화: {{ match.svcendtelno || '정보없음' }}</div>
-      <!-- 템플릿 내 버튼 부분 -->
       <div class="button-row">
         <button class="btn-blue" @click="copyAddress">주소복사</button>
         <button class="btn-blue" @click="toggleMap">
@@ -65,10 +64,10 @@
       <span>담당 매니저: {{ match.manager_name }}</span>
       <span>성별 제한: {{ genderLabel(match.gender_condition) }}</span>
       <span v-if="match.match_code === 'social'">
-        현재 인원 수: {{ currentCount }} / 18
+        현재 인원 수: {{ props.currentCount }} / 18
       </span>
       <span v-else-if="match.match_code === 'league'">
-        현재 팀 수: {{ currentCount }} / 3
+        현재 팀 수: {{ props.currentCount }} / 3
       </span>
     </div>
   </div>
@@ -78,37 +77,15 @@
 import { defineProps, ref, onMounted, nextTick, inject } from 'vue'
 import axios from 'axios'
 
+const props = defineProps({
+  match: { type: Object, required: true },
+  currentCount: { type: Number, required: true },
+})
+
 const userNo = inject('userNo')
 const clubId = ref(null)
 const isApplied = ref(false)
 const showMap = ref(false)
-const currentCount = ref(0)
-
-const props = defineProps({
-  match: {
-    type: Object,
-    required: true
-  }
-})
-
-const checkClubLeader = async () => {
-  if (props.match.match_code !== 'league' || !userNo?.value) return
-
-  try {
-    const res = await axios.get('/board_api/match/club', {
-      params: { userNo: userNo.value }
-    })
-
-    if (res.data.club_id) {
-      clubId.value = res.data.club_id
-    } else {
-      clubId.value = null
-    }
-  } catch (e) {
-    console.error('클럽 리더 여부 확인 실패:', e)
-    clubId.value = null
-  }
-}
 
 const imageUrl = `${props.match.img_PATH}`
 
@@ -131,13 +108,9 @@ const statusLabel = (code) => {
     case 'waiting': return '대기중'
     case 'active': return '진행중'
     case 'completed': return '진행 완료'
-    case 'cancelled' : return '취소됨'
+    case 'cancelled': return '취소됨'
     default: return code
   }
-}
-
-const codeLabel = (code) => {
-  return code === 'social' ? '소셜매치' : code === 'league' ? '리그매치' : code
 }
 
 const copyAddress = async () => {
@@ -164,7 +137,8 @@ const loadMap = () => {
 
   if (!window.kakao || !window.kakao.maps) {
     const script = document.createElement('script')
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=93d2abfcd442ea0ead3eed0dce1e66b3&autoload=false`
+    const apiKey = import.meta.env.VITE_KAKAOMAP_API_KEY
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`
     script.onload = kakaoMapReady
     document.head.appendChild(script)
   } else {
@@ -172,7 +146,6 @@ const loadMap = () => {
   }
 }
 
-// ✅ 신청 여부를 항상 DB에서 확인
 const checkIsApplied = async () => {
   if (!userNo || userNo.value == null) {
     isApplied.value = false
@@ -214,12 +187,10 @@ const applyToMatch = async () => {
     await axios.post('/board_api/match/apply', payload)
     alert('매치 참가 신청이 완료되었습니다!')
     await checkIsApplied()
-    await fetchParticipantCount()
+    //await fetchParticipantCount()
   } catch (error) {
     console.error('신청 실패:', error)
-
-    if (error.response && error.response.status === 409) {
-      // ✅ 백엔드에서 온 메시지 출력
+    if (error.response?.status === 409) {
       alert(error.response.data.error || '신청 조건을 만족하지 않습니다.')
     } else {
       alert('매치 참가 신청에 실패했습니다.')
@@ -244,31 +215,48 @@ const cancelParticipation = async () => {
     })
     alert('참가 신청이 취소되었습니다.')
     await checkIsApplied()
-    await fetchParticipantCount()
+    //await fetchParticipantCount()
   } catch (e) {
     console.error('취소 실패:', e)
     alert('참가 신청 취소에 실패했습니다.')
   }
 }
 
-const fetchParticipantCount = async () => {
+// const fetchParticipantCount = async () => {
+//   try {
+//     const res = await axios.get('/board_api/match/participants/count', {
+//       params: { matchId: props.match.match_id }
+//     })
+//     currentCount.value = res.data
+//   } catch (e) {
+//     console.error('인원 수 조회 실패:', e)
+//     currentCount.value = 0
+//   }
+// }
+
+const checkClubLeader = async () => {
+  if (props.match.match_code !== 'league' || !userNo?.value) return
+
   try {
-    const res = await axios.get('/board_api/match/participants/count', {
-      params: {
-        matchId: props.match.match_id
-      }
+    const res = await axios.get('/board_api/match/club', {
+      params: { userNo: userNo.value }
     })
-    currentCount.value = res.data
+
+    if (res.data.club_id) {
+      clubId.value = res.data.club_id
+    } else {
+      clubId.value = null
+    }
   } catch (e) {
-    console.error('인원 수 조회 실패:', e)
-    currentCount.value = 0
+    console.error('클럽 리더 여부 확인 실패:', e)
+    clubId.value = null
   }
 }
 
 onMounted(() => {
   checkIsApplied()
-  fetchParticipantCount()
-  checkClubLeader() // ✅ 클럽 리더 여부 확인
+  //fetchParticipantCount()
+  checkClubLeader()
 })
 </script>
 
@@ -323,10 +311,9 @@ onMounted(() => {
   border-radius: 8px;
   padding: 16px;
   margin-top: 12px;
-  margin-bottom: 12px; /* ✅ 다른 컴포넌트와 간격 확보 */
+  margin-bottom: 12px;
   background-color: #f9f9f9;
 }
-
 .btn-blue {
   background-color: #007bff;
   color: white;
@@ -336,11 +323,9 @@ onMounted(() => {
   cursor: pointer;
   font-size: 14px;
 }
-
 .btn-blue:hover {
   background-color: #0056b3;
 }
-
 .button-row {
   margin-top: 4px;
   display: flex;

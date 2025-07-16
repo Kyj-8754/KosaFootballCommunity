@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -19,13 +20,12 @@ public class WeatherApiUtil {
     private static final String BASE_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
 
     public static List<Weather> fetchForecast(String x, String y, String regionName) {
-    	
         int[] grid = convertGPS2Grid(Double.parseDouble(x), Double.parseDouble(y));
         String nx = String.valueOf(grid[0]);
         String ny = String.valueOf(grid[1]);
-    	
-        // 날짜 및 기준시각 계산 (1일 8회 기준시각)
-        LocalDateTime now = LocalDateTime.now();
+
+        // ✅ 서울 시간 기준 현재 시각으로 변경
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         int hour = now.getHour();
         String baseTime = getBaseTime(hour);
         String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));

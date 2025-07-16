@@ -111,6 +111,22 @@ const loadReservationDetails = async () =>{
   stadium.value = stadiumRes.data.stadiumDB.stadium;
   };
 
+  const cancelMatchByTypeAndId = async (type, id) => {
+    console.log("🛰️ 매치 상태 변경 요청: ", { type, id });
+
+    try {
+      const res = await axios.post('/board_api/match/matches/cancel', null, {
+        params: {
+          type,
+          id
+        }
+      });
+      console.log("✅ 매치 상태 변경 성공 응답:", res.data);
+    } catch (error) {
+      console.error("❌ 매치 상태 변경 실패:", error);
+    }
+  };
+
 // 예약 취소
  const cancleReservation = async () => {
 
@@ -124,6 +140,10 @@ const loadReservationDetails = async () =>{
     });
    // 성공 시 알림 띄우고, 페이지 이동
     alert('예약이 성공적으로 취소되었습니다.');
+
+    // 💡 매치 상태도 취소로 변경
+    await cancelMatchByTypeAndId("reservation", reservation.value.reservation_id);
+
     window.location.reload();
   } catch (err) {
     console.error(err);
@@ -180,6 +200,10 @@ const refundPayment = async () => {
  
     if (res.data.success) {
       alert("결제가 환불되었습니다.");
+
+      // 💡 매치 상태도 취소로 변경
+      await cancelMatchByTypeAndId("reservation", reservation.value.reservation_id);
+
       router.go(0);  // 새로고침
     } else {
       alert("환불 처리 중 문제가 발생했습니다.");
