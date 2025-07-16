@@ -123,7 +123,7 @@ const isLoggedIn = computed(() => !!token?.value);
 const fetchRecruit = async () => {
   const bno = route.params.bno;
   try {
-    const response = await axios.get(`/recruits_api/recruits/${bno}`);
+    const response = await axios.get(`/recruit_api/recruits/${bno}`);
     recruit.value = response.data;
   } catch (e) {
     alert("❌ 모집글 불러오기 실패");
@@ -140,7 +140,7 @@ const goEdit = () => {
 const handleCloseRecruit = async () => {
   if (!confirm("정말 모집을 마감하시겠습니까?")) return;
   try {
-    await axios.put(`/recruits_api/recruits/${recruit.value.bno}/close`, null, {
+    await axios.put(`/recruit_api/recruits/${recruit.value.bno}/close`, null, {
       params: { user_no: userNo.value },
       headers: { Authorization: `Bearer ${token.value}` },
     });
@@ -156,7 +156,7 @@ const handleCloseRecruit = async () => {
 const handleDeleteRecruit = async () => {
   if (!confirm("정말 삭제하시겠습니까?")) return;
   try {
-    await axios.delete(`/recruits_api/recruits/${recruit.value.bno}`, {
+    await axios.delete(`/recruit_api/recruits/${recruit.value.bno}`, {
       params: { user_no: userNo.value },
       headers: { Authorization: `Bearer ${token.value}` },
     });

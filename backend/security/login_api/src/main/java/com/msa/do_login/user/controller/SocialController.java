@@ -61,7 +61,7 @@ public class SocialController {
             if (account == null) {
                 // Vue 프론트엔드 회원가입 화면으로 redirect
                 String redirectUrl = String.format(
-                    "http://localhost:5173/member/socialRegister?provider=%s&providerId=%s&nickname=%s&profileImage=%s",
+                    "http://www.itsfootball.store/member/socialRegister?provider=%s&providerId=%s&nickname=%s&profileImage=%s",
                     provider,
                     userInfo.getProviderId(),
                     URLEncoder.encode(userInfo.getNickname(), StandardCharsets.UTF_8),
@@ -76,7 +76,7 @@ public class SocialController {
             Map<String, String> tokenMap = socialService.generateToken(provider, userInfo.getProviderId());
 
     		String redirectUrl = String.format(
-    			"http://localhost:5173/oauth/success?accessToken=%s&refreshToken=%s",
+    			"http://www.itsfootball.store/oauth/success?accessToken=%s&refreshToken=%s",
     			URLEncoder.encode(tokenMap.get("accessToken"), StandardCharsets.UTF_8),
     			URLEncoder.encode(tokenMap.get("refreshToken"), StandardCharsets.UTF_8)
     		);

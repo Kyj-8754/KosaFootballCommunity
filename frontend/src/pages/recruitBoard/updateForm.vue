@@ -65,7 +65,7 @@ const fetchRecruit = async () => {
     return;
   }
   try {
-    const response = await axios.get(`/recruits_api/recruits/${bno}`);
+    const response = await axios.get(`/recruit_api/recruits/${bno}`);
     const data = response.data;
 
     if (userNo.value !== data.user_no) {
@@ -106,7 +106,7 @@ const submitEdit = async () => {
   }
   try {
 await axios.put(
-  `/recruits_api/recruits/${bno}?user_no=${userNo.value}`,
+  `/recruit_api/recruits/${bno}?user_no=${userNo.value}`,
   {
     club_id: form.value.club_id,
     title: title,

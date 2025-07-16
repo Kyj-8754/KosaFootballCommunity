@@ -68,7 +68,7 @@ export default defineConfig({
         target: 'http://club_api:8121',
         changeOrigin: true,
       },
-      '/recruits_api': {
+      '/recruit_api': {
         target: 'http://recruit_api:8122',
         changeOrigin: true,
       },

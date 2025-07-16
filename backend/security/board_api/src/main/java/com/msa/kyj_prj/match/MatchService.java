@@ -83,7 +83,7 @@ public class MatchService {
             alarm.setMatchId(matchId);
             alarm.setMatchTitle(match.getMatch_title());
             alarm.setMessage(applicantName + "님이 [" + match.getMatch_title() + "] 경기에 참가 신청했습니다.");
-            alarm.setUrl("/match/" + matchId);
+            alarm.setUrl("match/matchdetail/" + matchId);
 
             restTemplate.postForEntity(alarmApiUrl + "/alarm/send", alarm, Void.class);
         } catch (Exception e) {

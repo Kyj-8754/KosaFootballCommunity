@@ -41,7 +41,7 @@ public class LoginSecurityConfig extends BaseSecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration config = new CorsConfiguration();
-	    config.setAllowedOrigins(List.of("http://localhost:5173")); // Vue 개발 서버
+	    config.setAllowedOrigins(List.of("http://www.itsfootball.store")); // Vue 개발 서버
 	    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 	    config.setAllowedHeaders(List.of("*"));
 	    config.setAllowCredentials(true);

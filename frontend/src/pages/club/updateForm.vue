@@ -384,9 +384,13 @@ const submitUpdate = async () => {
       active_times: clubInfo.value.active_times.join(","),
     };
     // 클럽 기본 정보/상세 정보 별도 전송 예시
-    // await axios.put(`/club_api/club/club_info/${club.value.club_id}`, club.value, {
-    //   headers: { Authorization: `Bearer ${token.value}` },
-    // });
+
+    // 클럽 소개글 수정
+    await axios.put(`/club_api/club/${club.value.club_id}`, club.value, {
+      headers: { Authorization: `Bearer ${token.value}` },
+    });
+
+    // 클럽 인포 수정
     await axios.put(`/club_api/club/club_info/${club.value.club_id}`, clubInfoPayload, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
