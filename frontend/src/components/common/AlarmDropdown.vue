@@ -22,11 +22,13 @@
           :key="alarm.alarm_id"
           :class="['alarm-item', { unread: alarm.read_yn === 'N' }]"
         >
-          <div class="alarm-message">
-            <div class="alarm-msg-text">
-              <span>{{ alarm.message }}</span>
-              <span class="alarm-time">{{ alarm.created_at }}</span>
-            </div>
+        <div class="alarm-message">
+            <router-link :to="`/${alarm.url}`">
+              <div class="alarm-msg-text">
+                <span>{{ alarm.message }}</span>
+                <span class="alarm-time">{{ alarm.created_at }}</span>
+              </div>
+            </router-link>
             <div class="alarm-buttons">
               <button
                 v-if="alarm.read_yn === 'N'"
