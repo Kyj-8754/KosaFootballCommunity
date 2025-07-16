@@ -40,11 +40,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/board_api/, ""),
       },
-      // 매치 일정 리스트 프록시
-      "/match": {
-        target: "http://localhost:8131", 
-        changeOrigin: true,
-      },
+      
       // 위젯 프록시
       "/widget_api": {
         target: "http://localhost:8130",

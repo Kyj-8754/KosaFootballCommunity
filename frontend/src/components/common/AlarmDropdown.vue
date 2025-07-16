@@ -1,11 +1,11 @@
 <template>
   <div style="position:relative;">
     <!-- 종 아이콘 버튼 -->
-<button @click="toggleList" class="alarm-btn">
-  <i class="bi bi-bell"></i>
-  <span class="alarm-label">알림</span>
-  <span v-if="unreadCount > 0" class="alarm-badge"></span>
-</button>
+    <button @click="toggleList" class="alarm-btn">
+      <i class="bi bi-bell"></i>
+      <span class="alarm-label">알림</span>
+      <span v-if="unreadCount > 0" class="alarm-badge"></span>
+    </button>
 
     <!-- 알림 리스트 팝업 -->
     <div v-if="showList" class="alarm-list-popup">
@@ -27,9 +27,16 @@
               <span>{{ alarm.message }}</span>
               <span class="alarm-time">{{ alarm.created_at }}</span>
             </div>
-            <div>
-              <button v-if="alarm.read_yn === 'N'" @click="readAlarm(alarm.alarm_id)" class="btn-xs btn-outline-success">읽음</button>
-              <button @click="deleteAlarm(alarm.alarm_id)" class="btn-xs btn-outline-danger">삭제</button>
+            <div class="alarm-buttons">
+              <button
+                v-if="alarm.read_yn === 'N'"
+                @click="readAlarm(alarm.alarm_id)"
+                class="btn-xs btn-outline-success"
+              >읽음</button>
+              <button
+                @click="deleteAlarm(alarm.alarm_id)"
+                class="btn-xs btn-outline-danger"
+              >삭제</button>
             </div>
           </div>
         </li>
@@ -41,7 +48,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import axios from "axios";
@@ -60,11 +66,8 @@ export default {
       alarmCount: 0
     };
   },
-
   computed: {
-    // ✅ [여기에 추가]
     unreadCount() {
-      // alarms 배열 중 read_yn이 'N'인 것만 개수 세기
       return this.alarms.filter(alarm => alarm.read_yn === 'N').length;
     }
   },
@@ -75,7 +78,6 @@ export default {
     },
     fetchAlarms() {
       if (!this.userNo) return;
-      // ✅ 프록시 주소로 변경!
       axios.get('/alarm_api/history', {
         params: { receiver_id: this.userNo, page: 1, size: 10 }
       }).then(res => {
@@ -87,7 +89,6 @@ export default {
       });
     },
     fetchCount() {
-      // ✅ 프록시 주소로 변경!
       axios.get('/alarm_api/history/count', {
         params: { receiver_id: this.userNo }
       }).then(res => {
@@ -95,30 +96,23 @@ export default {
       });
     },
     readAlarm(alarmId) {
-      // ✅ 프록시 주소로 변경!
       axios.put(`/alarm_api/history/read/${alarmId}`).then(() => {
         this.fetchAlarms();
       });
     },
-  readAll() {
-  axios.put('/alarm_api/history/read/all', null, {
-  params: { receiver_id: this.userNo }
-  }).then(() => {
-  this.alarms.forEach(alarm => alarm.read_yn = 'Y');
-  // 또는 this.fetchAlarms();
-  });
-
-}
-
-,
+    readAll() {
+      axios.put('/alarm_api/history/read/all', null, {
+        params: { receiver_id: this.userNo }
+      }).then(() => {
+        this.alarms.forEach(alarm => alarm.read_yn = 'Y');
+      });
+    },
     deleteAlarm(alarmId) {
-      // ✅ 프록시 주소로 변경!
       axios.delete(`/alarm_api/history/${alarmId}`).then(() => {
         this.fetchAlarms();
       });
     },
     deleteAll() {
-      // ✅ 프록시 주소로 변경!
       axios.delete('/alarm_api/history/all', {
         params: { receiver_id: this.userNo }
       }).then(() => {
@@ -151,12 +145,11 @@ export default {
   font-weight: 500;
 }
 .alarm-btn .bi-bell {
-  font-size: 1.15rem;   /* ✅ ← 아이콘 크기 줄이기 */
-  margin-right: 6px;    /* ✅ ← 알림 글씨랑 간격 */
-  vertical-align: middle;
+  font-size: 1.15rem;
+  margin-right: 6px;
 }
 .alarm-label {
-  font-size: 1rem;      /* 알림 텍스트 크기 */
+  font-size: 1rem;
   font-weight: 500;
 }
 .alarm-badge {
@@ -224,17 +217,24 @@ export default {
 }
 .alarm-message {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 .alarm-msg-text {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
+  word-break: break-word;
 }
 .alarm-time {
   font-size: 12px;
   color: #aaa;
   margin-top: 2px;
+}
+.alarm-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 60px;
 }
 .alarm-empty {
   text-align: center;
@@ -253,12 +253,12 @@ export default {
 .btn-xs {
   font-size: 11px;
   padding: 2px 9px;
-  margin-left: 4px;
   border-radius: 5px;
   cursor: pointer;
   border: 1px solid #dedede;
   background: #fff;
   transition: background 0.15s;
+  white-space: nowrap;
 }
 .btn-xs:hover {
   background: #f2f2f2;

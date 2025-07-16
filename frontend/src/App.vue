@@ -172,16 +172,16 @@ const onDrag = (e) => {
   const left = widgetEl.offsetLeft;
 
   // ✅ top만 계산
-  let top = e.clientY - offsetY;
+  let bottom = viewportHeight - (e.clientY + offsetY);
 
   // ✅ 화면 위아래로 나가지 않도록 제한
-  if (top < 0) top = 0;
-  if (top + widgetHeight > viewportHeight) {
-    top = viewportHeight - widgetHeight;
+  if (bottom < 0) bottom = 0;
+  if (bottom + widgetHeight > viewportHeight) {
+    bottom = viewportHeight - widgetHeight;
   }
 
   widgetEl.style.left = `${left}px`;
-  widgetEl.style.top = `${top}px`;
+  widgetEl.style.bottom = `${bottom}px`;
   widgetEl.style.right = 'auto';
 };
 
@@ -216,7 +216,7 @@ onMounted(() => {
 <style scoped>
 .floating-weather-widget {
   position: fixed;
-  top: 0px;
+  bottom: 0px;
   left: 0px;
   z-index: 999;
   cursor: grab;
