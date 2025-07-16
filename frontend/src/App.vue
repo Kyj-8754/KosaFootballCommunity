@@ -3,27 +3,16 @@
     <Header />
 
     <div class="row">
-      <!--
-      <div class="col-md-2">
-        <NavArea />
-      </div>
-      <div class="col-md-10">
-      -->
       <div>
         <router-view />
       </div>
     </div>
 
     <AlarmToast />
-    <Footer />
+      <Footer />
     <scrollUp />
 
-    <!-- ✅ 고정 위치 날씨 위젯 -->
-    <!--
-    <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
-      <weatherWidget />
-    </div>
-    -->
+    <!-- 위치 날씨 위젯 -->
     <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
       <weatherWidget />
     </div>
@@ -34,7 +23,6 @@
 <script setup>
 import { provide, ref, computed, onMounted, watch, onBeforeUnmount } from 'vue';
 import Header from '@/components/Header.vue';
-import NavArea from '@/components/NavArea.vue';
 import Footer from '@/components/Footer.vue';
 import AlarmToast from '@/components/common/AlarmToast.vue';
 import { connectWebSocket } from '@/utils/stomp';
@@ -126,38 +114,6 @@ const startDrag = (e) => {
   document.addEventListener('mousemove', onDrag)
   document.addEventListener('mouseup', endDrag)
 }
-
-// 상하좌우로 이동
-// const onDrag = (e) => {
-//   if (!isDragging) return
-
-//   const widgetEl = widget.value
-//   const widgetRect = widgetEl.getBoundingClientRect()
-//   const widgetWidth = widgetRect.width
-//   const widgetHeight = widgetRect.height
-
-//   const viewportWidth = window.innerWidth
-//   const viewportHeight = window.innerHeight
-
-//   // 계산된 위치
-//   let left = e.clientX - offsetX
-//   let top = e.clientY - offsetY
-
-//   // ✅ 화면 밖으로 나가지 않도록 제한
-//   if (left < 0) left = 0
-//   if (top < 0) top = 0
-//   if (left + widgetWidth > viewportWidth) {
-//     left = viewportWidth - widgetWidth
-//   }
-//   if (top + widgetHeight > viewportHeight) {
-//     top = viewportHeight - widgetHeight
-//   }
-
-//   // 스타일 적용
-//   widgetEl.style.left = `${left}px`
-//   widgetEl.style.top = `${top}px`
-//   widgetEl.style.right = 'auto'
-// }
 
 // 상하로만 이동
 const onDrag = (e) => {

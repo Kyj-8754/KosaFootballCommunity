@@ -27,13 +27,6 @@
       <router-link :to="{ name: 'Member_RegistForm' }">회원 가입</router-link>
     </div>
 
-    <!-- 임시 버튼 -->
-    <!-- <div class="my-2 px-2">
-      <button class="btn btn-warning btn-sm" @click="runWeatherCollector">
-        ⛅ 날씨 수집 테스트
-      </button>
-    </div> -->
-
     <!-- 내비게이션 바 -->
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
       <router-link class="navbar-brand ps-2" :to="{ name: 'Home' }">ITs FootBall</router-link>
@@ -144,15 +137,6 @@ const isAuthenticated = computed(() => !!token?.value);
 const isAdmin = computed(() => authCode?.value === "ROLE_A1");
 const isNavShow = ref(false);
 
-// const runWeatherCollector = async () => {
-//   try {
-//     const res = await axios.get("/widget_api/weather-collect/run");
-//     alert("✅ 날씨 수집 완료: " + res.data.result);
-//   } catch (err) {
-//     console.error(err);
-//     alert("❌ 날씨 수집 실패");
-//   }
-// };
 </script>
 <style>
 .auth-actions {
