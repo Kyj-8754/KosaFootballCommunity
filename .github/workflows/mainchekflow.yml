@@ -61,12 +61,12 @@ jobs:
 
           # security_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/security_api/src/main/resources/application-secret.properties
-          echo "${{ secrets.SECURITY_APPLICATION_SECRET_PROPERTIES }}" >> backend/reservation_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.SECURITY_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/security_api/src/main/resources/application-secret.properties
 
           # login_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/login_api/src/main/resources/application-secret.properties
-          echo "${{ secrets.ALARM_API_URL }}" >> backend/reservation_api/src/main/resources/application-secret.properties
-          echo "${{ secrets.LOGIN_APPLICATION_SECRET_PROPERTIES }}" >> backend/reservation_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/security/login_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.LOGIN_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/login_api/src/main/resources/application-secret.properties
 
           # alarm_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/alarm_api/src/main/resources/application-secret.properties
