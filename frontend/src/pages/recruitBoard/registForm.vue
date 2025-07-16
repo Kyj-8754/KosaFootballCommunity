@@ -87,7 +87,7 @@ const submitForm = async () => {
   try {
     // ✅ 서버로 모집글 등록 요청
     await axios.post(
-      `/recruits_api/regist`,
+      `/recruits_api/recruits/regist`,
       {
         title: title.value,
         content: content.value,
