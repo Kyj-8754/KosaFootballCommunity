@@ -3,7 +3,7 @@
 	<h2>구장 예약</h2>
 
  <div class="container mt-5">
-    <!-- 🏟 구장 정보 -->
+    <!-- 구장 정보 -->
     <div class="card mb-3">
       <div class="card-header">구장 정보</div>
       <div class="card-body">
@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <!-- 🙋‍♂️ 유저 정보 -->
+    <!-- 유저 정보 -->
     <div class="card mb-3">
       <div class="card-header">예약자 정보</div>
       <div class="card-body">
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <!-- 📅 예약 정보 -->
+    <!-- 예약 정보 -->
    <div class="card mb-3">
   <div class="card-header">예약 정보</div>
   <div class="card-body">
@@ -57,7 +57,7 @@
   </div>
 </div>
 
-    <!-- ✅ 예약 확인 모달 -->
+    <!-- 예약 확인 모달 -->
     <div class="modal fade" tabindex="-1" :class="{ show: showModal }" style="display: block;" v-if="showModal">
       <div class="modal-dialog">
         <div class="modal-content">

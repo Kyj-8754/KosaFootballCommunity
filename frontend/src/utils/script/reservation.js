@@ -4,16 +4,14 @@ import { useRoute, useRouter } from 'vue-router'
 import {StadiumDataStore} from '@/stores/stadiumStore'
 
 export function reservation_confirm(){
-    const token = inject('token');
-const router = useRouter();
-const route = useRoute();
-const reservation = ref({});
-const user = ref({});
-const stadium = ref({});
-const userNo = inject('userNo') // 로그인한 유저 정보 가져옴
-const authCode = inject('authCode') // 로그인한 유저 권한
-
-console.log(authCode?.value, userNo.value);
+  const token = inject('token');
+  const router = useRouter();
+  const route = useRoute();
+  const reservation = ref({});
+  const user = ref({});
+  const stadium = ref({});
+  const userNo = inject('userNo') // 로그인한 유저 정보 가져옴
+  const authCode = inject('authCode') // 로그인한 유저 권한
 
 // 결제 핸들러 이벤트, 감지해서 메시지를 띄우고 닫힘
 const handlePaymentMessage = (event) => {
@@ -29,7 +27,6 @@ const handlePaymentMessage = (event) => {
       console.warn("알 수 없는 결제 메시지:", event.data);
   }
 }
-
 
 onMounted(() => {
   loadReservationDetails(); // 함수 실행
@@ -258,8 +255,6 @@ const confirmReservation = async () => {
     if (res.data.res_code === '200') {
     alert(res.res_msg);
 
-    // 🎯 stadium 정보 초기화
-    // stadiumStore.clearStadium();
     const reservationId = res.data.reservation_id;
     router.push({name: 'reservation_Confirm', params: {reservationId}});
   }

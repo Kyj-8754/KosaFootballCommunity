@@ -41,7 +41,7 @@ export default defineConfig({
       },
       // 매치 일정 리스트 프록시
       "/match": {
-        target: "http://localhost:8131", 
+        target: "http://board_api:8131", 
         changeOrigin: true,
       },
       // 위젯 프록시
@@ -69,10 +69,7 @@ export default defineConfig({
       "/security_api": {
       target: "http://security_api:8110",
       changeOrigin: true,
-    },
-
-      
-      // club_api
+      },
       '/club_api': {
         target: 'http://club_api:8121',
         changeOrigin: true,
