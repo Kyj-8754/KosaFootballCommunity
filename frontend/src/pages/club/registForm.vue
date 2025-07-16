@@ -37,7 +37,7 @@
       <!-- 안내 메시지 -->
       <div class="mb-3">
         <p class="form-text">팀 코드 URL은 팀페이지 주소로 사용돼요</p>
-        <p class="text-muted">http://localhost:5173/club/<strong>{{ club.team_code }}</strong></p>
+        <p class="text-muted">http://itsfootball.store/club/<strong>{{ club.team_code }}</strong></p>
       </div>
 
       <!-- 등록 버튼 -->

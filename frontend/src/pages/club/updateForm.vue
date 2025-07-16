@@ -12,7 +12,7 @@
               :src="
                 previewUrl ||
                 (club.logo_path
-                  ? `http://localhost:8121${club.logo_path}`
+                  ? `/club_api${club.logo_path}`
                   : 'https://via.placeholder.com/120')
               "
               alt="클럽 로고"
@@ -289,7 +289,7 @@ onMounted(async () => {
     // 2. 클럽 상세정보(ClubInfo)도 별도 fetch & 배열화 (try-catch 별도!)
     if (club.value && club.value.club_id) {
       try {
-        const clubInfoRes = await axios.get(`/club_info/${club.value.club_id}`);
+        const clubInfoRes = await axios.get(`/club_api/${club.value.club_id}`);
         clubInfo.value = {
           ...clubInfoRes.data,
           active_days: clubInfoRes.data.active_days
@@ -387,7 +387,7 @@ const submitUpdate = async () => {
     await axios.put(`/club_api/${club.value.club_id}`, club.value, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
-    await axios.put(`/club_info/${club.value.club_id}`, clubInfoPayload, {
+    await axios.put(`/club_api/${club.value.club_id}`, clubInfoPayload, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
     alert("수정이 완료되었습니다.");

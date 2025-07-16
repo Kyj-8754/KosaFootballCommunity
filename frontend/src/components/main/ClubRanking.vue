@@ -17,7 +17,7 @@
           <span v-else class="me-2 fw-bold">{{ index + 1 }}위</span>
 
           <img
-            :src="club.logo_path ? `http://localhost:8121${club.logo_path}` : fallbackImg"
+            :src="club.logo_path ? `/club_api${club.logo_path}` : fallbackImg"
             @error="handleImageError"
             alt="클럽 로고"
             style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; margin: 0 12px 0 8px"
@@ -81,7 +81,7 @@ export default {
   methods: {
     async fetchClubs() {
       try {
-        const res = await axios.get("/club_api/list");
+        const res = await axios.get("/club_api/club/list");
         this.clubs = res.data.data;
       } catch (err) {
         console.error("클럽 데이터를 불러오는 중 오류 발생:", err);

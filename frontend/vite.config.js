@@ -60,7 +60,6 @@ export default defineConfig({
         target: "http://login_api:8111",
         changeOrigin: true,
       },
-
       "/security_api": {
       target: "http://security_api:8110",
       changeOrigin: true,
@@ -69,25 +68,13 @@ export default defineConfig({
         target: 'http://club_api:8121',
         changeOrigin: true,
       },
-      '/club_info': {
-        target: 'http://club_api:8121',
-        changeOrigin: true,
-      },
-
       '/recruits_api': {
         target: 'http://recruit_api:8122',
         changeOrigin: true,
       },
-
       '/alarm_api': {
         target: 'http://alarm_api:8120',
         changeOrigin: true,
-      },
-
-      '/ws': {
-        target: 'http://alarm_api:8120',
-        ws: true,
-        changeOrigin: true
       }
     }
   }
