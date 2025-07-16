@@ -25,7 +25,7 @@ public class Websocket {
             alarm.setMatchId(matchId);
             alarm.setMatchTitle(match.getMatch_title());
             alarm.setReceiverId(String.valueOf(userNo));
-            alarm.setUrl("/match/" + matchId);
+            alarm.setUrl("match/matchdetail/" + matchId);
 
             if ("approve".equalsIgnoreCase(userStatus)) {
                 alarm.setType("MATCH_APPROVED");

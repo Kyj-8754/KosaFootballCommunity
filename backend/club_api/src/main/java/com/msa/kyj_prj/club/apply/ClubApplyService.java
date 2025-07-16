@@ -114,6 +114,7 @@ public class ClubApplyService {
 		alarm.setReceiverId(String.valueOf(userNoForAlarm));
 		alarm.setClubId(clubIdForAlarm);
 		alarm.setMessage(senderName + " 님이 클럽가입을 신청했습니다.");
+		alarm.setUrl("club/T1/applyList");
 
 		log.info("나 이거 보내걸임" + alarm.toString());
 

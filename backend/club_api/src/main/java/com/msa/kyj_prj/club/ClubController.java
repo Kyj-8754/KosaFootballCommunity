@@ -194,7 +194,7 @@ public class ClubController {
             @Parameter(description = "페이지 번호 (기본값: 1)", example = "1")
             @RequestParam(defaultValue = "1") int page,
             @Parameter(description = "페이지당 항목 수 (기본값: 10)", example = "10")
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "100") int size,
             @Parameter(description = "검색 키워드 (선택 사항)", example = "축구")
             @RequestParam(required = false) String searchKeyword,
             @Parameter(description = "정렬 기준 컬럼 (기본값: ranking)", example = "club_name")
@@ -298,7 +298,7 @@ public class ClubController {
             if (file == null || file.isEmpty()) {
                 return ResponseEntity.badRequest().body("파일이 선택되지 않았습니다.");
             }
-            String uploadDir = "C:/workspace-sts4/MsaTeamProject/backend/club_api/uploads/club_logos/";
+            String uploadDir = "/home/ubuntu/actions-runner/_work/KosaFootballCommunity/KosaFootballCommunity/backend/club_api/uploads/club_logos/";
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs();
 
