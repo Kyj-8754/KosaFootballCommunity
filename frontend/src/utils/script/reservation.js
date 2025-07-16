@@ -190,6 +190,7 @@ const openCenteredPopup = (url, title, w, h) => {
 
 
     return {
+        stadium,
         reservation,
         cancleReservation,
         requestPayment,

@@ -309,7 +309,7 @@ onMounted(async () => {
   // 2. clubInfo는 반드시 별도 try-catch에서!
   if (club.value && club.value.club_id) {
     try {
-      const clubInfoRes = await axios.get(`/club_api/club/club_info${club.value.club_id}`);
+      const clubInfoRes = await axios.get(`/club_api/club/club_info/${club.value.club_id}`);
       clubInfo.value = clubInfoRes.data;
     } catch (infoErr) {
       if (infoErr.response && infoErr.response.status === 404) {
