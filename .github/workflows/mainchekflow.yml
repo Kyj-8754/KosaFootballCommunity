@@ -85,7 +85,7 @@ jobs:
 
           # board_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/board_api/src/main/resources/application-secret.properties
-          echo "${{ secrets.ALARM_SERVICE_API_KEY }}" >> backend/security/board_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/security/board_api/src/main/resources/application-secret.properties
           echo "${{ secrets.BOARD_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/board_api/src/main/resources/application-secret.properties
           
           
