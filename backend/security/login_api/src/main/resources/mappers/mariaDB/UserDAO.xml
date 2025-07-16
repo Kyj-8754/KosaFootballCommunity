@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.msa.do_security.security.dao.UserDAO">
+	
+	<!-- 회원 코드 존재 여부 확인 구문 -->
+	<select id="existsByUserCodeSecurity" parameterType="String" resultType="boolean">
+		SELECT COUNT(*) > 0 
+		FROM user 
+		WHERE user_code = #{userCode}
+		AND user_exit_status='N'
+	</select>
+	
+	<!-- 아이디 존재 여부 확인 구문 -->
+	<select id="getLocalAccountSecurity" parameterType="String" resultType="com.msa.do_security.security.vo.LocalAccount">
+		SELECT * 
+		FROM local_account 
+		WHERE user_id = #{userId}
+	</select>
+	
+	<!-- 회원 가입 구문 -->
+	<insert id="insertUserSecurity" useGeneratedKeys="true" keyProperty="userNo">
+		INSERT INTO user (
+		  user_name, user_birth, user_phone, user_post_code, user_addr, 
+		  user_detail_addr, auth_code, user_code, user_gender
+		) 
+		VALUES (
+		  #{userName}, #{userBirth}, #{userPhone}, #{userPostCode}, #{userAddr},
+		  #{userDetailAddr}, #{authCode}, #{userCode}, #{userGender}
+		)
+	</insert>
+	
+	<insert id="insertLocalAccountSecurity">
+		INSERT INTO local_account (user_no, user_id, user_pwd) 
+		VALUES (#{userNo}, #{userId}, #{userPwd})
+	</insert>
+	
+	<!-- 아이디로 회원(UserVO) 조회 -->
+	<select id="findByUserIdSecurity" parameterType="String" resultType="com.msa.do_security.security.vo.UserVO">
+		SELECT u.* 
+		FROM user u 
+		JOIN local_account l ON u.user_no = l.user_no
+		WHERE l.user_id = #{username}
+	</select>
+	
+	<!-- user_no로 LocalAccount 조회 -->
+	<select id="findAccountByUserNoSecurity" parameterType="int" resultType="com.msa.do_security.security.vo.LocalAccount">
+		SELECT * 
+		FROM local_account 
+		WHERE user_no = #{userNo}
+	</select>
+	
+	<!-- provider와 providerId로 소셜 계정 조회 -->
+	<select id="findSocialAccountSecurity" resultType="com.msa.do_security.security.vo.SocialAccountVO">
+		SELECT *
+		FROM social_account
+		WHERE provider = #{provider}
+		AND provider_id = #{providerId}
+	</select>
+	
+	<!-- user_no로 UserVO 조회 -->
+	<select id="findUserByUserNoSecurity" parameterType="int" resultType="com.msa.do_security.security.vo.UserVO">
+		SELECT *
+		FROM user
+		WHERE user_no = #{userNo}
+		AND user_exit_status='N'
+	</select>
+
+</mapper>

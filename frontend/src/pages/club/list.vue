@@ -51,7 +51,7 @@
           <img
             :src="
               club.logo_path
-                ? `http://localhost:8121${club.logo_path}`
+                ? `/club_api${club.logo_path}`
                 : fallbackImg
             "
             @error="handleImageError"

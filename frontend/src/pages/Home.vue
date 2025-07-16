@@ -48,7 +48,6 @@ import { useRouter } from "vue-router";
 const token = inject("token");
 const router = useRouter();
 
-import weatherWidget from "@/components/widget/weatherWidget.vue";
 import BoardCategoryTabs from "@/components/main/BoardCategoryTabs.vue";
 import RecentMatchList from "@/components/main/RecentMatchList.vue";
 import OldMatchList from "@/components/main/OldMatchList.vue";
@@ -76,19 +75,6 @@ onMounted(() => {
     }
   });
 });
-
-function test() {
-  axios.post("/stadium_api/stadium/test");
-}
-
-function update() {
-  axios
-    .post("/stadium_api/stadium/update")
-    .then((res) => {})
-    .catch((err) => {
-      console.error("API 호출 실패:", err);
-    });
-}
 </script>
 
 <style scoped>
