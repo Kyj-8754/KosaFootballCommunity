@@ -39,6 +39,11 @@ export default defineConfig({
         target: "http://board_api:8131",
         changeOrigin: true,
       },
+      // 매치 일정 리스트 프록시
+      "/match": {
+        target: "http://localhost:8131", 
+        changeOrigin: true,
+      },
       // 위젯 프록시
       "/widget_api": {
         target: "http://weather_api:8130",

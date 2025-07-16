@@ -17,6 +17,8 @@ import com.msa.do_login.user.util.InMemoryCode;
 import com.msa.do_login.user.util.SmsUtil;
 import com.msa.do_login.user.vo.UserVO;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,19 +26,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/user")
+@Tag(name = "회원 관련 API", description = "회원 기능 관련 API (회원 가입, 비밀번호 설정 등)")
 public class UserController {
 	private final UserService userService;
 	private final SmsUtil smsUtil;
 	private final InMemoryCode codeStore;
 
 	// 회원 가입
+	@Operation(summary = "회원가입", description = "사용자 정보를 등록합니다.")
 	@PostMapping("/na/register")
 	public ResponseEntity<Map<String, Object>> register(@RequestBody UserRegisterDTO dto) {
 		userService.register(dto);
 		return ResponseEntity.ok(Map.of("res_code", "200", "res_msg", "회원가입 성공"));
 	}
 
-	// 이메일 중복 확인
+	// 아이디 중복 확인
+	@Operation(summary = "아이디 중복 확인", description = "입력된 아이디가 이미 존재하는지 확인합니다.")
 	@PostMapping("/na/isExistUserId")
 	public ResponseEntity<Map<String, Object>> isExistUserId(@RequestBody Map<String, String> payload) {
 		boolean exists = userService.getLocalAccount(payload.get("userId")) != null;
@@ -48,6 +53,7 @@ public class UserController {
 	}
 	
 	// 전화번호 중복 확인
+	@Operation(summary = "전화번호 중복 확인", description = "입력된 전화번호가 이미 존재하는지 확인합니다.")
 	@PostMapping("/na/isExistPhone")
 	public ResponseEntity<Map<String, Object>> isExistPhone(@RequestBody Map<String, String> payload) {
 		String userPhone = payload.get("userPhone");
@@ -72,7 +78,8 @@ public class UserController {
 	    return ResponseEntity.ok(res);
 	}
 	
-	// 비밀번호 변경 
+	// 비밀번호 변경
+	@Operation(summary = "비밀번호 변경", description = "현재 비밀번호를 확인 후 새 비밀번호로 변경합니다.")
 	@PostMapping("/updatePassword")
 	public ResponseEntity<Map<String, Object>> updatePassword(@RequestBody Map<String, Object> payload) {
 	    Map<String, Object> res = new HashMap<>();
@@ -105,6 +112,7 @@ public class UserController {
 	}
 	
 	// 회원 탈퇴
+	@Operation(summary = "회원 탈퇴", description = "사용자 번호와 비밀번호를 입력하여 회원 탈퇴를 진행합니다.")
 	@PostMapping("/deleteMember")
 	public ResponseEntity<Map<String, Object>> deleteMember(@RequestBody Map<String, Object> payload) {
 	    Map<String, Object> res = new HashMap<>();
@@ -148,6 +156,7 @@ public class UserController {
 
 	
 	// 인증 코드 전송
+	@Operation(summary = "SMS 인증코드 전송", description = "입력된 전화번호로 인증코드를 전송합니다.")
 	@PostMapping("/na/smsCode")
 	public ResponseEntity<Map<String, Object>> sendSmsToCertification(@RequestParam("userPhone") String userPhone) {
 		Map<String, Object> res = new HashMap<>();
@@ -157,8 +166,8 @@ public class UserController {
         
         log.info("[문자 인증] 생성된 인증 코드: {}", verificationCode);
         // smsUtil.sendOne(userPhone, verificationCode);
-        System.out.println("[테스트용 인증번호]"+verificationCode);
         log.info("[문자 인증] 문자 전송 완료 - 수신자: {}", userPhone);
+        
         //인증코드 유효기간 5분 설정
         codeStore.setCodeWithExpiry(verificationCode, userPhone, 60 * 5L);
         
@@ -169,6 +178,7 @@ public class UserController {
     }
 	
 	// 인증 코드 검증
+	@Operation(summary = "SMS 인증코드 검증", description = "전송된 인증코드를 검증합니다.")
 	@PostMapping("/na/verify")
 	public ResponseEntity<Map<String, Object>> verifyCode(
 	        @RequestParam("userPhone") String userPhone,
@@ -200,6 +210,7 @@ public class UserController {
 	}
 	
 	// 아이디 찾기
+	@Operation(summary = "아이디 찾기", description = "이름과 전화번호를 통해 아이디를 조회합니다.")
 	@PostMapping("/na/findId")
 	public ResponseEntity<Map<String, Object>> findUserId(
 			@RequestBody Map<String, String> payload) {
@@ -230,6 +241,7 @@ public class UserController {
 	}
 
 	// 비밀번호 찾기
+	@Operation(summary = "비밀번호 찾기", description = "아이디, 이름, 전화번호로 회원 정보를 확인합니다.")
 	@PostMapping("/na/findPwd")
 	public ResponseEntity<Map<String, Object>> resetUserPwd(
 			@RequestBody Map<String, String> payload) {
@@ -261,6 +273,7 @@ public class UserController {
 	}
 	
 	// 비밀번호 재설정
+	@Operation(summary = "비밀번호 재설정", description = "비밀번호를 재설정합니다.")
 	@PostMapping("/na/resetPassword")
 	public ResponseEntity<Map<String, Object>> resetPassword(@RequestBody Map<String, Object> payload) {
 	    Map<String, Object> res = new HashMap<>();

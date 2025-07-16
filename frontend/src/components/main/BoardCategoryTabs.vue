@@ -36,7 +36,7 @@ import BoardTable from '@/components/board/boardTable.vue'
 const router = useRouter()
 
 // 탭으로 사용할 카테고리들
-const categories = ['공지사항', '자유게시판', '모집게시판']
+const categories = ['공지사항', '자유게시판']
 const selectedCategory = ref(categories[0])
 const latestPosts = ref([])
 

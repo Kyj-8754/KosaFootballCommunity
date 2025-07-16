@@ -44,7 +44,6 @@ public class LogFilter implements Filter {
 		
 		// 완료 시간
 		tick = System.nanoTime() - tick;
-		System.out.println(req.getRequestURI() + " 실행 시간 : " + tick);
 	}
 
 	/**
@@ -53,7 +52,6 @@ public class LogFilter implements Filter {
 	public void init(FilterConfig fConfig) throws ServletException {
 		// TODO Auto-generated method stub
 		String value = fConfig.getInitParameter("변수명");
-		System.out.println("변수명 : " + value);
 		
 	}
 

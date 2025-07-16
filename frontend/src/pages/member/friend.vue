@@ -1,6 +1,5 @@
 <template>
   <div class="friend-container">
-    <!-- 탭 영역 -->
     <div class="tabs">
       <div
         v-for="tab in tabList"
@@ -12,10 +11,7 @@
         <span class="tab-count">{{ getCount(tab.value) }}</span>
       </div>
     </div>
-
-    <!-- 탭 컨텐츠 영역 -->
     <div class="tab-content">
-      <!-- 친구 목록 -->
       <template v-if="activeTab === 'friends'">
         <div v-if="friends.length > 0">
           <router-link
@@ -32,8 +28,6 @@
         </div>
         <div v-else class="no-data">😢 아직 친구가 없어요</div>
       </template>
-
-      <!-- 신청대기 목록 -->
       <template v-else-if="activeTab === 'pending'">
         <div v-if="pending.length > 0">
           <router-link
@@ -66,9 +60,6 @@
         </div>
         <div v-else class="no-data">⏳ 신청 대기 중인 친구가 없어요</div>
       </template>
-
-
-      <!-- 친구 검색 -->
       <template v-else-if="activeTab === 'searchFriend'">
         <div class="search-wrapper">
           <div class="search-row">
@@ -143,99 +134,151 @@ const {
 
 <style scoped>
 .friend-container {
-  width: 600px;
-  margin: 30px auto;
-  font-family: sans-serif;
+  max-width: 1000px;
+  margin: 50px auto;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #212529;
+  padding: 0 1rem;
 }
 
 .tabs {
   display: flex;
   gap: 20px;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 20px;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 2rem;
 }
 
 .tab {
   cursor: pointer;
-  padding: 10px;
+  padding: 14px 22px;
+  border-radius: 6px 6px 0 0;
+  font-weight: 500;
+  color: #495057;
+  transition: all 0.2s ease-in-out;
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 1rem;
+}
+
+.tab:hover {
+  background-color: #f8f9fa;
 }
 
 .tab--focused {
-  font-weight: bold;
-  color: #007bff;
-  border-bottom: 2px solid #007bff;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-bottom: 2px solid white;
+  color: #0d6efd;
+  font-weight: 700;
 }
 
 .tab-title {
   margin: 0;
+  font-size: 1rem;
+  line-height: 1.2;
 }
 
 .tab-count {
-  color: #007bff;
-  font-weight: bold;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0d6efd;
+  line-height: 1.2;
+  transform: translateY(1px);
 }
 
 .tab-content {
-  padding: 20px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  min-height: 150px;
+  border: 1px solid #dee2e6;
+  border-radius: 0 0 8px 8px;
+  padding: 2rem;
+  background-color: #fff;
+  min-height: 200px;
 }
 
-.no-data {
-  text-align: center;
-  color: #999;
-  font-size: 14px;
+.friend-info-link,
+.pending-item,
+.result-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background-color: #f8f9fa;
+  margin-bottom: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s;
+}
+
+.friend-info-link:hover,
+.pending-item:hover,
+.result-info:hover {
+  background-color: #e9f2ff;
+}
+
+.pending-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.user-summary {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .search-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 
 .search-row {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
 .search-input {
   flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
 }
 
 .search-btn {
-  padding: 10px 20px;
-  background-color: #007bff;
+  padding: 12px 20px;
+  background-color: #0d6efd;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
+  font-size: 0.95rem;
 }
 
 .search-btn:hover {
-  background-color: #0056b3;
-}
-
-.result-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #ddd;
+  background-color: #0b5ed7;
 }
 
 .request-btn {
-  padding: 6px 12px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
   background-color: #28a745;
   color: white;
   border: none;
   border-radius: 4px;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -248,25 +291,36 @@ const {
   cursor: not-allowed;
 }
 
-.pending-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: nowrap;
-  gap: 10px;
-  width: 100%;
+.no-data {
+  text-align: center;
+  color: #868e96;
+  font-size: 0.95rem;
+  margin-top: 20px;
 }
 
-.pending-info span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex-grow: 1;
-}
+@media (max-width: 768px) {
+  .friend-container {
+    max-width: 95%;
+    padding: 0 1rem;
+  }
 
-.action-buttons {
-  display: flex;
-  flex-shrink: 0;
-  gap: 6px;
+  .tab-content {
+    padding: 1.2rem;
+  }
+
+  .search-row {
+    flex-direction: column;
+  }
+
+  .result-info,
+  .friend-info-link,
+  .pending-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    margin-top: 0.5rem;
+  }
 }
 </style>

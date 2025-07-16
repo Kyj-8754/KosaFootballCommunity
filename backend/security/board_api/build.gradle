@@ -36,6 +36,7 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
 	
 	implementation project(':security_api')
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
 	// 오라클11 설정
 	// https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc11

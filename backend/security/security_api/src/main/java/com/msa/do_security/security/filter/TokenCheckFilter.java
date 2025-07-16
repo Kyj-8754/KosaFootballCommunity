@@ -114,11 +114,9 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 	    } else {
 	    	userDetails = oAtuAuth2UserVOService.loadUserByUsername(userId, loginType);
 	    }
-		System.out.println(userDetails);
 		// userDetails 객체를 사용하여 인증객체로 생성한다
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 				userDetails.getUsername(), null, userDetails.getAuthorities());
-		System.out.println(authentication);
 
 		// 스프링 시큐리티에 인증객체를 설정한다
 		SecurityContextHolder.getContext().setAuthentication(authentication);

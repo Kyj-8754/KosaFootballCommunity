@@ -156,6 +156,45 @@
 	</select>
 
 
+<!-- bno 없이 club_id로만 insert -->
+<insert id="insertByClubDetail">
+    INSERT INTO tbl_club_apply (
+        club_id,
+        appli_user_no,
+        status,
+        apply_date
+    ) VALUES (
+        #{club_id},
+        #{appli_user_no},
+        #{status},
+        NOW()
+    )
+</insert>
+
+
+
+<!-- (1) club_id, appli_user_no로 최신 한 건 조회 -->
+	<select id="findLastApplyByClubIdAndApplicant" parameterType="map" resultType="com.msa.kyj_prj.club.apply.ClubApply">
+  	SELECT *
+  	FROM tbl_club_apply
+ 	WHERE club_id = #{club_id}
+    AND appli_user_no = #{appli_user_no}
+  	ORDER BY apply_date DESC
+	LIMIT 1
+	</select>
+
+<!-- (2) club_id, appli_user_no로 pending 상태 신청 취소 -->
+	<update id="cancelByClubIdAndApplicant" parameterType="map">
+  	UPDATE tbl_club_apply
+  	SET status = 'canceled', apply_date = NOW()
+  	WHERE club_id = #{club_id}
+    AND appli_user_no = #{appli_user_no}
+    AND status = 'pending'
+	</update>
+
+
+
+
 
 
 </mapper>
