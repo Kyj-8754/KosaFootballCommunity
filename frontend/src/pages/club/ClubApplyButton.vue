@@ -72,7 +72,7 @@ const handleApply = async () => {
   }
   try {
     await axios.post(
-      "/club_api/apply/club",
+      "/club_api/club/apply/club",
       {
         club_id: props.clubId,
         appli_user_no: Number(userNo.value),
@@ -91,7 +91,7 @@ const handleApply = async () => {
 
 const handleCancel = async () => {
   try {
-    await axios.delete("/club_api/apply/club", {
+    await axios.delete("/club_api/club/apply/club", {
       data: {
         club_id: props.clubId,
         appli_user_no: Number(userNo.value),
@@ -110,7 +110,7 @@ const handleCancel = async () => {
 const fetchApplyStatus = async () => {
   if (!userNo?.value) return;
   try {
-    const res = await axios.get("/club_api/apply/club/status", {
+    const res = await axios.get("/club_api/club/apply/club/status", {
       params: {
         club_id: props.clubId,
         user_no: userNo.value,

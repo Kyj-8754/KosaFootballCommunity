@@ -135,7 +135,7 @@ export default {
     },
     async fetchClubs() {
       try {
-        const response = await axios.get("/club_api/list");
+        const response = await axios.get("/club_api/club/list");
         this.clubs = response.data.data;
       } catch (error) {
         console.error("클럽 목록 불러오기 실패:", error);

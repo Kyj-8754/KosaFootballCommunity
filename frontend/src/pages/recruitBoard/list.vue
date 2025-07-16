@@ -186,7 +186,7 @@ async function fetchRecruits(sortType = "") {
 async function checkHasClub() {
   if (!userNo?.value) return;
   try {
-    const response = await axios.get(`/club_api/hasClub/${userNo.value}`);
+    const response = await axios.get(`/club_api/club/hasClub/${userNo.value}`);
     hasClub.value = response.data.result;
   } catch (e) {
     console.error("클럽 조회 실패", e);

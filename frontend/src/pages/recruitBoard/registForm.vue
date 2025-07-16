@@ -63,7 +63,7 @@ onMounted(async () => {
 
   try {
     // ✅ user_no를 기반으로 사용자의 클럽 목록 조회
-    const res = await axios.get(`/club_api/myClubs/${userNoRef.value}`);
+    const res = await axios.get(`/club_api/club/myClubs/${userNoRef.value}`);
 
     // ✅ 서버에서 클럽 배열을 정상적으로 받아온 경우
     if (Array.isArray(res.data) && res.data.length > 0) {
