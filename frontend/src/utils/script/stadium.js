@@ -41,12 +41,6 @@ export function useStadiumList() {
 	  }
 	  return range
 	})
-	
-	// watch([pageNo, searchType, () => route.query.searchValue], ([newPageNo, newSearchType, newSearch]) => {
-	// 	fetchData(newPageNo, newSearchType, newSearch)
-	// }, 
-	// { immediate: true }
-	// )
 
 	watch(
   () => route.query,
@@ -55,7 +49,7 @@ export function useStadiumList() {
     const newSearchType = query.searchType || ''
     const newSearchValue = query.searchValue || ''
 
-    // ✅ 명확히 상태 분리해서 저장
+    // 명확히 상태 분리해서 저장
     searchType.value = newSearchType
     pageResponse.searchValue = newSearchValue
 
