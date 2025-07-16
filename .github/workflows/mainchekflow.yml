@@ -2,7 +2,7 @@ name: KFC workflow
 on: 
   push:
     # main에 대해서만 실행하도록 설정
-    branches: [ main ]
+    branches: [ cd ]
     
 # 실행
 jobs:
@@ -19,11 +19,12 @@ jobs:
           node-version: '20'
           
       # 프론트엔드 의존성 설치 및 빌드
-      - name: Build Frontend
-        working-directory: ./frontend
-        run: |
-          npm install
-          npm run build
+      # - name: Build Frontend
+      #   working-directory: ./frontend
+      #   run: |
+      #     echo "VITE_KAKAOMAP_API_KEY=${{ secrets.VITE_KAKAOMAP_API_KEY }}" > .env
+      #     npm install
+      #     npm run build
 
       # jdk 설치
       - name: Set up JDK 17
@@ -47,13 +48,54 @@ jobs:
       # 각 API별 application-secret.properties 파일 생성
       - name: Create application-secret.properties for each API
         run: |
+          # stadium_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/stadium_api/src/main/resources/application-secret.properties
+
+          # reservation_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/reservation_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/reservation_api/src/main/resources/application-secret.properties
+
           # kakaopay_api
-          echo "kakao.admin.key=${{ secrets.KAKAO_ADMIN_KEY }}" >> backend/kakaopay_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/kakaopay_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.KAKAO_ADMIN_KEY }}" >> backend/kakaopay_api/src/main/resources/application-secret.properties
+
+          # security_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/security_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.SECURITY_APPLICATION_SECRET_PROPERTIES }}" >> backend/reservation_api/src/main/resources/application-secret.properties
+
+          # login_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/login_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/reservation_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.LOGIN_APPLICATION_SECRET_PROPERTIES }}" >> backend/reservation_api/src/main/resources/application-secret.properties
 
           # alarm_api
-          echo "alarm.service.api.key=${{ secrets.ALARM_SERVICE_API_KEY }}" >> backend/alarm_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/alarm_api/src/main/resources/application-secret.properties
 
+          # club_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/club_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/club_api/src/main/resources/application-secret.properties
 
+          # recruit_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/recruit_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/recruit_api/src/main/resources/application-secret.properties
+
+          # weather_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/weather_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.WEATHER_APPLICATION_SECRET_PROPERTIES }}" >> backend/weather_api/src/main/resources/application-secret.properties
+
+          # board_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/board_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_SERVICE_API_KEY }}" >> backend/security/board_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.BOARD_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/board_api/src/main/resources/application-secret.properties
+          
+          
+      # 프론트엔드 이미지 빌드 및 푸시
+      - name: Build and Push Frontend Image
+        working-directory: ${{ github.workspace }}/frontend
+        run: |
+          echo "VITE_KAKAOMAP_API_KEY=${{ secrets.VITE_KAKAOMAP_API_KEY }}" > .env
+          docker build -f ./Dockerfile -t ${{ secrets.USERNAME }}/nginx .
+          docker push ${{ secrets.USERNAME }}/nginx
 
       # 하위 폴더 전체 권한 부여
       - name: Set read permissions for all APIs
@@ -72,12 +114,6 @@ jobs:
          pushd backend/weather_api && chmod +x ./gradlew && ./gradlew build -x test && popd
          pushd backend/security && chmod +x ./gradlew && ./gradlew :security_api:build -x test && ./gradlew :board_api:build -x test && ./gradlew :login_api:build -x test && popd
           
-      # 프론트엔드 이미지 빌드 및 푸시
-      - name: Build and Push Frontend Image
-        working-directory: ${{ github.workspace }}/frontend
-        run: |
-          docker build -f ./Dockerfile -t ${{ secrets.USERNAME }}/nginx .
-          docker push ${{ secrets.USERNAME }}/nginx
 
      # 백엔드 이미지 빌드 및 푸쉬
       - name: Build and Push API Images
