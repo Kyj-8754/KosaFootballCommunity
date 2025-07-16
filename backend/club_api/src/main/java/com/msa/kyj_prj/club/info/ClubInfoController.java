@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
-@RequestMapping("/club_info")
+@RequestMapping("/club")
 @Tag(name = "Club Info", description = "클럽 상세 정보 API")
 public class ClubInfoController {
 

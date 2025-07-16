@@ -172,7 +172,7 @@ const handleDeleteRecruit = async () => {
 const fetchApplyStatus = async () => {
   if (!userNo.value) return;
   try {
-    const res = await axios.get("/club_api/apply/status", {
+    const res = await axios.get("/club_api/club/apply/status", {
       params: {
         bno: route.params.bno,
         user_no: userNo.value,
@@ -204,7 +204,7 @@ const handleApply = async () => {
 
   try {
     await axios.post(
-      "/club_api/apply",
+      "/club_api/club/apply",
       {
         bno: bno,
         appli_user_no: Number(userNo.value),
@@ -231,7 +231,7 @@ const handleCancel = async () => {
   }
 
   try {
-    await axios.delete("/club_api/apply", {
+    await axios.delete("/club_api/club/apply", {
       data: {
         bno: bno,
         appli_user_no: Number(userNo.value),

@@ -106,7 +106,7 @@ onMounted(async () => {
 
 async function fetchClubId() {
   try {
-    const res = await axios.get('/club_api/idByTeamCode', { params: { teamCode } })
+    const res = await axios.get('/club_api/club/idByTeamCode', { params: { teamCode } })
     clubId.value = res.data.club_id
     if (!clubId.value) {
       alert('club_id를 찾을 수 없습니다.')
@@ -121,7 +121,7 @@ async function fetchClubId() {
 
 async function fetchApplyList() {
   try {
-    const res = await axios.get('/club_api/apply/listWithName', { params: { club_id: clubId.value } })
+    const res = await axios.get('/club_api/club/apply/listWithName', { params: { club_id: clubId.value } })
     applyList.value = res.data
   } catch (e) {
     alert('가입 신청자 목록을 불러오지 못했습니다')
@@ -131,7 +131,7 @@ async function fetchApplyList() {
 
 async function approve(apply_id) {
   try {
-    await axios.post('/club_api/apply/approve', { apply_id })
+    await axios.post('/club_api/club/apply/approve', { apply_id })
     alert('승인 처리 완료')
     fetchApplyList()
   } catch (e) {
@@ -142,7 +142,7 @@ async function approve(apply_id) {
 
 async function reject(apply_id) {
   try {
-    await axios.post('/club_api/apply/reject', { apply_id })
+    await axios.post('/club_api/club/apply/reject', { apply_id })
     alert('거절 처리 완료')
     fetchApplyList()
   } catch (e) {
