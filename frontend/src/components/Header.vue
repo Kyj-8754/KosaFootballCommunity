@@ -2,6 +2,11 @@
   <div>
     <div v-if="isAuthenticated" class="auth-actions">
       <span>
+            <!-- 알림 드롭다운 -->
+      <AlarmDropdown
+        :userNo="userNo"
+        style="display: inline-block; margin-right: 15px"
+      />
         <router-link :to="{ name: 'Member_MyPage' }"
           >{{ userName }} 내 정보</router-link
         >
@@ -14,12 +19,6 @@
         |
         <a href="#" @click.prevent="logout">로그아웃</a>
       </span>
-
-      <!-- 알림 드롭다운 -->
-      <AlarmDropdown
-        :userNo="userNo"
-        style="display: inline-block; margin-right: 15px"
-      />
     </div>
 
     <!-- 로그인 전 -->
