@@ -2,14 +2,17 @@
   <div>
     <div v-if="isAuthenticated" class="auth-actions">
       <span>
-        <router-link :to="{ name: 'Member_MyPage' }">{{ userName }} 내 정보</router-link>
+        <router-link :to="{ name: 'Member_MyPage' }"
+          >{{ userName }} 내 정보</router-link
+        >
         <template v-if="isAdmin">
-          | <router-link :to="{ name: 'Admin_UserList' }" class="admin-link"> 회원 목록 </router-link>
-        </template> |
+          |
+          <router-link :to="{ name: 'Admin_UserList' }" class="admin-link">
+            회원 목록
+          </router-link>
+        </template>
+        |
         <a href="#" @click.prevent="logout">로그아웃</a>
-        <AlarmDropdown :userNo="userNo" class="alarm" />
-
-        
       </span>
 
       <!-- 알림 드롭다운 -->
@@ -21,10 +24,9 @@
 
     <!-- 로그인 전 -->
     <div v-else class="auth-actions">
-      <router-link :to="{ name: 'Member_LoginForm' }">로그인</router-link> | 
+      <router-link :to="{ name: 'Member_LoginForm' }">로그인</router-link> |
       <router-link :to="{ name: 'Member_RegistForm' }">회원 가입</router-link>
     </div>
-
 
     <!-- 임시 버튼 -->
     <div class="my-2 px-2">
@@ -122,11 +124,11 @@ import axios from "axios";
 import AlarmDropdown from "@/components/common/AlarmDropdown.vue";
 
 // token과 logout 함수 inject
-const token = inject('token')
-const userNo = inject('userNo')
-const logout = inject('logout')
-const userName = inject('userName')
-const authCode = inject('authCode')
+const token = inject("token");
+const userNo = inject("userNo");
+const logout = inject("logout");
+const userName = inject("userName");
+const authCode = inject("authCode");
 
 // 로그인 여부 계산
 const isAuthenticated = computed(() => !!token?.value);
