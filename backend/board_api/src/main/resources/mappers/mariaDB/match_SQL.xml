@@ -287,13 +287,19 @@
 	  )
 	</insert>
 	
-	<!-- 클럽 매치 리스트 -->
+	<!-- 클럽 매치 리스트 (필터링된) -->
 	<select id="selectFilteredClubMatches" parameterType="long" resultType="map">
 	  SELECT 
 	    m.match_id,
 	    m.match_title,
+	    m.match_created_at,
+	    m.match_date,
+	    m.SVCID,
+	    m.match_closed,
+	    m.gender_condition,
 	    m.match_status,
-	    m.match_date
+	    m.match_board_status,
+	    m.match_code
 	  FROM 
 	    match_participant mp
 	  JOIN 
@@ -317,6 +323,42 @@
 	    WHERE reservation_id = #{reservation_id}
 	      AND match_status IN ('waiting', 'active', 'completed')
 	</select>
+	
+	<!-- 결제 id 기반 예약 id 호출 -->
+	<select id="getReservationIdByPaymentId" parameterType="long" resultType="long">
+	    SELECT reservation_id
+	    FROM payment
+	    WHERE payment_id = #{payment_id}
+	</select>
+	
+	<!-- 최근 완료된 과거 매치 5개 조회 -->
+	<select id="selectRecentCompletedMatches" resultType="com.msa.kyj_prj.match.Match">
+	  SELECT
+	    match_id,
+	    match_title,
+	    match_created_at,
+	    match_date,
+	    SVCID,
+	    match_closed,
+	    gender_condition,
+	    match_status,
+	    match_board_status,
+	    match_code
+	  FROM `match`
+	  WHERE match_status = 'completed'
+	    AND match_date &lt; NOW()
+	  ORDER BY match_date DESC
+	  LIMIT 5
+	</select>
+
+	<select id="selectClosedLeagueMatches" resultType="com.msa.kyj_prj.match.Match">
+  SELECT *
+  FROM `match`
+  WHERE match_code = 'league'
+    AND match_date > NOW()
+  ORDER BY match_date ASC
+	</select>
+
 
 
 

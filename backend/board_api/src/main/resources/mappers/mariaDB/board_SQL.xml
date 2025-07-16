@@ -19,6 +19,7 @@
 	    FROM board
 	    <where>
 	        board_status != 'deleted'
+	        AND board_category != '모집게시판'
 	        
 	        <if test="criteria == 'title' and keyword != null and keyword != ''">
 	            AND board_title LIKE CONCAT('%', #{keyword}, '%')
@@ -159,5 +160,50 @@
 	      WHERE r.status IN ('cancelled', 'expired')
 	    )
 	</update>
+	
+	<!-- 모집게시판 게시글 목록 조회 (user_no 조건 선택적) -->
+	<select id="findRecruitBoards" resultType="com.msa.kyj_prj.board.Board">
+	    SELECT 
+	        board_id,
+	        user_name,
+	        board_title,
+	        board_category,
+	        board_created_at,
+	        board_modified_at,
+	        board_status,
+	        board_viewcount,
+	        board_likecount
+	    FROM board
+	    <where>
+	        board_status != 'deleted'
+	        AND board_category = '모집게시판'
+	        
+	        <!-- ✅ user_no가 null 또는 빈 문자열이 아닐 경우에만 조건 적용 -->
+	        <if test="userNo != null and userNo != ''">
+	            AND user_no = #{userNo}
+	        </if>
+	
+	        <if test="keyword != null and keyword != ''">
+	            AND (
+	                board_title LIKE CONCAT('%', #{keyword}, '%')
+	                OR board_content LIKE CONCAT('%', #{keyword}, '%')
+	            )
+	        </if>
+	    </where>
+	
+	    <!-- ✅ 정렬은 오직 board_id 기준, 방향만 제어 -->
+	    <choose>
+	        <when test="sortDirection != null and sortDirection != ''">
+	            ORDER BY board_id 
+	            <choose>
+	                <when test="sortDirection == 'asc'">ASC</when>
+	                <otherwise>DESC</otherwise>
+	            </choose>
+	        </when>
+	        <otherwise>
+	            ORDER BY board_id DESC
+	        </otherwise>
+	    </choose>
+	</select>
 
 </mapper>

@@ -142,7 +142,8 @@ public class BaseSecurityConfig {
 				"/v3/api-docs/**",
 				"/swagger-ui/**",
 				"/swagger-ui.html",
-				"/webjars/**");
+				"/webjars/**",
+				"/file/**");
 	}
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {

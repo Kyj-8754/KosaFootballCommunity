@@ -34,7 +34,7 @@ public class ClubApplyService {
 	// ◆ 클럽 가입 신청 처리 (중복 방지, 알림 전송 포함)
 	public AlarmMessageDTO applyToRecruit(ClubApply clubApply, int appli_user_no) {
 		int bno = clubApply.getBno();
-		
+
 		// 팀장 user_no 조회
 		int user_no = clubApplyDAO.findUserNoByBno(bno);
 		if (user_no == 0)
@@ -86,14 +86,25 @@ public class ClubApplyService {
 		}
 
 		clubApply.setStatus("pending");
-		int result = clubApplyDAO.insert(clubApply);
-		if (result != 1) {
-			log.error("❌ 클럽 신청 정보 저장 실패!");
-			return null;
+		int result;
+
+		// ★ 여기서 bno 값으로 분기!
+		if (clubApply.getBno() > 0) {
+		    // 모집글(bno)이 있으면 기존 방식 사용
+		    result = clubApplyDAO.insert(clubApply);
+		} else {
+		    // 클럽 상세에서 직접 신청(bno 없음)일 때는 insertByClubDetail 사용!
+		    result = clubApplyDAO.insertByClubDetail(clubApply);
 		}
-		
+
+		if (result != 1) {
+		    log.error("❌ 클럽 신청 정보 저장 실패!");
+		    return null;
+		}
+
+
 		String senderName = clubApplyDAO.findUserNameByUserNo(clubApply.getAppli_user_no());
-		
+
 		// 알림 메시지 전송 (실패해도 무방)
 		Integer clubIdForAlarm = clubApplyDAO.findClubIdByBno(clubApply.getBno());
 		Integer userNoForAlarm = clubApplyDAO.findUserNoByBno(clubApply.getBno());
@@ -105,8 +116,7 @@ public class ClubApplyService {
 		alarm.setMessage(senderName + " 님이 클럽가입을 신청했습니다.");
 
 		log.info("나 이거 보내걸임" + alarm.toString());
-		
-		
+
 		try {
 			String url = alarmApiUrl + "/api/alarm/send";
 			ResponseEntity<Void> response = restTemplate.postForEntity(url, alarm, Void.class);
@@ -167,7 +177,7 @@ public class ClubApplyService {
 				int club_id = apply.getClub_id();
 				int user_no = apply.getAppli_user_no();
 				int leader_user_no = clubApplyDAO.findLeaderUserNoByClubId(club_id);
-				
+
 				insertClubMember(club_id, user_no);
 
 				// [1] 승인 알림 전송 (로그 추가)
@@ -323,4 +333,112 @@ public class ClubApplyService {
 	public boolean isAlreadyPendingApply(int club_id, int appli_user_no) {
 		return clubApplyDAO.countPendingApply(club_id, appli_user_no) > 0;
 	}
+
+	// ////////////////////////////////////////////////////////////////////////
+	
+	// ◆ club_id, appli_user_no 기준으로 가장 최근 신청 이력 조회
+	public ClubApply findLastApplyByClubIdAndApplicant(int club_id, int appli_user_no) {
+		return clubApplyDAO.findLastApplyByClubIdAndApplicant(club_id, appli_user_no);
+	}
+
+	// ◆ club_id, appli_user_no 기준 신규 신청 (중복, 강퇴, 24시간 재신청 등 로직 포함)
+	public AlarmMessageDTO applyToClub(ClubApply clubApply, int appli_user_no) {
+	    int club_id = clubApply.getClub_id();
+
+	    // 팀장 user_no 조회
+	    Integer leader_user_no = clubApplyDAO.findLeaderUserNoByClubId(club_id);
+	    if (leader_user_no == null)
+	        throw new IllegalStateException("팀장 정보를 찾을 수 없습니다.");
+
+	    // 팀장 본인 가입 금지
+	    if (appli_user_no == leader_user_no)
+	        throw new IllegalStateException("팀장은 본인 클럽에 가입 신청할 수 없습니다.");
+
+	    // 기존 신청 이력 확인
+	    ClubApply exist = clubApplyDAO.findLastApplyByClubIdAndApplicant(club_id, appli_user_no);
+	    if (exist != null) {
+	        String status = exist.getStatus();
+	        if ("pending".equals(status) || "approved".equals(status)) {
+	            throw new IllegalStateException("❌ 이미 가입 신청 중이거나 멤버입니다.");
+	        }
+	        if ("kicked".equals(status)) {
+	            throw new IllegalStateException("❌ 강퇴된 유저는 재가입이 불가합니다.");
+	        }
+	        if ("canceled".equals(status)) {
+	            // 24시간 이내 최근 취소 확인
+	            ClubApply canceled = clubApplyDAO.findRecentCanceledApply(club_id, appli_user_no);
+	            if (canceled != null)
+	                throw new IllegalStateException("❌ 재가입 신청은 24시간 뒤에 해주세요.");
+
+	            int updated = clubApplyDAO.updateStatusToPending(club_id, appli_user_no);
+	            if (updated != 1)
+	                throw new IllegalStateException("재신청 갱신에 실패했습니다.");
+
+	            // 재신청 갱신 완료 → insert 불필요
+	            return null;
+	        }
+	        // rejected, withdrawn 등은 신규 신청 허용 (insert 진행)
+	    }
+
+	    // 신규 신청 등록
+	    clubApply.setStatus("pending");
+
+	    int result;
+	    if (clubApply.getBno() > 0) {
+	        result = clubApplyDAO.insert(clubApply);
+	    } else {
+	        System.out.println(">>> [insert] clubApply: " + clubApply);
+	        result = clubApplyDAO.insertByClubDetail(clubApply);
+	    }
+
+	    if (result != 1)
+	        throw new IllegalStateException("❌ 클럽 신청 정보 저장 실패!");
+
+	    // 🔽 [알림 메시지 전송 로직 시작]
+	    try {
+	        String senderName = clubApplyDAO.findUserNameByUserNo(clubApply.getAppli_user_no());
+
+	        AlarmMessageDTO alarm = new AlarmMessageDTO();
+	        alarm.setType("CLUB_APPLY");
+	        alarm.setSenderId(String.valueOf(clubApply.getAppli_user_no()));
+	        alarm.setReceiverId(String.valueOf(leader_user_no)); // 팀장에게 전송
+	        alarm.setClubId(club_id);
+	        alarm.setMessage(senderName + " 님이 클럽가입을 신청했습니다.");
+
+	        log.info("📢 클럽 신청 알림 전송 준비: {}", alarm.toString());
+
+	        String url = alarmApiUrl + "/alarm/send";
+	        ResponseEntity<Void> response = restTemplate.postForEntity(url, alarm, Void.class);
+
+	        if (response.getStatusCode().is2xxSuccessful()) {
+	            log.info("✅ 클럽 가입 알림 전송 성공 (receiver: {})", leader_user_no);
+	        } else {
+	            log.error("❌ 클럽 가입 알림 전송 실패 (status: {})", response.getStatusCode());
+	        }
+	    } catch (Exception e) {
+	        log.error("❌ 클럽 가입 알림 전송 중 예외 발생", e);
+	    }
+	    // 🔼 [알림 메시지 전송 로직 끝]
+
+	    return null;
+	}
+
+
+
+	// ◆ club_id, appli_user_no 기준 신청 취소 (pending만)
+	public boolean cancelApplyByClubId(int club_id, int appli_user_no) {
+		ClubApply lastApply = clubApplyDAO.findLastApplyByClubIdAndApplicant(club_id, appli_user_no);
+		if (lastApply == null)
+			return false;
+		String status = lastApply.getStatus();
+		if ("approved".equals(status)) {
+			throw new IllegalStateException("이미 승인된 신청은 취소할 수 없습니다.");
+		}
+		if (!"pending".equals(status)) {
+			return false;
+		}
+		int updated = clubApplyDAO.cancelByClubIdAndApplicant(club_id, appli_user_no);
+		return updated > 0;
+	}
+
 }

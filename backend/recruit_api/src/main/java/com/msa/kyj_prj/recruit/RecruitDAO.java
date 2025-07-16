@@ -33,4 +33,12 @@ public interface RecruitDAO {
 
 	// 조회수 증가
 	void increase_view_count(@Param("bno") int bno);
+
+	// 모집글 마감
+	void update_is_closed(@Param("bno") int bno, @Param("is_closed") int is_closed);
+
+	// 모집글 삭제
+	void delete_recruit(@Param("bno") int bno);
+
+	
 }
