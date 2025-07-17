@@ -25,7 +25,7 @@
     </div>
     -->
     <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
-      <weatherWidget />
+      <weatherWidget @expand="adjustWidgetPosition" />
     </div>
   </div>
 </template>
@@ -158,6 +158,21 @@ const endDrag = () => {
   isDragging = false
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', endDrag)
+}
+
+const adjustWidgetPosition = () => {
+  const widgetEl = widget.value;
+  if (!widgetEl) return;
+
+  // 펼친 후 실제 높이
+  const widgetHeight = widgetEl.getBoundingClientRect().height;
+  const viewportHeight = window.innerHeight;
+  const currentTop = widgetEl.offsetTop;
+
+  if (currentTop + widgetHeight > viewportHeight) {
+    const newTop = Math.max(0, viewportHeight - widgetHeight);
+    widgetEl.style.top = `${newTop}px`;
+  }
 }
 
 onMounted(() => {
