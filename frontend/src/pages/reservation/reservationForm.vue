@@ -82,6 +82,9 @@
 <script setup>
   import { form } from '@/utils/script/reservation'
 const {
+  reservation,
+  timeSlots,
+  UserDB,
   stadiumDB,
   openConfirmModal,
   confirmReservation,
