@@ -28,7 +28,7 @@ public class FileController {
     @Autowired
     private FileService fileService;
 
-    private final String uploadDir = "C:/upload/files/";
+    private final String uploadDir = "/home/ubuntu/images";
 
     // 파일 업로드
     @PostMapping("/upload")
