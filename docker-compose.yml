@@ -29,70 +29,70 @@ services:
 
 # stadium_api 생성
   stadium_api:
-    image: span5189/stadium_api:latest
+    image: span5189/stadium_api:${TAG:-latest}
     restart: always
     container_name: stadium-api
     networks:
       - msateamprj_network
 # reservation_api 생성
   reservation_api:
-    image: span5189/reservation_api:latest
+    image: span5189/reservation_api:${TAG:-latest}
     restart: always
     container_name: reservation-api
     networks:
       - msateamprj_network
 # kakaopay_api 생성
   kakaopay_api:
-    image: span5189/kakaopay_api:latest
+    image: span5189/kakaopay_api:${TAG:-latest}
     restart: always
     container_name: kakaopay-api
     networks:
       - msateamprj_network
 # security_api 생성
   security_api:
-    image: span5189/security_api:latest
+    image: span5189/security_api:${TAG:-latest}
     restart: always
     container_name: security-api
     networks:
       - msateamprj_network 
 # login_api 생성
   login_api:
-    image: span5189/login_api:latest
+    image: span5189/login_api:${TAG:-latest}
     restart: always
     container_name: login-api
     networks:
       - msateamprj_network
 # alarm_api 생성
   alarm_api:
-    image: span5189/alarm_api:latest
+    image: span5189/alarm_api:${TAG:-latest}
     restart: always
     container_name: alarm-api
     networks:
       - msateamprj_network 
 # club_api 생성
   club_api:
-    image: span5189/club_api:latest
+    image: span5189/club_api:${TAG:-latest}
     restart: always
     container_name: club-api
     networks:
       - msateamprj_network
 # recruit_api 생성
   recruit_api:
-    image: span5189/recruit_api:latest
+    image: span5189/recruit_api:${TAG:-latest}
     restart: always
     container_name: recruit-api
     networks:
       - msateamprj_network 
 # weather_api 생성
   weather_api:
-    image: span5189/weather_api:latest
+    image: span5189/weather_api:${TAG:-latest}
     restart: always
     container_name: weather-api
     networks:
       - msateamprj_network
 # board_api 생성
   board_api:
-    image: span5189/board_api:latest
+    image: span5189/board_api:${TAG:-latest}
     restart: always
     container_name: board-api
     networks:
@@ -100,7 +100,7 @@ services:
 
 # nginx 생성
   nginx:
-    image: span5189/nginx:latest
+    image: span5189/nginx:${TAG:-latest}
     container_name: webserver1
     ports:
       - 80:80

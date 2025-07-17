@@ -114,9 +114,7 @@ public class ClubApplyService {
 		alarm.setReceiverId(String.valueOf(userNoForAlarm));
 		alarm.setClubId(clubIdForAlarm);
 		alarm.setMessage(senderName + " 님이 클럽가입을 신청했습니다.");
-		alarm.setUrl("club/T1/applyList");
-
-		log.info("나 이거 보내걸임" + alarm.toString());
+		alarm.setUrl("club/teammsa/applyList");
 
 		try {
 			String url = alarmApiUrl + "/api/alarm/send";
@@ -188,6 +186,7 @@ public class ClubApplyService {
 				alarm.setReceiverId(String.valueOf(user_no)); // 알림 받을 사람(= 승인된 멤버)
 				alarm.setClubId(club_id);
 				alarm.setMessage("클럽 가입이 승인되었습니다!");
+				alarm.setUrl("club/teammsa");
 
 				try {
 					// [🔍 로그 추가] 실제로 보낼 JSON 찍기
