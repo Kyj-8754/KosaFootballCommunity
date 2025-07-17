@@ -52,7 +52,7 @@ export default defineConfig({
         target: "http://reservation_api:8101",
         changeOrigin: true,
       },
-      "/kakao_api": {
+      "/kakaopay_api": {
         target: "http://kakaopay_api:8102",
         changeOrigin: true,
       },

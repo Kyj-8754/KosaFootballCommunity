@@ -107,7 +107,7 @@ const requestPayment = async () => {
   if (!confirmPayment) return;
   
   try{
-    const res = await axios.post('/kakao_api/kakaopay/ready', {
+    const res = await axios.post('/kakaopay_api/kakaopay/ready', {
       item_name: stadium.value.svcnm,
       total_amount: reservation.value.price,
       partner_order_id: reservation.value.reservation_id,
@@ -141,7 +141,7 @@ const refundPayment = async () => {
   if (!confirmCancel) return;  // 취소 시 함수 종료
 
   try{
-    const res = await axios.post('/kakao_api/kakaopay/refund', {
+    const res = await axios.post('/kakaopay_api/kakaopay/refund', {
       reservation: reservation.value,
       user_no: userNo.value
     });

@@ -388,7 +388,7 @@ jobs:
     # AWS에서 불필요한 공간 삭제
     - name: Docker Cleanup
       run: |
-        docker image prune -f # 사용하지 않는 이미지 전체 삭제
-        docker builder prune -a -f   # BuildKit 캐시 삭제
+        docker container prune -f # 사용하지 않는 컨테이너 전체 삭제
+        docker image prune -a -f   # 사용하지 않는 이미지 전체 삭제
     
     

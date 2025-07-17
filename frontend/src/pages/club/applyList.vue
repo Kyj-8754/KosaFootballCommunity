@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>클럽 가입 신청자 리스트</h2>
+    <h2> {{ clubId }} 클럽 가입 신청자 리스트</h2>
     <table class="apply-table"><!-- 추가: 클래스명 -->
       <thead>
         <tr>
@@ -29,6 +29,7 @@
     </table>
       <!-- ✅ 우측 하단 고정 뒤로가기 버튼 -->
      <button class="btn btn-secondary apply-back-btn" @click="goBack">뒤로가기</button>
+     <button class="btn btn-secondary apply-back-btn" id="club" @click="goclub">클럽상세창</button>
 
   </div>
 </template>
@@ -170,9 +171,14 @@ function formatDate(dateStr) {
 }
 
 
-
+// 그냥 방금 전 화면으로 넘어가기
 function goBack() {
   router.go(-1)
+}
+
+//팀 상세창으로 넘어가기
+function goclub(){
+ router.push({name:`club/${teamCode}`});
 }
 
 </script>
