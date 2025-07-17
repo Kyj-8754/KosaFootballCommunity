@@ -51,6 +51,7 @@
 <script setup>
   import { reservation_confirm } from '@/utils/script/reservation'
 const {
+    user,
     stadium,
     reservation,
 		cancleReservation,
