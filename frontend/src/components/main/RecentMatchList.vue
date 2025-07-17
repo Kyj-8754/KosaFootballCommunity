@@ -46,8 +46,7 @@ const fetchRecentMatches = async () => {
     const today = new Date()
 
     const filtered = res.data
-      .filter(match => new Date(match.match_date) >= today)
-      .sort((a, b) => new Date(a.match_date) - new Date(b.match_date))
+  .sort((a, b) => new Date(a.match_date) - new Date(b.match_date))
 
     latestMatches.value = filtered.slice(0, 5)
   } catch (err) {
