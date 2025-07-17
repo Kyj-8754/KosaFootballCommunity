@@ -20,7 +20,7 @@
               <span class="num-col">{{ startIndex + index + 1 }}</span>
               <span class="name-col">{{ item.svcnm }}</span>
               <span class="match-col">{{ convertType(item.reservation_type) }}</span>
-              <span class="date-col">{{ item.paid_at }}</span>
+              <span class="date-col">{{ item.paid_at ? item.paid_at : '-' }}</span>
               <span class="amount-col">{{ item.amount }}</span>
               <span 
                 class="status-col" 
