@@ -96,6 +96,8 @@ public class KakaoService {
 		    // 응답온 body 담아주기
 		    Map<String, Object> result = response.getBody();
 		    
+		    log.info("카카오 응답 바디: {}", result);
+		    
 		    // 카카오 API 에서 받아온 TID를 DB에 담아주기 위해서 사용
 		    String tid = (String) response.getBody().get("tid");
 		    // 결제 DB에 TID 저장
