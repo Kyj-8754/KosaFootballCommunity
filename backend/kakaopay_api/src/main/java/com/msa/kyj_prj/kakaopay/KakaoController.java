@@ -3,6 +3,7 @@ package com.msa.kyj_prj.kakaopay;
 import java.io.IOException;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Tag(name = "kakaopay", description = "카카오페이 관련 API" )
 public class KakaoController {
-
+	
+	@Value("${base.url}")
+	private static String baseUrl;
 	private final KakaoService kakaoService;
 
 	// 카카오 api 결제
@@ -56,10 +59,10 @@ public class KakaoController {
 		try {
 			log.info("카카오페이 결제 승인 요청 시작");
 			kakaoService.approve(pg_token, id);
-			response.sendRedirect("http://localhost:5173/payment/success.html");
+			response.sendRedirect("http://"+ baseUrl +"/payment/success.html");
 		} catch (Exception e) {
 			log.error("결제 승인 실패", e);
-			response.sendRedirect("http://localhost:5173/payment/fail.html");
+			response.sendRedirect("http://"+ baseUrl +"/payment/fail.html");
 		}
 	}
 
@@ -72,7 +75,7 @@ public class KakaoController {
 		kakaoService.fail(id);
 
 		// 클라이언트로 redirect
-		response.sendRedirect("http://localhost:5173/payment/fail.html");
+		response.sendRedirect("http://"+ baseUrl +"/payment/fail.html");
 	}
 
 	// 결제 취소 처리
@@ -83,7 +86,7 @@ public class KakaoController {
 		// 2. 실패 처리
 		kakaoService.cancel(id);
 		// 클라이언트로 redirect
-		response.sendRedirect("http://localhost:5173/payment/cancel.html");
+		response.sendRedirect("http://"+baseUrl+"/payment/cancel.html");
 	}
 
 	// 결제 환불

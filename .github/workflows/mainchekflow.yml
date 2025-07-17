@@ -103,6 +103,7 @@ jobs:
           # kakaopay_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/kakaopay_api/src/main/resources/application-secret.properties
           echo "${{ secrets.KAKAO_ADMIN_KEY }}" >> backend/kakaopay_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.BASE_URL }}" >> backend/kakaopay_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for security_api
         if: steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'

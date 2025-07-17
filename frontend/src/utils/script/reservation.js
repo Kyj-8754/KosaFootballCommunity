@@ -306,9 +306,11 @@ const timeSlots = computed(() => {
 });
 
 return {
-    stadiumDB,
+  reservation,
+  UserDB,
+  stadiumDB,
+  timeSlots,
   openConfirmModal,
   confirmReservation,
-
 }
 }

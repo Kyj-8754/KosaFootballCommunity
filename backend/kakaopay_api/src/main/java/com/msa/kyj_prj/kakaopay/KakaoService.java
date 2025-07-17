@@ -61,9 +61,9 @@ public class KakaoService {
 		    log.info("id 가져옴" + id);
 		   
 		    // 성공, 실패, 취소 url
-		    String approvalUrl = "http://kakaopay-api:8102/kakaopay/success?id=" + id;
-		    String cancelUrl = "http://kakaopay-api:8102/kakaopay/cancel?id=" + id;
-		    String failUrl = "http://kakaopay-api:8102/kakaopay/fail?id=" + id;
+		    String approvalUrl = "http://www.itsfootball.store/kakaopay_api/kakaopay/success?id=" + id;
+		    String cancelUrl = "http://www.itsfootball.store/kakaopay_api/kakaopay/cancel?id=" + id;
+		    String failUrl = "http://www.itsfootball.store/kakaopay_api/kakaopay/fail?id=" + id;
 		    
 		    // api 요청 보내기 위한 로직
 			HttpHeaders headers = new HttpHeaders();
