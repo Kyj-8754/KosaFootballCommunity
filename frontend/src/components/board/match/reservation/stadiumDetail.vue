@@ -60,7 +60,9 @@ const calendarAttributes = computed(() => [
 ])
 
 const onDayClick = (day) => {
-  const dateStr = day.date.toISOString().slice(0, 10)
+  const dateStr = day.date.toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })
+  .replace(/\./g, '-')
+  .replace(/ /g, '')
   if (!availableDates.value.includes(dateStr)) return
   selectedDate.value = dateStr
 }
