@@ -19,7 +19,9 @@
         </div>
       </div>
 
-      <ForecastTimeline :forecasts="forecastList" />
+      <!-- weatherWidget.vue -->
+      <ForecastTimeline :forecasts="forecastList" @expand="handleChildExpand" />
+
 
       <div class="opacity-slider" @mousedown.stop @mouseup.stop @mousemove.stop>
         <label>투명도: {{ (opacity * 100).toFixed(0) }}%</label>
@@ -53,6 +55,10 @@ const current = ref({})
 const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
 
 const emit = defineEmits(['expand'])
+
+const handleChildExpand = () => {
+  emit('expand')  // ForecastTimeline 펼침 → App.vue에 전달
+}
 
 watchEffect(async () => {
   const res = await axios.get('/widget_api/widget/forecast', {
