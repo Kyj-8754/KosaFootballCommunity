@@ -2,7 +2,7 @@ name: KFC workflow
 on: 
   push:
     # main에 대해서만 실행하도록 설정
-    branches: [ cd ]
+    branches: [ main ]
     # 각 경로를 체크하도록
     paths:
       - 'backend/**'
@@ -57,7 +57,7 @@ jobs:
       # Node 설치 (프론트)
       - name: Set up Node.js
         # 프론트 감지하여 실행하도록
-        if: steps.changed-files.outputs.frontend == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.infra == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: '20'
@@ -85,20 +85,20 @@ jobs:
       # 각 API별 application-secret.properties 파일 생성
       # 각 분기별로 변경 감지된것만 실행하도록 최적화
       - name: Create application-secret.properties for stadium_api
-        if: steps.changed-files.outputs.stadium_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.stadium_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # stadium_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/stadium_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for reservation_api
-        if: steps.changed-files.outputs.reservation_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.reservation_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # reservation_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/reservation_api/src/main/resources/application-secret.properties
           echo "${{ secrets.ALARM_API_URL }}" >> backend/reservation_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for kakaopay_api
-        if: steps.changed-files.outputs.kakaopay_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.kakaopay_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # kakaopay_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/kakaopay_api/src/main/resources/application-secret.properties
@@ -106,14 +106,14 @@ jobs:
           echo "${{ secrets.BASE_URL }}" >> backend/kakaopay_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for security_api
-        if: steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # security_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/security_api/src/main/resources/application-secret.properties
           echo "${{ secrets.SECURITY_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/security_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for login_api
-        if: steps.changed-files.outputs.login_api == 'true' || steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.login_api == 'true' || steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # login_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/login_api/src/main/resources/application-secret.properties
@@ -121,34 +121,34 @@ jobs:
           echo "${{ secrets.LOGIN_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/login_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for alarm_api
-        if: steps.changed-files.outputs.alarm_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.alarm_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # alarm_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/alarm_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for club_api
-        if: steps.changed-files.outputs.club_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.club_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # club_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/club_api/src/main/resources/application-secret.properties
           echo "${{ secrets.ALARM_API_URL }}" >> backend/club_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for recruit_api
-        if: steps.changed-files.outputs.recruit_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.recruit_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # recruit_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/recruit_api/src/main/resources/application-secret.properties
           echo "${{ secrets.ALARM_API_URL }}" >> backend/recruit_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for weather_api
-        if: steps.changed-files.outputs.weather_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.weather_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # weather_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/weather_api/src/main/resources/application-secret.properties
           echo "${{ secrets.WEATHER_APPLICATION_SECRET_PROPERTIES }}" >> backend/weather_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for board_api
-        if: steps.changed-files.outputs.board_api== 'true' || steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.board_api== 'true' || steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # board_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/board_api/src/main/resources/application-secret.properties
@@ -158,7 +158,7 @@ jobs:
           
       # 프론트엔드 이미지 빌드 및 푸시
       - name: Build and Push Frontend Image
-        if: steps.changed-files.outputs.frontend == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.infra == 'true'
         working-directory: ${{ github.workspace }}/frontend
         run: |
           echo "VITE_KAKAOMAP_API_KEY=${{ secrets.VITE_KAKAOMAP_API_KEY }}" > .env
@@ -172,103 +172,103 @@ jobs:
 
       # 백엔 Gradle 빌드
       - name: Gradle bootJar for alarm_api
-        if: steps.changed-files.outputs.alarm_api== 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.alarm_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
          pushd backend/alarm_api && chmod +x ./gradlew && ./gradlew build -x test && popd
 
       - name: Gradle bootJar for club_api
-        if: steps.changed-files.outputs.club_api== 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.club_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
          pushd backend/club_api && chmod +x ./gradlew && ./gradlew build -x test && popd
 
       - name: Gradle bootJar for kakaopay_api
-        if: steps.changed-files.outputs.kakaopay_api== 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.kakaopay_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
          pushd backend/kakaopay_api && chmod +x ./gradlew && ./gradlew build -x test && popd
 
       - name: Gradle bootJar for recruit_api
-        if: steps.changed-files.outputs.recruit_api== 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.recruit_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
          pushd backend/recruit_api && chmod +x ./gradlew && ./gradlew build -x test && popd
 
       - name: Gradle bootJar for reservation_api
-        if: steps.changed-files.outputs.reservation_api== 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.reservation_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
          pushd backend/reservation_api && chmod +x ./gradlew && ./gradlew build -x test && popd
 
       - name: Gradle bootJar for stadium_api
-        if: steps.changed-files.outputs.stadium_api== 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.stadium_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
          pushd backend/stadium_api && chmod +x ./gradlew && ./gradlew build -x test && popd
 
       - name: Gradle bootJar for weather_api
-        if: steps.changed-files.outputs.weather_api== 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.weather_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
          pushd backend/weather_api && chmod +x ./gradlew && ./gradlew build -x test && popd
 
       - name: Gradle bootJar for security
-        if: steps.changed-files.outputs.security_api== 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.security_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
          pushd backend/security && chmod +x ./gradlew && ./gradlew :security_api:build -x test && ./gradlew :board_api:build -x test && ./gradlew :login_api:build -x test && popd
           
 
      # 각 백엔드 이미지 빌드 및 푸쉬
       - name: Build and Push alarm_api
-        if: steps.changed-files.outputs.alarm_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.alarm_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/alarm_api:${{ github.sha }} ./backend/alarm_api
           docker push ${{ secrets.USERNAME }}/alarm_api:${{ github.sha }}
 
       - name: Build and Push club_api
-        if: steps.changed-files.outputs.club_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.club_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/club_api:${{ github.sha }} ./backend/club_api
           docker push ${{ secrets.USERNAME }}/club_api:${{ github.sha }}
           
       - name: Build and Push kakaopay_api
-        if: steps.changed-files.outputs.kakaopay_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.kakaopay_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/kakaopay_api:${{ github.sha }} ./backend/kakaopay_api
           docker push ${{ secrets.USERNAME }}/kakaopay_api:${{ github.sha }}
 
       - name: Build and Push recruit_api
-        if: steps.changed-files.outputs.recruit_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.recruit_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/recruit_api:${{ github.sha }} ./backend/recruit_api
           docker push ${{ secrets.USERNAME }}/recruit_api:${{ github.sha }}
 
       - name: Build and Push reservation_api
-        if: steps.changed-files.outputs.reservation_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.reservation_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/reservation_api:${{ github.sha }} ./backend/reservation_api
           docker push ${{ secrets.USERNAME }}/reservation_api:${{ github.sha }}
 
       - name: Build and Push security_api
-        if: steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/security_api:${{ github.sha }} ./backend/security/security_api
           docker push ${{ secrets.USERNAME }}/security_api:${{ github.sha }}
 
       - name: Build and Push login_api
-        if: steps.changed-files.outputs.login_api == 'true' || steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.login_api == 'true' || steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/login_api:${{ github.sha }} ./backend/security/login_api
           docker push ${{ secrets.USERNAME }}/login_api:${{ github.sha }}
 
       - name: Build and Push board_apis
-        if: steps.changed-files.outputs.board_api == 'true' || steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.board_api == 'true' || steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/board_api:${{ github.sha }} ./backend/security/board_api
           docker push ${{ secrets.USERNAME }}/board_api:${{ github.sha }}
 
       - name: Build and Push stadium_api
-        if: steps.changed-files.outputs.stadium_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.stadium_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/stadium_api:${{ github.sha }} ./backend/stadium_api
           docker push ${{ secrets.USERNAME }}/stadium_api:${{ github.sha }}
 
       - name: Build and Push weather_apis
-        if: steps.changed-files.outputs.weather_api == 'true' || steps.changes.outputs.infra == 'true'
+        if: steps.changes.outputs.weather_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           docker build -t ${{ secrets.USERNAME }}/weather_api:${{ github.sha }} ./backend/weather_api
           docker push ${{ secrets.USERNAME }}/weather_api:${{ github.sha }}
