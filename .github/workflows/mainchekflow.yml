@@ -129,24 +129,24 @@ jobs:
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/club_api/src/main/resources/application-secret.properties
           echo "${{ secrets.ALARM_API_URL }}" >> backend/club_api/src/main/resources/application-secret.properties
 
-      - name: Create application-secret.properties for each API
+      - name: Create application-secret.properties for recruit_api
+        if: steps.changed-files.outputs.recruit_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # recruit_api
-          if: steps.changed-files.outputs.recruit_api == 'true' || steps.changes.outputs.infra == 'true'
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/recruit_api/src/main/resources/application-secret.properties
           echo "${{ secrets.ALARM_API_URL }}" >> backend/recruit_api/src/main/resources/application-secret.properties
 
-      - name: Create application-secret.properties for each API
+      - name: Create application-secret.properties for weather_api
+        if: steps.changed-files.outputs.weather_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # weather_api
-          if: steps.changed-files.outputs.weather_api == 'true' || steps.changes.outputs.infra == 'true'
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/weather_api/src/main/resources/application-secret.properties
           echo "${{ secrets.WEATHER_APPLICATION_SECRET_PROPERTIES }}" >> backend/weather_api/src/main/resources/application-secret.properties
 
-      - name: Create application-secret.properties for each API
+      - name: Create application-secret.properties for board_api
+        if: steps.changed-files.outputs.board_api== 'true' || steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # board_api
-          if: steps.changed-files.outputs.board_api== 'true' || steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/board_api/src/main/resources/application-secret.properties
           echo "${{ secrets.ALARM_API_URL }}" >> backend/security/board_api/src/main/resources/application-secret.properties
           echo "${{ secrets.BOARD_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/board_api/src/main/resources/application-secret.properties
