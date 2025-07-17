@@ -171,8 +171,8 @@ jobs:
 
       # 백엔 Gradle 빌드
       - name: Gradle bootJar for alarm_api
+        if: steps.changed-files.outputs.alarm_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
-         if: steps.changed-files.outputs.alarm_api== 'true' || steps.changes.outputs.infra == 'true'
          pushd backend/alarm_api && chmod +x ./gradlew && ./gradlew build -x test && popd
 
       - name: Gradle bootJar for club_api
