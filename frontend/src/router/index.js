@@ -30,7 +30,6 @@ const routes = [
   { path: '/board/boardeditform/:id', name: 'boardEditForm', component: () => import ('@/pages/board/boardEditForm.vue') },
 
   // 예약 결제 관련
-  { path:'/reservation/reservationForm', name: 'reservation_Form', component: () => import ('@/pages/reservation/reservationForm.vue')} ,
   { path:'/reservation/reservation_confirm/:reservationId', name: 'reservation_Confirm', component: () => import ('@/pages/reservation/reservation_confirm.vue'), props: true} ,
   { path:'/reservation/reservation_list', name: 'Reservation_List', component: () => import('@/pages/reservation/reservation_list.vue')},
   { path:'/payment/payment_list', name: 'Payment_List', component: () => import('@/pages/payment/payment_list.vue')},

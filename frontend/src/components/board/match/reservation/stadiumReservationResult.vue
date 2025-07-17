@@ -133,7 +133,7 @@ const requestPayment = async () => {
   if (!confirmPayment) return;
 
   try {
-    const res = await axios.post('/kakao_api/kakaopay/ready', {
+    const res = await axios.post('/kakaopay_api/kakaopay/ready', {
       item_name: stadium.value.svcnm,
       total_amount: reservation.value.price,
       partner_order_id: reservation.value.reservation_id,

@@ -140,24 +140,25 @@ export function stdaiumDetail() {
 	// 예약 선택 날짜
 	const selectedDate = ref(null)
 
-	const formatDate = (date) => {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
+	// 이제 안씀
+// 	const formatDate = (date) => {
+//   const y = date.getFullYear()
+//   const m = String(date.getMonth() + 1).padStart(2, '0')
+//   const d = String(date.getDate()).padStart(2, '0')
+//   return `${y}-${m}-${d}`
+// }
 
+// 이제 안씀
+// const onDayClick = (day) => {
+//   const dateStr = formatDate(day.date)
 
-const onDayClick = (day) => {
-  const dateStr = formatDate(day.date)
+//   if (!availableDates.value.includes(dateStr)) {
+//     return // 예약 불가 날짜는 무시
+//   }
 
-  if (!availableDates.value.includes(dateStr)) {
-    return // 예약 불가 날짜는 무시
-  }
-
-  selectedDate.value = dateStr;
+//   selectedDate.value = dateStr;
   
-}
+// }
 
 	// 달력관련 끝
 
@@ -265,13 +266,11 @@ const initKakaoMap = () => {
 
 
      return {
-		availableDates,
 		SVCID,
 		activeTab,
 		stadiumDB,
 		userId,
 		userName,
-		onDayClick,
 		goToList,
 		goToReservation,
 		stripHtml,

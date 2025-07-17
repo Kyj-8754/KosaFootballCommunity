@@ -195,7 +195,7 @@ public class ClubController {
             if (file == null || file.isEmpty()) {
                 return ResponseEntity.badRequest().body("파일이 선택되지 않았습니다.");
             }
-            String uploadDir = "C:/workspace-sts4/MsaTeamProject/backend/club_api/uploads/club_logos/";
+            String uploadDir = "/home/ubuntu/images";
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs();
 

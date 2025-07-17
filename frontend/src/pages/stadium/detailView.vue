@@ -6,40 +6,21 @@
 			<div class="container my-4">
 				<div class="row g-4 align-items-start">
 					<!-- 좌측: 이미지 -->
-					<div class="col-md-5 d-flex justify-content-center">
+					<div class="col-md-8 d-flex justify-content-center align-items-center">
 						<img :src="stadiumDB.img_PATH" class="img-fluid border rounded shadow-sm" 
-						style="max-width: 100%; max-height: 360px; aspect-ratio: 4/3; object-fit: cover;" />
+						style="max-width: 100%; max-height: 500px; aspect-ratio: 4/3; object-fit: cover;" />
 					</div>
 
 					<!-- 우측: 달력 + 가격 -->
-					<div class="col-md-7">
+					<div class="col-md-4">
 						<div class="mb-3 d-flex justify-content-between align-items-center">
 							<h5 class="mb-0 fw-bold">이용 요금</h5>
 							<span class="fs-4 fw-bold text-primary">{{ stadiumDB.price }}원</span>
 						</div>
-						<div class="p-2 border rounded bg-light" style="max-width: 320px;">
-							<v-calendar
-							is-expanded
-							:attributes="[{
-								key: 'available',
-								dates: availableDates,
-								highlight: true,
-								contentClass: 'available-date'
-							},
-							selectedDate?{
-								key: 'selected',
-								dates: selectedDate.value,
-								highlight: true,
-								contentClass: 'selected-date'
-							}
-							:null]"
-							@dayclick="onDayClick"
-							/>
-						</div>
 					</div>
 				</div>
 				<!-- 상단 버튼들 -->
-				<div class="d-flex justify-content-end gap-2 my-3">
+				<div class="mt-auto d-flex justify-content-end gap-2">
 					<button class="btn btn-secondary btn-sm" @click="goToList">목록</button>
 					<button class="btn btn-dark btn-sm" @click="goToReservation">예약</button>
 				</div>
@@ -109,13 +90,11 @@
 
 
 	const {
-		availableDates,
 		SVCID,
 		activeTab,
 		stadiumDB,
 		userId,
 		userName,
-		onDayClick,
 		goToList,
 		goToReservation,
 		stripHtml,
