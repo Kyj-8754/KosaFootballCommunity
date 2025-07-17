@@ -7,6 +7,9 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/**'
+      - 'nginx.conf'
     
 # 실행
 jobs:
