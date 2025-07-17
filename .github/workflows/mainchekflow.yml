@@ -113,7 +113,7 @@ jobs:
           echo "${{ secrets.SECURITY_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/security_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for login_api
-        if: steps.changed-files.outputs.login_api == 'true' || steps.changed-files.outputs.security_api == 'true'
+        if: steps.changed-files.outputs.login_api == 'true' || steps.changed-files.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
         run: |
           # login_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/login_api/src/main/resources/application-secret.properties
