@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, watch, nextTick } from 'vue'
 import axios from 'axios'
 import WeatherImageBox from './weatherImageBox.vue'
 import RegionSelector from './regionSelector.vue'
@@ -51,6 +51,8 @@ const forecastList = ref([])
 const current = ref({})
 
 const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+
+const emit = defineEmits(['expand'])
 
 watchEffect(async () => {
   const res = await axios.get('/widget_api/widget/forecast', {
@@ -70,6 +72,13 @@ watchEffect(async () => {
 
   forecastList.value = result
   current.value = result[0] || {}
+})
+
+watch(isCollapsed, async (newVal) => {
+  if (!newVal) {
+    await nextTick();   // 이제 가능!
+    emit('expand');
+  }
 })
 </script>
 
