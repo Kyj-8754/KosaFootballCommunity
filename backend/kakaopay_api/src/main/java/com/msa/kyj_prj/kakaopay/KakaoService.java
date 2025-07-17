@@ -31,7 +31,7 @@ public class KakaoService {
 	private final KakaoDAO kakaoDAO;
 	
 	@Value("${kakao.admin.key}")
-	private static String ADMIN_KEY;
+	private String ADMIN_KEY;
 	
  
 	
