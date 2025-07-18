@@ -70,7 +70,7 @@ public class WeatherApiUtil {
         }
     }
 
-    private static List<Weather> parseWeatherJson(String json, String regionName) {
+    private List<Weather> parseWeatherJson(String json, String regionName) {
         List<Weather> weatherList = new ArrayList<>();
         if (json == null || json.isEmpty()) return weatherList;
 
@@ -110,7 +110,7 @@ public class WeatherApiUtil {
     }
 
 
-    private static String getBaseTime(int hour) {
+    private String getBaseTime(int hour) {
         // 기준 발표 시각 (단기예보 8회 발표 기준)
         int[] baseTimes = {2, 5, 8, 11, 14, 17, 20, 23};
 
@@ -125,7 +125,7 @@ public class WeatherApiUtil {
         return "2300";
     }
     
-    private static int[] convertGPS2Grid(double lon, double lat) {
+    private int[] convertGPS2Grid(double lon, double lat) {
         double RE = 6371.00877; // Earth radius (km)
         double GRID = 5.0; // Grid spacing (km)
         double SLAT1 = 30.0;
