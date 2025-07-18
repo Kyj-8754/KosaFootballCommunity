@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -16,14 +17,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+//<<김용진 기존 코드 리펙토링 07-18기준>>
 @Component	
 public class WeatherApiUtil {
-	
+
 	@Value("${weather.service.key}")
 	private String SERVICE_KEY;
 	@Value("${weather.base.url}")
 	private String BASE_URL;
-
 
     public List<Weather> fetchForecast(String x, String y, String regionName) {
         int[] grid = convertGPS2Grid(Double.parseDouble(x), Double.parseDouble(y));
@@ -111,7 +112,7 @@ public class WeatherApiUtil {
     }
 
 
-    private String getBaseTime(int hour) {
+    private static String getBaseTime(int hour) {
         // 기준 발표 시각 (단기예보 8회 발표 기준)
         int[] baseTimes = {2, 5, 8, 11, 14, 17, 20, 23};
 
@@ -126,7 +127,7 @@ public class WeatherApiUtil {
         return "2300";
     }
     
-    private int[] convertGPS2Grid(double lon, double lat) {
+    private static int[] convertGPS2Grid(double lon, double lat) {
         double RE = 6371.00877; // Earth radius (km)
         double GRID = 5.0; // Grid spacing (km)
         double SLAT1 = 30.0;
@@ -159,5 +160,15 @@ public class WeatherApiUtil {
         int nx = (int) Math.floor(ra * Math.sin(theta) + XO + 0.5);
         int ny = (int) Math.floor(ro - ra * Math.cos(theta) + YO + 0.5);
         return new int[]{nx, ny};
+    }
+    
+    
+	// 불필요한 리소스 관리하도록 변경 <<김용진 수정>>
+	// OkHttpClient는 API 호출 시 매번 새로 생성하는 대신, 한 번 생성하여 재사용하는 것이 효율적입니다.
+    private final OkHttpClient httpClient;
+	
+	// 생성자를 통해 OkHttpClient를 초기화합니다.
+    public WeatherApiUtil() {
+        this.httpClient = new OkHttpClient();
     }
 }
