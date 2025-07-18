@@ -145,7 +145,7 @@ const convertType = (reservation_type) => {
   switch (reservation_type) {
     case 'social':
       return '소셜';
-    case 'league':
+    case 'match':
       return '리그';
     default:
       return '알 수 없음';

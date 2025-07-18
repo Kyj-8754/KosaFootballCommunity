@@ -188,11 +188,24 @@ const openCenteredPopup = (url, title, w, h) => {
   if (popup?.focus) popup.focus()
 }
 
+// 리그 상태명 바꾸기
+const convertType = (reservation_type) => {
+  switch (reservation_type) {
+    case 'social':
+      return '소셜';
+    case 'match':
+      return '리그';
+    default:
+      return '알 수 없음';
+  }
+};
+
 
     return {
         user,
         stadium,
         reservation,
+        convertType,
         cancleReservation,
         requestPayment,
         refundPayment,

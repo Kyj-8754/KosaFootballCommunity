@@ -138,9 +138,11 @@ const convertStatus = (status) => {
     case 'paid':
       return '결제 완료';
     case 'canceled':
-      return '결제 취소';
+      return '예약 취소';
     case 'pending':
       return '미 결제';
+    case 'refunded':
+      return '환불 됨';
     default:
       return '알 수 없음';
   }
