@@ -381,8 +381,8 @@ jobs:
 
         if [ -n "$services" ]; then
          echo "변경된 서비스: $services"
-         TAG=${{ github.sha }} docker compose pull $services nginx
-         TAG=${{ github.sha }} docker compose up -d $services nginx
+         TAG=${{ github.sha }} docker compose pull $services
+         TAG=${{ github.sha }} docker compose up -d $services
         else
          echo "No changed services to deploy"
         fi
