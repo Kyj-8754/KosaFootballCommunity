@@ -49,11 +49,7 @@
 
           <!-- 클럽 로고 썸네일 -->
           <img
-            :src="
-              club.logo_path
-                ? `/club_api${club.logo_path}`
-                : fallbackImg
-            "
+            :src="club.logo_path || 'https://via.placeholder.com/120'"
             @error="handleImageError"
             alt="클럽 로고"
             style="
@@ -76,20 +72,23 @@
         </div>
 
         <!-- 오른쪽: 레벨 + 참가 + 승률 -->
-      <div class="d-flex align-items-center club-meta">
-  <span class="badge bg-primary level">
-    {{
-      calculateClubLevel(
-        club.win_count || 0,
-        club.draw_count || 0,
-        club.loss_count || 0
-      )
-    }}
-  </span>
-  <span class="text-muted small game-count">참가: {{ getTotalGames(club) }}</span>
-  <span class="text-muted small win-rate">승률: {{ calcWinRate(club) }}%</span>
-</div>
-
+        <div class="d-flex align-items-center club-meta">
+          <span class="badge bg-primary level">
+            {{
+              calculateClubLevel(
+                club.win_count || 0,
+                club.draw_count || 0,
+                club.loss_count || 0
+              )
+            }}
+          </span>
+          <span class="text-muted small game-count"
+            >참가: {{ getTotalGames(club) }}</span
+          >
+          <span class="text-muted small win-rate"
+            >승률: {{ calcWinRate(club) }}%</span
+          >
+        </div>
       </li>
     </ul>
 
@@ -106,8 +105,10 @@ export default {
       clubs: [],
       searchKeyword: "",
       fallbackImg:
-        'data:image/svg+xml;base64,' +
-        btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" rx="8" fill="#e0e0e0"/><text x="50%" y="54%" text-anchor="middle" fill="#888" font-size="12" font-family="Arial" dy=".3em">NO LOGO</text></svg>`)
+        "data:image/svg+xml;base64," +
+        btoa(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" rx="8" fill="#e0e0e0"/><text x="50%" y="54%" text-anchor="middle" fill="#888" font-size="12" font-family="Arial" dy=".3em">NO LOGO</text></svg>`
+        ),
     };
   },
   created() {
@@ -156,9 +157,7 @@ export default {
     },
     getTotalGames(club) {
       return (
-        (club.win_count || 0) +
-        (club.draw_count || 0) +
-        (club.loss_count || 0)
+        (club.win_count || 0) + (club.draw_count || 0) + (club.loss_count || 0)
       );
     },
     calculateClubLevel(win, draw, loss) {
@@ -224,5 +223,4 @@ export default {
   width: 90px;
   text-align: left;
 }
-
 </style>
