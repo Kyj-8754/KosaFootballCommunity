@@ -338,6 +338,13 @@ jobs:
       run:  |
         TAG=${{ github.sha }}
         services=""
+         if "${{ steps.changes.outputs.infra }}" = "true"; then
+           services="$services mariadb"
+         fi
+
+         if [ "${{ steps.changes.outputs.frontend }}" = "true" || [ "${{ steps.changes.outputs.infra }}" = "true"  ]; then
+           services="$services nginx"
+         fi
 
          if [ "${{ steps.changes.outputs.stadium_api }}" = "true" || [ "${{ steps.changes.outputs.infra }}" = "true"  ]; then
            services="$services stadium_api"
