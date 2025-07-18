@@ -258,7 +258,7 @@ public class ClubController {
 		}
 	}
 
-	@PostMapping("/{club_id}/uploadLogo")
+	@PostMapping("/{club_id}/uploadLogoBase64")
 	public ResponseEntity<String> uploadLogoBase64(
 			@Parameter(description = "클럽 ID", required = true) @PathVariable int club_id,
 			@RequestBody com.msa.kyj_prj.club.dto.Base64ImageDTO dto) {

@@ -273,7 +273,7 @@ async function uploadBase64Logo() {
 
   try {
     const { data } = await axios.post(
-      `/club_api/${club.value.club_id}/uploadLogoBase64`,
+      `/club_api/club/${club.value.club_id}/uploadLogo`,
       { base64: base64Image.value },
       {
         headers: {
