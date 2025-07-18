@@ -22,7 +22,7 @@
       <h3 class="text-lg font-semibold mb-2">📅 예약 정보</h3>
       <p><strong>날짜:</strong> {{ reservation.slot_date }}</p>
       <p><strong>시간:</strong> {{ reservation.start_time }} ~ {{ reservation.end_time }}</p>
-      <p><strong>유형:</strong> {{ reservation.reservation_type }}</p>
+      <p><strong>유형:</strong> {{ convertType(reservation.reservation_type) }}</p>
       <p><strong>가격:</strong> {{ reservation.price }}</p>
       <p><strong>예약 현황:</strong> {{ reservation.status === 'reserved' ? '예약 완료' : reservation.status === 'cancelled' ? '예약 취소' : '예약안됨' }}</p>
       <p><strong>결제 현황:</strong> {{ reservation.payment_status === 'paid' ? '결제 완료' : reservation.payment_status === 'canceled' ? '결제 취소됨' : '미결제' }}</p>
@@ -57,6 +57,7 @@ const {
 		cancleReservation,
     requestPayment,
     refundPayment,
+    convertType,
 	} = reservation_confirm()
 </script>
 
