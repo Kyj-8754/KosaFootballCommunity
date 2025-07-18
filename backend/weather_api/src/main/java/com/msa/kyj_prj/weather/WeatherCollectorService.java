@@ -17,6 +17,9 @@ public class WeatherCollectorService {
 
     @Autowired
     private WeatherDAO weatherDAO;
+    
+    @Autowired
+    private WeatherApiUtil weatherApiUtil;
 
     public void collectAndStoreForecasts() {
         List<Location> locations = locationService.getAllLocations();
@@ -29,7 +32,7 @@ public class WeatherCollectorService {
                 try {
                     System.out.println("▶▶ [" + loc.getWeather_location() + "] 호출 시작");
 
-                    List<Weather> forecasts = WeatherApiUtil.fetchForecast(
+                    List<Weather> forecasts = weatherApiUtil.fetchForecast(
                         loc.getWeather_location_x(),
                         loc.getWeather_location_y(),
                         loc.getWeather_location()
