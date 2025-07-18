@@ -17,6 +17,7 @@ services:
     volumes:
       - shared-data:/var/lib/mysql # 기본 볼륨 마운트
       - ~/mariadb_config/conf.d/server.cnf:/etc/mysql/conf.d/server.cnf # 추가로 서버 설정 마운트
+      - ~/mariadb_config/conf.d/timezone.cnf:/etc/mysql/conf.d/timezone.cnf # 추가로 서버 시간 설정 마운트
     user: mysql
     environment:
       MARIADB_DATABASE: kosa_db
