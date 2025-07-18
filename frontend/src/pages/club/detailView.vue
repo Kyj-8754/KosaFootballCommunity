@@ -11,12 +11,7 @@
           <div class="border rounded p-3 text-center" style="height: 250px">
             <!-- ✅ 이 자리에 아래 코드 삽입 -->
             <img
-              :src="
-                club.logo_path
-                  ? `http://localhost:8121${club.logo_path}`
-                  : fallbackImg
-              "
-              @error="handleImageError"
+              :src="club.logo_path || 'https://via.placeholder.com/120'"
               alt="클럽 로고"
               class="img-fluid mb-3"
               style="max-height: 250px; object-fit: contain"

@@ -6,37 +6,47 @@
       <div class="row gx-4 gy-5 align-items-start">
         <!-- 좌측: 팀 로고 & 오버뷰 -->
         <div class="col-lg-3">
+          <!-- 이미지 업로드 + 미리보기 (Base64) -->
           <div class="bg-light rounded p-4 text-center shadow-sm">
-            <!-- 이미지 미리보기 우선 적용, 서버 포트 포함! -->
-            <img
+            <!-- Base64로 미리보기 -->
+            <!-- <img
               :src="
-                previewUrl ||
+                base64Image ||
                 (club.logo_path
-                  ? `http://localhost:8121${club.logo_path}`
+                  ? `https://www.http://www.itsfootball.store/${club.logo_path}`
                   : 'https://via.placeholder.com/120')
               "
               alt="클럽 로고"
               class="img-fluid mb-3"
               style="max-height: 250px; object-fit: contain"
+            /> -->
+            <img
+              :src="club.logo_path || 'https://via.placeholder.com/120'"
+              alt="클럽 로고"
+              class="img-fluid mb-3"
+              style="max-height: 250px; object-fit: contain"
             />
-            <!-- 파일 업로드: 팀장만 보임 -->
+
             <div v-if="isClubOwner" class="mb-2">
-              <!-- 안내문구 추가! -->
               <div
                 class="form-text mb-2 text-secondary"
                 style="font-size: 0.95em"
               >
-                10메가 바이트 이하의 <b>jpg</b> 파일만 가능합니다.
+                10MB 이하의 <b>이미지</b> 파일만 가능합니다.
               </div>
+
+              <!-- ✅ base64 변환용 input -->
               <input
                 type="file"
-                @change="onFileChange"
-                accept="image/jpeg"
+                accept="image/*"
+                @change="handleFileChange"
                 class="form-control mb-2"
               />
+
+              <!-- 업로드 버튼 -->
               <button
-                v-if="selectedFile"
-                @click="uploadLogo"
+                v-if="base64Image"
+                @click="uploadBase64Logo"
                 class="btn btn-sm btn-outline-primary mb-2"
               >
                 업로드
@@ -209,85 +219,89 @@ import { ref, inject, computed, onMounted, watchEffect } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 
-// ✅ JWT, 유저번호, 라우터/라우트
+// ✅ 전역 상태 주입 (JWT, 사용자 정보 등)
 const token = inject("token");
 const userNo = inject("userNo");
 const router = useRouter();
 const route = useRoute();
-// ✅ 클럽 객체 (club_api 응답)
+
+// ✅ 클럽 데이터 관련 상태
 const club = ref(null);
-
-const selectedFile = ref(null);
-const previewUrl = ref("");
-
-function onFileChange(event) {
-  const file = event.target.files[0];
-  if (file) {
-    selectedFile.value = file;
-    previewUrl.value = URL.createObjectURL(file);
-  }
-}
-
-async function uploadLogo() {
-  if (!selectedFile.value) return;
-  const formData = new FormData();
-  formData.append("file", selectedFile.value);
-  try {
-    const { data } = await axios.post(
-      `/club_api/${club.value.club_id}/uploadLogo`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token.value}`,
-        },
-      }
-    );
-    club.value.logo_path = data;
-    alert("로고가 업로드되었습니다!");
-    previewUrl.value = "";
-    selectedFile.value = null;
-  } catch (e) {
-    alert("로고 업로드 실패!");
-  }
-}
-
-// ✅ ClubInfo 폼 상태 (gender/age_group/active_days/active_times)
 const clubInfo = ref({
   gender: "",
   age_group: "",
   active_days: [],
   active_times: [],
 });
+const clubMember = ref([]); // 클럽 멤버 리스트
 
-// ✅ 멤버 리스트 상태
-const clubMember = ref([]);
-
-// ✅ 드롭다운/체크박스 옵션 (DDL과 일치)
+// ✅ 셀렉트 박스/체크박스 옵션
 const genderOptions = ["남성", "여성", "혼성"];
 const ageGroupOptions = ["10~20", "20~30", "30~40", "40~50"];
 const daysOptions = ["월", "화", "수", "목", "금", "토", "일"];
 const timeOptions = ["아침", "오후", "저녁", "야간", "심야"];
 
-// ✅ 팀장 여부 (user_no, 타입 일치 주의)
+// ✅ 팀장 여부 판단
 const isClubOwner = computed(
   () =>
     club.value && userNo && Number(club.value.user_no) === Number(userNo.value)
 );
 
-// ✅ mount 시 club + clubInfo + clubMember fetch, clubInfo 필드도 분해해 배열로 초기화
+// ✅ Base64 업로드 관련 상태
+const base64Image = ref(""); // 미리보기 및 서버 전송용 Base64 문자열
+const selectedFile = ref(null); // 선택된 파일 객체
+
+// ✅ 파일 선택 시 → base64 변환 + 미리보기 설정
+function handleFileChange(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  selectedFile.value = file;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    base64Image.value = reader.result; // reader.result = base64 문자열
+  };
+  reader.readAsDataURL(file); // 파일을 Base64 문자열로 읽기
+}
+
+// ✅ base64 문자열을 서버에 POST → logo_path 경로 갱신
+async function uploadBase64Logo() {
+  if (!base64Image.value || !club.value) {
+    alert("업로드할 이미지 또는 클럽 정보가 없습니다.");
+    return;
+  }
+
+  try {
+    const { data } = await axios.post(
+      `/club_api/${club.value.club_id}/uploadLogoBase64`,
+      { base64: base64Image.value },
+      {
+        headers: {
+          Authorization: `Bearer ${token.value}`,
+        },
+      }
+    );
+    club.value.logo_path = data; // 서버에서 응답받은 logo_path
+    alert("로고가 업로드되었습니다.");
+    base64Image.value = ""; // 상태 초기화
+    selectedFile.value = null;
+  } catch (e) {
+    alert("로고 업로드 실패!");
+    console.error(e);
+  }
+}
+
+// ✅ 클럽 정보 + 상세 정보 + 멤버 리스트 fetch
 onMounted(async () => {
   const teamCode = route.params.teamCode;
   try {
-    // 1. 클럽 기본 정보 조회
     const response = await axios.get(`/club_api/code/${teamCode}`, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
     club.value = response.data;
-    console.log("클럽 전체 객체:", club.value);
 
-    // 2. 클럽 상세정보(ClubInfo)도 별도 fetch & 배열화 (try-catch 별도!)
     if (club.value && club.value.club_id) {
+      // 클럽 상세정보
       try {
         const clubInfoRes = await axios.get(`/club_info/${club.value.club_id}`);
         clubInfo.value = {
@@ -299,44 +313,32 @@ onMounted(async () => {
             ? clubInfoRes.data.active_times.split(",")
             : [],
         };
-        console.log("클럽 상세정보:", clubInfo.value);
       } catch (infoErr) {
-        if (infoErr.response && infoErr.response.status === 404) {
-          // 상세정보 없으면 clubInfo.value만 null로!
+        if (infoErr.response?.status === 404) {
+          // 상세정보가 없을 경우 초기화
           clubInfo.value = {
             gender: "",
             age_group: "",
             active_days: [],
             active_times: [],
           };
-          // 안내문구는 템플릿에서 처리 (alert 없음)
         } else {
           alert("클럽 상세 정보 조회 중 오류가 발생했습니다.");
         }
       }
-    }
 
-    // 3. 클럽 멤버 리스트 fetch (TOP3 추출용)
-    if (club.value && club.value.club_id) {
+      // 클럽 멤버 리스트
       const memberRes = await axios.get(
         `/club_api/member/list/${club.value.club_id}`
       );
       clubMember.value = memberRes.data;
-      console.log("멤버 리스트:", clubMember.value);
     }
   } catch (e) {
     alert("클럽 정보를 불러오는 데 실패했습니다.");
   }
 });
 
-// ✅ 주요 멤버 TOP3 (경기수 내림차순)
-const topMembers = computed(() => {
-  return [...clubMember.value]
-    .sort((a, b) => parseInt(b.match_count || 0) - parseInt(a.match_count || 0))
-    .slice(0, 3);
-});
-
-// ✅ 팀 레벨 산출 공식 (백엔드와 동일, 브론즈~다이아)
+// ✅ 팀 레벨 계산
 function calculateClubLevel(win, draw, loss) {
   const total = win + draw + loss;
   if (total === 0) return "브론즈";
@@ -347,6 +349,7 @@ function calculateClubLevel(win, draw, loss) {
   if (rate >= 30) return "실버";
   return "브론즈";
 }
+
 const teamLevel = computed(() => {
   if (!club.value) return "-";
   return calculateClubLevel(
@@ -356,14 +359,20 @@ const teamLevel = computed(() => {
   );
 });
 
-// ✅ 저장(수정) 제출: club와 clubInfo 분리 전송 (active_days, active_times는 join해서 CSV로!)
+// ✅ 주요 멤버 TOP3
+const topMembers = computed(() => {
+  return [...clubMember.value]
+    .sort((a, b) => parseInt(b.match_count || 0) - parseInt(a.match_count || 0))
+    .slice(0, 3);
+});
+
+// ✅ 저장 (club + clubInfo 분리 전송)
 const submitUpdate = async () => {
   if (!isClubOwner.value) {
     alert("팀장만 수정할 수 있습니다.");
     return;
   }
 
-  // ✅ 유효성 검사 추가
   const { gender, age_group, active_days, active_times } = clubInfo.value;
   if (
     !gender ||
@@ -376,27 +385,29 @@ const submitUpdate = async () => {
   }
 
   try {
-    // clubInfo 전송용 데이터
     const clubInfoPayload = {
       ...clubInfo.value,
       club_id: club.value.club_id,
-      active_days: clubInfo.value.active_days.join(","),
-      active_times: clubInfo.value.active_times.join(","),
+      active_days: active_days.join(","),
+      active_times: active_times.join(","),
     };
-    // 클럽 기본 정보/상세 정보 별도 전송 예시
+
     await axios.put(`/club_api/${club.value.club_id}`, club.value, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
     await axios.put(`/club_info/${club.value.club_id}`, clubInfoPayload, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
+
     alert("수정이 완료되었습니다.");
     router.push(`/club/${club.value.team_code}`);
   } catch (e) {
     alert("수정 중 오류가 발생했습니다.");
+    console.error(e);
   }
 };
 
+// ✅ 취소 버튼
 const cancelUpdate = () => {
   if (club.value) {
     router.push(`/club/${club.value.team_code}`);
@@ -405,23 +416,8 @@ const cancelUpdate = () => {
   }
 };
 
-// 디버깅: 실제 값/타입 콘솔 출력 (user_no, club.user_no 비교)
+// ✅ 디버깅 로그
 watchEffect(() => {
-  console.log(
-    "userNo:",
-    userNo && userNo.value,
-    "type:",
-    typeof (userNo && userNo.value)
-  );
-  console.log(
-    "club.user_no:",
-    club.value && club.value.user_no,
-    "type:",
-    typeof (club.value && club.value.user_no)
-  );
-  console.log(
-    "같은가?:",
-    club.value && userNo && Number(club.value.user_no) === Number(userNo.value)
-  );
+  console.log("userNo:", userNo?.value, "club.user_no:", club.value?.user_no);
 });
 </script>

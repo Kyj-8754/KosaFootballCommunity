@@ -35,17 +35,16 @@ public class ClubService {
 	// ✅ 클럽 등록 + 팀장 자동 등록
 	public int insert(Club club) {
 		Integer userNo = club.getUser_no();
-		
-		
-		  // 1. 이미 클럽이 있는지 체크 (리더 기준)
-	    if (clubDAO.findClubByUserNo(userNo) != null) {
-	        throw new IllegalStateException("이미 해당 유저는 클럽을 보유하고 있습니다.");
-	    }
-		
+
+		// 1. 이미 클럽이 있는지 체크 (리더 기준)
+		if (clubDAO.findClubByUserNo(userNo) != null) {
+			throw new IllegalStateException("이미 해당 유저는 클럽을 보유하고 있습니다.");
+		}
+
 		int result = clubDAO.insert(club); // 1. 클럽 생성
 
 		Integer clubId = club.getClub_id(); // 2. 생성된 club_id (useGeneratedKeys로 주입됨)
-	//	Integer userNo = club.getUser_no(); // ✅ 클럽 생성자 user_no 가져오기
+		// Integer userNo = club.getUser_no(); // ✅ 클럽 생성자 user_no 가져오기
 
 		// 3. 팀장을 club_member 테이블에 자동 등록
 		ClubMember leader = new ClubMember();
@@ -118,10 +117,11 @@ public class ClubService {
 		club.setClub_level(clubLevel);
 		clubDAO.updateClubLevel(clubId, clubLevel); // update 쿼리 필요
 	}
-
-	// ✅ 클럽 로고 경로(logo_path) 업데이트 메소드
+	
 	public void updateLogoPath(int clubId, String logoPath) {
 		clubDAO.updateLogoPath(clubId, logoPath);
 	}
+	
+	
 
 }
