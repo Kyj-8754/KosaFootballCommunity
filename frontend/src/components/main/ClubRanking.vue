@@ -15,12 +15,19 @@
           <span v-else-if="index === 1" class="me-2">🥈</span>
           <span v-else-if="index === 2" class="me-2">🥉</span>
           <span v-else class="me-2 fw-bold">{{ index + 1 }}위</span>
-
+          ㅋ
           <img
-            :src="club.logo_path ? `/club_api${club.logo_path}` : fallbackImg"
+            :src="club.logo_path || 'https://via.placeholder.com/120'"
             @error="handleImageError"
             alt="클럽 로고"
-            style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px; margin: 0 12px 0 8px"
+            style="
+              width: 40px;
+              height: 40px;
+              object-fit: cover;
+              border-radius: 6px;
+              margin-left: 8px;
+              margin-right: 12px;
+            "
           />
 
           <router-link
@@ -59,7 +66,12 @@ export default {
   data() {
     return {
       clubs: [],
-      fallbackImg: "https://placehold.co/40x40"
+      searchKeyword: "",
+      fallbackImg:
+        "data:image/svg+xml;base64," +
+        btoa(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" rx="8" fill="#e0e0e0"/><text x="50%" y="54%" text-anchor="middle" fill="#888" font-size="12" font-family="Arial" dy=".3em">NO LOGO</text></svg>`
+        ),
     };
   },
   created() {

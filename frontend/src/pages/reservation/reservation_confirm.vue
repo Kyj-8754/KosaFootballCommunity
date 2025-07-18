@@ -24,20 +24,20 @@
       <p><strong>시간:</strong> {{ reservation.start_time }} ~ {{ reservation.end_time }}</p>
       <p><strong>유형:</strong> {{ convertType(reservation.reservation_type) }}</p>
       <p><strong>가격:</strong> {{ reservation.price }}</p>
-      <p><strong>예약 현황:</strong> {{ reservation.status === 'reserved' ? '예약 완료' : reservation.status === 'cancelled' ? '예약 취소' : '예약안됨' }}</p>
-      <p><strong>결제 현황:</strong> {{ reservation.payment_status === 'paid' ? '결제 완료' : reservation.payment_status === 'canceled' ? '결제 취소됨' : '미결제' }}</p>
+      <p><strong>예약 현황:</strong> {{ reservation.status === 'reserved' ? '예약 완료' : reservation.status === 'cancelled' ? '예약 취소' : reservation.status === 'expired' ? '예약 만료' : '예약 안됨' }}</p>
+      <p><strong>결제 현황:</strong> {{ reservation.payment_status === 'paid' ? '결제 완료' : reservation.payment_status === 'canceled' ? '결제 취소됨' : reservation.payment_status === 'refunded' ? '결제 환불됨' : '미결제' }}</p>
     </div>
 
-    <div class="text-cente" style="margin-top: 2rem;">
-      <button @click="requestPayment" class="button button-pay">
+    <div class="text-center" style="margin-top: 2rem;">
+      <button  v-if="reservation.payment_status === 'pending'" @click="requestPayment" class="button button-pay">
         결제하기
       </button>
 
-      <button @click="refundPayment" class="button button-cancel">
+      <button  v-if="reservation.payment_status === 'paid'" @click="refundPayment" class="button button-cancel">
         결제취소
       </button>
 
-      <button @click="cancleReservation" class="button button-cancel">
+      <button v-if="reservation.status === 'reserved'" @click="cancleReservation" class="button button-cancel">
         예약취소
       </button>
 
