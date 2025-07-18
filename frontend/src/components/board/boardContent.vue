@@ -14,6 +14,7 @@ const props = defineProps({
   border: 1px solid #ccc;
   min-height: 300px;
   line-height: 1.6;
+  overflow-x: auto;
 }
 .post-content img {
   max-width: 100%;
