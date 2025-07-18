@@ -43,13 +43,22 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
   forecasts: Array
 })
 
+const emit = defineEmits(['expand'])
+
 const isExpanded = ref(false)
+
+watch(isExpanded, async (newVal) => {
+  if (newVal) {
+    await nextTick() // DOM 반영 이후 emit
+    emit('expand')
+  }
+})
 
 function formatTime(t) {
   return `${t?.slice(0, 2)}:${t?.slice(2)}`

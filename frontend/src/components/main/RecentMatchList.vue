@@ -43,11 +43,11 @@ const fetchRecentMatches = async () => {
   try {
     const res = await axios.get(`/board_api/match/${selectedType.value}`)
 
-    const today = new Date()
+    // 안쓰는 부분 주석처리함
+    // const today = new Date()
 
     const filtered = res.data
-      .filter(match => new Date(match.match_date) >= today)
-      .sort((a, b) => new Date(a.match_date) - new Date(b.match_date))
+  .sort((a, b) => new Date(a.match_date) - new Date(b.match_date))
 
     latestMatches.value = filtered.slice(0, 5)
   } catch (err) {

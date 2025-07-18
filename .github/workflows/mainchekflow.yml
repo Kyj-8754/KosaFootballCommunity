@@ -2,7 +2,7 @@ name: KFC workflow
 on: 
   push:
     # main에 대해서만 실행하도록 설정
-    branches: [ main ]
+    branches: [ cd ]
     # 각 경로를 체크하도록
     paths:
       - 'backend/**'
