@@ -116,10 +116,10 @@
         </div>
 
         <!-- 신청수 뱃지 + 모집 상태 뱃지 -->
-        <div class="d-flex align-items-center" style="gap: 8px;">
+        <div class="d-flex align-items-center" style="gap: 8px">
           <span
             class="badge bg-light text-dark"
-            style="font-size: 0.98em; min-width: 68px; font-weight: normal;"
+            style="font-size: 0.98em; min-width: 68px; font-weight: normal"
           >
             신청 {{ recruit.apply_count }}명
           </span>
@@ -135,7 +135,6 @@
     </ul>
   </div>
 </template>
-
 
 <script setup>
 import { ref, computed, onMounted, inject } from "vue";

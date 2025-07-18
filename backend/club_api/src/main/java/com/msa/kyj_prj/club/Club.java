@@ -51,4 +51,5 @@ public class Club {
 
 	@Schema(description = "생성일 (yyyy-MM-dd HH:mm:ss 등)", example = "2024-07-17 12:12:00")
 	private String created_at;
+	
 }
