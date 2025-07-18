@@ -24,6 +24,7 @@ jobs:
         id: changes
         uses: dorny/paths-filter@v2
         with:
+          base: cd
           filters: |
             frontend:
               - 'frontend/**'
@@ -289,6 +290,7 @@ jobs:
       id: changes
       uses: dorny/paths-filter@v2
       with:
+          base: cd
           filters: |
             frontend:
               - 'frontend/**'
