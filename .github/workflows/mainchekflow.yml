@@ -383,6 +383,12 @@ jobs:
          echo "변경된 서비스: $services"
          TAG=${{ github.sha }} docker compose pull $services
          TAG=${{ github.sha }} docker compose up -d $services
+    
+         echo "🔁 Nginx 재시작"
+         if [[ ! "$services" =~ "nginx" ]]; then
+           docker compose restart nginx
+         fi
+
         else
          echo "No changed services to deploy"
         fi

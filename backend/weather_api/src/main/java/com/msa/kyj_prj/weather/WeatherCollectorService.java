@@ -18,13 +18,15 @@ public class WeatherCollectorService {
     @Autowired
     private WeatherDAO weatherDAO;
     
+    @Autowired
+    private WeatherApiUtil weatherApiUtil;
 
 
     public void collectAndStoreForecasts() {
         List<Location> locations = locationService.getAllLocations();
         weatherDAO.truncateWeather();
 
-        WeatherApiUtil weatherApiUtil = new WeatherApiUtil();
+        
         
         for (Location loc : locations) {
             boolean success = false;
