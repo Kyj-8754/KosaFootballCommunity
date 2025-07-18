@@ -3,6 +3,7 @@ package com.msa.kyj_prj.weather;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -15,7 +16,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-	
+@Component	
 public class WeatherApiUtil {
 	
 	@Value("${weather.service.key}")
@@ -59,9 +60,9 @@ public class WeatherApiUtil {
                     "&nx=" + x +
                     "&ny=" + y;
 
+            System.out.println("▶▶ 호출 URL: " + url);
             Request request = new Request.Builder().url(url).build();
             Response response = client.newCall(request).execute();
-            System.out.println("▶▶ 호출 URL: " + url);
             return response.body() != null ? response.body().string() : null;
 
         } catch (IOException e) {
