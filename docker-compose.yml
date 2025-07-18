@@ -108,17 +108,6 @@ services:
       - 80:80
     networks:
       - msateamprj_network
-    depends_on:
-      - stadium_api
-      - reservation_api
-      - kakaopay_api
-      - security_api
-      - login_api
-      - alarm_api
-      - club_api
-      - recruit_api
-      - weather_api
-      - board_api
     restart: always
 
 volumes:
