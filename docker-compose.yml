@@ -10,7 +10,7 @@ services:
 # 마리아DB 생성
   mariadb:
     container_name: maria_db
-    image: mariadb:${TAG-latest}
+    image: mariadb:latest
     restart: always
     ports:
       - 3306:3306
