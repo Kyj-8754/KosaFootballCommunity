@@ -278,6 +278,7 @@ async function uploadBase64Logo() {
       {
         headers: {
           Authorization: `Bearer ${token.value}`,
+          'Content-Type': 'application/json'
         },
       }
     );
