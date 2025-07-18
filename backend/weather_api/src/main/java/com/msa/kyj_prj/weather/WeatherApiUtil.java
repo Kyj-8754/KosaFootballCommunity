@@ -15,14 +15,16 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+	
 public class WeatherApiUtil {
 	
 	@Value("${weather.service.key}")
-    private static String SERVICE_KEY;
+	private String SERVICE_KEY;
 	@Value("${weather.base.url}")
-	private static String BASE_URL;
+	private String BASE_URL;
 
-    public static List<Weather> fetchForecast(String x, String y, String regionName) {
+
+    public List<Weather> fetchForecast(String x, String y, String regionName) {
         int[] grid = convertGPS2Grid(Double.parseDouble(x), Double.parseDouble(y));
         String nx = String.valueOf(grid[0]);
         String ny = String.valueOf(grid[1]);
@@ -41,8 +43,10 @@ public class WeatherApiUtil {
     }
 
 
-    private static String callApi(String x, String y, String baseDate, String baseTime) {
-        try {
+    private String callApi(String x, String y, String baseDate, String baseTime) {
+    	
+       
+    	try {
             OkHttpClient client = new OkHttpClient();
             String encodedKey = URLEncoder.encode(SERVICE_KEY, "UTF-8");
 
