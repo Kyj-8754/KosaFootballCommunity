@@ -130,7 +130,7 @@ const checkUserApplied = async (matchId) => {
 
 const fetchMatches = async () => {
   try {
-    const res = await axios.get("/match/league/closed");
+    const res = await axios.get("/board_api/match/league/closed");
     const rawMatches = Array.isArray(res.data) ? res.data : res.data.data || [];
 
     const withApplied = await Promise.all(
