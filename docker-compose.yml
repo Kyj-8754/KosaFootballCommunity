@@ -10,12 +10,13 @@ services:
 # 마리아DB 생성
   mariadb:
     container_name: maria_db
-    image: mariadb
+    image: span5189/mariadb:${TAG-latest}
     restart: always
     ports:
       - 3306:3306
     volumes:
-      - shared-data:/var/lib/mysql
+      - shared-data:/var/lib/mysql # 기본 볼륨 마운트
+      - ~/mariadb_config/conf.d/server.cnf:/etc/mysql/conf.d/server.cnf # 추가로 서버 설정 마운트
     user: mysql
     environment:
       MARIADB_DATABASE: kosa_db

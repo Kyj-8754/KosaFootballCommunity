@@ -38,6 +38,7 @@ export default defineConfig({
       "/board_api": {
         target: "http://board_api:8131",
         changeOrigin: true,
+        //historyApiFallback: true,
       },
       // 위젯 프록시
       "/widget_api": {
