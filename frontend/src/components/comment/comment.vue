@@ -51,7 +51,7 @@
 		<div class="pagination">
 		<button @click="prevPage" :disabled="currentPage === 1">이전</button>
 		<span>페이지 {{ currentPage }} / {{ totalPages }}</span>
-		<button @click="nextPage" :disabled="endIndex >= reservations.length">다음</button>
+		<button @click="nextPage" :disabled="endIndex >= commentDB.length">다음</button>
 		</div>
 	</div>
 	<!-- 댓글 입력 섹션 -->
@@ -137,14 +137,14 @@ const commentDB = ref({ list: [] })	// 댓글
 	const currentPage = ref(1);
 	const pageSize = 10;
 	const totalPages = computed(() => {
-		return Math.ceil(reservations.value.length / pageSize);
+		return Math.ceil(commentDB.value.length / pageSize);
 	});
 
-	const startIndex = computed(() => (currentPage.value - 1) * pageSize);
+	//const startIndex = computed(() => (currentPage.value - 1) * pageSize);
 	const endIndex = computed(() => currentPage.value * pageSize);
 
 	const nextPage = () => {
-		if (endIndex.value < reservations.value.length) currentPage.value++;
+		if (endIndex.value < commentDB.value.length) currentPage.value++;
 	};
 	const prevPage = () => {
 		if (currentPage.value > 1) currentPage.value--;
