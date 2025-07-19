@@ -39,7 +39,7 @@ stompClient = Stomp.over(() => new SockJS('/alarm_api/ws')); // 🟢 factory 전
     });
 
   }, (error) => {
-    console.error('🔴 WebSocket 연결 실패:', error);
+    console.warn('🔴 WebSocket 연결 실패:', error);
   });
 }
 

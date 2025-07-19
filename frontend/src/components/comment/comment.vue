@@ -53,7 +53,7 @@
 		<div class="container mt-4" style="max-width: 1000px;">
 			<div class="border rounded p-3">
 				<div class="d-flex justify-content-between align-items-center mb-2">
-					<strong class="fw-bold">{{ comment.userName }}</strong>
+					<strong class="fw-bold">{{ userName }}</strong>
 					<div class="rating-input-stars d-flex"  
 					@mousedown="dragging = true" 
 					@mouseup="dragging = false" 
