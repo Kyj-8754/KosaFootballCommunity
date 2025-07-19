@@ -47,6 +47,12 @@
 				</div>
 			</form>
 		</template>
+		 <!-- 페이지네이션 버튼 -->
+		<div class="pagination">
+		<button @click="prevPage" :disabled="currentPage === 1">이전</button>
+		<span>페이지 {{ currentPage }} / {{ totalPages }}</span>
+		<button @click="nextPage" :disabled="endIndex >= reservations.length">다음</button>
+		</div>
 	</div>
 	<!-- 댓글 입력 섹션 -->
 	<form id="regist" @submit.prevent="regist" v-if="userId && userName">
@@ -125,6 +131,24 @@ const commentDB = ref({ list: [] })	// 댓글
 			editForm.username = props.userName;
 			editing.value = true;
 		}
+	};
+
+	//페이지 버튼, 버튼 이벤트
+	const currentPage = ref(1);
+	const pageSize = 10;
+	const totalPages = computed(() => {
+		return Math.ceil(reservations.value.length / pageSize);
+	});
+
+	const startIndex = computed(() => (currentPage.value - 1) * pageSize);
+	const endIndex = computed(() => currentPage.value * pageSize);
+	const pagedReservations = computed(() => sortedReservations.value.slice(startIndex.value, endIndex.value));
+
+	const nextPage = () => {
+		if (endIndex.value < reservations.value.length) currentPage.value++;
+	};
+	const prevPage = () => {
+		if (currentPage.value > 1) currentPage.value--;
 	};
 
 	//api로 댓글 수정보내기

@@ -1,47 +1,31 @@
 <template>
   <div class="payment-list">
     <div v-if="!reservations || reservations.length === 0">결제 정보가 없습니다.</div>
-    <ul v-else>
-      <li class="list-header">
-        <span class="num-col">번호</span>
-        <span class="name-col">구장명</span>
-        <span class="date-col" @click="toggleSort('slot_date')" style="cursor: pointer">
-          결제일
-          <span v-if="sortKey === 'slot_date'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
-        </span>
-        <span class="amount-col">결제 금액</span>
-        <span class="status-col" @click="toggleSort('status')" style="cursor: pointer">
-          결제 상태
-          <span v-if="sortKey === 'status'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
-        </span>
-        </li>
-        <li v-for="(item, index) in pagedReservations" :key="item.reservation_id" class="payment-item" @click="goToDetail(item.reservation_id)"> 
-              <span class="num-col">{{ startIndex + index + 1 }}</span>
-              <span class="name-col">{{ item.svcnm }}</span>
-              <span class="date-col">{{ item.paid_at ? item.paid_at : '-' }}</span>
-              <span class="amount-col">{{ item.amount }}</span>
-              <span 
-                class="status-col" 
-                :class="{
-                  paid: item.status === 'paid',
-                  refunded: item.status === 'refunded',
-                  pending: item.status === 'pending' || item.status === '미 결제'
-                }"
-              >
-            {{ convertStatus(item.status) }}
-          </span>
-      </li>
-    </ul>
-    <!-- 페이지네이션 버튼 -->
-    <div class="pagination">
-      <button @click="prevPage" :disabled="currentPage === 1">이전</button>
-      <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="endIndex >= reservations.length">다음</button>
-    </div>
-
-    <div class="total-amount">
-  총 결제 금액: {{ totalPaidAmount.toLocaleString() }} 원
-</div>
+      <ul v-else>
+        <li class="list-header">
+          <span class="num-col">번호</span>
+          <span class="name-col">구장명</span>
+          <span class="date-col">결제일</span>
+          <span class="amount-col">결제 금액</span>
+          <span class="status-col">결제 상태</span>
+          </li>
+          <li v-for="(item, index) in pagedReservations" :key="item.reservation_id" class="payment-item" @click="goToDetail(item.reservation_id)"> 
+                <span class="num-col">{{ startIndex + index + 1 }}</span>
+                <span class="name-col">{{ item.svcnm }}</span>
+                <span class="date-col">{{ item.paid_at ? item.paid_at : '-' }}</span>
+                <span class="amount-col">{{ item.amount }}</span>
+                <span>{{ convertStatus(item.status) }}</span>
+          </li>
+      </ul>
+      <!-- 페이지네이션 버튼 -->
+      <div class="pagination">
+        <button @click="prevPage" :disabled="currentPage === 1">이전</button>
+        <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="endIndex >= reservations.length">다음</button>
+      </div>
+      <div class="total-amount">
+        총 결제 금액: {{ totalPaidAmount.toLocaleString() }} 원
+      </div>
     </div>
 </template>
 
@@ -58,57 +42,6 @@ const props = defineProps({
     required: true
   }
 })
-
-// 예약 필터
-const sortKey = ref(null);  // "slot_date" or "status"
-const sortOrder = ref('asc'); // 'asc' or 'desc'
-
-const sortedReservations = computed(() => {
-  const sorted = [...reservations.value];
-  if (!sortKey.value) return sorted;
-
-  return sorted.sort((a, b) => {
-    const aVal = a[sortKey.value];
-    const bVal = b[sortKey.value];
-
-    // 날짜 비교
-    if (sortKey.value === 'slot_date') {
-      const dateA = new Date(aVal);
-      const dateB = new Date(bVal);
-      return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
-    }
-
-      const statusPriority = {
-        paid: 1,
-        refunded: 2,
-        unpaid: 3,
-        canceled: 4
-      };
-
-      if (sortKey.value === 'status') {
-        const aPriority = statusPriority[aVal] || 99;
-        const bPriority = statusPriority[bVal] || 99;
-
-        return sortOrder.value === 'asc'
-          ? aPriority - bPriority
-          : bPriority - aPriority;
-      }
-
-    return 0;
-  });
-});
-
-// 오름차순, 내림차순용도
-const toggleSort = (key) => {
-  if (sortKey.value === key) {
-    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-  } else {
-    sortKey.value = key;
-    sortOrder.value = 'asc';
-  }
-};
-
-
 
 // 결제 금액
 const totalPaidAmount = computed(() => {
