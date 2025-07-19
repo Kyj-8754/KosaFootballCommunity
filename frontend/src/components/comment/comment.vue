@@ -5,7 +5,7 @@
 			{{ commentDB.length }}개의 리뷰, 평균 
 			<span class="text-warning">★{{ averageRating.toFixed(1) }}</span>
 		</p>
-		<template v-for="comment in commentDB" :key="comment.comment_no">
+		<template v-for="comment in pagedComments" :key="comment.comment_no">
 			<div class="card mb-2"  v-if="comment.status !== 'false'">
 				<div class="card-body p-3">
 					<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
@@ -49,9 +49,9 @@
 		</template>
 		 <!-- 페이지네이션 버튼 -->
 		<div class="pagination">
-		<button @click="prevPage" :disabled="currentPage === 1">이전</button>
-		<span>페이지 {{ currentPage }} / {{ totalPages }}</span>
-		<button @click="nextPage" :disabled="endIndex >= commentDB.length">다음</button>
+			<button @click="prevPage" :disabled="currentPage === 1">이전</button>
+				<span>페이지 {{ currentPage }} / {{ totalPages }}</span>
+			<button @click="nextPage" :disabled="endIndex >= commentDB.length">다음</button>
 		</div>
 	</div>
 	<!-- 댓글 입력 섹션 -->
@@ -135,12 +135,12 @@ const commentDB = ref({ list: [] })	// 댓글
 
 	//페이지 버튼, 버튼 이벤트
 	const currentPage = ref(1);
-	const pageSize = 10;
+	const pageSize = 5;
 	const totalPages = computed(() => {
 		return Math.ceil(commentDB.value.length / pageSize);
 	});
 
-	//const startIndex = computed(() => (currentPage.value - 1) * pageSize);
+	const startIndex = computed(() => (currentPage.value - 1) * pageSize);
 	const endIndex = computed(() => currentPage.value * pageSize);
 
 	const nextPage = () => {
@@ -149,6 +149,10 @@ const commentDB = ref({ list: [] })	// 댓글
 	const prevPage = () => {
 		if (currentPage.value > 1) currentPage.value--;
 	};
+
+	const pagedComments = computed(() =>
+		commentDB.value.slice(startIndex.value, endIndex.value)
+	);
 
 	//api로 댓글 수정보내기
 	const editForm = reactive({
