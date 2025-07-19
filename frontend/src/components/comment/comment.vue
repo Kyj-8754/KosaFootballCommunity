@@ -1,11 +1,11 @@
 <template>
 	<!-- 댓글 섹션 -->
 	<div class="container mt-4" style="max-width: 1000px;">
+		<p v-if="commentDB.length > 0" class="comment-summary text-muted mb-2">
+			{{ commentDB.length }}개의 리뷰, 평균 
+			<span class="text-warning">★{{ averageRating.toFixed(1) }}</span>
+		</p>
 		<template v-for="comment in commentDB" :key="comment.comment_no">
-			<p v-if="commentDB.length > 0" class="comment-summary text-muted mb-2">
-				{{ commentDB.length }}개의 리뷰, 평균 
-				<span class="text-warning">★{{ averageRating.toFixed(1) }}</span>
-			</p>
 			<div class="card mb-2"  v-if="comment.status !== 'false'">
 				<div class="card-body p-3">
 					<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
@@ -53,7 +53,7 @@
 		<div class="container mt-4" style="max-width: 1000px;">
 			<div class="border rounded p-3">
 				<div class="d-flex justify-content-between align-items-center mb-2">
-					<strong class="fw-bold">{{ userName }}</strong>
+					<strong class="fw-bold">{{ userId }}</strong>
 					<div class="rating-input-stars d-flex"  
 					@mousedown="dragging = true" 
 					@mouseup="dragging = false" 
