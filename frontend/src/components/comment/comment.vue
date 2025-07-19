@@ -142,7 +142,6 @@ const commentDB = ref({ list: [] })	// 댓글
 
 	const startIndex = computed(() => (currentPage.value - 1) * pageSize);
 	const endIndex = computed(() => currentPage.value * pageSize);
-	const pagedReservations = computed(() => sortedReservations.value.slice(startIndex.value, endIndex.value));
 
 	const nextPage = () => {
 		if (endIndex.value < reservations.value.length) currentPage.value++;
