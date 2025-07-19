@@ -14,7 +14,7 @@
                 <span class="name-col">{{ item.svcnm }}</span>
                 <span class="date-col">{{ item.paid_at ? item.paid_at : '-' }}</span>
                 <span class="amount-col">{{ item.amount }}</span>
-                <span>{{ convertStatus(item.status) }}</span>
+                <span class="status-col">{{ convertStatus(item.status) }}</span>
           </li>
       </ul>
       <!-- 페이지네이션 버튼 -->

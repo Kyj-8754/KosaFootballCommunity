@@ -61,3 +61,28 @@
   width: 0%; /* ← JS에서 동적으로 0%, 50%, 100% 설정 */
 
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.pagination button {
+  border: none;
+  background-color: #f0f0f0;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #ddd;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
