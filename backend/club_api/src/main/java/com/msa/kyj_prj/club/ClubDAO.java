@@ -39,8 +39,10 @@ public interface ClubDAO {
 
 	// 클럽 레벨 전적을 바탕으로 업데이트
 	int updateClubLevel(@Param("clubId") int clubId, @Param("clubLevel") String clubLevel);	
+	
 	// 클럽 로고 경로 업데이트
 	int updateLogoPath(@Param("clubId") int clubId, @Param("logoPath") String logoPath);
+	
 	// 클럼 리더 위임
 	int updateLeader(@Param("club_id") int club_id, @Param("user_no") int user_no);
 	
