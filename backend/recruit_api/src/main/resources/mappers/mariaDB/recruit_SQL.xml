@@ -5,31 +5,31 @@
 
 <mapper namespace="com.msa.kyj_prj.recruit.RecruitDAO">
 
-<!-- ✅ 전체 목록 (최신순) -->
-<select id="find_all" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
-  SELECT 
-    r.*, 
-    c.club_name,
-    IFNULL(COUNT(a.apply_id), 0) AS apply_count
-  FROM tbl_recruit_board r
-  JOIN tbl_club c ON r.club_id = c.club_id
-  LEFT JOIN tbl_club_apply a ON r.bno = a.bno
-  GROUP BY r.bno
-  ORDER BY r.bno DESC
-</select>
+  <!-- ✅ 전체 목록 (최신순) -->
+  <select id="find_all" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT 
+      r.*, 
+      c.club_name,
+      IFNULL(COUNT(a.apply_id), 0) AS apply_count
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    LEFT JOIN tbl_club_apply a ON r.bno = a.bno
+    GROUP BY r.bno
+    ORDER BY r.bno DESC
+  </select>
 
   <!-- ✅ 인기순 정렬 -->
-<select id="find_all_order_by_view_count" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
-  SELECT 
-    r.*, 
-    c.club_name,
-    IFNULL(COUNT(a.apply_id), 0) AS apply_count
-  FROM tbl_recruit_board r
-  JOIN tbl_club c ON r.club_id = c.club_id
-  LEFT JOIN tbl_club_apply a ON r.bno = a.bno
-  GROUP BY r.bno
-  ORDER BY r.view_count DESC
-</select>
+  <select id="find_all_order_by_view_count" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT 
+      r.*, 
+      c.club_name,
+      IFNULL(COUNT(a.apply_id), 0) AS apply_count
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    LEFT JOIN tbl_club_apply a ON r.bno = a.bno
+    GROUP BY r.bno
+    ORDER BY r.view_count DESC
+  </select>
 
   <!-- ✅ 클럽별 모집글 목록 -->
   <select id="find_by_club_id" parameterType="int" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
@@ -42,17 +42,16 @@
 
   <!-- ✅ 모집글 단건 조회 -->
   <select id="find_by_id" parameterType="int" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
-  SELECT
-    r.*,
-    c.club_name,
-    IFNULL(COUNT(a.apply_id), 0) AS apply_count
-  FROM tbl_recruit_board r
-  JOIN tbl_club c ON r.club_id = c.club_id
-  LEFT JOIN tbl_club_apply a ON r.bno = a.bno
-  WHERE r.bno = #{bno}
-  GROUP BY r.bno
-</select>
-
+    SELECT
+      r.*,
+      c.club_name,
+      IFNULL(COUNT(a.apply_id), 0) AS apply_count
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    LEFT JOIN tbl_club_apply a ON r.bno = a.bno
+    WHERE r.bno = #{bno}
+    GROUP BY r.bno
+  </select>
 
   <!-- ✅ 모집글 등록 -->
   <insert id="insert" parameterType="com.msa.kyj_prj.recruit.RecruitBoard">
@@ -76,41 +75,84 @@
     SET view_count = view_count + 1
     WHERE bno = #{bno}
   </update>
-  
+
   <!-- ✅ 최신순 + 검색어 -->
-<select id="find_by_keyword" parameterType="string" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
-  SELECT r.*, c.club_name
-  FROM tbl_recruit_board r
-  JOIN tbl_club c ON r.club_id = c.club_id
-  WHERE r.title LIKE CONCAT('%', #{keyword}, '%')
-     OR r.content LIKE CONCAT('%', #{keyword}, '%')
-     OR c.club_name LIKE CONCAT('%', #{keyword}, '%')
-  ORDER BY r.bno DESC
-</select>
+  <select id="find_by_keyword" parameterType="string" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    WHERE r.title LIKE CONCAT('%', #{keyword}, '%')
+       OR r.content LIKE CONCAT('%', #{keyword}, '%')
+       OR c.club_name LIKE CONCAT('%', #{keyword}, '%')
+    ORDER BY r.bno DESC
+  </select>
 
-<!-- ✅ 인기순 + 검색어 -->
-<select id="find_by_keyword_order_by_view_count" parameterType="string" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
-  SELECT r.*, c.club_name
-  FROM tbl_recruit_board r
-  JOIN tbl_club c ON r.club_id = c.club_id
-  WHERE r.title LIKE CONCAT('%', #{keyword}, '%')
-     OR r.content LIKE CONCAT('%', #{keyword}, '%')
-     OR c.club_name LIKE CONCAT('%', #{keyword}, '%')
-  ORDER BY r.view_count DESC
-</select>
+  <!-- ✅ 인기순 + 검색어 -->
+  <select id="find_by_keyword_order_by_view_count" parameterType="string" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    WHERE r.title LIKE CONCAT('%', #{keyword}, '%')
+       OR r.content LIKE CONCAT('%', #{keyword}, '%')
+       OR c.club_name LIKE CONCAT('%', #{keyword}, '%')
+    ORDER BY r.view_count DESC
+  </select>
 
-<update id="update_is_closed">
+  <update id="update_is_closed">
     UPDATE tbl_recruit_board
     SET is_closed = #{is_closed}
     WHERE bno = #{bno}
-</update>
+  </update>
 
-<delete id="delete_recruit">
+  <delete id="delete_recruit">
     DELETE FROM tbl_recruit_board
     WHERE bno = #{bno}
-</delete>
+  </delete>
 
+  <!-- ✅ 페이징: 최신순 (수정됨) -->
+  <select id="find_paginated_order_by_recent" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    <where>
+      <if test="keyword != null and keyword != ''">
+        (r.title LIKE CONCAT('%', #{keyword}, '%')
+        OR r.content LIKE CONCAT('%', #{keyword}, '%')
+        OR c.club_name LIKE CONCAT('%', #{keyword}, '%'))
+      </if>
+    </where>
+    ORDER BY r.bno DESC
+    LIMIT #{startRow}, #{pageSize}
+  </select>
 
-  
-  
+  <!-- ✅ 페이징: 인기순 (수정됨) -->
+  <select id="find_paginated_order_by_view_count" resultType="com.msa.kyj_prj.recruit.RecruitBoard">
+    SELECT r.*, c.club_name
+    FROM tbl_recruit_board r
+    JOIN tbl_club c ON r.club_id = c.club_id
+    <where>
+      <if test="keyword != null and keyword != ''">
+        (r.title LIKE CONCAT('%', #{keyword}, '%')
+        OR r.content LIKE CONCAT('%', #{keyword}, '%')
+        OR c.club_name LIKE CONCAT('%', #{keyword}, '%'))
+      </if>
+    </where>
+    ORDER BY r.view_count DESC
+    LIMIT #{startRow}, #{pageSize}
+  </select>
+
+  <!-- ✅ 페이징: 총 개수 (수정됨) -->
+<select id="count_total" resultType="int">
+  SELECT COUNT(DISTINCT r.bno) 
+  FROM tbl_recruit_board r
+  JOIN tbl_club c ON r.club_id = c.club_id
+  <where>
+    <if test="keyword != null and keyword != ''">
+      (r.title LIKE CONCAT('%', #{keyword}, '%')
+      OR r.content LIKE CONCAT('%', #{keyword}, '%')
+      OR c.club_name LIKE CONCAT('%', #{keyword}, '%'))
+    </if>
+  </where>
+</select>
+
 </mapper>

@@ -258,6 +258,8 @@ public class ClubController {
 		}
 	}
 
+	
+	// 로고 업로드
 	@PostMapping("/{club_id}/uploadLogo")
 	public ResponseEntity<String> uploadLogoBase64(
 			@Parameter(description = "클럽 ID", required = true) @PathVariable int club_id,
@@ -273,5 +275,4 @@ public class ClubController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("업로드 실패: " + e.getMessage());
 		}
 	}
-
 }

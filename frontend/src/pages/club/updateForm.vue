@@ -213,19 +213,16 @@
     </p>
   </div>
 </template>
-
 <script setup>
 import { ref, inject, computed, onMounted, watchEffect } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
 
-// ✅ 전역 상태 주입 (JWT, 사용자 정보 등)
 const token = inject("token");
 const userNo = inject("userNo");
 const router = useRouter();
 const route = useRoute();
 
-// ✅ 클럽 데이터 관련 상태
 const club = ref(null);
 const clubInfo = ref({
   gender: "",
@@ -233,25 +230,21 @@ const clubInfo = ref({
   active_days: [],
   active_times: [],
 });
-const clubMember = ref([]); // 클럽 멤버 리스트
+const clubMember = ref([]);
 
-// ✅ 셀렉트 박스/체크박스 옵션
 const genderOptions = ["남성", "여성", "혼성"];
 const ageGroupOptions = ["10~20", "20~30", "30~40", "40~50"];
 const daysOptions = ["월", "화", "수", "목", "금", "토", "일"];
 const timeOptions = ["아침", "오후", "저녁", "야간", "심야"];
 
-// ✅ 팀장 여부 판단
 const isClubOwner = computed(
-  () =>
-    club.value && userNo && Number(club.value.user_no) === Number(userNo.value)
+  () => club.value && userNo && Number(club.value.user_no) === Number(userNo.value)
 );
 
-// ✅ Base64 업로드 관련 상태
-const base64Image = ref(""); // 미리보기 및 서버 전송용 Base64 문자열
-const selectedFile = ref(null); // 선택된 파일 객체
+// ✅ Base64 관련 상태
+const base64Image = ref("");
+const selectedFile = ref(null);
 
-// ✅ 파일 선택 시 → base64 변환 + 미리보기 설정
 function handleFileChange(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -259,12 +252,12 @@ function handleFileChange(event) {
 
   const reader = new FileReader();
   reader.onload = () => {
-    base64Image.value = reader.result; // reader.result = base64 문자열
+    base64Image.value = reader.result;
   };
-  reader.readAsDataURL(file); // 파일을 Base64 문자열로 읽기
+  reader.readAsDataURL(file);
 }
 
-// ✅ base64 문자열을 서버에 POST → logo_path 경로 갱신
+// ✅ Base64 업로드 요청 정확히 수정됨
 async function uploadBase64Logo() {
   if (!base64Image.value || !club.value) {
     alert("업로드할 이미지 또는 클럽 정보가 없습니다.");
@@ -282,9 +275,9 @@ async function uploadBase64Logo() {
         },
       }
     );
-    club.value.logo_path = data; // 서버에서 응답받은 logo_path
+    club.value.logo_path = data;
     alert("로고가 업로드되었습니다.");
-    base64Image.value = ""; // 상태 초기화
+    base64Image.value = "";
     selectedFile.value = null;
   } catch (e) {
     alert("로고 업로드 실패!");
@@ -292,7 +285,6 @@ async function uploadBase64Logo() {
   }
 }
 
-// ✅ 클럽 정보 + 상세 정보 + 멤버 리스트 fetch
 onMounted(async () => {
   const teamCode = route.params.teamCode;
   try {
@@ -303,7 +295,6 @@ onMounted(async () => {
     club.value = response.data;
 
     if (club.value && club.value.club_id) {
-      // 클럽 상세정보
       try {
         const clubInfoRes = await axios.get(`/club_api/club/club_info/${club.value.club_id}`);
         clubInfo.value = {
@@ -317,7 +308,6 @@ onMounted(async () => {
         };
       } catch (infoErr) {
         if (infoErr.response?.status === 404) {
-          // 상세정보가 없을 경우 초기화
           clubInfo.value = {
             gender: "",
             age_group: "",
@@ -329,7 +319,6 @@ onMounted(async () => {
         }
       }
 
-      // 클럽 멤버 리스트
       const memberRes = await axios.get(
         `/club_api/club/member/list/${club.value.club_id}`
       );
@@ -340,7 +329,6 @@ onMounted(async () => {
   }
 });
 
-// ✅ 팀 레벨 계산
 function calculateClubLevel(win, draw, loss) {
   const total = win + draw + loss;
   if (total === 0) return "브론즈";
@@ -361,14 +349,12 @@ const teamLevel = computed(() => {
   );
 });
 
-// ✅ 주요 멤버 TOP3
 const topMembers = computed(() => {
   return [...clubMember.value]
     .sort((a, b) => parseInt(b.match_count || 0) - parseInt(a.match_count || 0))
     .slice(0, 3);
 });
 
-// ✅ 저장 (club + clubInfo 분리 전송)
 const submitUpdate = async () => {
   if (!isClubOwner.value) {
     alert("팀장만 수정할 수 있습니다.");
@@ -413,7 +399,6 @@ const submitUpdate = async () => {
   }
 };
 
-// ✅ 취소 버튼
 const cancelUpdate = () => {
   if (club.value) {
     router.push(`/club/${club.value.team_code}`);
@@ -422,7 +407,6 @@ const cancelUpdate = () => {
   }
 };
 
-// ✅ 디버깅 로그
 watchEffect(() => {
   console.log("userNo:", userNo?.value, "club.user_no:", club.value?.user_no);
 });

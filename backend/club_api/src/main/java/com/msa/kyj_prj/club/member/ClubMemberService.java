@@ -57,5 +57,4 @@ public class ClubMemberService {
 		// 3. 새로운 리더를 LEADER로 변경
 		clubMemberDAO.updateRoleByClubIdAndUserNo(club_id, new_leader_user_no, "LEADER");
 	}
-
 }

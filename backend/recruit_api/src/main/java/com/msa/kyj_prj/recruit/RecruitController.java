@@ -12,6 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
+import com.msa.kyj_prj.recruit.dto.PageRequestDTO;
+import com.msa.kyj_prj.recruit.dto.PageResponseDTO;
+
 @RestController
 @RequestMapping("/recruits")
 @RequiredArgsConstructor
@@ -21,31 +24,33 @@ public class RecruitController {
 
 	// 전체 모집글 목록 조회 (+ 인기순 정렬 지원)
 	@GetMapping
-	@Operation(summary = "모집글 전체 목록 조회", description = "전체 모집글을 조회합니다. 인기순 정렬(sort=popular) 및 키워드 검색(keyword) 기능을 지원합니다.")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "조회 성공"),
-			@ApiResponse(responseCode = "500", description = "서버 오류") })
-	public ResponseEntity<List<RecruitBoard>> get_all_recruits(
-			@Parameter(description = "정렬 방식 (popular: 인기순, 미입력 시 최신순)", example = "popular") @RequestParam(required = false) String sort,
-			@Parameter(description = "검색 키워드 (팀명)", example = "T1") @RequestParam(required = false) String keyword) {
-		List<RecruitBoard> list;
-		if ("popular".equalsIgnoreCase(sort)) {
-			list = recruit_service.get_recruits_order_by_view_count(keyword);
-		} else {
-			list = recruit_service.get_all_recruits(keyword);
-		}
-		return ResponseEntity.ok(list);
+	@Operation(summary = "모집글 페이징 목록 조회", description = "페이징 + 정렬 + 키워드 검색을 지원합니다.")
+	@ApiResponses({
+	    @ApiResponse(responseCode = "200", description = "조회 성공"),
+	    @ApiResponse(responseCode = "500", description = "서버 오류")
+	})
+	public ResponseEntity<PageResponseDTO<RecruitBoard>> getPagedRecruits(
+	    @RequestParam(defaultValue = "1") int page,
+	    @RequestParam(defaultValue = "10") int size,
+	    @RequestParam(required = false) String sort,
+	    @RequestParam(required = false) String keyword
+	) {
+	    try {
+	        // ✅ PageRequestDTO 구성
+	        PageRequestDTO request = new PageRequestDTO();
+	        request.setPage(page);
+	        request.setSize(size);
+	        request.setKeyword((keyword != null && !keyword.trim().isEmpty()) ? keyword : null); // ✅
+
+	        // ✅ 페이징 결과 가져오기
+	        PageResponseDTO<RecruitBoard> response = recruit_service.get_paginated_recruits(request, sort);
+
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 
-	// 클럽별 모집글 목록 조회
-	@GetMapping("/club/{club_id}")
-	@Operation(summary = "클럽별 모집글 목록 조회", description = "club_id로 해당 클럽의 모집글 목록을 조회합니다.")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "조회 성공"),
-			@ApiResponse(responseCode = "404", description = "클럽이 존재하지 않음") })
-	public ResponseEntity<List<RecruitBoard>> get_recruits_by_club(
-			@Parameter(description = "클럽 ID", example = "4") @PathVariable int club_id) {
-		List<RecruitBoard> list = recruit_service.get_recruits_by_club(club_id);
-		return ResponseEntity.ok(list);
-	}
 
 	// 모집글 단건 조회 + 조회수 증가
 	@GetMapping("/{bno}")

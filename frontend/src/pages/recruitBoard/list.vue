@@ -132,15 +132,21 @@
           </span>
         </div>
       </router-link>
+      <Pagination
+  :currentPage="currentPage"
+  :totalPages="totalPages"
+  @changePage="handlePageChange"
+/>
+
     </ul>
   </div>
 </template>
-
 <script setup>
-import { ref, computed, onMounted, inject } from "vue";
+import { ref, computed, onMounted, inject, watch } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
+import Pagination from "@/components/pagination.vue"; // 실제 위치에 맞게 조정
 
 // 1. provide된 값 받기
 const token = inject("token");
@@ -150,16 +156,15 @@ const route = useRoute();
 function isActiveTab(path) {
   return route.path === path;
 }
-// const fallbackImg = "https://placehold.co/40x40?text=IMG";
-// // ✅ 이미지 로딩 실패 시 기본 이미지로 대체
-// const handleImageError = (event) => {
-//   event.target.src = fallbackImg;
-// };
 
 // 2. 상태(reactive 변수)
 const recruits = ref([]);
 const searchTeam = ref("");
 const hasClub = ref(false);
+const currentPage = ref(1);
+const totalPages = ref(1);
+const pageSize = 10;
+const sortType = ref(""); // 정렬 상태 기억용
 
 // 3. computed
 const filteredRecruits = computed(() => {
@@ -170,16 +175,27 @@ const filteredRecruits = computed(() => {
 });
 
 // 4. 메서드
-async function fetchRecruits(sortType = "") {
+async function fetchRecruits() {
   try {
-    const url =
-      sortType === "popular" ? "/recruit_api/recruits?sort=popular" : "/recruit_api/recruits";
-    const response = await axios.get(url);
-    recruits.value = response.data;
+    const query = new URLSearchParams({
+      page: currentPage.value,
+      size: pageSize,
+      sort: sortType.value,
+      keyword: searchTeam.value || ""
+    });
+
+    const response = await axios.get(`/recruit_api/recruits?${query}`);
+    recruits.value = response.data.list;
+    totalPages.value = Math.ceil(response.data.total / pageSize);
   } catch (e) {
     alert("모집글을 불러오는 데 실패했습니다.");
     console.error(e);
   }
+}
+
+function handlePageChange(page) {
+  currentPage.value = page;
+  fetchRecruits();
 }
 
 async function checkHasClub() {
@@ -199,8 +215,6 @@ function formatDate(dateTime) {
 }
 
 function goToClubCreate() {
-  console.log("token:", token);
-  console.log("token.value:", token?.value);
   if (token?.value) {
     router.push("/club/registForm");
   } else {
@@ -209,7 +223,13 @@ function goToClubCreate() {
   }
 }
 
-// 5. 라이프사이클
+// 5. 검색어 입력 시 페이지 초기화 + 재조회
+watch(searchTeam, () => {
+  currentPage.value = 1;
+  fetchRecruits();
+});
+
+// 6. 라이프사이클
 onMounted(() => {
   fetchRecruits();
   checkHasClub();
