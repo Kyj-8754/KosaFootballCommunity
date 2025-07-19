@@ -14,7 +14,11 @@
                 <span class="name-col">{{ item.svcnm }}</span>
                 <span class="date-col">{{ item.paid_at ? item.paid_at : '-' }}</span>
                 <span class="amount-col">{{ item.amount }}</span>
-                <span class="status-col">{{ convertStatus(item.status) }}</span>
+                <span class="status-col" :class="{
+                  paid: item.status === 'paid',
+                  refunded: item.status === 'refunded',
+                  pending: item.status === 'pending' || item.status === '미 결제'
+                }">{{ convertStatus(item.status) }}</span>
           </li>
       </ul>
       <!-- 페이지네이션 버튼 -->
@@ -125,7 +129,7 @@ onMounted(fetchReservations)
 }
 
 .num-col {
-  width: 50px;
+  flex: 0.5;
   text-align: center;
 }
 
@@ -135,12 +139,17 @@ onMounted(fetchReservations)
 }
 
 .date-col {
-  flex: 1.5;
+  flex: 1;
+  text-align: center;
+}
+
+.amount-col{
+  flex: 1;
   text-align: center;
 }
 
 .status-col {
-  flex: 1;
+  flex: 0.8;
   text-align: center;
   font-weight: bold;
   padding: 4px 8px;
