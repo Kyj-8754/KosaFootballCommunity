@@ -15,7 +15,7 @@
           <span v-if="sortKey === 'status'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
         </span>
         </li>
-        <li v-for="(item, index) in pagedReservations" :key="item.reservation_id" class="reservation-item" @click="goToDetail(item.reservation_id)"> 
+        <li v-for="(item, index) in pagedReservations" :key="item.reservation_id" class="payment-item" @click="goToDetail(item.reservation_id)"> 
               <span class="num-col">{{ startIndex + index + 1 }}</span>
               <span class="name-col">{{ item.svcnm }}</span>
               <span class="date-col">{{ item.paid_at ? item.paid_at : '-' }}</span>

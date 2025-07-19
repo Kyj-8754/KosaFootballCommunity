@@ -80,7 +80,7 @@
 	@import "@/utils/css/comment.css";
 </style>
 <script setup>
-import {ref, reactive, onMounted} from 'vue'
+import {ref, reactive, onMounted, computed} from 'vue'
 import axios from 'axios'
 
 // 받아줄 기본 정의

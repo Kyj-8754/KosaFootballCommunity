@@ -48,9 +48,10 @@ public class StadiumController {
 
 	// 경기장 목록 진입
 	@Operation(summary = "경기장 목록 조회", description = "검색 조건과 페이지 번호에 따라 게시판 목록을 조회하는 API")
-	@ApiResponse(responseCode = "200", description = "성공적으로 조회됨",
-    content = @Content(mediaType = "application/json",
-        schema = @Schema(implementation = PageResponseVO_board.class)))
+	@ApiResponse(
+			responseCode = "200", description = "성공적으로 조회됨",
+			content = @Content(mediaType = "application/json",
+			schema = @Schema(implementation = PageResponseVO_board.class)))
 	@GetMapping("list")
 	public Map<String, Object> list(
 			@Parameter(description = "페이지 번호", example = "1") @RequestParam(required = false) String pageNo, 
