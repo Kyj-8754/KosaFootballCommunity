@@ -3,8 +3,11 @@ package com.msa.kyj_prj.recruit;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import lombok.extern.slf4j.Slf4j; // ← 이 라인이 반드시 필요합니다!
 
+import com.msa.kyj_prj.recruit.dto.PageRequestDTO;
+import com.msa.kyj_prj.recruit.dto.PageResponseDTO;
+
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
 @Slf4j
@@ -42,6 +45,30 @@ public class RecruitService {
 		}
 	}
 
+	// ✅ 페이징 처리된 모집글 조회 (정렬 조건 포함)
+	public PageResponseDTO<RecruitBoard> get_paginated_recruits(PageRequestDTO dto, String sort) {
+	    // ❗ 빈 문자열일 경우 null 처리 (쿼리에서 필터 빠지도록)
+	    String keyword = (dto.getKeyword() != null && !dto.getKeyword().trim().isEmpty()) ? dto.getKeyword().trim() : null;
+	    dto.setKeyword(keyword); // ✅ 다시 dto에 세팅
+
+	    int total = recruit_dao.count_total(keyword);
+
+	    List<RecruitBoard> list;
+	    if ("popular".equalsIgnoreCase(sort)) {
+	        list = recruit_dao.find_paginated_order_by_view_count(dto.getStartRow(), dto.getSize(), keyword);
+	    } else {
+	        list = recruit_dao.find_paginated_order_by_recent(dto.getStartRow(), dto.getSize(), keyword);
+	    }
+
+	    return PageResponseDTO.<RecruitBoard>builder()
+	        .list(list)
+	        .total(total)
+	        .page(dto.getPage())
+	        .size(dto.getSize())
+	        .build();
+	}
+
+
 	// 클럽별 모집글 목록 조회
 	public List<RecruitBoard> get_recruits_by_club(int club_id) {
 		return recruit_dao.find_by_club_id(club_id);
@@ -74,9 +101,9 @@ public class RecruitService {
 	public void increase_view_count(int bno) {
 		recruit_dao.increase_view_count(bno);
 	}
+
 	// 모집글 마감
 	public void close_recruit(int bno) {
 	    recruit_dao.update_is_closed(bno, 1); // 1 = 모집 마감
 	}
-
 }
