@@ -258,11 +258,8 @@ public class ClubController {
 		}
 	}
 
-	// @PostMapping("/{club_id}/uploadLogoBase64")
-	// public ResponseEntity<String> uploadLogoBase64(@PathVariable int club_id, @RequestBody String base64) {
-	// 	clubService.updateLogoPath(club_id, base64);
-	// 	return ResponseEntity.ok(base64);
 	
+	// 로고 업로드
 	@PostMapping("/{club_id}/uploadLogo")
 	public ResponseEntity<String> uploadLogoBase64(
 			@Parameter(description = "클럽 ID", required = true) @PathVariable int club_id,

@@ -51,7 +51,8 @@ public class ClubService {
 		leader.setClub_id(clubId);
 		leader.setUser_no(userNo); // ✅ 기존 user_id → user_no로 수정
 		leader.setRole("LEADER"); // 팀장 역할 지정
-
+		leader.setPom(String.valueOf(0));           // ✅ int → String 변환
+		leader.setMatch_count(String.valueOf(0));   // ✅ int → String 변환
 		clubMemberDAO.insert(leader); // 4. 클럽 멤버 등록
 
 		return result;

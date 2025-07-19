@@ -77,7 +77,6 @@ public interface ClubApplyDAO {
 	// (2) club_id, appli_user_no로 pending 상태 신청 취소 (status = 'canceled')
 	int cancelByClubIdAndApplicant(@Param("club_id") int club_id, @Param("appli_user_no") int appli_user_no);
 
-	
 	// 추가!
 	int insertByClubDetail(ClubApply clubApply);
 
