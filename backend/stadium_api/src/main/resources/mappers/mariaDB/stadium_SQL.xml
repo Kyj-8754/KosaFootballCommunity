@@ -31,8 +31,8 @@
 	
 	<select id="list" resultType="com.msa.kyj_prj.dto.StadiumListDTO">
 	    SELECT s.*,
-	    IFNULL(ROUND(AVG(c.rating), 1), 0) AS avg_rating,
-    	COUNT(c.comment_no) AS comment_count
+	    IFNULL(ROUND(AVG(c.rating), 1), 0) AS avgRating,
+    	COUNT(c.comment_no) AS reviewCount
 		FROM stadium s
 		LEFT JOIN stadium_comment c ON s.svcid = c.svcid
 			<include refid="search"/>

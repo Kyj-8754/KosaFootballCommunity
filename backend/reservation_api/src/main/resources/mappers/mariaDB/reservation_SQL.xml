@@ -55,7 +55,8 @@ WHERE r.reservation_id = #{reservation_id}
 		FROM reservation r
 		JOIN reservation_slot rs on r.slot_id = rs.slot_id
 		JOIN stadium s on rs.svcid = s.svcid
-		where user_no = #{user_no};
+		where user_no = #{user_no}
+		ORDER BY reservation_id DESC;
 	</select>
 	
 	<select id="getPaymentList" resultType="com.msa.kyj_prj.dto.ReservationDTO">
@@ -64,7 +65,8 @@ WHERE r.reservation_id = #{reservation_id}
 		left join reservation r on p.reservation_id = r.reservation_id
 		JOIN reservation_slot rs on r.slot_id = rs.slot_id
 		join stadium s on rs.svcid = s.svcid
-		where p.user_no = #{user_no};
+		where p.user_no = #{user_no}
+		ORDER BY p.reservation_id DESC;
 	</select>
 	
 	<update id="updateStatusToCancelled"  parameterType="int">

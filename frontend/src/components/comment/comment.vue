@@ -49,7 +49,7 @@
 		<div class="container mt-4" style="max-width: 1000px;">
 			<div class="border rounded p-3">
 				<div class="d-flex justify-content-between align-items-center mb-2">
-					<strong class="fw-bold">{{ userName }}</strong>
+					<strong class="fw-bold">{{ commentDB.userName }}</strong>
 					<div class="rating-input-stars d-flex"  
 					@mousedown="dragging = true" 
 					@mouseup="dragging = false" 
@@ -183,7 +183,9 @@ const commentDB = ref({ list: [] })	// 댓글
 		const confirmRegist = confirm("삭제하시겠습니까?")
 		if (!confirmRegist) return
 		
-		axios.delete('/stadium_api/comment/delete', { comment_no })
+		axios.delete('/stadium_api/comment/delete', { 
+			 data: { comment_no } 
+			})
 			.then(res => {
 				if (!res.data.error) {
 				fetchComments();

@@ -5,21 +5,19 @@
       <li class="list-header">
         <span class="num-col">번호</span>
         <span class="name-col">구장명</span>
-        <span class="match-col">리그/매치</span>
-         <span class="date-col" @click="toggleSort('slot_date')" style="cursor: pointer">
-    결제일
-    <span v-if="sortKey === 'slot_date'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
-  </span>
-   <span class="amount-col">결제 금액</span>
-  <span class="status-col" @click="toggleSort('status')" style="cursor: pointer">
-    결제 상태
-    <span v-if="sortKey === 'status'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
-  </span>
-      </li>
-      <li v-for="(item, index) in pagedReservations" :key="item.reservation_id" class="reservation-item" @click="goToDetail(item.reservation_id)"> 
+        <span class="date-col" @click="toggleSort('slot_date')" style="cursor: pointer">
+          예약일
+          <span v-if="sortKey === 'slot_date'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
+        </span>
+        <span class="amount-col">결제 금액</span>
+        <span class="status-col" @click="toggleSort('status')" style="cursor: pointer">
+          결제 상태
+          <span v-if="sortKey === 'status'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
+        </span>
+        </li>
+        <li v-for="(item, index) in pagedReservations" :key="item.reservation_id" class="reservation-item" @click="goToDetail(item.reservation_id)"> 
               <span class="num-col">{{ startIndex + index + 1 }}</span>
               <span class="name-col">{{ item.svcnm }}</span>
-              <span class="match-col">{{ convertType(item.reservation_type) }}</span>
               <span class="date-col">{{ item.paid_at ? item.paid_at : '-' }}</span>
               <span class="amount-col">{{ item.amount }}</span>
               <span 
@@ -131,22 +129,6 @@ const fetchReservations = async () => {
   })
   reservations.value = res.data.reservationList
 }
-
-// 예약상태명 바꾸기
-const convertStatus = (status) => {
-  switch (status) {
-    case 'paid':
-      return '결제 완료';
-    case 'canceled':
-      return '예약 취소';
-    case 'pending':
-      return '미 결제';
-    case 'refunded':
-      return '환불 됨';
-    default:
-      return '알 수 없음';
-  }
-};
 
 // 리그 상태명 바꾸기
 const convertType = (reservation_type) => {
