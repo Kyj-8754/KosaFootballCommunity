@@ -1,6 +1,6 @@
 <template>
-  <div class="reservation-list">
-    <div v-if="!reservations || reservations.length === 0">예약 정보가 없습니다.</div>
+  <div class="payment-list">
+    <div v-if="!reservations || reservations.length === 0">결제 정보가 없습니다.</div>
     <ul v-else>
       <li class="list-header">
         <span class="num-col">번호</span>
@@ -85,6 +85,7 @@ const sortedReservations = computed(() => {
   });
 });
 
+// 오름차순, 내림차순용도
 const toggleSort = (key) => {
   if (sortKey.value === key) {
     sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
@@ -93,6 +94,8 @@ const toggleSort = (key) => {
     sortOrder.value = 'asc';
   }
 };
+
+
 
 // 결제 금액
 const totalPaidAmount = computed(() => {
@@ -130,18 +133,21 @@ const fetchReservations = async () => {
   reservations.value = res.data.reservationList
 }
 
-// 리그 상태명 바꾸기
-const convertType = (reservation_type) => {
-  switch (reservation_type) {
-    case 'social':
-      return '소셜';
-    case 'match':
-      return '리그';
+// 예약상태명 바꾸기
+const convertStatus = (status) => {
+  switch (status) {
+    case 'paid':
+      return '결제 완료';
+    case 'canceled':
+      return '예약 취소';
+    case 'pending':
+      return '미 결제';
+    case 'refunded':
+      return '환불 됨';
     default:
       return '알 수 없음';
   }
 };
-
 
 // 이동
 const goToDetail = (id) => {
@@ -153,14 +159,14 @@ onMounted(fetchReservations)
 </script>
 
 <style scoped>
-.reservation-list ul {
+.payment-list ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
 .list-header,
-.reservation-item {
+.payment-item {
   display: flex;
   padding: 12px;
   border-bottom: 1px solid #eee;
@@ -207,7 +213,7 @@ onMounted(fetchReservations)
   color: #d93025;
 }
 
-.reservation-item:hover {
+.payment-item:hover {
   background-color: #f1f8ff;
 }
 

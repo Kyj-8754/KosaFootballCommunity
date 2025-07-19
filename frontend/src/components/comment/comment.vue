@@ -2,6 +2,10 @@
 	<!-- 댓글 섹션 -->
 	<div class="container mt-4" style="max-width: 1000px;">
 		<template v-for="comment in commentDB" :key="comment.comment_no">
+			<p v-if="commentDB.length > 0" class="comment-summary text-muted mb-2">
+				{{ commentDB.length }}개의 리뷰, 평균 
+				<span class="text-warning">★{{ averageRating.toFixed(1) }}</span>
+			</p>
 			<div class="card mb-2"  v-if="comment.status !== 'false'">
 				<div class="card-body p-3">
 					<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
@@ -49,7 +53,7 @@
 		<div class="container mt-4" style="max-width: 1000px;">
 			<div class="border rounded p-3">
 				<div class="d-flex justify-content-between align-items-center mb-2">
-					<strong class="fw-bold">{{ commentDB.userName }}</strong>
+					<strong class="fw-bold">{{ comment.userName }}</strong>
 					<div class="rating-input-stars d-flex"  
 					@mousedown="dragging = true" 
 					@mouseup="dragging = false" 
@@ -141,6 +145,13 @@ const commentDB = ref({ list: [] })	// 댓글
 		const res = await axios.get('/stadium_api/comment/list', { params: { SVCID: props.SVCID } });
 		commentDB.value = res.data.commentDB;
 	};
+
+// 별점 평균 계산용	
+const averageRating = computed(() => {
+  if (commentDB.value.length === 0) return 0;
+  const sum = commentDB.value.reduce((acc, c) => acc + (c.rating || 0), 0);
+  return sum / commentDB.value.length;
+});
 
 // 댓글 등록
 	function regist() {
