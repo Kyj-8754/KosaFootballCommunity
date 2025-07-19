@@ -207,6 +207,16 @@ jobs:
         run: |
          pushd backend/weather_api && chmod +x ./gradlew && ./gradlew build -x test && popd
 
+      - name: Gradle bootJar for board_api
+        if: steps.changes.outputs.board_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/security/board_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+         
+      - name: Gradle bootJar for login_api
+        if: steps.changes.outputs.login_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/security/login_api && chmod +x ./gradlew && ./gradlew build -x test && popd   
+
       - name: Gradle bootJar for security
         if: steps.changes.outputs.security_api== 'true' || steps.changes.outputs.infra == 'true'
         run: |
