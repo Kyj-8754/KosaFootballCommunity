@@ -180,8 +180,8 @@
 	        mp.club_id,
 	        mp.user_role,
 	        mp.user_status,
-	        mp.created_at,
-	        mp.modified_at,
+	        DATE_SUB(mp.created_at, INTERVAL 9 HOUR) AS created_at,
+    		DATE_SUB(mp.modified_at, INTERVAL 9 HOUR) AS modified_at,
 	        u.user_name
 	    FROM 
 	        match_participant mp
@@ -199,8 +199,8 @@
 	        mp.club_id,
 	        mp.user_role,
 	        mp.user_status,
-	        mp.created_at,
-	        mp.modified_at,
+	        DATE_SUB(mp.created_at, INTERVAL 9 HOUR) AS created_at,
+    		DATE_SUB(mp.modified_at, INTERVAL 9 HOUR) AS modified_at,
 	        u.user_name,
 	        c.club_name
 	    FROM 
