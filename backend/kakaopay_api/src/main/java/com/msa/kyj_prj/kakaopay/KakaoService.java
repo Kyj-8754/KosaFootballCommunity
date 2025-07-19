@@ -20,6 +20,8 @@ import com.msa.kyj_prj.dto.PaymentDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -27,7 +29,11 @@ public class KakaoService {
 
 	private final RestTemplate restTemplate;
 	private final KakaoDAO kakaoDAO;
-	private static final String ADMIN_KEY = "91e1d1afa824dec2d285f98c15707b02";
+	
+	@Value("${kakao.admin.key}")
+	private String ADMIN_KEY;
+	
+ 
 	
 	// 카카오 서버에 결제 준비 보내기
 	public Map<String, Object> paymentReady(KakaoPayRequestDTO param) {
@@ -55,9 +61,9 @@ public class KakaoService {
 		    log.info("id 가져옴" + id);
 		   
 		    // 성공, 실패, 취소 url
-		    String approvalUrl = "http://localhost:8102/kakaopay/success?id=" + id;
-		    String cancelUrl = "http://localhost:8102/kakaopay/cancel?id=" + id;
-		    String failUrl = "http://localhost:8102/kakaopay/fail?id=" + id;
+		    String approvalUrl = "http://www.itsfootball.store/kakaopay_api/kakaopay/success?id=" + id;
+		    String cancelUrl = "http://www.itsfootball.store/kakaopay_api/kakaopay/cancel?id=" + id;
+		    String failUrl = "http://www.itsfootball.store/kakaopay_api/kakaopay/fail?id=" + id;
 		    
 		    // api 요청 보내기 위한 로직
 			HttpHeaders headers = new HttpHeaders();
@@ -89,6 +95,8 @@ public class KakaoService {
 
 		    // 응답온 body 담아주기
 		    Map<String, Object> result = response.getBody();
+		    
+		    log.info("카카오 응답 바디: {}", result);
 		    
 		    // 카카오 API 에서 받아온 TID를 DB에 담아주기 위해서 사용
 		    String tid = (String) response.getBody().get("tid");

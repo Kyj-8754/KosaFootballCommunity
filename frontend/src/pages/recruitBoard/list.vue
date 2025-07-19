@@ -173,7 +173,7 @@ const filteredRecruits = computed(() => {
 async function fetchRecruits(sortType = "") {
   try {
     const url =
-      sortType === "popular" ? "/recruits_api?sort=popular" : "/recruits_api";
+      sortType === "popular" ? "/recruit_api/recruits?sort=popular" : "/recruit_api/recruits";
     const response = await axios.get(url);
     recruits.value = response.data;
   } catch (e) {
@@ -185,7 +185,7 @@ async function fetchRecruits(sortType = "") {
 async function checkHasClub() {
   if (!userNo?.value) return;
   try {
-    const response = await axios.get(`/club_api/hasClub/${userNo.value}`);
+    const response = await axios.get(`/club_api/club/hasClub/${userNo.value}`);
     hasClub.value = response.data.result;
   } catch (e) {
     console.error("클럽 조회 실패", e);

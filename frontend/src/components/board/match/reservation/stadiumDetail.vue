@@ -60,7 +60,13 @@ const calendarAttributes = computed(() => [
 ])
 
 const onDayClick = (day) => {
-  const dateStr = day.date.toISOString().slice(0, 10)
+  // 임시 수정
+  const dateStr = new Date(day.date).toLocaleDateString('ko-KR', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+}).replace(/\./g, '').replace(/ /g, '-').replace(/-$/, '');
+  // const dateStr = day.date.toISOString().slice(0, 10)
   if (!availableDates.value.includes(dateStr)) return
   selectedDate.value = dateStr
 }

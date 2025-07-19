@@ -8,23 +8,22 @@
 	<sql id="search">
 		where state != 'DELETE'   <!-- ① 무조건 적용 -->
         <if test="searchValue != null and searchValue != ''">
-         AND
 		    <choose>
 		     <when test="searchType == ''">
-		        (
+		       AND (
 		          svcnm LIKE CONCAT('%', #{searchValue}, '%')
 		          OR areanm LIKE CONCAT('%', #{searchValue}, '%')
 		          OR placenm LIKE CONCAT('%', #{searchValue}, '%')
 		        )
 		      </when>
 		      <when test="searchType == 'svcnm'">
-		       svcnm LIKE concat('%', #{searchValue}, '%')
+		      AND svcnm LIKE concat('%', #{searchValue}, '%')
 		      </when>
 		      <when test="searchType == 'areanm'">
-		         areanm LIKE concat('%', #{searchValue}, '%')
+		       AND areanm LIKE concat('%', #{searchValue}, '%')
 		      </when>
 		      <when test="searchType == 'placenm'">
-		        placenm LIKE concat('%', #{searchValue}, '%')
+		      AND  placenm LIKE concat('%', #{searchValue}, '%')
 		      </when>
 		    </choose>
         </if>
@@ -59,13 +58,13 @@
 	
 	<update id="update">
 		update stadium set 
-			  SVCNM = #{SVCNM},
-    PLACENM = #{PLACENM},
-    TELNO = #{TELNO},
-    V_MIN = #{V_MIN},
-    V_MAX = #{V_MAX},
-    NOTICE = #{NOTICE},
-    ADRES = #{ADRES}
+		  	SVCNM = #{SVCNM},
+		    PLACENM = #{PLACENM},
+		    TELNO = #{TELNO},
+		    V_MIN = #{V_MIN},
+		    V_MAX = #{V_MAX},
+		    NOTICE = #{NOTICE},
+		    ADRES = #{ADRES}
 		where SVCID = #{SVCID}
 	</update>
 	
@@ -75,7 +74,7 @@
 	</select>
 	
 	<insert id="regist">
-		insert into STADIUM (
+		insert into stadium (
 			SVCID, 
 			SVCNM, 
 			PLACENM,
@@ -113,7 +112,7 @@
 	</insert>
 	
 	<insert id="registPatch">
-		insert into STADIUM_PATCH (
+		insert into stadium_patch (
 			SVCID, 
 			SVCNM, 
 			PLACENM,

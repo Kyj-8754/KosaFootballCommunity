@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>클럽 가입 신청자 리스트</h2>
+    <h2> {{ clubId }} 클럽 가입 신청자 리스트</h2>
     <table class="apply-table"><!-- 추가: 클래스명 -->
       <thead>
         <tr>
@@ -29,6 +29,7 @@
     </table>
       <!-- ✅ 우측 하단 고정 뒤로가기 버튼 -->
      <button class="btn btn-secondary apply-back-btn" @click="goBack">뒤로가기</button>
+     <button class="btn btn-secondary apply-back-btn" id="club" @click="goclub">클럽상세창</button>
 
   </div>
 </template>
@@ -106,7 +107,7 @@ onMounted(async () => {
 
 async function fetchClubId() {
   try {
-    const res = await axios.get('/club_api/idByTeamCode', { params: { teamCode } })
+    const res = await axios.get('/club_api/club/idByTeamCode', { params: { teamCode } })
     clubId.value = res.data.club_id
     if (!clubId.value) {
       alert('club_id를 찾을 수 없습니다.')
@@ -121,7 +122,7 @@ async function fetchClubId() {
 
 async function fetchApplyList() {
   try {
-    const res = await axios.get('/club_api/apply/listWithName', { params: { club_id: clubId.value } })
+    const res = await axios.get('/club_api/club/apply/listWithName', { params: { club_id: clubId.value } })
     applyList.value = res.data
   } catch (e) {
     alert('가입 신청자 목록을 불러오지 못했습니다')
@@ -131,7 +132,7 @@ async function fetchApplyList() {
 
 async function approve(apply_id) {
   try {
-    await axios.post('/club_api/apply/approve', { apply_id })
+    await axios.post('/club_api/club/apply/approve', { apply_id })
     alert('승인 처리 완료')
     fetchApplyList()
   } catch (e) {
@@ -142,7 +143,7 @@ async function approve(apply_id) {
 
 async function reject(apply_id) {
   try {
-    await axios.post('/club_api/apply/reject', { apply_id })
+    await axios.post('/club_api/club/apply/reject', { apply_id })
     alert('거절 처리 완료')
     fetchApplyList()
   } catch (e) {
@@ -170,9 +171,14 @@ function formatDate(dateStr) {
 }
 
 
-
+// 그냥 방금 전 화면으로 넘어가기
 function goBack() {
   router.go(-1)
+}
+
+//팀 상세창으로 넘어가기
+function goclub(){
+ router.push({name:`club/${teamCode}`});
 }
 
 </script>

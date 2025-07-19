@@ -20,7 +20,7 @@
               <span class="num-col">{{ startIndex + index + 1 }}</span>
               <span class="name-col">{{ item.svcnm }}</span>
               <span class="match-col">{{ convertType(item.reservation_type) }}</span>
-              <span class="date-col">{{ item.paid_at }}</span>
+              <span class="date-col">{{ item.paid_at ? item.paid_at : '-' }}</span>
               <span class="amount-col">{{ item.amount }}</span>
               <span 
                 class="status-col" 
@@ -138,9 +138,11 @@ const convertStatus = (status) => {
     case 'paid':
       return '결제 완료';
     case 'canceled':
-      return '결제 취소';
+      return '예약 취소';
     case 'pending':
       return '미 결제';
+    case 'refunded':
+      return '환불 됨';
     default:
       return '알 수 없음';
   }

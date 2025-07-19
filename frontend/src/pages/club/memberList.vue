@@ -129,7 +129,7 @@ onMounted(async () => {
   const teamCode = route.params.teamCode;
   try {
     // 1. teamCode로 클럽 객체(club_id 포함) 조회
-    const response = await axios.get(`/club_api/code/${teamCode}`, {
+    const response = await axios.get(`/club_api/club/code/${teamCode}`, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
     club.value = response.data;
@@ -137,7 +137,7 @@ onMounted(async () => {
     // 2. club_id로 멤버 리스트 조회
     if (club.value && club.value.club_id) {
       const memberRes = await axios.get(
-        `/club_api/member/list/${club.value.club_id}`,
+        `/club_api/club/member/list/${club.value.club_id}`,
         {
           headers: { Authorization: `Bearer ${token.value}` },
         }
@@ -160,7 +160,7 @@ async function kickMember(memberUserNo) {
   if (!confirm("정말 이 멤버를 강퇴하시겠습니까?")) return;
   try {
     await axios.post(
-      "/club_api/apply/kick",
+      "/club_api/club/apply/kick",
       null, // POST의 바디는 필요 없음 (params로만 전달)
       {
         params: {
@@ -173,7 +173,7 @@ async function kickMember(memberUserNo) {
     alert("강퇴 처리 완료");
     // 멤버 리스트 새로고침
     const memberRes = await axios.get(
-      `/club_api/member/list/${club.value.club_id}`,
+      `/club_api/club/member/list/${club.value.club_id}`,
       {
         headers: { Authorization: `Bearer ${token.value}` },
       }
@@ -192,7 +192,7 @@ async function withdrawMember() {
   }
   if (!confirm("정말 클럽에서 탈퇴하시겠습니까?")) return;
   try {
-    await axios.post("/club_api/apply/withdraw", null, {
+    await axios.post("/club_api/club/apply/withdraw", null, {
       params: {
         club_id: club.value.club_id,
         user_no: userNo.value,
@@ -220,7 +220,7 @@ async function delegateLeader(newLeaderUserNo) {
 
   try {
     await axios.put(
-      "/club_api/member/delegate_leader",
+      "/club_api/club/member/delegate_leader",
       {
         club_id: club.value.club_id,
         new_leader_user_no: newLeaderUserNo,
@@ -233,7 +233,7 @@ async function delegateLeader(newLeaderUserNo) {
     alert("리더가 성공적으로 위임되었습니다.");
     // 멤버/클럽 정보 새로고침 (위임 시 본인은 더 이상 팀장이 아닐 수 있음)
     const response = await axios.get(
-      `/club_api/code/${route.params.teamCode}`,
+      `/club_api/club/code/${route.params.teamCode}`,
       {
         headers: { Authorization: `Bearer ${token.value}` },
       }
@@ -242,7 +242,7 @@ async function delegateLeader(newLeaderUserNo) {
 
     if (club.value && club.value.club_id) {
       const memberRes = await axios.get(
-        `/club_api/member/list/${club.value.club_id}`,
+        `/club_api/club/member/list/${club.value.club_id}`,
         {
           headers: { Authorization: `Bearer ${token.value}` },
         }

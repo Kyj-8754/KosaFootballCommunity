@@ -41,12 +41,22 @@ export function useStadiumList() {
 	  }
 	  return range
 	})
-	
-	watch([pageNo, searchType, () => route.query.searchValue], ([newPageNo, newSearchType, newSearch]) => {
-		fetchData(newPageNo, newSearchType, newSearch)
-	}, 
-	{ immediate: true }
-	)
+
+	watch(
+  () => route.query,
+  (query) => {
+    const newPageNo = parseInt(query.pageNo) || 1
+    const newSearchType = query.searchType || ''
+    const newSearchValue = query.searchValue || ''
+
+    // 명확히 상태 분리해서 저장
+    searchType.value = newSearchType
+    pageResponse.searchValue = newSearchValue
+
+    fetchData(newPageNo, newSearchType, newSearchValue)
+  },
+  { immediate: true }
+)
 	
 	// 값 검색시 넘어가는 로직
 	function searchID() {
@@ -60,11 +70,11 @@ export function useStadiumList() {
 		})
 	}
 	// 값 변경시 다시 list 가져오도록 요청
-	function fetchData(pageNo, searchValue) {
+	function fetchData(pageNo, searchType, searchValue) {
 		axios.get(`/stadium_api/stadium/list`,{
 			params:{
 				pageNo,
-				searchType: searchType.value || '',
+				searchType: searchType || '',
 				searchValue: searchValue || ''}
 			})
 			.then(res => {
@@ -130,24 +140,25 @@ export function stdaiumDetail() {
 	// 예약 선택 날짜
 	const selectedDate = ref(null)
 
-	const formatDate = (date) => {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
+	// 이제 안씀
+// 	const formatDate = (date) => {
+//   const y = date.getFullYear()
+//   const m = String(date.getMonth() + 1).padStart(2, '0')
+//   const d = String(date.getDate()).padStart(2, '0')
+//   return `${y}-${m}-${d}`
+// }
 
+// 이제 안씀
+// const onDayClick = (day) => {
+//   const dateStr = formatDate(day.date)
 
-const onDayClick = (day) => {
-  const dateStr = formatDate(day.date)
+//   if (!availableDates.value.includes(dateStr)) {
+//     return // 예약 불가 날짜는 무시
+//   }
 
-  if (!availableDates.value.includes(dateStr)) {
-    return // 예약 불가 날짜는 무시
-  }
-
-  selectedDate.value = dateStr;
+//   selectedDate.value = dateStr;
   
-}
+// }
 
 	// 달력관련 끝
 
@@ -179,10 +190,17 @@ const onDayClick = (day) => {
 		router.push({name: 'Stadium_List'})
 	}
 
-	// 예약 창으로 넘어가기
+	// 예약 창으로 넘어가기, 현재는 글 작성으로 넘어감
 	function goToReservation(){
-		router.push({name: 'reservation_Form', query: {date: selectedDate.value, SVCID: SVCID}})
+		router.push('/board/boardregisterform')
 	}
+
+	// html관련
+	function stripHtml(html) {
+  const tmp = document.createElement('div')
+  tmp.innerHTML = html || ''
+  return tmp.textContent || tmp.innerText || ''
+}
 
 watch(activeTab, async (newTab) => {
   if (newTab === 'map' && !isMapInitialized) {
@@ -248,14 +266,13 @@ const initKakaoMap = () => {
 
 
      return {
-		availableDates,
 		SVCID,
 		activeTab,
 		stadiumDB,
 		userId,
 		userName,
-		onDayClick,
 		goToList,
 		goToReservation,
+		stripHtml,
   }
 }

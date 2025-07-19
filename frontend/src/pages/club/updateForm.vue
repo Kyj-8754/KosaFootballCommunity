@@ -266,13 +266,13 @@ async function uploadBase64Logo() {
 
   try {
     const { data } = await axios.post(
-      `/club_api/${club.value.club_id}/uploadLogoBase64`,
-      base64Image.value, // ✅ 문자열 단독 전송
+      `/club_api/club/${club.value.club_id}/uploadLogo`,
+      { base64: base64Image.value },
       {
         headers: {
           Authorization: `Bearer ${token.value}`,
-          'Content-Type': 'text/plain' // ✅ 중요
-        }
+          'Content-Type': 'application/json'
+        },
       }
     );
     club.value.logo_path = data;
@@ -288,14 +288,15 @@ async function uploadBase64Logo() {
 onMounted(async () => {
   const teamCode = route.params.teamCode;
   try {
-    const response = await axios.get(`/club_api/code/${teamCode}`, {
+    // 1. 클럽 기본 정보 조회
+    const response = await axios.get(`/club_api/club/code/${teamCode}`, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
     club.value = response.data;
 
     if (club.value && club.value.club_id) {
       try {
-        const clubInfoRes = await axios.get(`/club_info/${club.value.club_id}`);
+        const clubInfoRes = await axios.get(`/club_api/club/club_info/${club.value.club_id}`);
         clubInfo.value = {
           ...clubInfoRes.data,
           active_days: clubInfoRes.data.active_days
@@ -319,7 +320,7 @@ onMounted(async () => {
       }
 
       const memberRes = await axios.get(
-        `/club_api/member/list/${club.value.club_id}`
+        `/club_api/club/member/list/${club.value.club_id}`
       );
       clubMember.value = memberRes.data;
     }
@@ -378,11 +379,15 @@ const submitUpdate = async () => {
       active_days: active_days.join(","),
       active_times: active_times.join(","),
     };
+    // 클럽 기본 정보/상세 정보 별도 전송 예시
 
-    await axios.put(`/club_api/${club.value.club_id}`, club.value, {
+    // 클럽 소개글 수정
+    await axios.put(`/club_api/club/${club.value.club_id}`, club.value, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
-    await axios.put(`/club_info/${club.value.club_id}`, clubInfoPayload, {
+
+    // 클럽 인포 수정
+    await axios.put(`/club_api/club/club_info/${club.value.club_id}`, clubInfoPayload, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
 

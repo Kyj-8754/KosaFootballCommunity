@@ -3,29 +3,18 @@
     <Header />
 
     <div class="row">
-      <!--
-      <div class="col-md-2">
-        <NavArea />
-      </div>
-      <div class="col-md-10">
-      -->
       <div>
         <router-view />
       </div>
     </div>
 
     <AlarmToast />
-    <Footer />
+      <Footer />
     <scrollUp />
 
-    <!-- ✅ 고정 위치 날씨 위젯 -->
-    <!--
+    <!-- 위치 날씨 위젯 -->
     <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
-      <weatherWidget />
-    </div>
-    -->
-    <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
-      <weatherWidget />
+      <weatherWidget @expand="adjustWidgetPosition" />
     </div>
   </div>
 </template>
@@ -34,7 +23,6 @@
 <script setup>
 import { provide, ref, computed, onMounted, watch, onBeforeUnmount } from 'vue';
 import Header from '@/components/Header.vue';
-import NavArea from '@/components/NavArea.vue';
 import Footer from '@/components/Footer.vue';
 import AlarmToast from '@/components/common/AlarmToast.vue';
 import { connectWebSocket } from '@/utils/stomp';
@@ -127,38 +115,6 @@ const startDrag = (e) => {
   document.addEventListener('mouseup', endDrag)
 }
 
-// 상하좌우로 이동
-// const onDrag = (e) => {
-//   if (!isDragging) return
-
-//   const widgetEl = widget.value
-//   const widgetRect = widgetEl.getBoundingClientRect()
-//   const widgetWidth = widgetRect.width
-//   const widgetHeight = widgetRect.height
-
-//   const viewportWidth = window.innerWidth
-//   const viewportHeight = window.innerHeight
-
-//   // 계산된 위치
-//   let left = e.clientX - offsetX
-//   let top = e.clientY - offsetY
-
-//   // ✅ 화면 밖으로 나가지 않도록 제한
-//   if (left < 0) left = 0
-//   if (top < 0) top = 0
-//   if (left + widgetWidth > viewportWidth) {
-//     left = viewportWidth - widgetWidth
-//   }
-//   if (top + widgetHeight > viewportHeight) {
-//     top = viewportHeight - widgetHeight
-//   }
-
-//   // 스타일 적용
-//   widgetEl.style.left = `${left}px`
-//   widgetEl.style.top = `${top}px`
-//   widgetEl.style.right = 'auto'
-// }
-
 // 상하로만 이동
 const onDrag = (e) => {
   if (!isDragging) return;
@@ -168,20 +124,21 @@ const onDrag = (e) => {
   const widgetHeight = widgetRect.height;
   const viewportHeight = window.innerHeight;
 
-  // ❌ left는 고정 (초기 위치 유지)
+  // ✅ left는 고정 (초기 위치 유지)
   const left = widgetEl.offsetLeft;
 
-  // ✅ top만 계산
-  let bottom = viewportHeight - (e.clientY + offsetY);
+  // ✅ top 계산
+  let top = e.clientY - offsetY;
 
   // ✅ 화면 위아래로 나가지 않도록 제한
-  if (bottom < 0) bottom = 0;
-  if (bottom + widgetHeight > viewportHeight) {
-    bottom = viewportHeight - widgetHeight;
+  if (top < 0) top = 0;
+  if (top + widgetHeight > viewportHeight) {
+    top = viewportHeight - widgetHeight;
   }
 
   widgetEl.style.left = `${left}px`;
-  widgetEl.style.bottom = `${bottom}px`;
+  widgetEl.style.top = `${top}px`;
+  widgetEl.style.bottom = 'auto'; // ✅ bottom 초기화
   widgetEl.style.right = 'auto';
 };
 
@@ -189,6 +146,21 @@ const endDrag = () => {
   isDragging = false
   document.removeEventListener('mousemove', onDrag)
   document.removeEventListener('mouseup', endDrag)
+}
+
+const adjustWidgetPosition = () => {
+  const widgetEl = widget.value;
+  if (!widgetEl) return;
+
+  // 펼친 후 실제 높이
+  const widgetHeight = widgetEl.getBoundingClientRect().height;
+  const viewportHeight = window.innerHeight;
+  const currentTop = widgetEl.offsetTop;
+
+  if (currentTop + widgetHeight > viewportHeight) {
+    const newTop = Math.max(0, viewportHeight - widgetHeight);
+    widgetEl.style.top = `${newTop}px`;
+  }
 }
 
 onMounted(() => {
@@ -209,6 +181,13 @@ onMounted(() => {
     // (참고: 필요하면 이전 소켓 연결 해제 로직 추가 가능)
   });
   // ⚠️ 추후 로그인 연동 시 userNo 값을 JWT에서 동적으로 할당하도록 수정
+
+  const widgetEl = widget.value;
+  const widgetHeight = widgetEl.getBoundingClientRect().height;
+  const viewportHeight = window.innerHeight;
+
+  const initialTop = viewportHeight - widgetHeight;
+  widgetEl.style.top = `${initialTop}px`;
 });
 
 </script>
@@ -216,7 +195,7 @@ onMounted(() => {
 <style scoped>
 .floating-weather-widget {
   position: fixed;
-  bottom: 0px;
+  top: 0px;
   left: 0px;
   z-index: 999;
   cursor: grab;

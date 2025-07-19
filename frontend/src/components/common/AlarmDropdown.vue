@@ -22,23 +22,16 @@
           :key="alarm.alarm_id"
           :class="['alarm-item', { unread: alarm.read_yn === 'N' }]"
         >
-        <div class="alarm-message">
+          <div class="alarm-message">
             <router-link :to="`/${alarm.url}`">
               <div class="alarm-msg-text">
                 <span>{{ alarm.message }}</span>
                 <span class="alarm-time">{{ alarm.created_at }}</span>
               </div>
             </router-link>
-            <div class="alarm-buttons">
-              <button
-                v-if="alarm.read_yn === 'N'"
-                @click="readAlarm(alarm.alarm_id)"
-                class="btn-xs btn-outline-success"
-              >읽음</button>
-              <button
-                @click="deleteAlarm(alarm.alarm_id)"
-                class="btn-xs btn-outline-danger"
-              >삭제</button>
+            <div>
+              <button v-if="alarm.read_yn === 'N'" @click="readAlarm(alarm.alarm_id)" class="btn-xs btn-outline-success">읽음</button>
+              <button @click="deleteAlarm(alarm.alarm_id)" class="btn-xs btn-outline-danger">삭제</button>
             </div>
           </div>
         </li>
@@ -80,7 +73,8 @@ export default {
     },
     fetchAlarms() {
       if (!this.userNo) return;
-      axios.get('/alarm_api/history', {
+      // ✅ 프록시 주소로 변경!
+      axios.get('/alarm_api/alarm/history', {
         params: { receiver_id: this.userNo, page: 1, size: 10 }
       }).then(res => {
         this.alarms = res.data;
@@ -91,31 +85,39 @@ export default {
       });
     },
     fetchCount() {
-      axios.get('/alarm_api/history/count', {
+      // ✅ 프록시 주소로 변경!
+      axios.get('/alarm_api/alarm/history/count', {
         params: { receiver_id: this.userNo }
       }).then(res => {
         this.alarmCount = res.data;
       });
     },
     readAlarm(alarmId) {
-      axios.put(`/alarm_api/history/read/${alarmId}`).then(() => {
+      // ✅ 프록시 주소로 변경!
+      axios.put(`/alarm_api/alarm/history/read/${alarmId}`).then(() => {
         this.fetchAlarms();
       });
     },
-    readAll() {
-      axios.put('/alarm_api/history/read/all', null, {
-        params: { receiver_id: this.userNo }
-      }).then(() => {
-        this.alarms.forEach(alarm => alarm.read_yn = 'Y');
-      });
-    },
+  readAll() {
+  axios.put('/alarm_api/alarm/history/read/all', null, {
+  params: { receiver_id: this.userNo }
+  }).then(() => {
+  this.alarms.forEach(alarm => alarm.read_yn = 'Y');
+  // 또는 this.fetchAlarms();
+  });
+
+}
+
+,
     deleteAlarm(alarmId) {
-      axios.delete(`/alarm_api/history/${alarmId}`).then(() => {
+      // ✅ 프록시 주소로 변경!
+      axios.delete(`/alarm_api/alarm/history/${alarmId}`).then(() => {
         this.fetchAlarms();
       });
     },
     deleteAll() {
-      axios.delete('/alarm_api/history/all', {
+      // ✅ 프록시 주소로 변경!
+      axios.delete('/alarm_api/alarm/history/all', {
         params: { receiver_id: this.userNo }
       }).then(() => {
         this.fetchAlarms();

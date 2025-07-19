@@ -2,8 +2,11 @@ package com.msa.kyj_prj.weather;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -14,12 +17,16 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+//<<김용진 기존 코드 리펙토링 07-18기준>>
+@Component	
 public class WeatherApiUtil {
 
-    private static final String SERVICE_KEY = "hhJrtCIbQi3NSeHNduSiz4vmFmSGrSO6GWLdls+pc3Ia0rIavAg472tL3bkf4c73d5rinqBCoplCiseQsMZoOg==";
-    private static final String BASE_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
+	@Value("${weather.service.key}")
+	private String SERVICE_KEY;
+	@Value("${weather.base.url}")
+	private String BASE_URL;
 
-    public static List<Weather> fetchForecast(String x, String y, String regionName) {
+    public List<Weather> fetchForecast(String x, String y, String regionName) {
         int[] grid = convertGPS2Grid(Double.parseDouble(x), Double.parseDouble(y));
         String nx = String.valueOf(grid[0]);
         String ny = String.valueOf(grid[1]);
@@ -37,8 +44,11 @@ public class WeatherApiUtil {
         return parseWeatherJson(json, regionName);
     }
 
-    private static String callApi(String x, String y, String baseDate, String baseTime) {
-        try {
+
+    private String callApi(String x, String y, String baseDate, String baseTime) {
+    	
+       
+    	try {
             OkHttpClient client = new OkHttpClient();
             String encodedKey = URLEncoder.encode(SERVICE_KEY, "UTF-8");
 
@@ -51,9 +61,9 @@ public class WeatherApiUtil {
                     "&nx=" + x +
                     "&ny=" + y;
 
+            System.out.println("▶▶ 호출 URL: " + url);
             Request request = new Request.Builder().url(url).build();
             Response response = client.newCall(request).execute();
-            System.out.println("▶▶ 호출 URL: " + url);
             return response.body() != null ? response.body().string() : null;
 
         } catch (IOException e) {
@@ -62,7 +72,7 @@ public class WeatherApiUtil {
         }
     }
 
-    private static List<Weather> parseWeatherJson(String json, String regionName) {
+    private List<Weather> parseWeatherJson(String json, String regionName) {
         List<Weather> weatherList = new ArrayList<>();
         if (json == null || json.isEmpty()) return weatherList;
 
@@ -150,5 +160,15 @@ public class WeatherApiUtil {
         int nx = (int) Math.floor(ra * Math.sin(theta) + XO + 0.5);
         int ny = (int) Math.floor(ro - ra * Math.cos(theta) + YO + 0.5);
         return new int[]{nx, ny};
+    }
+    
+    
+	// 불필요한 리소스 관리하도록 변경 <<김용진 수정>>
+	// OkHttpClient는 API 호출 시 매번 새로 생성하는 대신, 한 번 생성하여 재사용하는 것이 효율적입니다.
+    private final OkHttpClient httpClient;
+	
+	// 생성자를 통해 OkHttpClient를 초기화합니다.
+    public WeatherApiUtil() {
+        this.httpClient = new OkHttpClient();
     }
 }

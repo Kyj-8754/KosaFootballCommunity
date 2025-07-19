@@ -1,142 +1,82 @@
 <template>
-						<!-- 댓글 섹션 -->
-						<div class="container mt-4" style="max-width: 1000px;">
-							<template v-for="comment in commentDB" :key="comment.comment_no">
-								<div class="card mb-2"  v-if="comment.status !== 'false'">
-									<div class="card-body p-3">
-										<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
-											<div class="fw-bold">
-												{{ comment.userid }}
-												<div class="rating-display-stars d-flex">
-													<div v-for="n in 5" :key="n" class="display-star-wrapper">
-														<span class="display-star">☆</span>
-														<span class="display-star filled" :style="{ width: getStarFillForComment(comment.rating, n) }">★</span>
-													</div>
-												</div>
-											</div>
-											<div class="text-muted" style="font-size: 0.9rem;">
-												{{ comment.modified_date ? comment.modified_date.substring(0, 16) + ' (수정됨)' : comment.regist_date?.substring(0, 16) }}
-											</div>
-										</div>
-										<div class="mb-2">
-											{{ comment.content }}
-										</div>
-									<button class="btn btn-sm btn-outline-secondary me-1" @click="editComment(comment)">수정</button>
-									<button class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.comment_no)">삭제</button>
-									</div>
-								</div>
-								<!-- 댓글 수정 창 -->
-								<form v-if="editing && editForm.comment_no === comment.comment_no" @submit.prevent="update" class="card mb-2" style="border: 2px;">
-									<div class="card mb-2">
-										<div class="card-body p-3">
-											<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
-												<div class="fw-bold mb-2">{{ comment.userid }}</div>
-											</div>
-											<textarea ref="edittextRef" v-model="editForm.content" class="form-control mb-2" style="resize: none; overflow-y: auto; height: 120px;"required></textarea>
-											<div class="text-end">
-												<button type="submit" class="btn btn-sm btn-outline-secondary me-1">수정</button>
-												<button type="button" class="btn btn-sm btn-outline-danger" @click="editing = false">취소</button>
-											</div>
-										</div>
-									</div>
-								</form>
-							</template>
-						</div>
-						<!-- 댓글 입력 섹션 -->
-						<form id="regist" @submit.prevent="regist">
-							<div class="container mt-4" style="max-width: 1000px;">
-								<div class="border rounded p-3">
-									<div class="d-flex justify-content-between align-items-center mb-2">
-										<strong class="fw-bold">{{ userName }}</strong>
-										<div class="rating-input-stars d-flex"  
-										@mousedown="dragging = true" 
-										@mouseup="dragging = false" 
-										@mouseleave="dragging = false" 
-										@mousemove="handleDrag" 
-										@click="handleClick" 
-										ref="starContainer">
-											<div v-for="n in 5" :key="n" class="input-star-container">
-												<span class="input-star" :class="{ filled: form.rating >= n }">★</span>
-												<span class="input-star half" :class="{ filled: form.rating >= n - 0.5 }">★</span>
-											</div>
-										</div>
-									</div>
-									<div class="d-flex align-items-center">
-										<textarea  ref="registertextRef"  class="form-control me-2" v-model="form.content" style="resize: none; overflow-y: auto; height: 120px;" required></textarea>
-										<button  type="submit" class="btn btn-secondary flex-shrink-0">등록</button>
-									</div>
+	<!-- 댓글 섹션 -->
+	<div class="container mt-4" style="max-width: 1000px;">
+		<template v-for="comment in commentDB" :key="comment.comment_no">
+			<div class="card mb-2"  v-if="comment.status !== 'false'">
+				<div class="card-body p-3">
+					<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
+						<div class="fw-bold">
+							{{ comment.userid }}
+							<div class="rating-display-stars d-flex">
+								<div v-for="n in 5" :key="n" class="display-star-wrapper">
+									<span class="display-star">☆</span>
+									<span class="display-star filled" :style="{ width: getStarFillForComment(comment.rating, n) }">★</span>
 								</div>
 							</div>
-						</form>
+						</div>
+						<div class="text-muted" style="font-size: 0.9rem;">
+							{{ comment.modified_date ? comment.modified_date.substring(0, 16) + ' (수정됨)' : comment.regist_date?.substring(0, 16) }}
+						</div>
+					</div>
+					<div class="mb-2">
+						{{ comment.content }}
+					</div>
+					<div v-if="comment.userid === userId">
+						<button class="btn btn-sm btn-outline-secondary me-1" @click="editComment(comment)">수정</button>
+						<button class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.comment_no)">삭제</button>
+					</div>	
+				</div>
+			</div>
+			<!-- 댓글 수정 창 -->
+			<form v-if="editing && editForm.comment_no === comment.comment_no" @submit.prevent="update" class="card mb-2" style="border: 2px;">
+				<div class="card mb-2">
+					<div class="card-body p-3">
+						<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
+							<div class="fw-bold mb-2">{{ comment.userid }}</div>
+						</div>
+						<textarea ref="edittextRef" v-model="editForm.content" class="form-control mb-2" style="resize: none; overflow-y: auto; height: 120px;"required></textarea>
+						<div class="text-end">
+							<button type="submit" class="btn btn-sm btn-outline-secondary me-1">수정</button>
+							<button type="button" class="btn btn-sm btn-outline-danger" @click="editing = false">취소</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</template>
+	</div>
+	<!-- 댓글 입력 섹션 -->
+	<form id="regist" @submit.prevent="regist" v-if="userId && userName">
+		<div class="container mt-4" style="max-width: 1000px;">
+			<div class="border rounded p-3">
+				<div class="d-flex justify-content-between align-items-center mb-2">
+					<strong class="fw-bold">{{ userName }}</strong>
+					<div class="rating-input-stars d-flex"  
+					@mousedown="dragging = true" 
+					@mouseup="dragging = false" 
+					@mouseleave="dragging = false" 
+					@mousemove="handleDrag" 
+					@click="handleClick" 
+					ref="starContainer">
+						<div v-for="n in 5" :key="n" class="input-star-container">
+							<span class="input-star" :class="{ filled: form.rating >= n }">★</span>
+							<span class="input-star half" :class="{ filled: form.rating >= n - 0.5 }">★</span>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex align-items-center">
+					<textarea  ref="registertextRef"  class="form-control me-2" v-model="form.content" style="resize: none; overflow-y: auto; height: 120px;" required></textarea>
+					<button  type="submit" class="btn btn-secondary flex-shrink-0">등록</button>
+				</div>
+			</div>
+		</div>
+	</form>
 </template>
 
 <style>
-.rating-input-stars {
-  display: flex;
-  user-select: none;
-  cursor: pointer;
-  width: 150px;
-  height: 30px;
-  align-items: center;
-  justify-content: flex-end; 
-}
-.input-star-container {
-  position: relative;
-  width: 20%;
-  display: inline-block;
-  height: 100%;
-}
-.input-star {
-  font-size: 30px;
-  color: lightgray;
-  line-height: 1; 
- position: absolute;
-  left: 0;
-  top: 0;
-}
-.input-star.filled {
-  color: gold;
-    z-index: 1;
-}
-.input-star.half {
-  clip-path: inset(0 50% 0 0);
-    z-index: 2;
-}
-
-
-.rating-display-stars {
-  display: flex;
-  align-items: center;
-  font-size: 18px; 
-  line-height: 1;
-}
-.display-star-wrapper {
-  position: relative;
-  width: 20px;
-  height: 20px;
-  margin-right: 2px;
-  overflow: hidden; /* 핵심 */
-}
-.display-star {
-  position: absolute;
-  top: 0;
-  left: 0;
-  color: lightgray;
-}
-.display-star.filled {
-  color: gold;
-  overflow: hidden;
-  white-space: nowrap;
-
-   position: absolute;
-    top: 0;
-  left: 0;
-  width: 0%; /* ← JS에서 동적으로 0%, 50%, 100% 설정 */
-
-}
+	@import "@/utils/css/comment.css";
 </style>
 <script setup>
-import {ref, reactive, onMounted, nextTick} from 'vue'
+import {ref, reactive, onMounted} from 'vue'
 import axios from 'axios'
 
 // 받아줄 기본 정의

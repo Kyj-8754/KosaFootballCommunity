@@ -30,7 +30,6 @@ import axios from 'axios'
 import stadiumList from '@/components/board/match/reservation/stadiumList.vue'
 import stadiumDetail from '@/components/board/match/reservation/stadiumDetail.vue'
 import reservationForm from '@/components/board/match/reservation/stadiumReservationForm.vue'
-import reservationResult from '@/components/board/match/reservation/stadiumReservationResult.vue'
 
 const currentView = ref('list') // 'list' | 'detail' | 'reserve' | 'result'
 const selectedSVCID = ref(null)

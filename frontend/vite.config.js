@@ -36,72 +36,46 @@ export default defineConfig({
 
       // 게시판 프록시
       "/board_api": {
-        target: "http://localhost:8131",
+        target: "http://board_api:8131",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/board_api/, ""),
+        //historyApiFallback: true,
       },
-      
       // 위젯 프록시
       "/widget_api": {
-        target: "http://localhost:8130",
+        target: "http://weather_api:8130",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/widget_api/, ""),
       },
       "/stadium_api": {
-        target: "http://localhost:8100",
+        target: "http://stadium_api:8100",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/stadium_api/, ""),
       },
       "/reservation_api": {
-        target: "http://localhost:8101",
+        target: "http://reservation_api:8101",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/reservation_api/, ""),
       },
-      "/kakao_api": {
-        target: "http://localhost:8102",
+      "/kakaopay_api": {
+        target: "http://kakaopay_api:8102",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/kakao_api/, ""),
       },
       "/login_api": {
-        target: "http://localhost:8111",
+        target: "http://login_api:8111",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/login_api/, ""),
       },
-
       "/security_api": {
-      target: "http://localhost:8110",
+      target: "http://security_api:8110",
       changeOrigin: true,
-      rewrite: (path) => path.replace(/^\/security_api/, ""),
-    },
-
-      
-      // club_api
+      },
       '/club_api': {
-        target: 'http://localhost:8121',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/club_api/, "/club"),
-      },
-      '/club_info': {
-        target: 'http://localhost:8121',
+        target: 'http://club_api:8121',
         changeOrigin: true,
       },
-
-      '/recruits_api': {
-        target: 'http://localhost:8122',
+      '/recruit_api': {
+        target: 'http://recruit_api:8122',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/recruits_api/, "/recruits"),
       },
-
       '/alarm_api': {
-        target: 'http://localhost:8120',
+        target: 'http://alarm_api:8120',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/alarm_api/, "/alarm"),
-      },
-
-      '/ws': {
-        target: 'http://localhost:8120',
-        ws: true,
-        changeOrigin: true
       }
     }
   }

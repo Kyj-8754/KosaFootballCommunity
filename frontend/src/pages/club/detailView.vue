@@ -284,14 +284,14 @@ onMounted(async () => {
   const teamCode = route.params.teamCode;
   try {
     // 1. club, clubMember는 실패하면 alert
-    const response = await axios.get(`/club_api/code/${teamCode}`, {
+    const response = await axios.get(`/club_api/club/code/${teamCode}`, {
       headers: { Authorization: `Bearer ${token.value}` },
     });
     club.value = response.data;
 
     if (club.value && club.value.club_id) {
       const memberRes = await axios.get(
-        `/club_api/member/list/${club.value.club_id}`
+        `/club_api/club/member/list/${club.value.club_id}`
       );
       clubMember.value = memberRes.data;
     }
@@ -304,7 +304,7 @@ onMounted(async () => {
   // 2. clubInfo는 반드시 별도 try-catch에서!
   if (club.value && club.value.club_id) {
     try {
-      const clubInfoRes = await axios.get(`/club_info/${club.value.club_id}`);
+      const clubInfoRes = await axios.get(`/club_api/club/club_info/${club.value.club_id}`);
       clubInfo.value = clubInfoRes.data;
     } catch (infoErr) {
       if (infoErr.response && infoErr.response.status === 404) {
