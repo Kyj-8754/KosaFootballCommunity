@@ -30,7 +30,12 @@
 						<div class="card h-100 shadow-sm">
 							<img :src="item.img_PATH || '/default.jpg'" class="card-img-top" alt="stadium image" />
 							<div class="card-body">
-							<h5 class="card-title">{{ item.svcnm }}</h5>
+							<h5 class="card-title">
+								{{ item.svcnm }}
+								<span v-if="item.avgRating !== null" style="font-size: 0.9em; color: #f5a623; margin-left: 6px;">
+									⭐ {{ item.avgRating.toFixed(1) }} ({{ item.reviewCount || 0 }})
+								</span>
+							</h5>
 							<p class="card-text"><strong>지역명:</strong> {{ item.areanm }}</p>
 							<p class="card-text"><strong>장소명:</strong> {{ item.placenm }}</p>
 							<p class="card-text"><strong>연락처:</strong> {{ item.telno }}</p>

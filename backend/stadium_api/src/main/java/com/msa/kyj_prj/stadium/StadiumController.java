@@ -38,7 +38,7 @@ public class StadiumController {
     
 	// 공공 데이터 api 호출
 	@Operation(summary = "초기 경기장 데이터 파싱용", description = "경기장 데이터 베이스를 넣기 위한 API")
-	@PostMapping("test")
+	@PostMapping("getStadium")
 	public void stadiumapi() throws Exception{
 		log.info("데이터 테스트 시작 시간 = {} ", LocalDateTime.now());
 			stadiumService.stadiumapi();

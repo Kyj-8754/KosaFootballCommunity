@@ -32,6 +32,7 @@ public class CommentService{
 	public List<Comment> list(String svcid) {
 		return new ArrayList<Comment>(conmmentDAO.list(svcid));
 	}
+	
 	// 댓글 삭제
 	@Transactional
 	public boolean delete(int comment_no) {

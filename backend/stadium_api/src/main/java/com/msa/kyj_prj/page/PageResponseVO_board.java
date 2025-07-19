@@ -3,7 +3,7 @@ package com.msa.kyj_prj.page;
 
 import java.util.List;
 
-import com.msa.kyj_prj.dto.Stadium;
+import com.msa.kyj_prj.dto.StadiumListDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class PageResponseVO_board {
 	// 목록
 	@Schema(description = "게시판 목록", example = "[{...}, {...}]")
-	private List<Stadium> list;
+	private List<StadiumListDTO> list;
 	// 전체 글 갯수
 	@Schema(description = "전체 글 개수", example = "120")
 	private int totalCount = 0;
@@ -38,11 +38,11 @@ public class PageResponseVO_board {
 	@Schema(description = "검색어", example = "서울")
 	// 서칭
 	private String searchValue;
-	 @Schema(description = "검색 타입", example = "title")
+	 @Schema(description = "검색 타입", example = "svcnm")
 	private String searchType;
 	
 	
-	public PageResponseVO_board(List<Stadium> list, int totalPage, int pageNo, String searchType, String searchValue) {
+	public PageResponseVO_board(List<StadiumListDTO> list, int totalPage, int pageNo, String searchType, String searchValue) {
 		this.list = list;
 		this.totalCount = totalPage;
 		this.totalPage = (int)Math.ceil((double)totalPage / size);

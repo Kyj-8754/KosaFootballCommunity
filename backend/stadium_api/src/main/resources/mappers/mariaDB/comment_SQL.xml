@@ -7,8 +7,8 @@
 <mapper namespace="com.msa.kyj_prj.comment.CommentDAO">
 	 <!-- 댓글 등록명령문 -->
 <insert id="regist">
-	INSERT INTO stadium_comment (SVCID, USERID, CONTENT, RATING) 
-	VALUES (#{svcid}, #{userid}, #{content}, #{rating})
+	INSERT INTO stadium_comment (SVCID, USERNAME, CONTENT, RATING) 
+	VALUES (#{svcid}, #{username}, #{content}, #{rating})
 </insert>
 
 <!-- 댓글 업데이트 명령문 -->

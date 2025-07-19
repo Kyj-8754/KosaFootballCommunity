@@ -6,7 +6,7 @@
 				<div class="card-body p-3">
 					<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
 						<div class="fw-bold">
-							{{ comment.userid }}
+							{{ comment.username }}
 							<div class="rating-display-stars d-flex">
 								<div v-for="n in 5" :key="n" class="display-star-wrapper">
 									<span class="display-star">☆</span>
@@ -21,7 +21,7 @@
 					<div class="mb-2">
 						{{ comment.content }}
 					</div>
-					<div v-if="comment.userid === userId">
+					<div v-if="comment.username === userId">
 						<button class="btn btn-sm btn-outline-secondary me-1" @click="editComment(comment)">수정</button>
 						<button class="btn btn-sm btn-outline-danger" @click="deleteComment(comment.comment_no)">삭제</button>
 					</div>	
@@ -32,7 +32,7 @@
 				<div class="card mb-2">
 					<div class="card-body p-3">
 						<div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
-							<div class="fw-bold mb-2">{{ comment.userid }}</div>
+							<div class="fw-bold mb-2">{{ comment.username }}</div>
 						</div>
 						<textarea ref="edittextRef" v-model="editForm.content" class="form-control mb-2" style="resize: none; overflow-y: auto; height: 120px;"required></textarea>
 						<div class="text-end">
@@ -101,7 +101,7 @@ const commentDB = ref({ list: [] })	// 댓글
 	const form = reactive({
 		comment_no: null,
 		content : '',
-		userid : props.userId,
+		username : props.userId,
 		svcid : props.SVCID,
 		rating : 0
 	})
@@ -118,7 +118,7 @@ const commentDB = ref({ list: [] })	// 댓글
 			// 수정 시작
 			editForm.comment_no = comment.comment_no;
 			editForm.content = comment.content;
-			editForm.userid = props.userName;
+			editForm.username = props.userName;
 			editing.value = true;
 		}
 	};
@@ -167,7 +167,7 @@ const commentDB = ref({ list: [] })	// 댓글
 		const confirmRegist = confirm("수정하시겠습니까?")
 		if (!confirmRegist) return
 
-		axios.post('/stadium_api/comment/update', editForm)
+		axios.patch('/stadium_api/comment/update', editForm)
 			.then(res => {
 			if (!res.data.error) {
 				fetchComments();
@@ -183,7 +183,7 @@ const commentDB = ref({ list: [] })	// 댓글
 		const confirmRegist = confirm("삭제하시겠습니까?")
 		if (!confirmRegist) return
 		
-		axios.post('/stadium_api/comment/delete', { comment_no })
+		axios.delete('/stadium_api/comment/delete', { comment_no })
 			.then(res => {
 				if (!res.data.error) {
 				fetchComments();

@@ -29,10 +29,14 @@
         </if>
 	</sql>
 	
-	<select id="list" resultType="com.msa.kyj_prj.dto.Stadium">
-	    SELECT *
-		FROM stadium 
+	<select id="list" resultType="com.msa.kyj_prj.dto.StadiumListDTO">
+	    SELECT s.*,
+	    IFNULL(ROUND(AVG(c.rating), 1), 0) AS avg_rating,
+    	COUNT(c.comment_no) AS comment_count
+		FROM stadium s
+		LEFT JOIN stadium_comment c ON s.svcid = c.svcid
 			<include refid="search"/>
+	    GROUP BY s.svcid
 		LIMIT #{start}, #{end}
 	</select>
 	
