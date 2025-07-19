@@ -6,7 +6,7 @@
         <span class="num-col">번호</span>
         <span class="name-col">구장명</span>
         <span class="date-col" @click="toggleSort('slot_date')" style="cursor: pointer">
-          예약일
+          결제일
           <span v-if="sortKey === 'slot_date'">({{ sortOrder === 'asc' ? '▲' : '▼' }})</span>
         </span>
         <span class="amount-col">결제 금액</span>
@@ -22,7 +22,11 @@
               <span class="amount-col">{{ item.amount }}</span>
               <span 
                 class="status-col" 
-                :class="item.status === 'paid' ? 'paid' : 'canceled'"
+                :class="{
+                  paid: item.status === 'paid',
+                  refunded: item.status === 'refunded',
+                  pending: item.status === 'pending' || item.status === '미 결제'
+                }"
               >
             {{ convertStatus(item.status) }}
           </span>
@@ -74,12 +78,21 @@ const sortedReservations = computed(() => {
       return sortOrder.value === 'asc' ? dateA - dateB : dateB - dateA;
     }
 
-    // 문자열 비교 (status)
-    if (sortKey.value === 'status') {
-      if (aVal < bVal) return sortOrder.value === 'asc' ? -1 : 1;
-      if (aVal > bVal) return sortOrder.value === 'asc' ? 1 : -1;
-      return 0;
-    }
+      const statusPriority = {
+        paid: 1,
+        refunded: 2,
+        unpaid: 3,
+        canceled: 4
+      };
+
+      if (sortKey.value === 'status') {
+        const aPriority = statusPriority[aVal] || 99;
+        const bPriority = statusPriority[bVal] || 99;
+
+        return sortOrder.value === 'asc'
+          ? aPriority - bPriority
+          : bPriority - aPriority;
+      }
 
     return 0;
   });
@@ -208,7 +221,12 @@ onMounted(fetchReservations)
   color: #219653;
 }
 
-.status-col.canceled {
+.status-col.refunded {
+  background-color: #fdeaea;
+  color: #d93025;
+}
+
+.status-col.pending {
   background-color: #fdeaea;
   color: #d93025;
 }
