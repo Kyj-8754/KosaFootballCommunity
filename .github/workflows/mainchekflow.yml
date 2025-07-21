@@ -2,7 +2,7 @@ name: KFC workflow
 on: 
   push:
     # main에 대해서만 실행하도록 설정
-    branches: [ cd ]
+    branches: [ main ]
     # 각 경로를 체크하도록
     paths:
       - 'backend/**'
@@ -24,7 +24,7 @@ jobs:
         id: changes
         uses: dorny/paths-filter@v2
         with:
-          base: cd
+          base: main
           filters: |
             frontend:
               - 'frontend/**'
@@ -300,7 +300,7 @@ jobs:
       id: changes
       uses: dorny/paths-filter@v2
       with:
-          base: cd
+          base: main
           filters: |
             frontend:
               - 'frontend/**'
