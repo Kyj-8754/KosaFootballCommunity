@@ -440,5 +440,12 @@ public class ClubApplyService {
 		int updated = clubApplyDAO.cancelByClubIdAndApplicant(club_id, appli_user_no);
 		return updated > 0;
 	}
+	
+	// ClubApplyService.java (맨 아래에 추가)
+	public String getTeamCodeByClubId(int clubId) {
+	    return clubApplyDAO.getTeamCodeByClubId(clubId);
+	}
+
+	
 
 }

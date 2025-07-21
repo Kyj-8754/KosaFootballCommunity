@@ -15,7 +15,6 @@
           <span v-else-if="index === 1" class="me-2">🥈</span>
           <span v-else-if="index === 2" class="me-2">🥉</span>
           <span v-else class="me-2 fw-bold">{{ index + 1 }}위</span>
-          ㅋ
           <img
             :src="club.logo_path || 'https://via.placeholder.com/120'"
             @error="handleImageError"
