@@ -165,7 +165,10 @@ export function stdaiumDetail() {
 
 	// 예약 창으로 넘어가기, 현재는 글 작성으로 넘어감
 	function goToReservation(){
-		router.push('/board/boardregisterform')
+		if(userId){
+			router.push({name: 'boardRegisterForm'})
+		}
+		router.push({name: 'Member_LoginForm'})
 	}
 
 	// html관련
