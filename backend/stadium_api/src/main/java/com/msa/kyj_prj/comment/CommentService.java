@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.msa.kyj_prj.dto.Comment;
+
 
 
 @Service
@@ -30,6 +32,7 @@ public class CommentService{
 	public List<Comment> list(String svcid) {
 		return new ArrayList<Comment>(conmmentDAO.list(svcid));
 	}
+	
 	// 댓글 삭제
 	@Transactional
 	public boolean delete(int comment_no) {

@@ -29,14 +29,6 @@
         FROM tbl_club_apply
         WHERE bno = #{bno}
     </select>
-
-    <!-- 모집글 승인/거부 업데이트 -->
-    <update id="updateStatus" parameterType="map">
-        UPDATE tbl_club_apply
-        SET status = #{status}
-        WHERE apply_id = #{apply_id}
-    </update>
-
 	
 	<!-- bno로 club_id 조회 -->
 	<select id="findClubIdByBno" parameterType="int" resultType="int">
@@ -58,6 +50,7 @@
     SET status = 'canceled', apply_date = NOW()
     WHERE bno = #{bno}
       AND appli_user_no = #{appli_user_no}
+      AND status = 'pending'  
 	</update>
 	
 	<select id="findRecentCanceledApply" parameterType="map" resultType="com.msa.kyj_prj.club.apply.ClubApply">
@@ -89,6 +82,119 @@
     LIMIT 1
 	</select>
 	
-
+	  <!-- 신청 상태를 approved/rejected 등으로 변경 (apply_id 기준) -->
+    <update id="updateStatus" parameterType="map">
+        UPDATE tbl_club_apply
+        SET status = #{status}
+        WHERE apply_id = #{apply_id}
+    </update>
     
+    <!-- 클럽 멤버 등록 -->
+	<insert id="insertClubMember" parameterType="map">
+    INSERT INTO tbl_club_member (
+        club_id,
+        user_no,
+        role,
+        joined_at
+    ) VALUES (
+        #{club_id},
+        #{user_no},
+        'MEMBER',
+        NOW()
+    )
+	</insert>
+	
+	<select id="findByApplyId" parameterType="int" resultType="com.msa.kyj_prj.club.apply.ClubApply">
+  	SELECT * FROM tbl_club_apply WHERE apply_id = #{apply_id}
+	</select>
+
+	
+	<!-- 클럽 id 기준으로 전체 신청목록 조회 -->
+	<select id="findByClubId" parameterType="int" resultType="com.msa.kyj_prj.club.apply.ClubApply">
+  SELECT * FROM tbl_club_apply
+  WHERE club_id = #{club_id}
+  ORDER BY apply_date DESC
+	</select>
+	
+	<!-- club_id로 신청자+신청자 이름 조회 -->
+	<select id="findByClubIdWithUserName" parameterType="int" resultType="map">
+  SELECT 
+    a.*,
+    u.user_name
+  FROM tbl_club_apply a
+  JOIN `user` u ON a.appli_user_no = u.user_no
+  WHERE a.club_id = #{club_id}
+  ORDER BY a.apply_date DESC
+	</select>
+
+	    <!-- 멤버 자진 탈퇴 시 상태를 withdrawn으로 변경 -->
+    <update id="updateWithdrawnStatus" parameterType="map">
+        UPDATE tbl_club_apply
+        SET status = 'withdrawn'
+        WHERE club_id = #{club_id}
+          AND appli_user_no = #{appli_user_no}
+          AND status = 'approved'
+    </update>
+
+    <!-- 멤버 강퇴 시 상태를 kicked로 변경 -->
+    <update id="updateKickedStatus" parameterType="map">
+        UPDATE tbl_club_apply
+        SET status = 'kicked'
+        WHERE club_id = #{club_id}
+          AND appli_user_no = #{appli_user_no}
+          AND status = 'approved'
+    </update>
+	
+	<select id="findLeaderUserNoByClubId" parameterType="int" resultType="int">
+    SELECT user_no FROM tbl_club WHERE club_id = #{club_id}
+	</select>
+	
+	<select id="findUserNameByUserNo" parameterType="int" resultType="string">
+    SELECT user_name
+    FROM user
+    WHERE user_no = #{user_no}
+	</select>
+
+
+<!-- bno 없이 club_id로만 insert -->
+<insert id="insertByClubDetail">
+    INSERT INTO tbl_club_apply (
+        club_id,
+        appli_user_no,
+        status,
+        apply_date
+    ) VALUES (
+        #{club_id},
+        #{appli_user_no},
+        #{status},
+        NOW()
+    )
+</insert>
+
+
+
+<!-- (1) club_id, appli_user_no로 최신 한 건 조회 -->
+	<select id="findLastApplyByClubIdAndApplicant" parameterType="map" resultType="com.msa.kyj_prj.club.apply.ClubApply">
+  	SELECT *
+  	FROM tbl_club_apply
+ 	WHERE club_id = #{club_id}
+    AND appli_user_no = #{appli_user_no}
+  	ORDER BY apply_date DESC
+	LIMIT 1
+	</select>
+
+<!-- (2) club_id, appli_user_no로 pending 상태 신청 취소 -->
+	<update id="cancelByClubIdAndApplicant" parameterType="map">
+  	UPDATE tbl_club_apply
+  	SET status = 'canceled', apply_date = NOW()
+  	WHERE club_id = #{club_id}
+    AND appli_user_no = #{appli_user_no}
+    AND status = 'pending'
+	</update>
+
+
+
+
+
+
 </mapper>

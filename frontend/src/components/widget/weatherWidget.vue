@@ -1,61 +1,79 @@
 <template>
-  <div class="weather-widget">
-    <!-- 상단 영역 -->
-    <div class="top-section">
-      <WeatherImageBox :sky="current.SKY" :pty="current.PTY" />
-      <div class="info-section">
-        <RegionSelector v-model="region" />
-        <WeatherDetail :data="current" />
+  <div
+    class="weather-widget"
+    :class="{ collapsed: isCollapsed }"
+    :style="{ opacity: isCollapsed ? 1 : opacity }"
+  >
+    <!-- 접기/펼치기 버튼만 항상 보이도록 -->
+    <div class="collapse-toggle" @click="isCollapsed = !isCollapsed">
+      <span>{{ isCollapsed ? '펼치기 ▼' : '접기 ▲' }}</span>
+    </div>
+
+    <!-- 펼쳐진 경우에만 나머지 컨텐츠 렌더링 -->
+    <div v-if="!isCollapsed">
+      <div class="top-section">
+        <WeatherImageBox :sky="current.SKY" :pty="current.PTY" />
+        <div class="info-section">
+          <RegionSelector v-model="region" />
+          <WeatherDetail :data="current" />
+        </div>
+      </div>
+
+      <!-- weatherWidget.vue -->
+      <ForecastTimeline :forecasts="forecastList" @expand="handleChildExpand" />
+
+
+      <div class="opacity-slider" @mousedown.stop @mouseup.stop @mousemove.stop>
+        <label>투명도: {{ (opacity * 100).toFixed(0) }}%</label>
+        <input
+          type="range"
+          min="0.1"
+          max="1"
+          step="0.01"
+          v-model="opacity"
+        />
       </div>
     </div>
-    <!-- 하단 시간별 예보 -->
-    <ForecastTimeline :forecasts="forecastList" />
-    <!-- 안내 문구 -->
-    <div class="update-info">※ 단기예보 데이터는 매일 0시와 12시에 갱신됩니다.</div>
   </div>
-  <!--
-  <div class="weather-widget">
-    <div class="top-section">
-      <WeatherImageBox :sky="current.SKY" :pty="current.PTY" />
-      <div class="info-section">
-        <RegionSelector v-model="region" />
-        <WeatherDetail :data="current" />
-      </div>
-    <ForecastTimeline :forecasts="forecastList" />
-    </div>
-    <div class="update-info">※ 이 단기예보 데이터는 매일 0시와 12시에 갱신됩니다.</div>
-  </div>-->
 </template>
 
-
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, watch, nextTick } from 'vue'
 import axios from 'axios'
 import WeatherImageBox from './weatherImageBox.vue'
 import RegionSelector from './regionSelector.vue'
 import WeatherDetail from './weatherDetail.vue'
 import ForecastTimeline from './forecastTimeline.vue'
 
+const opacity = ref(1)
+const isCollapsed = ref(false)
+
 const region = ref('강남구')
 const forecastList = ref([])
 const current = ref({})
 
+
+
+
 const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+
+const emit = defineEmits(['expand'])
+
+const handleChildExpand = () => {
+  emit('expand')  // ForecastTimeline 펼침 → App.vue에 전달
+}
 
 watchEffect(async () => {
   const res = await axios.get('/widget_api/widget/forecast', {
     params: { region: region.value, date: today }
   })
 
-  const rawList = res.data // 서버에서 받은 row 데이터들
+  const rawList = res.data
 
-  // 🧠 그룹핑 로직: 시간별로 묶어서 { TMP, SKY, POP, ... } 구조로 변경
   const grouped = {}
   for (const item of rawList) {
     const time = item.weather_fcst_time
-    if (!grouped[time]) {
-      grouped[time] = { fcst_time: time }
-    }
+    if (!grouped[time]) grouped[time] = { fcst_time: time }
     grouped[time][item.weather_code] = item.weather_value
   }
 
@@ -64,18 +82,41 @@ watchEffect(async () => {
   forecastList.value = result
   current.value = result[0] || {}
 })
+
+watch(isCollapsed, async (newVal) => {
+  if (!newVal) {
+    await nextTick();   // 이제 가능!
+    emit('expand');
+  }
+})
 </script>
 
 <style scoped>
 .weather-widget {
   font-family: sans-serif;
   width: 300px;
-  padding: 16px;
   margin: 0 auto;
-  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  width: 365px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+  user-select: none;
+  background-color: #ffffff;
+  padding: 8px;
+  transition: width 0.2s ease, padding 0.2s ease;
+}
+
+/* ✅ 접힌 상태: 최소한의 폭과 패딩만 유지 */
+.weather-widget.collapsed {
+  width: fit-content;
+  padding: 4px 8px;
+}
+
+.collapse-toggle {
+  text-align: right;
+  font-size: 12px;
+  cursor: pointer;
+  color: #555;
+  white-space: nowrap;
 }
 
 .top-section {
@@ -96,13 +137,17 @@ watchEffect(async () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  /*margin-right: 8px;*/
 }
 
-.update-info {
-  margin-top: 8px;
+.opacity-slider {
+  margin-top: 12px;
   font-size: 12px;
-  color: #666;
-  text-align: left;
+  color: #555;
+  opacity: 1 !important;
+}
+
+.opacity-slider input[type='range'] {
+  width: 100%;
+  margin-top: 4px;
 }
 </style>

@@ -39,3 +39,6 @@ out/
 # macOS system files
 .DS_Store
 
+db_data/
+backend/security/loginapi/src/main/resources/application-secret.properties
+backend/securityapi/src/main/resources/application-secret.properties

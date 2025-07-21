@@ -1,0 +1,419 @@
+name: KFC workflow
+on: 
+  push:
+    # main에 대해서만 실행하도록 설정
+    branches: [ main ]
+    # 각 경로를 체크하도록
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/**'
+      - 'nginx.conf'
+    
+# 실행
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 현재 브랜치 코드 체크아웃
+      - uses: actions/checkout@v3
+
+      # 변경 감지
+      - name: Detect changes
+        id: changes
+        uses: dorny/paths-filter@v2
+        with:
+          base: main
+          filters: |
+            frontend:
+              - 'frontend/**'
+            stadium_api:
+              - 'backend/stadium_api/**'
+            reservation_api:
+              - 'backend/reservation_api/**'
+            kakaopay_api:
+              - 'backend/kakaopay_api/**'
+            alarm_api:
+              - 'backend/alarm_api/**'
+            club_api:
+              - 'backend/club_api/**'   
+            recruit_api:
+              - 'backend/recruit_api/**'
+            weather_api:
+              - 'backend/weather_api/**'
+            security_api:
+              - 'backend/security/security_api/**'
+            login_api:
+              - 'backend/security/login_api/**'
+            board_api:
+              - 'backend/security/board_api/**'
+            infra:
+              - 'docker-compose.yml'
+              - '.github/workflows/**'
+              - 'nginx.conf'
+
+
+
+      # Node 설치 (프론트)
+      - name: Set up Node.js
+        # 프론트 감지하여 실행하도록
+        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.infra == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          
+
+      # jdk 설치
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        # 매개변수 설정
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      # Docker buildx 설정    
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+       
+        # 도커 허브 로그인
+      - name: docker hub login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+
+      # 각 API별 application-secret.properties 파일 생성
+      # 각 분기별로 변경 감지된것만 실행하도록 최적화
+      - name: Create application-secret.properties for stadium_api
+        if: steps.changes.outputs.stadium_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # stadium_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/stadium_api/src/main/resources/application-secret.properties
+
+      - name: Create application-secret.properties for reservation_api
+        if: steps.changes.outputs.reservation_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # reservation_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/reservation_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/reservation_api/src/main/resources/application-secret.properties
+
+      - name: Create application-secret.properties for kakaopay_api
+        if: steps.changes.outputs.kakaopay_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # kakaopay_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/kakaopay_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.KAKAO_ADMIN_KEY }}" >> backend/kakaopay_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.BASE_URL }}" >> backend/kakaopay_api/src/main/resources/application-secret.properties
+
+      - name: Create application-secret.properties for security_api
+        if: steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # security_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/security_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.SECURITY_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/security_api/src/main/resources/application-secret.properties
+
+      - name: Create application-secret.properties for login_api
+        if: steps.changes.outputs.login_api == 'true' || steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # login_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/login_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/security/login_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.LOGIN_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/login_api/src/main/resources/application-secret.properties
+
+      - name: Create application-secret.properties for alarm_api
+        if: steps.changes.outputs.alarm_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # alarm_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/alarm_api/src/main/resources/application-secret.properties
+
+      - name: Create application-secret.properties for club_api
+        if: steps.changes.outputs.club_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # club_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/club_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/club_api/src/main/resources/application-secret.properties
+
+      - name: Create application-secret.properties for recruit_api
+        if: steps.changes.outputs.recruit_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # recruit_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/recruit_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/recruit_api/src/main/resources/application-secret.properties
+
+      - name: Create application-secret.properties for weather_api
+        if: steps.changes.outputs.weather_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # weather_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/weather_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.WEATHER_APPLICATION_SECRET_PROPERTIES }}" >> backend/weather_api/src/main/resources/application-secret.properties
+
+      - name: Create application-secret.properties for board_api
+        if: steps.changes.outputs.board_api== 'true' || steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          # board_api
+          echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/security/board_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.ALARM_API_URL }}" >> backend/security/board_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.BOARD_APPLICATION_SECRET_PROPERTIES }}" >> backend/security/board_api/src/main/resources/application-secret.properties
+          
+          
+      # 프론트엔드 이미지 빌드 및 푸시
+      - name: Build and Push Frontend Image
+        if: steps.changes.outputs.frontend == 'true' || steps.changes.outputs.infra == 'true'
+        working-directory: ${{ github.workspace }}/frontend
+        run: |
+          echo "VITE_KAKAOMAP_API_KEY=${{ secrets.VITE_KAKAOMAP_API_KEY }}" > .env
+          docker build -f ./Dockerfile -t ${{ secrets.USERNAME }}/nginx:${{ github.sha }} .
+          docker push ${{ secrets.USERNAME }}/nginx:${{ github.sha }}
+
+      # 하위 폴더 전체 권한 부여
+      - name: Set read permissions for all APIs
+        run: |
+          chmod -R a+r ./backend
+
+      # 백엔 Gradle 빌드
+      - name: Gradle bootJar for alarm_api
+        if: steps.changes.outputs.alarm_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/alarm_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+
+      - name: Gradle bootJar for club_api
+        if: steps.changes.outputs.club_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/club_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+
+      - name: Gradle bootJar for kakaopay_api
+        if: steps.changes.outputs.kakaopay_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/kakaopay_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+
+      - name: Gradle bootJar for recruit_api
+        if: steps.changes.outputs.recruit_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/recruit_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+
+      - name: Gradle bootJar for reservation_api
+        if: steps.changes.outputs.reservation_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/reservation_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+
+      - name: Gradle bootJar for stadium_api
+        if: steps.changes.outputs.stadium_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/stadium_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+
+      - name: Gradle bootJar for weather_api
+        if: steps.changes.outputs.weather_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/weather_api && chmod +x ./gradlew && ./gradlew build -x test && popd
+
+      - name: Gradle bootJar for board_api
+        if: steps.changes.outputs.board_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/security && chmod +x ./gradlew && ./gradlew :board_api:build -x test && popd
+         
+      - name: Gradle bootJar for login_api
+        if: steps.changes.outputs.login_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/security && chmod +x ./gradlew && ./gradlew :login_api:build -x test && popd   
+
+      - name: Gradle bootJar for security
+        if: steps.changes.outputs.security_api== 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+         pushd backend/security && chmod +x ./gradlew && ./gradlew :security_api:build -x test && ./gradlew :board_api:build -x test && ./gradlew :login_api:build -x test && popd
+          
+
+     # 각 백엔드 이미지 빌드 및 푸쉬
+      - name: Build and Push alarm_api
+        if: steps.changes.outputs.alarm_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/alarm_api:${{ github.sha }} ./backend/alarm_api
+          docker push ${{ secrets.USERNAME }}/alarm_api:${{ github.sha }}
+
+      - name: Build and Push club_api
+        if: steps.changes.outputs.club_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/club_api:${{ github.sha }} ./backend/club_api
+          docker push ${{ secrets.USERNAME }}/club_api:${{ github.sha }}
+          
+      - name: Build and Push kakaopay_api
+        if: steps.changes.outputs.kakaopay_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/kakaopay_api:${{ github.sha }} ./backend/kakaopay_api
+          docker push ${{ secrets.USERNAME }}/kakaopay_api:${{ github.sha }}
+
+      - name: Build and Push recruit_api
+        if: steps.changes.outputs.recruit_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/recruit_api:${{ github.sha }} ./backend/recruit_api
+          docker push ${{ secrets.USERNAME }}/recruit_api:${{ github.sha }}
+
+      - name: Build and Push reservation_api
+        if: steps.changes.outputs.reservation_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/reservation_api:${{ github.sha }} ./backend/reservation_api
+          docker push ${{ secrets.USERNAME }}/reservation_api:${{ github.sha }}
+
+      - name: Build and Push security_api
+        if: steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/security_api:${{ github.sha }} ./backend/security/security_api
+          docker push ${{ secrets.USERNAME }}/security_api:${{ github.sha }}
+
+      - name: Build and Push login_api
+        if: steps.changes.outputs.login_api == 'true' || steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/login_api:${{ github.sha }} ./backend/security/login_api
+          docker push ${{ secrets.USERNAME }}/login_api:${{ github.sha }}
+
+      - name: Build and Push board_apis
+        if: steps.changes.outputs.board_api == 'true' || steps.changes.outputs.security_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/board_api:${{ github.sha }} ./backend/security/board_api
+          docker push ${{ secrets.USERNAME }}/board_api:${{ github.sha }}
+
+      - name: Build and Push stadium_api
+        if: steps.changes.outputs.stadium_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/stadium_api:${{ github.sha }} ./backend/stadium_api
+          docker push ${{ secrets.USERNAME }}/stadium_api:${{ github.sha }}
+
+      - name: Build and Push weather_apis
+        if: steps.changes.outputs.weather_api == 'true' || steps.changes.outputs.infra == 'true'
+        run: |
+          docker build -t ${{ secrets.USERNAME }}/weather_api:${{ github.sha }} ./backend/weather_api
+          docker push ${{ secrets.USERNAME }}/weather_api:${{ github.sha }}
+        
+  deploy:
+    # build 가 끝나야 실행하도록 설정
+    needs: build
+    name: 서버에 배포 단계
+    runs-on: self-hosted
+    steps:
+    
+    # 깃 체크아웃
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 변경 감지
+    - name: Detect changes
+      id: changes
+      uses: dorny/paths-filter@v2
+      with:
+          base: main
+          filters: |
+            frontend:
+              - 'frontend/**'
+            stadium_api:
+              - 'backend/stadium_api/**'
+            reservation_api:
+              - 'backend/reservation_api/**'
+            kakaopay_api:
+              - 'backend/kakaopay_api/**'
+            alarm_api:
+              - 'backend/alarm_api/**'
+            club_api:
+              - 'backend/club_api/**'   
+            recruit_api:
+              - 'backend/recruit_api/**'
+            weather_api:
+              - 'backend/weather_api/**'
+            security_api:
+              - 'backend/security/security_api/**'
+            login_api:
+              - 'backend/security/login_api/**'
+            board_api:
+              - 'backend/security/board_api/**'
+            infra:
+              - 'docker-compose.yml'
+              - '.github/workflows/**'
+              - 'nginx.conf'
+
+    # 실행 전에 디렉토리 보장, 현재 GitHub Actions 사용자(ubuntu 등)에게 권한 부여
+    - name: Ensure db_data volume directory exists
+      run: |
+        sudo mkdir -p /home/ubuntu/db_data
+        sudo chown -R 999:999 /home/ubuntu/db_data
+      
+    #  도커 허브 로그 
+    - name: 운영서버에서 docker hub 로그인
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        
+    - name: docker-compose에서 이미지 다운로드 및 실행
+    # | 를 추가하면 여러개의 명령어를 추가할 수 있다.
+    # 넘어오는 디렉토리를 기준으로 docker-compose 실행
+      run:  |
+        TAG=${{ github.sha }}
+        services=""
+         if "${{ steps.changes.outputs.infra }}" = "true"; then
+           services="$services mariadb"
+         fi
+
+         if [ "${{ steps.changes.outputs.frontend }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true"  ]; then
+           services="$services nginx"
+         fi
+
+         if [ "${{ steps.changes.outputs.stadium_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true"  ]; then
+           services="$services stadium_api"
+         fi
+
+         if [ "${{ steps.changes.outputs.reservation_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true" ]; then
+           services="$services reservation_api"
+         fi
+
+         if [ "${{ steps.changes.outputs.kakaopay_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true" ]; then
+           services="$services kakaopay_api"
+         fi
+
+         if [ "${{ steps.changes.outputs.security_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true" ]; then
+           services="$services security_api"
+         fi
+
+         if [ "${{ steps.changes.outputs.login_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true" ] || [ "${{ steps.changes.outputs.security_api }}" = "true" ]; then
+           services="$services login_api"
+         fi
+
+         if [ "${{ steps.changes.outputs.alarm_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true" ]; then
+           services="$services alarm_api"
+         fi
+
+         if [ "${{ steps.changes.outputs.club_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true" ]; then
+           services="$services club_api"
+         fi
+
+         if [ "${{ steps.changes.outputs.recruit_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true" ]; then
+           services="$services recruit_api"
+         fi
+
+         if [ "${{ steps.changes.outputs.weather_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true" ]; then
+           services="$services weather_api"
+         fi
+
+         if [ "${{ steps.changes.outputs.board_api }}" = "true" ] || [ "${{ steps.changes.outputs.infra }}" = "true" ] || [ "${{ steps.changes.outputs.security_api }}" = "true" ]; then
+           services="$services board_api"
+         fi
+
+        if [ -n "$services" ]; then
+         echo "변경된 서비스: $services"
+         TAG=${{ github.sha }} docker compose pull $services
+         TAG=${{ github.sha }} docker compose up -d $services
+    
+         echo "🔁 Nginx 재시작"
+         if [[ ! "$services" =~ "nginx" ]]; then
+           docker compose restart nginx
+         fi
+
+        else
+         echo "No changed services to deploy"
+        fi
+        
+    # AWS에서 불필요한 공간 삭제
+    - name: Docker Cleanup
+      run: |
+        docker container prune -f # 사용하지 않는 컨테이너 전체 삭제
+        docker image prune -a -f   # 사용하지 않는 이미지 전체 삭제
+    
+    

@@ -37,7 +37,7 @@
       <!-- 안내 메시지 -->
       <div class="mb-3">
         <p class="form-text">팀 코드 URL은 팀페이지 주소로 사용돼요</p>
-        <p class="text-muted">http://localhost:5173/club/<strong>{{ club.team_code }}</strong></p>
+        <p class="text-muted">http://itsfootball.store/club/<strong>{{ club.team_code }}</strong></p>
       </div>
 
       <!-- 등록 버튼 -->
@@ -89,7 +89,7 @@ export default {
         return;
       }
       try {
-        const res = await axios.get('/club_api/check-teamcode', { // 바뀐 주소 
+        const res = await axios.get('/club_api/club/check-teamcode', { // 바뀐 주소 
           params: { teamCode: this.club.team_code }
         });
         this.codeDuplicateResult = res.data;
@@ -106,7 +106,7 @@ export default {
         return;
       }
       try {
-        const res = await axios.get('/club_api/check-name', { // 바뀐 주소
+        const res = await axios.get('/club_api/club/check-name', { // 바뀐 주소
           params: { name: this.club.club_name }
         });
         this.nameDuplicateResult = res.data;
@@ -127,10 +127,22 @@ export default {
         return;
       }
       try {
-        await axios.post('/club_api', this.club); // 바뀐 주소
+        await axios.post('/club_api/club', this.club); // 바뀐 주소
         alert('클럽이 등록되었습니다. 이어서 클럽 프로필을 작성하세요.');
         this.$router.push(`/club/${this.club.team_code}`); 
       } catch (error) {
+
+          if (
+      error.response &&
+      error.response.status === 400 &&
+      error.response.data === '이미 해당 유저는 클럽을 보유하고 있습니다.'
+    ) {
+      alert('팀은 1개만 생성할 수 있습니다.');
+      return;
+    }
+
+
+
         console.error('클럽 등록 실패:', error);
         alert('등록에 실패했습니다.');
       }

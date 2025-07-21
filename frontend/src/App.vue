@@ -3,37 +3,40 @@
     <Header />
 
     <div class="row">
-      <div class="col-md-2">
-        <NavArea />
-      </div>
-      <div class="col-md-10">
+      <div>
         <router-view />
       </div>
     </div>
 
-    <AlarmToast /> <!-- 🔔 알림 토스트 전역 표시 -->
+    <AlarmToast />
+      <Footer />
+    <scrollUp />
 
-    <Footer />
+    <!-- 위치 날씨 위젯 -->
+    <div class="floating-weather-widget" ref="widget" @mousedown="startDrag">
+      <weatherWidget @expand="adjustWidgetPosition" />
+    </div>
   </div>
-  <scrollUp />
 </template>
 
+
 <script setup>
-import { provide, ref, computed, onMounted, watch } from 'vue';
+import { provide, ref, computed, onMounted, watch, onBeforeUnmount } from 'vue';
 import Header from '@/components/Header.vue';
-import NavArea from '@/components/NavArea.vue';
 import Footer from '@/components/Footer.vue';
 import AlarmToast from '@/components/common/AlarmToast.vue';
 import { connectWebSocket } from '@/utils/stomp';
 import { useAlarmStore } from '@/stores/alarmStore';
 import scrollUp from '@/components/scrollUp.vue'
+import { injectSetToken } from '@/utils/tokenGenerator.js'
+import weatherWidget from './components/widget/weatherWidget.vue';
 
 const alarmStore = useAlarmStore();
 
-// 1. 토큰 상태
-const token = ref('')
 
-// 2. 토큰 설정 함수
+
+const token = ref(localStorage.getItem('accessToken') || '')
+// 토큰 설정 함수
 const setToken = (newToken) => {
   token.value = newToken
   if (newToken) {
@@ -42,8 +45,8 @@ const setToken = (newToken) => {
     localStorage.removeItem('accessToken')
   }
 }
+injectSetToken(setToken)
 
-// 3. 마운트 시 로컬스토리지에서 토큰 로딩
 onMounted(() => {
   const savedToken = localStorage.getItem('accessToken')
   if (savedToken) {
@@ -57,10 +60,10 @@ const decodeJwtPayload = (tokenStr) => {
     const base64Payload = tokenStr.split('.')[1]
     const decoded = atob(base64Payload)
     const payload = JSON.parse(decoded)
-
+    
     // userName만 디코딩 (서버에서 encode 했을 경우만)
     if (payload.userName) {
-      payload.userName = decodeURIComponent(payload.userName)
+      payload.userName = decodeURIComponent(payload.userName.replace(/\+/g, ' '))
     }
 
     return payload
@@ -70,13 +73,13 @@ const decodeJwtPayload = (tokenStr) => {
   }
 }
 
-// ✅ payload에서 각 속성 추출 (token이 null이면 null 반환)
+// payload에서 각 속성 추출 (token이 null이면 null 반환)
 const payload = computed(() => token.value ? decodeJwtPayload(token.value) : {})
-
 const userId = computed(() => payload.value.userId || null)
 const userNo = computed(() => payload.value.userNo || null)
 const userName = computed(() => payload.value.userName || null)
-const authCode = computed(() => payload.value.auth || null)
+const authCode = computed(() => payload.value.authCode || null)
+const loginType = computed(() => payload.value.loginType || null)
 
 // 로그아웃 함수
 const logout = () => {
@@ -94,7 +97,71 @@ provide('userId', userId)
 provide('userNo', userNo)
 provide('userName', userName)
 provide('authCode', authCode)
+provide('loginType', loginType)
 
+const widget = ref(null)
+
+let isDragging = false
+let offsetX = 0
+let offsetY = 0
+
+const startDrag = (e) => {
+  isDragging = true
+  const rect = widget.value.getBoundingClientRect()
+  offsetX = e.clientX - rect.left
+  offsetY = e.clientY - rect.top
+
+  document.addEventListener('mousemove', onDrag)
+  document.addEventListener('mouseup', endDrag)
+}
+
+// 상하로만 이동
+const onDrag = (e) => {
+  if (!isDragging) return;
+
+  const widgetEl = widget.value;
+  const widgetRect = widgetEl.getBoundingClientRect();
+  const widgetHeight = widgetRect.height;
+  const viewportHeight = window.innerHeight;
+
+  // ✅ left는 고정 (초기 위치 유지)
+  const left = widgetEl.offsetLeft;
+
+  // ✅ top 계산
+  let top = e.clientY - offsetY;
+
+  // ✅ 화면 위아래로 나가지 않도록 제한
+  if (top < 0) top = 0;
+  if (top + widgetHeight > viewportHeight) {
+    top = viewportHeight - widgetHeight;
+  }
+
+  widgetEl.style.left = `${left}px`;
+  widgetEl.style.top = `${top}px`;
+  widgetEl.style.bottom = 'auto'; // ✅ bottom 초기화
+  widgetEl.style.right = 'auto';
+};
+
+const endDrag = () => {
+  isDragging = false
+  document.removeEventListener('mousemove', onDrag)
+  document.removeEventListener('mouseup', endDrag)
+}
+
+const adjustWidgetPosition = () => {
+  const widgetEl = widget.value;
+  if (!widgetEl) return;
+
+  // 펼친 후 실제 높이
+  const widgetHeight = widgetEl.getBoundingClientRect().height;
+  const viewportHeight = window.innerHeight;
+  const currentTop = widgetEl.offsetTop;
+
+  if (currentTop + widgetHeight > viewportHeight) {
+    const newTop = Math.max(0, viewportHeight - widgetHeight);
+    widgetEl.style.top = `${newTop}px`;
+  }
+}
 
 onMounted(() => {
 
@@ -114,6 +181,27 @@ onMounted(() => {
     // (참고: 필요하면 이전 소켓 연결 해제 로직 추가 가능)
   });
   // ⚠️ 추후 로그인 연동 시 userNo 값을 JWT에서 동적으로 할당하도록 수정
+
+  const widgetEl = widget.value;
+  const widgetHeight = widgetEl.getBoundingClientRect().height;
+  const viewportHeight = window.innerHeight;
+
+  const initialTop = viewportHeight - widgetHeight;
+  widgetEl.style.top = `${initialTop}px`;
 });
 
 </script>
+
+<style scoped>
+.floating-weather-widget {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 999;
+  cursor: grab;
+}
+
+.floating-weather-widget:active {
+  cursor: grabbing;
+}
+</style>

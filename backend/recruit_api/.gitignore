@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# 시크릿키 깃 올라가지 않도록
+application-secret.properties
+

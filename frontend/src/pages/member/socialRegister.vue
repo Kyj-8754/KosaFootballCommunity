@@ -50,9 +50,12 @@
                 <input type="text" v-model="form.userDetailAddr" id="detail_address" class="form-control" placeholder="상세주소를 입력해주세요">
               </div>
 
-              <div class="d-flex justify-content-between">
-                <input type="submit" value="회원가입" class="btn btn-primary">
-                <input type="reset" value="초기화" class="btn btn-secondary" @click="onReset">
+              <div class="d-flex justify-content-between mt-4">
+                <input type="reset" value="초기화" class="btn btn-outline-secondary" @click="onReset" />
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary">확인</button>
+                  <router-link :to="{ name: 'Home' }" class="btn btn-outline-secondary">취소</router-link>
+                </div>
               </div>
             </form>
           </div>
@@ -63,94 +66,104 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
-const router = useRouter()
-const route = useRoute()
-
-// 소셜 회원가입용 폼
-const form = reactive({
-  provider: '',
-  providerId: '',
-  userName: '',
-  userBirth: '',
-  userGender: '',
-  userPhone: '',
-  userPostcode: '',
-  userAddr: '',
-  userDetailAddr: ''
-})
-
-const onSubmit = async () => {
-  // 전화번호 숫자만 필터링
-  form.userPhone = form.userPhone.replace(/[^0-9]/g, '')
-
-  // 필수 항목 유효성 검사
-  if (!form.userBirth || !form.userGender || !form.userPhone || !form.userPostcode || !form.userAddr) {
-    alert('모든 필수 정보를 입력해주세요.')
-    return
-  }
-
-  try {
-    const response = await fetch('/login_api/oauth/na/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json;charset=utf-8' },
-      body: JSON.stringify(form)
-    })
-
-    const json = await response.json()
-
-    if (json.res_code === '200') {
-      alert(json.res_msg)
-      router.push({ path: '/member/loginForm' }) // query 제거해서 이동
-    } else {
-      alert(json.res_msg || '회원가입에 실패했습니다.')
-    }
-  } catch (error) {
-    console.error('회원가입 요청 중 오류 발생:', error)
-    alert('서버 오류로 회원가입에 실패했습니다.')
-  }
-}
-
-const onReset = () => {
-  form.userBirth = ''
-  form.userGender = ''
-  form.userPhone = ''
-  form.userPostcode = ''
-  form.userAddr = ''
-  form.userDetailAddr = ''
-}
-
-// 다음 주소 API 로드
-const findZipcode = () => {
-  new window.daum.Postcode({
-    oncomplete: function (data) {
-      form.userPostcode = data.zonecode
-      form.userAddr = data.address
-    }
-  }).open()
-}
-
-onMounted(() => {
-  const query = route.query
-
-  console.log("🔍 소셜 회원가입 쿼리 파라미터:", query)
-  if (!query.provider || !query.providerId || !query.nickname) {
-    alert('잘못된 접근입니다.')
-    router.replace('/member/loginForm')
-    return
-  }
-
-  form.provider = query.provider
-  form.providerId = query.providerId
-  form.userName = query.nickname || query.name || '이름없음'
-
-  // 다음 주소 API 스크립트 동적 로드
-  if (!window.daum?.Postcode) {
-    const script = document.createElement('script')
-    script.src = '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'
-    document.body.appendChild(script)
-  }
-})
+import { useSocialRegister } from '@/utils/script/user.js'
+const { form, onSubmit, onReset, findZipcode } = useSocialRegister()
 </script>
+
+<style scoped>
+.container-fluid.main-container {
+  padding-top: 40px;
+  padding-bottom: 60px;
+  font-family: 'Pretendard', sans-serif;
+}
+
+.card {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
+}
+
+.form-control,
+.form-select {
+  font-size: 14px;
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: none;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: none;
+}
+
+textarea.form-control {
+  resize: none;
+}
+
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.d-flex.gap-2 {
+  gap: 8px;
+}
+
+.btn {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+.btn-outline-secondary {
+  background-color: #f8f9fa;
+  border: 1px solid #ccc;
+  color: #495057;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #e2e6ea;
+  color: #212529;
+}
+
+.text-danger,
+.text-success {
+  font-size: 13px;
+  margin-top: 4px;
+}
+</style>

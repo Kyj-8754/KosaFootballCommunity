@@ -8,32 +8,35 @@
 	<sql id="search">
 		where state != 'DELETE'   <!-- ① 무조건 적용 -->
         <if test="searchValue != null and searchValue != ''">
-         AND
 		    <choose>
 		     <when test="searchType == ''">
-		        (
+		       AND (
 		          svcnm LIKE CONCAT('%', #{searchValue}, '%')
 		          OR areanm LIKE CONCAT('%', #{searchValue}, '%')
 		          OR placenm LIKE CONCAT('%', #{searchValue}, '%')
 		        )
 		      </when>
 		      <when test="searchType == 'svcnm'">
-		       svcnm LIKE concat('%', #{searchValue}, '%')
+		      AND svcnm LIKE concat('%', #{searchValue}, '%')
 		      </when>
 		      <when test="searchType == 'areanm'">
-		         areanm LIKE concat('%', #{searchValue}, '%')
+		       AND areanm LIKE concat('%', #{searchValue}, '%')
 		      </when>
 		      <when test="searchType == 'placenm'">
-		        placenm LIKE concat('%', #{searchValue}, '%')
+		      AND  placenm LIKE concat('%', #{searchValue}, '%')
 		      </when>
 		    </choose>
         </if>
 	</sql>
 	
-	<select id="list" resultType="com.msa.kyj_prj.stadium.Stadium">
-	    SELECT *
-		FROM stadium 
+	<select id="list" resultType="com.msa.kyj_prj.dto.StadiumListDTO">
+	    SELECT s.*,
+	    IFNULL(ROUND(AVG(c.rating), 1), 0) AS avgRating,
+    	COUNT(c.comment_no) AS reviewCount
+		FROM stadium s
+		LEFT JOIN stadium_comment c ON s.svcid = c.svcid
 			<include refid="search"/>
+	    GROUP BY s.svcid
 		LIMIT #{start}, #{end}
 	</select>
 	
@@ -43,19 +46,29 @@
 		<include refid="search"/>
 	</select>
 	
-	<select id="getStadium" resultType="com.msa.kyj_prj.stadium.Stadium">
+	<select id="getStadium" resultType="com.msa.kyj_prj.dto.Stadium">
 		select * from stadium where SVCID = #{SVCID}
 	</select>
 	
+	<select id="getAvailableDate" resultType="com.msa.kyj_prj.dto.Slot">
+		select distinct slot_date
+		from reservation_slot
+		where svcid = #{svcid}
+		AND slot_date &gt;= CURDATE()
+      	AND slot_date &lt;= DATE_ADD(CURDATE(), INTERVAL (6 - WEEKDAY(CURDATE())) DAY)
+		order by slot_date
+	</select>
+
+	
 	<update id="update">
 		update stadium set 
-			  SVCNM = #{SVCNM},
-    PLACENM = #{PLACENM},
-    TELNO = #{TELNO},
-    V_MIN = #{V_MIN},
-    V_MAX = #{V_MAX},
-    NOTICE = #{NOTICE},
-    ADRES = #{ADRES}
+		  	SVCNM = #{SVCNM},
+		    PLACENM = #{PLACENM},
+		    TELNO = #{TELNO},
+		    V_MIN = #{V_MIN},
+		    V_MAX = #{V_MAX},
+		    NOTICE = #{NOTICE},
+		    ADRES = #{ADRES}
 		where SVCID = #{SVCID}
 	</update>
 	
@@ -63,15 +76,9 @@
 	<select id="findAllSvcIds" resultType="string">
 	  SELECT SVCID FROM stadium
 	</select>
-		
-	<!-- <update id="invViewCount">
-		update t_board set 
-		    view_count = view_count + 1  
-		where bno= #{bno}	
-	</update>	 -->
 	
 	<insert id="regist">
-		insert into STADIUM (
+		insert into stadium (
 			SVCID, 
 			SVCNM, 
 			PLACENM,
@@ -109,7 +116,7 @@
 	</insert>
 	
 	<insert id="registPatch">
-		insert into STADIUM_PATCH (
+		insert into stadium_patch (
 			SVCID, 
 			SVCNM, 
 			PLACENM,
@@ -157,8 +164,5 @@
         CALL sync_stadium_state()
     </select>
     
-<!--     <select id="callSyncStadiumProcedure" statementType="CALLABLE">
-        select
-    </select> -->
 	
 </mapper>

@@ -1,0 +1,5 @@
+rootProject.name = 'security'
+
+include ':board_api'
+include ':login_api'
+include ':security_api'

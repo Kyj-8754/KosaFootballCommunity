@@ -1,5 +1,4 @@
 // 📁 src/utils/stomp.js
-import { useToast } from 'vue-toastification';
 import { Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
@@ -17,22 +16,19 @@ export function connectWebSocket(userNo, onMessage) {
     return;
   }
 
-  const stompClient = Stomp.over(() => new SockJS('http://localhost:8086/ws')); // 🟢 factory 전달, auto reconnect OK
+stompClient = Stomp.over(() => new SockJS('/alarm_api/ws')); // 🟢 factory 전달, auto reconnect OK
 
 
 // ✅ 로그 비활성화 (에러 방지 방식)
    stompClient.debug = () => {}; // ← 로그 비활성화
 
   stompClient.connect({}, () => {
-    console.log('🟢 WebSocket 연결 성공');
 
     const topicPath = `/topic/alarm/${userNo}`; // ✅ PK 기준 경로
-    console.log("✅ 구독 경로:", topicPath);
 
     stompClient.subscribe(topicPath, (message) => {
       try {
         const data = JSON.parse(message.body);
-        console.log('📩 알림 수신:', data);
         if (onMessage) onMessage(data); // 콜백 함수 존재 시 실행
         // 또는 여기서 바로 토스트 출력도 가능
         // const toast = useToast();
@@ -43,7 +39,7 @@ export function connectWebSocket(userNo, onMessage) {
     });
 
   }, (error) => {
-    console.error('🔴 WebSocket 연결 실패:', error);
+    console.warn('🔴 WebSocket 연결 실패:', error);
   });
 }
 
@@ -53,7 +49,6 @@ export function connectWebSocket(userNo, onMessage) {
 export function disconnectWebSocket() {
   if (stompClient?.connected) {
     stompClient.disconnect(() => {
-      console.log('🛑 WebSocket 연결 해제');
     });
   }
 }

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.msa.kyj_prj.reservation.ReservationDAO">		
+	<select id="getReservationForm" resultType="com.msa.kyj_prj.dto.SlotDTO">
+		SELECT 
+		rs.slot_id AS slotid, 
+		rs.svcid AS svcid,
+		rs.slot_date AS slotDate,
+		rs.start_time AS startTime,
+		rs.end_time AS endTime,
+		CASE WHEN r.slot_id IS NOT NULL THEN 'reserved' ELSE 'available' END AS reservationStatus
+	FROM reservation_slot rs
+	LEFT JOIN reservation r 
+		ON rs.slot_id = r.slot_id 
+		AND r.status = 'reserved'
+	WHERE rs.svcid = #{svcid}
+	  AND rs.slot_date = #{date}
+	ORDER BY rs.start_time
+	</select>
+	
+	<insert id="reservation" useGeneratedKeys="true" keyProperty="reservation_id">
+		insert into reservation (user_no, reservation_type, slot_id, price)
+		values(#{user_no}, #{reservation_type}, #{slot_id}, #{price})
+	</insert>
+	
+	<select id="getReservations" resultType="com.msa.kyj_prj.dto.ReservationDTO">
+		SELECT 
+  r.*, 
+  rs.slot_date, rs.start_time, rs.end_time, rs.svcid,
+  p.status AS payment_status,
+  p.paid_at,
+  p.method,
+  p.amount,
+  p.tid
+FROM reservation r
+JOIN reservation_slot rs ON r.slot_id = rs.slot_id
+LEFT JOIN (
+    SELECT p1.*
+    FROM payment p1
+    JOIN (
+        SELECT reservation_id, MAX(id) AS max_id
+        FROM payment
+        GROUP BY reservation_id
+    ) latest ON p1.reservation_id = latest.reservation_id AND p1.id = latest.max_id
+) p ON r.reservation_id = p.reservation_id
+WHERE r.reservation_id = #{reservation_id}
+	</select>
+	
+	<select id="getReservationList" resultType="com.msa.kyj_prj.dto.ReservationDTO">
+		SELECT r.reservation_id, r.reservation_type,r.status, r.reserved_at, rs.slot_date, rs.svcid, s.svcnm
+		FROM reservation r
+		JOIN reservation_slot rs on r.slot_id = rs.slot_id
+		JOIN stadium s on rs.svcid = s.svcid
+		where user_no = #{user_no}
+		ORDER BY reservation_id DESC;
+	</select>
+	
+	<select id="getPaymentList" resultType="com.msa.kyj_prj.dto.ReservationDTO">
+		SELECT p.*, s.svcnm
+		from payment p
+		left join reservation r on p.reservation_id = r.reservation_id
+		JOIN reservation_slot rs on r.slot_id = rs.slot_id
+		join stadium s on rs.svcid = s.svcid
+		where p.user_no = #{user_no}
+		ORDER BY p.reservation_id DESC;
+	</select>
+	
+	<update id="updateStatusToCancelled"  parameterType="int">
+		UPDATE reservation
+	  SET status = 'cancelled',
+	      cancelled_at = now()
+	  WHERE reservation_id = #{reservation_id}
+	</update>
+	
+	<update id="updateBoardId" parameterType="map">
+	  UPDATE reservation
+	  SET board_id = #{board_id}
+	  WHERE reservation_id = #{reservation_id}
+	</update>
+
+	<update id="expiredReservation">
+		UPDATE reservation r
+		JOIN reservation_slot rs ON r.slot_id = rs.slot_id
+		JOIN (
+			SELECT p.reservation_id
+			FROM payment p
+			JOIN (
+				SELECT reservation_id, max(id) AS latest_id
+				FROM payment
+				GROUP BY reservation_id
+			) latest ON p.id = latest.latest_id
+			WHERE p.status IS NULL OR p.status != 'paid'
+		) unpaid ON r.reservation_id = unpaid.reservation_id
+		SET r.status = 'expired'
+		WHERE r.status = 'reserved'
+		AND timestamp(rs.slot_date, rs.start_time) &lt; now();
+	</update>
+	
+
+
+</mapper>
