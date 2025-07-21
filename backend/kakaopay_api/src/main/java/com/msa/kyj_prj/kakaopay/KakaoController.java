@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KakaoController {
 	
 	@Value("${base.url}")
-	private static String baseUrl;
+	private String baseUrl;
 	private final KakaoService kakaoService;
 
 	// 카카오 api 결제
