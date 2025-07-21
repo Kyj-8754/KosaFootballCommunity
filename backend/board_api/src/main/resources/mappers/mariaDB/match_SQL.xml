@@ -347,16 +347,17 @@
 	  FROM `match`
 	  WHERE match_status = 'completed'
 	    AND match_date &lt; NOW()
+	    AND match_code = 'league'
 	  ORDER BY match_date DESC
 	  LIMIT 5
 	</select>
 
 	<select id="selectClosedLeagueMatches" resultType="com.msa.kyj_prj.match.Match">
-  SELECT *
-  FROM `match`
-  WHERE match_code = 'league'
-    AND match_date > NOW()
-  ORDER BY match_date ASC
+	  SELECT *
+	  FROM `match`
+	  WHERE match_code = 'league'
+	    AND match_date > NOW()
+	  ORDER BY match_date ASC
 	</select>
 
 
