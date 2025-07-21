@@ -76,7 +76,7 @@ public class SocialController {
             Map<String, String> tokenMap = socialService.generateToken(provider, userInfo.getProviderId());
 
     		String redirectUrl = String.format(
-    			"http://www.itsfootball.store/#/login/oauth/success?accessToken=%s&refreshToken=%s",
+    			"http://www.itsfootball.store/#/oauth/success?accessToken=%s&refreshToken=%s",
     			URLEncoder.encode(tokenMap.get("accessToken"), StandardCharsets.UTF_8),
     			URLEncoder.encode(tokenMap.get("refreshToken"), StandardCharsets.UTF_8)
     		);
