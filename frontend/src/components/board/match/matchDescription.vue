@@ -52,7 +52,7 @@ const tabs = computed(() => {
     { key: 'description', label: '매치 설명' },
     { key: 'participants', label: '참가자 목록' }
   ]
-  if (props.matchStatus === 'completed') {
+  if (props.matchStatus === 'completed' && props.matchCode === 'league') {
     base.push({ key: 'results', label: '경기 결과' })
   }
   return base
