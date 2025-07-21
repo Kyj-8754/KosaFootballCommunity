@@ -167,6 +167,7 @@ export function stdaiumDetail() {
 	function goToReservation(){
 		if(userId){
 			router.push({name: 'boardRegisterForm'})
+			return;
 		}
 		router.push({name: 'Member_LoginForm'})
 	}
