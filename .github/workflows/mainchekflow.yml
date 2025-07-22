@@ -90,6 +90,7 @@ jobs:
         run: |
           # stadium_api
           echo "${{ secrets.APPLICATION_SECRET_PROPERTIES_COMMON }}" > backend/stadium_api/src/main/resources/application-secret.properties
+          echo "${{ secrets.STADIUM_APIKEY }}" >> backend/stadium_api/src/main/resources/application-secret.properties
 
       - name: Create application-secret.properties for reservation_api
         if: steps.changes.outputs.reservation_api == 'true' || steps.changes.outputs.infra == 'true'

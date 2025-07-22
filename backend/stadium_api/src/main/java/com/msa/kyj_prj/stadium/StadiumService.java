@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class StadiumService{
 	private final StadiumDAO stadiumDAO;
+	
+	@Value("apikey")
+	String apiKey;
 
 	// 1초마다 값 불러내도록 하기위해 설정
     private static final int STEP = 1000;
@@ -71,7 +75,6 @@ public class StadiumService{
 		
 	// 구장 1000개 데이터 가져오는 API
 	private List<String> fetchData(int start, int end) throws IOException {
-	String apiKey = "6d657a6f546b796a36384d5665716e"; // 실제 인증키로 교체
 	String urlStr = String.format("http://openapi.seoul.go.kr:8088/%s/json/tvYeyakCOllect/%d/%d/",
 		apiKey, start, end
 	);
@@ -121,7 +124,6 @@ public class StadiumService{
 		
 	// 상세 정보 API
 	private Map<String, Object> fetchDetailData(String svcid) throws IOException {
-        String apiKey = "6d657a6f546b796a36384d5665716e"; // 실제 인증키로 교체
         String urlStr = String.format(
                 "http://openapi.seoul.go.kr:8088/%s/json/ListPublicReservationDetail/1/5/%s",
                 apiKey, svcid
@@ -242,7 +244,6 @@ public class StadiumService{
 	
 	// API RAW 데이터 갯수 확인용
 	public int fetchTotalCount() throws Exception {
-	    String apiKey = "6d657a6f546b796a36384d5665716e";
 	    String urlStr = String.format(
 	        "http://openapi.seoul.go.kr:8088/%s/json/tvYeyakCOllect/1/1/",
 	        apiKey
