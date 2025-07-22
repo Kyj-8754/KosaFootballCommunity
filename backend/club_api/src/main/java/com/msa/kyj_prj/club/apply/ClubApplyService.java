@@ -108,7 +108,7 @@ public class ClubApplyService {
 		// 알림 메시지 전송 (실패해도 무방)
 		Integer clubIdForAlarm = clubApplyDAO.findClubIdByBno(clubApply.getBno());
 		Integer userNoForAlarm = clubApplyDAO.findUserNoByBno(clubApply.getBno());
-		String teamCode = clubApplyDAO.getTeamCodeByClubId(clubIdForAlarm.intValue());
+		String teamCode = clubApplyDAO.getTeamCodeByClubId(clubIdForAlarm);
 		AlarmMessageDTO alarm = new AlarmMessageDTO();
 		alarm.setType("CLUB_APPLY");
 		alarm.setSenderId(String.valueOf(clubApply.getAppli_user_no()));

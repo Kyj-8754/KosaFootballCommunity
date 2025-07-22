@@ -82,7 +82,7 @@ public interface ClubApplyDAO {
 	int insertByClubDetail(ClubApply clubApply);
 
 	// ClubApplyDAO.java (interface)
-	String getTeamCodeByClubId(int clubId);
+	String getTeamCodeByClubId(@Param("clubId")int clubId);
 
 	
 	
