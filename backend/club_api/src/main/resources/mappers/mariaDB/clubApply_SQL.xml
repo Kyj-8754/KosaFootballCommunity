@@ -192,7 +192,7 @@
     AND status = 'pending'
 	</update>
 
-	<select id="getTeamCodeByClubId" parameterType="int" resultType="string">
+	<select id="getTeamCodeByClubId" parameterType="int" resultType="String">
   	SELECT team_code FROM tbl_club WHERE club_id = #{clubId}
 	</select>
 
