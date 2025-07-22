@@ -104,17 +104,18 @@ public class ClubApplyService {
 
 
 		String senderName = clubApplyDAO.findUserNameByUserNo(clubApply.getAppli_user_no());
-
+		
 		// 알림 메시지 전송 (실패해도 무방)
 		Integer clubIdForAlarm = clubApplyDAO.findClubIdByBno(clubApply.getBno());
 		Integer userNoForAlarm = clubApplyDAO.findUserNoByBno(clubApply.getBno());
+		String teamCode = clubApplyDAO.getTeamCodeByClubId(clubIdForAlarm);
 		AlarmMessageDTO alarm = new AlarmMessageDTO();
 		alarm.setType("CLUB_APPLY");
 		alarm.setSenderId(String.valueOf(clubApply.getAppli_user_no()));
 		alarm.setReceiverId(String.valueOf(userNoForAlarm));
 		alarm.setClubId(clubIdForAlarm);
 		alarm.setMessage(senderName + " 님이 클럽가입을 신청했습니다.");
-		alarm.setUrl("club/teammsa/applyList");
+		alarm.setUrl(teamCode != null ? "club/" + teamCode + "/applyList" : "club/applyList");
 
 		try {
 			String url = alarmApiUrl + "/api/alarm/send";
@@ -186,7 +187,7 @@ public class ClubApplyService {
 				alarm.setReceiverId(String.valueOf(user_no)); // 알림 받을 사람(= 승인된 멤버)
 				alarm.setClubId(club_id);
 				alarm.setMessage("클럽 가입이 승인되었습니다!");
-				alarm.setUrl("club/teammsa");
+			//	alarm.setUrl("club/teammsa");
 
 				try {
 					// [🔍 로그 추가] 실제로 보낼 JSON 찍기
