@@ -165,7 +165,7 @@ public class UserController {
         String verificationCode = userService.createCode();
         
         log.info("[문자 인증] 생성된 인증 코드: {}", verificationCode);
-        // smsUtil.sendOne(userPhone, verificationCode);
+        smsUtil.sendOne(userPhone, verificationCode);
         log.info("[문자 인증] 문자 전송 완료 - 수신자: {}", userPhone);
         
         //인증코드 유효기간 5분 설정
