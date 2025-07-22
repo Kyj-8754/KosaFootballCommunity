@@ -40,7 +40,7 @@
         </div>
         <div class="match-box">
           <p class="title">👑 POM</p>
-          <p class="count">{{ profileInfo?.POMCount ?? 0 }}</p>
+          <p class="count">{{ profileInfo?.pomcount ?? 0 }}</p>
         </div>
       </div>
 
