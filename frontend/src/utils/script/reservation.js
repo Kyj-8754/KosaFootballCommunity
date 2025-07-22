@@ -193,7 +193,7 @@ const convertType = (reservation_type) => {
   switch (reservation_type) {
     case 'social':
       return '소셜';
-    case 'match':
+    case 'league':
       return '리그';
     default:
       return '알 수 없음';
@@ -240,7 +240,7 @@ watch(UserDB, (newVal) => {
 
 const reservation = ref({
   slot_id: '',               // 선택한 시간 슬롯 ID
-  reservation_type: '',                 // 'social' or 'match'
+  reservation_type: '',                 // 'social' or 'league'
   user_no: UserDB.value.user_no,   // 사용자 번호
   price: stadiumDB.price
 })
