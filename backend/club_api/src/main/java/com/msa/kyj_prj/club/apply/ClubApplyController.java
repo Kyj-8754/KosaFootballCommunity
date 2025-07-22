@@ -221,11 +221,9 @@ public class ClubApplyController {
 
 	// 클럽별 전체 신청자+이름 목록 조회(GET)
 	@GetMapping("/listWithName")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "신청 목록 조회 성공"),
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "신청 목록 조회 성공"),
 			@ApiResponse(responseCode = "400", description = "클럽 ID가 필요합니다", content = @Content(schema = @Schema(implementation = String.class))),
-			@ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content(schema = @Schema(implementation = String.class)))
-		})
+			@ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content(schema = @Schema(implementation = String.class))) })
 	public ResponseEntity<?> getApplyListByClubIdWithUserName(@RequestParam("club_id") int club_id) {
 		if (club_id == 0) {
 			return ResponseEntity.badRequest().body("클럽 ID가 필요합니다.");
@@ -368,6 +366,23 @@ public class ClubApplyController {
 			return ResponseEntity.ok(new ApplyStatusResponse(last != null ? last.getStatus() : "none"));
 		} catch (Exception e) {
 			return ResponseEntity.internalServerError().body("가입 신청 상태 조회 중 오류가 발생했습니다.");
+		}
+	}
+
+	// 클럽 id로 team_code 반환
+	@GetMapping("/teamCodeById")
+	public ResponseEntity<?> getTeamCodeByClubId(@RequestParam("club_id") int clubId) {
+		if (clubId == 0) {
+			return ResponseEntity.badRequest().body("club_id가 필요합니다.");
+		}
+		try {
+			String teamCode = clubApplyService.getTeamCodeByClubId(clubId);
+			if (teamCode == null) {
+				return ResponseEntity.badRequest().body("해당 club_id의 team_code를 찾을 수 없습니다.");
+			}
+			return ResponseEntity.ok(Map.of("team_code", teamCode));
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body("조회 중 오류가 발생했습니다.");
 		}
 	}
 

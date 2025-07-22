@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2> {{ clubId }} 클럽 가입 신청자 리스트</h2>
+    <h2>클럽 가입 신청자 리스트</h2>
     <table class="apply-table"><!-- 추가: 클래스명 -->
       <thead>
         <tr>
@@ -176,9 +176,26 @@ function goBack() {
   router.go(-1)
 }
 
-//팀 상세창으로 넘어가기
-function goclub(){
- router.push({name:`club/${teamCode}`});
+async function goclub() {
+  if (!clubId.value) {
+    alert('club_id가 없습니다.');
+    return;
+  }
+  try {
+    const res = await axios.get('/club_api/club/apply/teamCodeById', { params: { club_id: clubId.value } });
+    const teamCode = res.data.team_code;
+    if (!teamCode) {
+      alert('team_code를 찾을 수 없습니다.');
+      return;
+    }
+    // name 기반 push (params: { teamCode }) → 라우트 등록대로!
+    router.push({ name: 'Club_DetailView', params: { teamCode } });
+    // 또는 path 기반 사용도 완벽하게 동작
+    // router.push({ path: `/club/${teamCode}` });
+  } catch (e) {
+    alert('team_code 조회 실패');
+    console.error(e);
+  }
 }
 
 </script>

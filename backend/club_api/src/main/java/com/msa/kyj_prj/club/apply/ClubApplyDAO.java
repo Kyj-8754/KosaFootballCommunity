@@ -81,7 +81,9 @@ public interface ClubApplyDAO {
 	// 추가!
 	int insertByClubDetail(ClubApply clubApply);
 
-	
+	// ClubApplyDAO.java (interface)
+	String getTeamCodeByClubId(int clubId);
+
 	
 	
 }
