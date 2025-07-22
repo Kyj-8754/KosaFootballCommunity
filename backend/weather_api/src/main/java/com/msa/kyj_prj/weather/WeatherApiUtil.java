@@ -28,6 +28,12 @@ public class WeatherApiUtil {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         int hour = now.getHour();
         String baseTime = getBaseTime(hour);
+        
+        // ✅ 발표 정책 고려: baseTime이 "2300"이면 날짜는 하루 전
+        if ("2300".equals(baseTime)) {
+            now = now.minusDays(1);
+        }
+        
         String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         System.out.println("▶▶ [" + regionName + "] 호출 시작");
@@ -51,9 +57,9 @@ public class WeatherApiUtil {
                     "&nx=" + x +
                     "&ny=" + y;
 
+            System.out.println("▶▶ 호출 URL: " + url);
             Request request = new Request.Builder().url(url).build();
             Response response = client.newCall(request).execute();
-            System.out.println("▶▶ 호출 URL: " + url);
             return response.body() != null ? response.body().string() : null;
 
         } catch (IOException e) {
