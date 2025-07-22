@@ -83,9 +83,9 @@ const loadReservationDetails = async () =>{
 
    try {
         await axios.post('/reservation_api/reservation/cancel',{
-        reservation: reservation.value,
-        user_no: userNo.value
-    });
+         reservation: reservation.value,
+         user_no: userNo.value
+        });
    // 성공 시 알림 띄우고, 페이지 이동
     alert('예약이 성공적으로 취소되었습니다.');
 
@@ -151,6 +151,18 @@ const refundPayment = async () => {
 
       // 💡 매치 상태도 취소로 변경
       await cancelMatchByTypeAndId("reservation", reservation.value.reservation_id);
+
+      try {
+        await axios.post('/reservation_api/reservation/cancel',{
+         reservation: reservation.value,
+         user_no: userNo.value
+        });
+          // 💡 매치 상태도 취소로 변경
+          await cancelMatchByTypeAndId("reservation", reservation.value.reservation_id);
+        } catch (err) {
+          console.error(err);
+          alert('예약 취소 실패: ' + (err.response?.data?.message || '서버 오류'));
+        }
 
       router.go(0);  // 새로고침
     } else {
