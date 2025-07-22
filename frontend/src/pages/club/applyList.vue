@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{teamName}}클럽 가입 신청자 리스트</h2>
+    <h2>클럽 가입 신청자 리스트</h2>
     <table class="apply-table"><!-- 추가: 클래스명 -->
       <thead>
         <tr>
