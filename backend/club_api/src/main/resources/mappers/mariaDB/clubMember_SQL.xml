@@ -27,38 +27,47 @@
     <!-- // 클럽별 전체 멤버 리스트 조회 -->
     <select id="findByClubId" parameterType="int" resultType="com.msa.kyj_prj.club.member.ClubMember">
     SELECT
-        m.club_id,
-        m.user_no,
-        m.role,
-        m.joined_at,
-        m.left_at,
-        m.match_count,
-        m.pom,
-        u.user_name
-    FROM tbl_club_member m
-    JOIN user u ON m.user_no = u.user_no
-    WHERE m.club_id = #{club_id}
-     AND m.left_at IS NULL
-    ORDER BY m.joined_at ASC
+    m.club_id,
+    m.user_no,
+    m.role,
+    m.joined_at,
+    m.left_at,
+    u.user_name,
+    -- 리그 매치 횟수
+    SUM(CASE WHEN mt.match_code = 'league' THEN 1 ELSE 0 END) AS match_count,
+    -- POM 횟수
+    SUM(CASE WHEN ml.log_type = 'POM' THEN 1 ELSE 0 END) AS pom
+	FROM tbl_club_member m
+	JOIN user u ON m.user_no = u.user_no
+	LEFT JOIN match_log ml ON ml.club_id = m.club_id AND ml.user_no = m.user_no
+	LEFT JOIN `match` mt ON ml.match_id = mt.match_id
+	WHERE m.club_id = #{club_id}
+	GROUP BY m.club_id, m.user_no, m.role, m.joined_at, m.left_at, u.user_name
+	ORDER BY m.joined_at ASC;
 	</select>
 
 
     <!-- // 특정 유저의 클럽 멤버 정보 조회 -->
  	<select id="findByClubIdAndUserNo" parameterType="map" resultType="com.msa.kyj_prj.club.member.ClubMember">
-    SELECT
-        m.club_id,
-        m.user_no,
-        m.role,
-        m.joined_at,
-        m.left_at,
-        m.match_count,
-        m.pom,
-        u.user_name
-    FROM tbl_club_member m
-    JOIN user u ON m.user_no = u.user_no
-    WHERE m.club_id = #{club_id}
-      AND m.user_no = #{user_no}
-    LIMIT 1
+	    SELECT
+	    m.club_id,
+	    m.user_no,
+	    m.role,
+	    m.joined_at,
+	    m.left_at,
+	    u.user_name,
+	    -- 리그 매치 횟수
+	    SUM(CASE WHEN mt.match_code = 'league' THEN 1 ELSE 0 END) AS match_count,
+	    -- POM 횟수
+	    SUM(CASE WHEN ml.log_type = 'POM' THEN 1 ELSE 0 END) AS pom
+		FROM tbl_club_member m
+		JOIN user u ON m.user_no = u.user_no
+		LEFT JOIN match_log ml ON ml.club_id = m.club_id AND ml.user_no = m.user_no
+		LEFT JOIN `match` mt ON ml.match_id = mt.match_id
+		WHERE m.club_id = #{club_id}
+		  AND m.user_no = #{user_no}
+		GROUP BY m.club_id, m.user_no, m.role, m.joined_at, m.left_at, u.user_name
+		LIMIT 1
 	</select>
 
 
