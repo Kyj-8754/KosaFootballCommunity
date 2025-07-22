@@ -50,7 +50,7 @@
       <select v-model="reservation.reservation_type" class="form-select">
         <option disabled value="">예약 유형을 선택하세요</option>
         <option value="social">소셜</option>
-        <option value="match">매치</option>
+        <option value="league">리그</option>
       </select>
     </div>
     <button class="btn btn-primary mt-2" @click="openConfirmModal">예약하기</button>
