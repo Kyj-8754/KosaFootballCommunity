@@ -109,6 +109,7 @@ public class ClubApplyService {
 		Integer clubIdForAlarm = clubApplyDAO.findClubIdByBno(clubApply.getBno());
 		Integer userNoForAlarm = clubApplyDAO.findUserNoByBno(clubApply.getBno());
 		String teamCode = clubApplyDAO.getTeamCodeByClubId(clubIdForAlarm);
+		log.info(teamCode);
 		AlarmMessageDTO alarm = new AlarmMessageDTO();
 		alarm.setType("CLUB_APPLY");
 		alarm.setSenderId(String.valueOf(clubApply.getAppli_user_no()));
