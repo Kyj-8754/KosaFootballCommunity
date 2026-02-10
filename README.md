@@ -13,25 +13,25 @@
 
 ```mermaid
 graph TD
-    User[사용자 / 클라이언트] -->|HTTPS: www.itsfootball.store| DNS[DNS (Route 53 / Gabia)]
-    DNS -->|Resolved IP| Nginx[Nginx Gateway (Port 80)]
+    User["사용자 / 클라이언트"] -->|"HTTPS: www.itsfootball.store"| DNS["DNS (Route 53 / Gabia)"]
+    DNS -->|"Resolved IP"| Nginx["Nginx Gateway (Port 80)"]
     
     subgraph "AWS EC2 (Ubuntu Linux)"
         subgraph "Docker Network (msateamprj_network)"
             Nginx
             
-            Nginx -->|/stadium_api| Stadium[Stadium API :8100]
-            Nginx -->|/reservation_api| Reservation[Reservation API :8101]
-            Nginx -->|/kakaopay_api| KakaoPay[KakaoPay API :8102]
-            Nginx -->|/security_api| Security[Security API :8110]
-            Nginx -->|/login_api| Login[Login API :8111]
-            Nginx -->|/alarm_api| Alarm[Alarm API :8120]
-            Nginx -->|/club_api| Club[Club API :8121]
-            Nginx -->|/recruit_api| Recruit[Recruit API :8122]
-            Nginx -->|/widget_api| Weather[Weather API :8130]
-            Nginx -->|/board_api| Board[Board API :8131]
+            Nginx -->|"/stadium_api"| Stadium[Stadium API :8100"]
+            Nginx -->|"/reservation_api"| Reservation["Reservation API :8101"]
+            Nginx -->|"/kakaopay_api"| KakaoPay["KakaoPay API :8102"]
+            Nginx -->|"/security_api"| Security["Security API :8110"]
+            Nginx -->|"/login_api"| Login["Login API :8111"]
+            Nginx -->|"/alarm_api"| Alarm["Alarm API :8120"]
+            Nginx -->|"/club_api"| Club["Club API :8121"]
+            Nginx -->|"/recruit_api"| Recruit["Recruit API :8122"]
+            Nginx -->|"/widget_api"| Weather["Weather API :8130"]
+            Nginx -->|"/board_api"| Board["Board API :8131"]
             
-            Stadium --> DB[(MariaDB :3306)]
+            Stadium --> DB[("MariaDB :3306")]
             Reservation --> DB
             KakaoPay --> DB
             Security --> DB
