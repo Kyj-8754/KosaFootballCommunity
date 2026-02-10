@@ -20,7 +20,7 @@ graph TD
         subgraph "Docker Network (msateamprj_network)"
             Nginx
             
-            Nginx -->|"/stadium_api"| Stadium[Stadium API :8100"]
+            Nginx -->|"/stadium_api"| Stadium["Stadium API :8100"]
             Nginx -->|"/reservation_api"| Reservation["Reservation API :8101"]
             Nginx -->|"/kakaopay_api"| KakaoPay["KakaoPay API :8102"]
             Nginx -->|"/security_api"| Security["Security API :8110"]
