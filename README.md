@@ -12,7 +12,7 @@
 사용자는 도메인(`www.itsfootball.store`)을 통해 접속하며, AWS 클라우드 상의 Ubuntu 서버 내 Docker Network로 요청이 전달됩니다.
 
 ```mermaid
-graph TD
+graph LR
     User["사용자 / 클라이언트"] -->|"HTTPS: www.itsfootball.store"| DNS["DNS (Route 53 / Gabia)"]
     DNS -->|"Resolved IP"| Nginx["Nginx Gateway (Port 80)"]
     
